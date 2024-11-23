@@ -1,20 +1,28 @@
-// components/DetailsPanel.tsx
-interface DetailsPanelProps {
-  title: string;
-  details: Record<string, string | number>;
-}
-
-export default function DetailsPanel({ title, details }: DetailsPanelProps) {
-  return (
-    <div style={{ padding: '1rem', borderLeft: '1px solid #ddd' }}>
-      <h3>{title}</h3>
-      <ul>
-        {Object.entries(details).map(([key, value]) => (
+export default function DetailsPanel({ title, details }: { title: string; details: any }) {
+  const renderDetails = (obj: Record<string, any>) => (
+    <ul>
+      {Object.entries(obj).map(([key, value]) => {
+        if (typeof value === "object" && value !== null) {
+          return (
+            <li key={key}>
+              <strong>{key}:</strong>
+              {renderDetails(value)}
+            </li>
+          );
+        }
+        return (
           <li key={key}>
-            <strong>{key}:</strong> {value}
+            <strong>{key}:</strong> {String(value)}
           </li>
-        ))}
-      </ul>
+        );
+      })}
+    </ul>
+  );
+
+  return (
+    <div style={{ padding: "1rem", borderLeft: "1px solid #ddd" }}>
+      <h3>{title}</h3>
+      {renderDetails(details)}
     </div>
   );
 }

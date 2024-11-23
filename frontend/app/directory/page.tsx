@@ -4,33 +4,90 @@ import TreeView from '../../components/TreeView';
 
 export default function ActiveDirectoryPage() {
   const data = [
-    {
-      id: '1',
-      name: 'Organisation',
-      children: [
-        {
-          id: '2',
-          name: 'Abteilung IT',
-          children: [
-            { id: '3', name: 'Benutzer: Max Mustermann' },
-            { id: '4', name: 'Benutzer: Maria Müller' },
-          ],
-        },
-        {
-          id: '5',
-          name: 'Abteilung HR',
-          children: [{ id: '6', name: 'Benutzer: Hans Schneider' }],
-        },
-      ],
-    },
-  ];
+  {
+    id: "1",
+    name: "Hochschule Karlsruhe (HKA)",
+    children: [
+      {
+        id: "2",
+        name: "Rektorat",
+        children: [
+          { id: "3", name: "Rektorin: Max Muster" },
+          { id: "4", name: "Kanzler: Mina Muster" },
+          { id: "5", name: "Prorektoren: Michael Muster" },
+          {
+        id: "6",
+        name: "Fakultäten",
+        children: [
+          { id: "7", name: "Architektur und Bauwesen" },
+          { id: "8", name: "Elektrotechnik und Informationstechnik" },
+          {
+            id: "9",
+            name: "Informatik und Wirtschaftsinformatik",
+            children: [
+              {
+                id: "19",
+                name: "Dekanat",
+                children: [
+                  {
+                    id: "21",
+                    name: "Dekan",
+                  },
+                  { id: "22", name: "VizeDekan" },
+                  { id: "23", name: "Prodekan" },
+                ]
+              },
+              { id: "20", name: "Sekretariat"}
+            ]
+          },
+          { id: "10", name: "Informationsmanagement und Medien" },
+          { id: "11", name: "Maschinenbau und Mechatronik" },
+          { id: "12", name: "Wirtschaftswissenschaften" },
+        ],
+          },
+          {
+        id: "13",
+        name: "Zentrale Einrichtungen",
+        children: [
+          { id: "14", name: "Rechenzentrum" },
+          { id: "15", name: "Bibliothek" },
+          { id: "16", name: "International Office" },
+        ],
+          },
+          {
+        id: "17",
+        name: "Verwaltung",
+        children: [
+          { id: "18", name: "Finanzen" },
+        ],
+      },
+        ],
+      },
+    ],
+  },
+];
+
 
   const details = {
-    Name: 'Max Mustermann',
-    Rolle: 'Administrator',
-    Gruppe: 'IT',
-    Email: 'max.mustermann@example.com',
-  };
+  _id: "673ed989e1746bf8e6aa19e4",
+  userId: "gyca1011",
+  userType: "student",
+  userRole: "-",
+  orgUnit: "IWI",
+  active: true,
+  validFrom: "2024-01-04T00:21:03.176+00:00",
+  validUntil: "2100-12-31T00:00:00.000+00:00",
+  student: {
+    _id: "65c501afa3cc6ccbde337542",
+    courseOfStudy: "WIB",
+    courseOfStudyUnique: "58|WIB|-|-|H|6|-|S|V|1|",
+    courseOfStudyName: "Wirtschaftsinformatik",
+    level: "Bachelor",
+    examRegulation: "6",
+    courseOfStudyShort: "WIIB",
+  },
+};
+
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
