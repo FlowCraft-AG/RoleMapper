@@ -1,19 +1,19 @@
-package com.flowcraft.backend.camunda;
-
-import com.flowcraft.backend.mail.EmailService;
-import com.flowcraft.backend.mongodb.service.ReadService;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.worker.JobWorker;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
-import java.util.Map;
-
-@Component
-@RequiredArgsConstructor
-@Slf4j
-public class VorgesetzterErmittelnWorker {
+//package com.flowcraft.backend.camunda;
+//
+//import com.flowcraft.backend.mail.EmailService;
+//import com.flowcraft.backend.mongodb.service.ReadService;
+//import io.camunda.zeebe.client.ZeebeClient;
+//import io.camunda.zeebe.client.api.worker.JobWorker;
+//import lombok.RequiredArgsConstructor;
+//import lombok.extern.slf4j.Slf4j;
+//import org.springframework.stereotype.Component;
+//
+//import java.util.Map;
+//
+//@Component
+//@RequiredArgsConstructor
+//@Slf4j
+//public class VorgesetzterErmittelnWorker {
 //
 //    private final ZeebeClient zeebeClient;
 //    private final ReadService readService;
@@ -79,4 +79,4 @@ public class VorgesetzterErmittelnWorker {
 //
 //        log.info("Worker für 'vorgesetzter_ermitteln' ist aktiv.");
 //    }
-}
+//}
