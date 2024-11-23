@@ -1,0 +1,15 @@
+MONGODB_USER_NAME:  awp
+MONGODB_USER_PASSWORT: fN7HPdrwr0TzHzKU
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.neo4j.Neo4jDataAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.neo4j.Neo4jReactiveDataAutoConfiguration
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGODB_USER_NAME}:${MONGODB_USER_PASSWORT}@hka-test0.re2qw.mongodb.net/
+      database: OrgPermissions
+  config:
+    activate:
+      on-profile: mongodb

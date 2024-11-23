@@ -1,0 +1,103 @@
+SPRING_MAIL_USERNAME: calebgyamfi15@gmail.com
+SPRING_MAIL_PASSWORD: qgmwtxmxpbinaewv
+
+# wiederherstellungscode : CR7VT-XMYAW-QRMC8-DFGK6-9TKAQ
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+  profiles:
+     active: ${ACTIVE_PROFILE:mongodb}
+  application:
+    name: rolemapper
+
+zeebe:
+  client:
+    gateway:
+      address: localhost:26500
+    security:
+      plaintext: true
+
+
+
+camunda.bpm:
+  admin-user:
+    id: demo
+    password: demo
+    firstName: Demo
+  filter:
+    create: All tasks
+
+
+
+logging:
+  file.name: ./tmp/application.log
+  logback.rolling policy:
+    file-name-pattern: ${logging.file.name}.%d{yyyy-MM-dd}.%i.gz
+    max-file-size: 100KB
+    max-history: 3
+  pattern:
+    # %thread protokolliert den Thread-Namen: leer bei Virtual Threads
+    # https://stackoverflow.com/questions/61207226/logging-thread-id-instead-of-thread-name-using-logback
+    console: "%clr(%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}){faint} %clr(%5level) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15thread]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %msg%n%wEx"
+    file: "%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %5level ${PID:- } --- [%thread] %-40.40logger{39} : %m%n%wEx"
+  threshold:
+    console: trace
+    file: trace
+  level:
+    com.flowcraft.backend: trace
+
+    # Spring Web und allgemeine Logging-Konfigurationen
+    org.springframework.data.mongodb: trace
+    org.springframework.web.servlet.DispatcherServlet: debug
+    org.springframework.web.servlet.mvc.method.annotation.HttpEntityMethodProcessor: debug
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: debug
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: error
+
+    # Spring Security (falls verwendet)
+    org.springframework.security.core.user details.User: error
+    org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider: debug
+    org.springframework.security.web.access.intercept.RequestMatcherDelegatingAuthorizationManager: debug
+    org.springframework.security.web.FilterChainProxy: debug
+    org.springframework.security.web.server.authorization.AuthorizationWebFilter: trace
+
+    # RestTemplate-Logging für HTTP-Requests
+    org.springframework.web.client.RestTemplate: debug
+
+    # Micrometer Observability (falls genutzt)
+    io.micrometer.observation.context propagation.ObservationThreadLocalAccessor: error
+
+    # Flyway Datenbank-Migrationen (falls verwendet)
+    org.flywaydb.core.internal.script.DefaultSqlScriptExecutor: debug
+
+    # Camunda Zeebe (falls Workflow-Integration benötigt)
+    io.camunda.zeebe: debug
+
+    # Test-Logging (nur aktivieren, wenn Test-Kontexte analysiert werden)
+    org.junit.jupiter.engine.descriptor.TestInstanceLifecycleUtils: warn
+    org.springframework.boot.test.context.SpringBootTestContextBootstrapper: warn
+    org.springframework.test.context.support.AbstractContextLoader: warn
+    org.springframework.test.context.support.AnnotationConfigContextLoaderUtils: warn
+    org.springframework.test.context.support.DefaultTestContextBootstrapper: warn
+
+    # Fokus auf MongoDB-Queries
+#    org.mongodb.driver: debug
+    org.mongodb.driver.protocol.command: debug
+#    org.springframework.data.mongodb.core.MongoTemplate: debug
+
+
+#    org.springframework.boot.availability.ApplicationAvailabilityBean: debug
+#    org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener: warn
+
