@@ -32,10 +32,10 @@
 ## 🛠 Technologie-Stack
 
 ### Backend
-- **Datenbank:** MongoDB
+- **Datenbank:** MongoDB (Cloud-Instanz)
 - **Framework:** Spring Boot
-- **Programmiersprache:** Java
-- **Build-Tool:** Maven
+- **Programmiersprache:** Java 23
+- **Build-Tool:** Maven 3.9.9
 - **Authentifizierung und Autorisierung:** Keycloak
 - **Workflow-Engine:** Camunda BPM
 
@@ -43,16 +43,17 @@
 - **Framework:** Next.js
 - **Programmiersprache:** TypeScript
 - **CSS-Framework:** Bootstrap 5
+- **Node.js-Version:** v23.3.0
 
 ---
 
 ## 📥 Installation
 
 ### Voraussetzungen
-- **Java:** Version 11 oder höher
-- **Maven:** Aktuelle Version
-- **Node.js:** Aktuelle LTS-Version mit npm
-- **Datenbank:** MongoDB (lokal oder gehostet)
+- **Java:** Version 23
+- **Maven:** Version 3.9.9
+- **Node.js:** Version v23.3.0
+- **Datenbank:** MongoDB (Cloud-Instanz, z. B. MongoDB Atlas)
 - **Authentication-Server:** Keycloak
 - **Workflow-Engine:** Camunda BPM
 
@@ -71,7 +72,15 @@
    ```bash
    mvn clean install
    ```
-4. **Anwendung starten:**
+4. **Konfiguriere MongoDB-Cloud-Verbindung:**
+   - Erstelle eine `application.properties`-Datei im Verzeichnis `src/main/resources` (falls nicht vorhanden).
+   - Füge folgende Zeilen hinzu:
+     ```properties
+     spring.data.mongodb.uri=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
+     ```
+   - Ersetze `<username>`, `<password>`, `<cluster-url>` und `<database>` durch deine MongoDB-Cloud-Daten.
+
+5. **Anwendung starten:**
    ```bash
    mvn spring-boot:run
    ```
