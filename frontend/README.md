@@ -1,99 +1,36 @@
-# RoleMapper Frontend
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Das **RoleMapper Frontend** ist die Benutzeroberfläche, mit der Rollen und Berechtigungen verwaltet werden können. Es basiert auf Next.js und Bootstrap und ist vollständig responsive.
+## Getting Started
 
----
+First, run the development server:
 
-## 📋 Voraussetzungen
-
-- **Node.js:** Version v23.3.0
-- **CSS-Framework:** Bootstrap 5
-- **Keycloak:** Authentifizierungsserver
-
----
-
-## 🚀 Installation
-
-### 1. Repository klonen
-```bash
-git clone https://github.com/flowcraft-ag/rolemapper.git
-```
-
-### 2. In das Frontend-Verzeichnis wechseln
-```bash
-cd rolemapper/frontend
-```
-
-### 3. Abhängigkeiten installieren
-```bash
-npm install
-```
-
-### 4. Bootstrap einbinden
-- Bootstrap ist bereits über NPM installiert.
-- Stelle sicher, dass es in `_app.tsx` importiert ist:
-  ```javascript
-  import 'bootstrap/dist/css/bootstrap.min.css';
-  ```
-
-### 5. Entwicklung starten
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Die Anwendung ist nun unter [http://localhost:3000](http://localhost:3000) verfügbar.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
----
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## ⚙️ Konfiguration
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-### Keycloak
-1. Stelle sicher, dass dein Keycloak-Server läuft.
-2. Füge die Keycloak-Konfigurationsdetails in die Datei `.env.local` ein:
-   ```env
-   NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080/auth
-   NEXT_PUBLIC_KEYCLOAK_REALM=rolemapper
-   NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=rolemapper-client
-   ```
+## Learn More
 
----
+To learn more about Next.js, take a look at the following resources:
 
-## 📐 Projektstruktur
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-```plaintext
-├── components       # Wiederverwendbare UI-Komponenten
-├── pages            # Seiten und Routen
-├── public           # Statische Dateien (Bilder, Icons)
-├── styles           # Globale und modulare Stylesheets
-└── utils            # Hilfsfunktionen und API-Helper
-```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
----
+## Deploy on Vercel
 
-## 🔧 Befehle
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-- **Entwicklung starten:** `npm run dev`
-- **Produktions-Build erstellen:** `npm run build`
-- **Server starten:** `npm run start`
-- **Tests ausführen:** `npm run test`
-
----
-
-## 💻 Technologien
-
-- **Framework:** Next.js
-- **Programmiersprache:** TypeScript
-- **CSS-Framework:** Bootstrap 5
-- **Auth:** Keycloak
-- **Node.js-Version:** v23.3.0
-
----
-
-## 📞 Kontakt
-
-FlowCraft AG  
-[Website](https://www.flowcraft-ag.de)  
-[Support](mailto:support@flowcraft-ag.de)
-
----
-
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
