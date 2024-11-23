@@ -16,7 +16,7 @@
 
 ## 🔍 Übersicht
 
-**RoleMapper** ist ein fortschrittliches System von FlowCraft AG, das dynamisches Mapping von Rollen und Funktionen in Unternehmen ermöglicht. Es kombiniert eine intuitive Benutzeroberfläche mit einer leistungsstarken Backend-Architektur, um Berechtigungen und Prozesse flexibel und effizient zu verwalten. 
+**RoleMapper** ist ein fortschrittliches System von FlowCraft AG, das dynamisches Mapping von Rollen und Funktionen in Unternehmen ermöglicht. Es kombiniert eine intuitive Benutzeroberfläche mit einer leistungsstarken Backend-Architektur, um Berechtigungen und Prozesse flexibel und effizient zu verwalten. Dank Bootstrap ist das UI einfach und schnell gestaltbar.
 
 ---
 
@@ -25,7 +25,7 @@
 - **Dynamisches Rollen-Mapping:** Automatische Zuweisung von Rollen basierend auf Benutzerfunktionen und organisatorischen Prozessen.
 - **Zentrales Rechte-Management:** Verwaltung von Berechtigungen durch präzises Mapping auf Funktionen und Workflows.
 - **Workflow-Integration:** Unterstützung für Genehmigungs- und Automatisierungsprozesse durch Camunda BPM.
-- **Moderne Benutzeroberfläche:** Intuitive Visualisierung und Verwaltung im Active Directory-Stil.
+- **Responsive Benutzeroberfläche:** Einfaches und funktionales UI mit Bootstrap-Komponenten.
 
 ---
 
@@ -42,7 +42,7 @@
 ### Frontend
 - **Framework:** Next.js
 - **Programmiersprache:** TypeScript
-- **CSS-Framework:** Tailwind CSS (Utility-first Ansatz für modulare Designs)
+- **CSS-Framework:** Bootstrap 5
 
 ---
 
@@ -81,11 +81,20 @@
    ```bash
    cd ../frontend
    ```
-2. **Abhängigkeiten installieren:**
+2. **Bootstrap installieren:**
+   ```bash
+   npm install bootstrap
+   ```
+3. **Bootstrap einbinden:**
+   Füge die folgende Zeile in `_app.tsx` oder `_app.jsx` hinzu:
+   ```javascript
+   import 'bootstrap/dist/css/bootstrap.min.css';
+   ```
+4. **Abhängigkeiten installieren:**
    ```bash
    npm install
    ```
-3. **Anwendung starten:**
+5. **Anwendung starten:**
    ```bash
    npm run dev
    ```
