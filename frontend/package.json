@@ -1,0 +1,39 @@
+{
+  "name": "rolemapper",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend für das dynamische Rollen- und Funktionsmanagement mit Camunda Workflow-Integration",
+  "author": {
+    "name": "FlowCraft AG",
+    "email": "info@flowcraft-ag.de",
+    "url": "https://www.flowcraft-ag.de"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flowcraft-ag/rolemapper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flowcraft-ag/rolemapper/issues"
+  },
+  "homepage": "https://www.flowcraft-ag.de/products/rolemapper",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "next": "15.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.3"
+  }
+}

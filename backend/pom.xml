@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.flowcraft</groupId>
-    <artifactId>rolemapper-camunda</artifactId>
+    <artifactId>rolemapper</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>RoleMapper Backend</name>
     <description>Backend-Service für das dynamische Rollen- und Funktionsmanagement mit Camunda Workflow-Integration</description>
