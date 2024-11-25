@@ -1,4 +1,4 @@
-package com.flowcraft.backend.mongodb.model.entity;
+package com.flowcraft.backend.mongodb.model.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

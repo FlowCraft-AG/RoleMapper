@@ -14,10 +14,10 @@ public class EmailSenderRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        emailService.sendEmail(
-            "caleb_g@outlook.de",
-            "Testnachricht",
-            "<h1>Hallo!</h1><p>Das ist eine Testnachricht.</p>"
-        );
+//        emailService.sendEmail(
+//            "caleb_g@outlook.de",
+//            "Testnachricht",
+//            "<h1>Hallo!</h1><p>Das ist eine Testnachricht.</p>"
+//        );
     }
 }

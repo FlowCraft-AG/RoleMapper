@@ -128,7 +128,7 @@
 
 ## 🚀 Nutzung
 
-1. **Zugriff auf das Frontend:** 
+1. **Zugriff auf das Frontend:**
    - Öffne `http://localhost:3000` in deinem Browser.
    - Melde dich mit einem in Keycloak definierten Benutzerkonto an.
 
@@ -141,11 +141,11 @@
 
 RoleMapper wurde mit Leidenschaft von unserem Team bei FlowCraft AG entwickelt:
 
-- 🎯 **Projektmanager:** [Name des Projektmanagers]  
-- 💻 **Backend-Entwickler:** [Name des Backend-Entwicklers]  
-- 🌐 **Frontend-Entwickler:** [Name des Frontend-Entwicklers]  
-- 🎨 **UX/UI-Designer:** [Name des Designers]  
-- 🚀 **DevOps-Ingenieur:** [Name des DevOps-Ingenieurs]  
+- 🎯 **Projektmanager:** [Name des Projektmanagers]
+- 💻 **Backend-Entwickler:** [Name des Backend-Entwicklers]
+- 🌐 **Frontend-Entwickler:** [Name des Frontend-Entwicklers]
+- 🎨 **UX/UI-Designer:** [Name des Designers]
+- 🚀 **DevOps-Ingenieur:** [Name des DevOps-Ingenieurs]
 - ✅ **Qualitätssicherung:** [Name des QA-Verantwortlichen]
 
 Möchtest du Teil unseres Teams werden? Besuche unsere [Karriereseite](https://www.flowcraft-ag.de/jobs).

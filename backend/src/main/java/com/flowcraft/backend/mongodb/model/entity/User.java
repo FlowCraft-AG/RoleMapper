@@ -9,7 +9,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-
     @Id
     private String id;
     private String userId;
@@ -34,27 +32,4 @@ public class User {
     private LocalDateTime validFrom;
     @LastModifiedDate
     private LocalDateTime validUntil;
-
-    @Getter
-    @Setter
-    @ToString
-    private static class Student {
-        @Id
-        private String id;
-        @Field("id")
-        private String courseOfStudy;
-        private String courseOfStudyUnique;
-        private String courseOfStudyShort;
-        private String courseOfStudyName;
-        private String level;
-        private String examRegulation;
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    private static class Employee {
-        private String costCenter;
-        private String department;
-    }
 }

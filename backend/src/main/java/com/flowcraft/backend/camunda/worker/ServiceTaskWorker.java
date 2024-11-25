@@ -1,4 +1,4 @@
-package com.flowcraft.backend.camunda;
+package com.flowcraft.backend.camunda.worker;
 
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.worker.JobWorker;

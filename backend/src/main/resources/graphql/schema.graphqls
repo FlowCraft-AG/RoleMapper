@@ -1,0 +1,85 @@
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  users(suchkriterien: Suchkriterien): [User!]
+  user(id: ID!): User
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User
+  updateUser(id: ID!, input: UpdateUserInput!): User
+  deleteUser(id: ID!): Boolean
+}
+
+type User {
+  id: ID
+  userId: String
+  userType: String
+  userRole: String
+  orgUnit: String
+  active: Boolean
+  student: Student
+  employee: Employee
+  validFrom: String
+  validUntil: String
+}
+
+type Student {
+  id: ID
+  courseOfStudy: String
+  courseOfStudyUnique: String
+  courseOfStudyShort: String
+  courseOfStudyName: String
+  level: String
+  examRegulation: String
+}
+
+type Employee {
+  costCenter: String
+  department: String
+}
+
+input Suchkriterien {
+  userType: String
+  userRole: String
+  active: Boolean
+  orgUnit: String
+}
+
+input CreateUserInput {
+  userId: String
+  userType: String!
+  userRole: String!
+  orgUnit: String!
+  active: Boolean!
+  student: StudentInput
+  employee: EmployeeInput
+}
+
+input UpdateUserInput {
+  userId: String
+  userType: String
+  userRole: String
+  orgUnit: String
+  active: Boolean
+  student: StudentInput
+  employee: EmployeeInput
+}
+
+input StudentInput {
+  courseOfStudy: String!
+  courseOfStudyUnique: String!
+  courseOfStudyShort: String!
+  courseOfStudyName: String!
+  level: String!
+  examRegulation: String!
+}
+
+input EmployeeInput {
+  costCenter: String!
+  department: String!
+}

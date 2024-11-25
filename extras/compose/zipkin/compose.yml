@@ -1,0 +1,15 @@
+# Aufruf:   docker compose up
+#             http://localhost:9411/zipkin
+#             docker compose exec zipkin ash
+#           docker compose down
+
+services:
+  zipkin:
+    # Image basierend auf nginx als Webserver
+    image: openzipkin/zipkin:latest
+    ports:
+      - published: 9411
+        target: 9411
+    restart: always
+    container_name: zipkin
+    #extra_hosts: ['host.docker.internal']

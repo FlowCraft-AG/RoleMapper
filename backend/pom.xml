@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
+        <version>3.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.flowcraft</groupId>
@@ -32,7 +32,6 @@
             <organizationUrl>https://www.flowcraft-ag.de</organizationUrl>
         </developer>
     </developers>
-
     <scm>
         <connection>scm:git:git://github.com/flowcraft-ag/rolemapper.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:flowcraft-ag/rolemapper.git</developerConnection>
@@ -48,6 +47,8 @@
         <enable.preview>--enable-preview</enable.preview>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+      <spring-addons-starter-oidc.version>7.8.0</spring-addons-starter-oidc.version>
+      <camunda.version>8.7.0-alpha1</camunda.version>
     </properties>
     <dependencies>
         <dependency>
@@ -60,11 +61,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
+            <artifactId>spring-boot-starter-graphql</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-graphql</artifactId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,6 +78,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
         </dependency>
 
         <dependency>
@@ -105,11 +114,38 @@
             <artifactId>spring-graphql-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+<!--                                S E C U R I T Y -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security</groupId>-->
+<!--            <artifactId>spring-security-test</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--      <dependency>-->
+<!--        <groupId>org.springframework.boot</groupId>-->
+<!--        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>-->
+<!--      </dependency>-->
+<!--      <dependency>-->
+<!--        <groupId>org.springframework.boot</groupId>-->
+<!--        <artifactId>spring-boot-starter-security</artifactId>-->
+<!--      </dependency>-->
+<!--      <dependency>-->
+<!--        <groupId>com.c4-soft.springaddons</groupId>-->
+<!--        <artifactId>spring-addons-starter-oidc</artifactId>-->
+<!--        <version>${spring-addons-starter-oidc.version}</version>-->
+<!--      </dependency>-->
+
+<!--                        C A M U N D A -->
         <dependency>
             <groupId>io.camunda</groupId>
             <artifactId>zeebe-client-java</artifactId>
-            <version>8.7.0-alpha1</version>
+            <version>${camunda.version}</version>
         </dependency>
+<!--      <dependency>-->
+<!--        <groupId>io.camunda</groupId>-->
+<!--        <artifactId>spring-boot-starter-camunda-sdk</artifactId>-->
+<!--        <version>${camunda.version}</version>-->
+<!--      </dependency>-->
     </dependencies>
 
     <build>

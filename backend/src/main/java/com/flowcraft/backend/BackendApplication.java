@@ -1,37 +1,43 @@
 package com.flowcraft.backend;
 
-import com.flowcraft.backend.camunda.ServiceTaskWorker;
+import com.flowcraft.backend.camunda.worker.ServiceTaskWorker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
+
+import static com.flowcraft.backend.Banner.TEXT;
+import static org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType.HAL;
+import static org.springframework.hateoas.support.WebStack.WEBMVC;
 
 @SpringBootApplication(proxyBeanMethods = false)
 @EnableMongoAuditing
 @EnableAsync
+@EnableHypermediaSupport(type = HAL, stacks = WEBMVC)
+@EntityScan
 @Slf4j
 @RequiredArgsConstructor
 public class BackendApplication implements CommandLineRunner {
-
-    // private final VorgesetzterErmittelnWorker vorgesetzterErmittelnWorker;
     private final ServiceTaskWorker serviceTaskWorker;
 
     public static void main(String[] args) {
-        SpringApplication.run(BackendApplication.class, args);
+        final var app = new SpringApplication(BackendApplication.class);
+        app.setBanner((_, _, out) -> out.println(TEXT));
+        app.run(args);
     }
 
     @Override
     public void run(String... args) {
         log.info("Starte Camunda-Prozessanwendung");
-        // vorgesetzterErmittelnWorker.registerWorker();
         serviceTaskWorker.registerWorker();
     }
 
-
-//    private static void deployBpmnFiles(ZeebeClient client) {
+    //    private static void deployBpmnFiles(ZeebeClient client) {
 //        File directory = new File("src/main/resources/camunda/");
 //
 //        if (!directory.exists() || !directory.isDirectory()) {

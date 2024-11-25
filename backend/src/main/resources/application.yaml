@@ -1,9 +1,38 @@
 SPRING_MAIL_USERNAME: calebgyamfi15@gmail.com
 SPRING_MAIL_PASSWORD: qgmwtxmxpbinaewv
 
-# wiederherstellungscode : CR7VT-XMYAW-QRMC8-DFGK6-9TKAQ
+server:
+  port: ${app.server.port}
+  compression:
+    enabled: true
+    mime-types: application/hal+json
+    min-response-size: 2KB
+  error.whitelabel.enabled: false
+  http2.enabled: true
+  ssl.bundle: microservice
+  shutdown: graceful
 
 spring:
+  ssl:
+    bundle:
+      pem:
+        microservice:
+          reload-on-update: true
+          keystore:
+            private-key: "file:../volumes/keys/key.pem"
+            certificate: "file:../volumes/keys/certificate.crt"
+          truststore:
+            certificate: "file:../volumes/keys/certificate.crt"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${app.keycloak.schema}://${app.keycloak.host}:${app.keycloak.port}/realms/${app.keycloak.realm}
+
+  graphql:
+    graphiql.enabled: true
+    schema.printer.enabled: true
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -17,28 +46,54 @@ spring:
           starttls:
             enable: true
 
-
   profiles:
      active: ${ACTIVE_PROFILE:mongodb}
+
   application:
     name: rolemapper
 
-zeebe:
-  client:
-    gateway:
-      address: localhost:26500
-    security:
-      plaintext: true
+#  zeebe:
+#    client:
+#      lifecycle:
+#        enabled: false
+#      broker:
+#        contactPoint: localhost:26500
+
+#camunda.bpm:
+#  admin-user:
+#    id: demo
+#    password: demo
+#    firstName: Demo
+#  filter:
+#    create: All tasks
+
+app:
+  server:
+    port: 8080
+  keycloak:
+    #client-secret: ${keycloak.client-secret}
+    schema: http
+    host: localhost
+    port: 8880
+    client-secret: zomzt73VuP6LTUpPpZf5pghlv8exNCtB
+    clientId: rolemapper
+    realm: flowcraft
+  mail:
+    to: caleb_g@outlook.de
+    from: ${SPRING_MAIL_USERNAME}
 
 
 
-camunda.bpm:
-  admin-user:
-    id: demo
-    password: demo
-    firstName: Demo
-  filter:
-    create: All tasks
+com:
+  c4-soft:
+    springaddons:
+      oidc:
+        ops:
+          - iss: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
+            authorities:
+              # Pfad zu den Rollen innerhalb vom "JWT Claim" und zusaetzlicher Praefix "ROLE_" fuer Spring Security
+              - path: $.realm_access.roles
+                prefix: ROLE_
 
 
 
@@ -67,6 +122,7 @@ logging:
     org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: error
 
     # Spring Security (falls verwendet)
+    org.springframework.security: DEBUG
     org.springframework.security.core.user details.User: error
     org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider: debug
     org.springframework.security.web.access.intercept.RequestMatcherDelegatingAuthorizationManager: debug
@@ -98,6 +154,6 @@ logging:
 #    org.springframework.data.mongodb.core.MongoTemplate: debug
 
 
-#    org.springframework.boot.availability.ApplicationAvailabilityBean: debug
+    org.springframework.boot.availability.ApplicationAvailabilityBean: debug
 #    org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener: warn
 

@@ -10,4 +10,9 @@ public class UserNotFoundException extends RuntimeException {
         super(String.format("UserId %s existiert nicht", user));
         this.user = user;
     }
+
+    public UserNotFoundException() {
+        super("Keine User gefunden.");
+        user = null;
+    }
 }

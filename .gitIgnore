@@ -202,3 +202,8 @@ snyk-*.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+
+# Volumes
+
+volumes/**
