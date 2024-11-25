@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="note" name="Note" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <decision id="note_verteilen" name="Note verteilen">
+    <informationRequirement id="InformationRequirement_0lkrvtr">
+      <requiredInput href="#wissen" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_0u63avm">
+      <requiredInput href="#beziehung" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_1wxse1a">
+      <input id="Input_1">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text>beziehung</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_0l14mj5">
+          <text>"mag ich","mag ich nicht"</text>
+        </inputValues>
+      </input>
+      <input id="InputClause_02zf4hc">
+        <inputExpression id="LiteralExpression_1fmsd1l" typeRef="string">
+          <text>wissen</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_1qsmcx0">
+          <text>"dumm","schlau"</text>
+        </inputValues>
+      </input>
+      <output id="Output_1" label="Note" name="gegebene_note" typeRef="string">
+        <outputValues id="UnaryTests_0n8cp0y">
+          <text>"gut","sehr Schlecht","Sehr Gut","Schlecht"</text>
+        </outputValues>
+      </output>
+      <rule id="DecisionRule_0tka4ue">
+        <inputEntry id="UnaryTests_1s3v8ra">
+          <text>"mag ich"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0wroxrj">
+          <text>"schlau"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ji2hsf">
+          <text>"Sehr Gut"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0anuvhg">
+        <inputEntry id="UnaryTests_0721z8y">
+          <text>"mag ich nicht"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1frynh1">
+          <text>"schlau"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1jvzm1z">
+          <text>"gut"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1oe3awb">
+        <inputEntry id="UnaryTests_1fuufm9">
+          <text>"mag ich"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1g8350x">
+          <text>"dumm"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1dch5a1">
+          <text>"Schlecht"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_04yg7aw">
+        <inputEntry id="UnaryTests_09sp18y">
+          <text>"mag ich nicht"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0keb7g4">
+          <text>"dumm"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0914zwl">
+          <text>"sehr Schlecht"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="beziehung" name="Beziehung" />
+  <inputData id="wissen" name="Wissen" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="note_verteilen">
+        <dc:Bounds height="80" width="180" x="240" y="90" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0ajxh05" dmnElementRef="beziehung">
+        <dc:Bounds height="45" width="125" x="157" y="367" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1hzq04f" dmnElementRef="wissen">
+        <dc:Bounds height="45" width="125" x="337" y="317" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_1gu0aol" dmnElementRef="InformationRequirement_0lkrvtr">
+        <di:waypoint x="400" y="317" />
+        <di:waypoint x="360" y="190" />
+        <di:waypoint x="360" y="170" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_05igea3" dmnElementRef="InformationRequirement_0u63avm">
+        <di:waypoint x="220" y="367" />
+        <di:waypoint x="300" y="190" />
+        <di:waypoint x="300" y="170" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

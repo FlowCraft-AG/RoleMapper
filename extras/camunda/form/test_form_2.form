@@ -1,0 +1,55 @@
+{
+  "components": [
+    {
+      "label": "Wissen",
+      "values": [
+        {
+          "label": "schlau",
+          "value": "schlau"
+        },
+        {
+          "label": "tollpatsch",
+          "value": "tollpatsch"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1solvn3",
+        "columns": null
+      },
+      "id": "Field_07m4k4g",
+      "key": "wissen",
+      "description": "wie ist der Schüler"
+    },
+    {
+      "label": "Beziehung",
+      "values": [
+        {
+          "label": "mag ich",
+          "value": "mag ich"
+        },
+        {
+          "label": "mag ich nicht",
+          "value": "mag ich nicht"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_16irctj",
+        "columns": null
+      },
+      "id": "Field_1s9lo0b",
+      "key": "beziehung",
+      "description": "beziehungsstatus zum Schüler"
+    }
+  ],
+  "type": "default",
+  "id": "user_input_note",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}

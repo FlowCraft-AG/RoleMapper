@@ -1,0 +1,24 @@
+{
+  "components": [
+    {
+      "label": "Text Eingabe",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1nq8m1r",
+        "columns": null
+      },
+      "id": "Field_1pzrdp2",
+      "key": "eingabe",
+      "description": "gib irgendetwas ein"
+    }
+  ],
+  "type": "default",
+  "id": "user_input",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}
