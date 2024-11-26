@@ -150,7 +150,7 @@ logging:
 
     # Fokus auf MongoDB-Queries
 #    org.mongodb.driver: debug
-    org.mongodb.driver.protocol.command: debug
+#    org.mongodb.driver.protocol.command: debug
 #    org.springframework.data.mongodb.core.MongoTemplate: debug
 
 

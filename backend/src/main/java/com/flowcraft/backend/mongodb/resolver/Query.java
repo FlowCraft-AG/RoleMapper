@@ -33,4 +33,10 @@ public class Query {
         return readService.findById(id);
     }
 
+    @QueryMapping("leiter")
+    User getLeiterById(@Argument String id) {
+        log.debug("getLeiterById: antragsteller={}", id);
+        return readService.findLeiterByUserId(id);
+    }
+
 }

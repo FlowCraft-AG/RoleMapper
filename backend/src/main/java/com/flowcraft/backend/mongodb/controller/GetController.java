@@ -60,8 +60,15 @@ public class GetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BaseUserModel> getById(@PathVariable String id, final HttpServletRequest request) {
-        log.info("Fetching user by ID: {}", id);
+        log.debug("Fetching user by ID: {}", id);
         User user = readService.findById(id);
+        return ResponseEntity.ok(gastToModel(user, request));
+    }
+
+    @GetMapping("/leiter/{id}")
+    public ResponseEntity<BaseUserModel> getLeiterById(@PathVariable String id, final HttpServletRequest request) {
+        log.debug("getLeiterById: antragsteller={}", id);
+        User user = readService.findLeiterByUserId(id);
         return ResponseEntity.ok(gastToModel(user, request));
     }
 

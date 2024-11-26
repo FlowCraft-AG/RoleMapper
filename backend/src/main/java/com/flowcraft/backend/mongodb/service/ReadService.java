@@ -2,6 +2,7 @@ package com.flowcraft.backend.mongodb.service;
 
 import com.flowcraft.backend.mongodb.model.entity.User;
 import com.flowcraft.backend.mongodb.exception.UserNotFoundException;
+import com.flowcraft.backend.mongodb.repository.FunctionRepository;
 import com.flowcraft.backend.mongodb.repository.OrgUnitRepository;
 import com.flowcraft.backend.mongodb.repository.UserRepository;
 
@@ -16,7 +17,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,6 +26,7 @@ import java.util.Map;
 public class ReadService {
 
     private final UserRepository userRepository;
+    private final FunctionRepository functionRepository;
     private final OrgUnitRepository orgUnitRepository;
     private final MongoTemplate mongoTemplate;
 
@@ -58,11 +59,27 @@ public class ReadService {
 
     public User findLeiterByUserId (final String userId) {
         log.debug("findLeiterByUserId: userId={}", userId);
-        final var userAntragsteller = userRepository.findById(userId).orElseThrow();
-        final var orgUnit = orgUnitRepository.findById(userAntragsteller.getOrgUnit()).orElseThrow();
+        final var userAntragsteller = userRepository.findByUserId(userId).orElseThrow();
+        log.debug("findLeiterByUserId: userAntragsteller={}", userAntragsteller);
+        final var userFunction = userAntragsteller.getUserRole();
+
+        final var leiter = switch (userFunction) {
+            case "lecturer" -> findDekan(userAntragsteller);
+            case "adminTechnicalStaff" -> findDekan(userAntragsteller);
+            case "academicStaff" -> findDekan(userAntragsteller);
+            case "professor" -> findDekan(userAntragsteller);
+            default -> throw new IllegalStateException(String.format("Unexpected value: %s", userFunction));
+        };
+        log.debug("findLeiterByUserId: leiter={}", leiter);
+        return leiter;
+    }
+
+    private User findDekan (final User antragsteller) {
+        log.debug("findDekan: antragsteller={}", antragsteller);
+        final var orgUnit = orgUnitRepository.findByOrgId(antragsteller.getOrgUnit()).orElseThrow();
         final var leiterId = orgUnit.getLeiterId();
         log.debug("findLeiterByUserId: leiterId={}", leiterId);
-        final var userLeiter = userRepository.findById(leiterId).orElseThrow();
+        final var userLeiter = userRepository.findByUserId(leiterId).orElseThrow();
         log.debug("findLeiterByUserId: userLeiter={}", userLeiter);
         return userLeiter;
     }

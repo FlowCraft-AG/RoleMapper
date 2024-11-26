@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection = "OrgUnits")
 @Getter
@@ -17,7 +18,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class OrgUnit {
     @Id
     private String id;
+    @Field("id")
+    private String orgId;
     private String name;
     private String type;
+    @Field("leiter")
     private String leiterId;
 }

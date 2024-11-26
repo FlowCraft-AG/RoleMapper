@@ -15,4 +15,7 @@ public interface OrgUnitRepository extends MongoRepository<OrgUnit, String> {
     @NonNull
     @Override
     Optional<OrgUnit> findById(@NonNull String id);
+
+    @NonNull
+    Optional<OrgUnit> findByOrgId(@NonNull String orgId);
 }

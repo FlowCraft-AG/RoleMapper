@@ -19,4 +19,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Override
     @NonNull
     List<User> findAll();
+
+    @NonNull
+    Optional<User> findByUserId(@NonNull String userId);
 }
