@@ -13,6 +13,10 @@ server:
   shutdown: graceful
 
 spring:
+  autoconfigure:
+    exclude:
+      - com.c4_soft.springaddons.security.oidc.starter.synchronised.resourceserve.*
+
   ssl:
     bundle:
       pem:
@@ -84,16 +88,16 @@ app:
 
 
 
-com:
-  c4-soft:
-    springaddons:
-      oidc:
-        ops:
-          - iss: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
-            authorities:
-              # Pfad zu den Rollen innerhalb vom "JWT Claim" und zusaetzlicher Praefix "ROLE_" fuer Spring Security
-              - path: $.realm_access.roles
-                prefix: ROLE_
+#com:
+#  c4-soft:
+#    springaddons:
+#      oidc:
+#        ops:
+#          - iss: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
+#            authorities:
+#              # Pfad zu den Rollen innerhalb vom "JWT Claim" und zusaetzlicher Praefix "ROLE_" fuer Spring Security
+#              - path: $.realm_access.roles
+#                prefix: ROLE_
 
 
 
@@ -123,7 +127,8 @@ logging:
 
     # Spring Security (falls verwendet)
     org.springframework.security: DEBUG
-    org.springframework.security.core.user details.User: error
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.core.userdetails.User: error
     org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider: debug
     org.springframework.security.web.access.intercept.RequestMatcherDelegatingAuthorizationManager: debug
     org.springframework.security.web.FilterChainProxy: debug

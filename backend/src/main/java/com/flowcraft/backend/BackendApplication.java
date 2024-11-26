@@ -1,15 +1,20 @@
 package com.flowcraft.backend;
 
 import com.flowcraft.backend.camunda.worker.ServiceTaskWorker;
+import com.flowcraft.backend.config.ApplicationConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import static com.flowcraft.backend.Banner.TEXT;
 import static org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType.HAL;
@@ -22,6 +27,10 @@ import static org.springframework.hateoas.support.WebStack.WEBMVC;
 @EntityScan
 @Slf4j
 @RequiredArgsConstructor
+@Import({ApplicationConfig.class})
+@EnableConfigurationProperties({KeycloakProps.class, MailProps.class})
+@EnableWebSecurity
+@EnableMethodSecurity
 public class BackendApplication implements CommandLineRunner {
     private final ServiceTaskWorker serviceTaskWorker;
 

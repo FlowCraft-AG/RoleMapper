@@ -116,26 +116,26 @@
         </dependency>
 
 <!--                                S E C U R I T Y -->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.security</groupId>-->
-<!--            <artifactId>spring-security-test</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--      <dependency>-->
-<!--        <groupId>org.springframework.boot</groupId>-->
-<!--        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>-->
-<!--      </dependency>-->
-<!--      <dependency>-->
-<!--        <groupId>org.springframework.boot</groupId>-->
-<!--        <artifactId>spring-boot-starter-security</artifactId>-->
-<!--      </dependency>-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+      </dependency>
 <!--      <dependency>-->
 <!--        <groupId>com.c4-soft.springaddons</groupId>-->
 <!--        <artifactId>spring-addons-starter-oidc</artifactId>-->
 <!--        <version>${spring-addons-starter-oidc.version}</version>-->
 <!--      </dependency>-->
 
-<!--                        C A M U N D A -->
+      <!--                  C A M U N D A -->
         <dependency>
             <groupId>io.camunda</groupId>
             <artifactId>zeebe-client-java</artifactId>

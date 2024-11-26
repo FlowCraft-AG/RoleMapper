@@ -4,6 +4,7 @@ import com.flowcraft.backend.mongodb.model.BaseUserModel;
 import com.flowcraft.backend.mongodb.model.EmployeeModel;
 import com.flowcraft.backend.mongodb.model.StudentModel;
 import com.flowcraft.backend.mongodb.model.entity.User;
+import com.flowcraft.backend.mongodb.security.JwtService;
 import com.flowcraft.backend.mongodb.service.ReadService;
 import com.flowcraft.backend.mongodb.utils.UriHelper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,12 +15,16 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.LinkRelation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 import static com.flowcraft.backend.mongodb.controller.GetController.REST_PATH;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @RequestMapping(REST_PATH)
@@ -30,12 +35,20 @@ public class GetController {
 
     private final ReadService readService;
     private final UriHelper uriHelper;
+    private final JwtService jwtService;
 
     @GetMapping(produces = HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<BaseUserModel>> getUsers(
         @RequestParam @NonNull final Map<String, String> suchkriterien,
-        final HttpServletRequest request
+        final HttpServletRequest request,
+        @AuthenticationPrincipal final Jwt jwt
     ) {
+        final var username = jwtService.getUsername(jwt);
+        log.debug("getById: username={}", username);
+
+        final var rollen = jwtService.getRollen(jwt);
+        log.trace("getById: rollen={}", rollen);
+
         log.debug("getUsers: suchkriterien={}", suchkriterien);
         final var baseUri = uriHelper.getBaseUri(request).toString();
 
