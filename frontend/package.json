@@ -25,7 +25,10 @@
     "check": "npm-check"
   },
   "dependencies": {
+    "@apollo/client": "^3.11.10",
     "bootstrap": "^5.3.3",
+    "graphql": "^16.9.0",
+    "graphql-request": "^7.1.2",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106"
