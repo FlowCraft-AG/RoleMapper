@@ -1,11 +1,14 @@
 package com.flowcraft.backend.mongodb.security;
 
 import com.flowcraft.backend.KeycloakProps;
+import com.flowcraft.backend.mongodb.exception.UnauthorizedException;
 import com.flowcraft.backend.mongodb.security.dto.LoginDTO;
 import com.flowcraft.backend.mongodb.security.dto.TokenDTO;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.password.CompromisedPasswordChecker;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
