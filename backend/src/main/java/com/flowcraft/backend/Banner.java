@@ -34,7 +34,7 @@ final class Banner {
         Benutzername        $username
         JVM Locale          $locale
         GraphiQL Endpoint   /graphiql
-        OpenAPI Docs        /swagger-ui.html /v3/api-docs.yaml
+        OpenAPI Docs        swagger-ui/index.html /v3/api-docs.yaml
         Keycloak Realm      $keycloakRealm
         MongoDB Cluster     $mongoCluster
         Camunda Console     /camunda

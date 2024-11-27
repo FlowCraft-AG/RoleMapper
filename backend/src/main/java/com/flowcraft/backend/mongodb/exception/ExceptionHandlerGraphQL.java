@@ -8,7 +8,7 @@ import static org.springframework.graphql.execution.ErrorType.NOT_FOUND;
 
 
 @ControllerAdvice
-final class ExceptionHandler {
+final class ExceptionHandlerGraphQL {
     @GraphQlExceptionHandler
     GraphQLError onNotFound(final UserNotFoundException ex) {
         final var id = ex.getUserId();

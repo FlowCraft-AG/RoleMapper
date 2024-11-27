@@ -5,6 +5,8 @@ import com.flowcraft.backend.mongodb.exception.UnauthorizedException;
 import com.flowcraft.backend.mongodb.security.dto.LoginDTO;
 import com.flowcraft.backend.mongodb.security.dto.TokenDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.annotation.PostConstruct;
@@ -75,7 +77,9 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "Ungültige Anmeldeinformationen")
     })
     @PostMapping(path = "/login", consumes = APPLICATION_JSON_VALUE)
-    TokenDTO login(@RequestBody final LoginDTO loginDto) {
+    TokenDTO login(
+        @RequestBody final LoginDTO loginDto
+    ) {
         log.debug("login: loginDto={}", loginDto);
         final var tokenDTO = keycloakRepository.login(
             String.format("grant_type=password&username=%s&password=%s", loginDto.username(), loginDto.password()),
