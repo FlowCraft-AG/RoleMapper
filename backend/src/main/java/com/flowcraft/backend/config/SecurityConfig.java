@@ -26,6 +26,7 @@ import java.util.Map;
 import static com.flowcraft.backend.mongodb.controller.GetController.REST_PATH;
 import static com.flowcraft.backend.mongodb.security.AuthController.AUTH_PATH;
 import static com.flowcraft.backend.mongodb.security.enums.Rolle.ADMIN;
+import static com.flowcraft.backend.mongodb.security.enums.Rolle.USER;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.http.HttpMethod.POST;
@@ -38,17 +39,12 @@ public sealed interface SecurityConfig permits ApplicationConfig {
     default SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
             .authorizeHttpRequests(authorize -> {
-                final var restPathBestellungId = REST_PATH + "/*";
                 authorize
-                    .requestMatchers(POST, "/login").permitAll()
-                    .requestMatchers(GET, "/login").permitAll()
                     .requestMatchers(GET, REST_PATH).hasRole(ADMIN.getRole())
-                    .requestMatchers(POST, "/graphql").permitAll()
-                    .requestMatchers(OPTIONS, REST_PATH + "/**").permitAll()
-                    .requestMatchers(GET, AUTH_PATH + "/me").hasRole(ADMIN.name())
-                    .requestMatchers(GET, REST_PATH, restPathBestellungId).permitAll()
-                    .requestMatchers(POST, restPathBestellungId, "/graphql").hasRole(ADMIN.name())
-                    .requestMatchers(POST, AUTH_PATH + "/login").permitAll()
+                    .requestMatchers(GET, REST_PATH + "/**").hasAnyRole(ADMIN.getRole(), USER.getRole())
+//                    .requestMatchers(OPTIONS, REST_PATH + "/**").permitAll()
+                    .requestMatchers(GET, AUTH_PATH + "/me").hasRole(ADMIN.getRole())
+                    .requestMatchers(POST, "/graphql", AUTH_PATH + "/login").permitAll()
                     .requestMatchers(
                         EndpointRequest.to(HealthEndpoint.class),
                         EndpointRequest.to(PrometheusScrapeEndpoint.class)

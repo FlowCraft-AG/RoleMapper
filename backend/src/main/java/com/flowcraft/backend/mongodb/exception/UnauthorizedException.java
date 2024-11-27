@@ -1,4 +1,4 @@
-package com.flowcraft.backend.keycloak;
+package com.flowcraft.backend.mongodb.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

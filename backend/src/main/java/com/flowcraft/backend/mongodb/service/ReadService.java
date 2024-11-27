@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -61,22 +62,27 @@ public class ReadService {
         log.debug("findLeiterByUserId: userId={}", userId);
         final var userAntragsteller = userRepository.findByUserId(userId).orElseThrow();
         log.debug("findLeiterByUserId: userAntragsteller={}", userAntragsteller);
-        final var userFunction = userAntragsteller.getUserRole();
+        return findLeiter(userAntragsteller);
+//        final var userFunction = userAntragsteller.getUserRole();
 
-        final var leiter = switch (userFunction) {
-            case "lecturer" -> findDekan(userAntragsteller);
-            case "adminTechnicalStaff" -> findDekan(userAntragsteller);
-            case "academicStaff" -> findDekan(userAntragsteller);
-            case "professor" -> findDekan(userAntragsteller);
-            default -> throw new IllegalStateException(String.format("Unexpected value: %s", userFunction));
-        };
-        log.debug("findLeiterByUserId: leiter={}", leiter);
-        return leiter;
+//        final var leiter = switch (userFunction) {
+//            case "lecturer", "adminTechnicalStaff" -> findLeiter(userAntragsteller);
+//            case "academicStaff" -> findLeiter(userAntragsteller);
+//            case "professor" -> findLeiterVonProfessor(userAntragsteller);
+//            default -> throw new IllegalStateException(String.format("Unexpected value: %s", userFunction));
+//        };
+//        log.debug("findLeiterByUserId: leiter={}", leiter);
+//        return leiter;
     }
 
-    private User findDekan (final User antragsteller) {
+    private User findLeiter(final User antragsteller) {
         log.debug("findDekan: antragsteller={}", antragsteller);
-        final var orgUnit = orgUnitRepository.findByOrgId(antragsteller.getOrgUnit()).orElseThrow();
+        final var userOrgUnit = antragsteller.getOrgUnit();
+        if (Objects.equals(userOrgUnit, "A0029")) {
+            return antragsteller;
+        }
+
+        final var orgUnit = orgUnitRepository.findByOrgId(userOrgUnit).orElseThrow();
         final var leiterId = orgUnit.getLeiterId();
         log.debug("findLeiterByUserId: leiterId={}", leiterId);
         final var userLeiter = userRepository.findByUserId(leiterId).orElseThrow();
