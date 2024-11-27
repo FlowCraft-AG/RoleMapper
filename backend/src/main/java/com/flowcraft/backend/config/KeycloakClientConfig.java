@@ -9,9 +9,18 @@ import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * Schnittstelle zur Konfiguration des Keycloak-Clients.
+ */
 sealed interface KeycloakClientConfig permits ApplicationConfig {
     Logger LOGGER = LoggerFactory.getLogger(KeycloakClientConfig.class);
 
+    /**
+     * Erstellt einen KeycloakRepository-Bean, um HTTP-Aufrufe an Keycloak zu ermöglichen.
+     *
+     * @param clientBuilder Der RestClient.Builder.
+     * @return Eine Instanz von KeycloakRepository.
+     */
     @Bean
     default KeycloakRepository keycloakRepository(
         final RestClient.Builder clientBuilder

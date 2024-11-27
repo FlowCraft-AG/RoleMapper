@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.stream.Stream;
 
 public enum UserType {
-    EMPLOYEE("employee"),
-    STUDENT("student");
+    employee("employee"),
+    student("student");
 
     private final String typ;
 

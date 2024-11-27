@@ -1,7 +1,7 @@
 package com.flowcraft.backend.mongodb.service;
 
-import com.flowcraft.backend.mongodb.model.entity.User;
 import com.flowcraft.backend.mongodb.exception.UserNotFoundException;
+import com.flowcraft.backend.mongodb.model.entity.User;
 import com.flowcraft.backend.mongodb.repository.FunctionRepository;
 import com.flowcraft.backend.mongodb.repository.OrgUnitRepository;
 import com.flowcraft.backend.mongodb.repository.UserRepository;
@@ -27,66 +27,82 @@ import java.util.Objects;
 public class ReadService {
 
     private final UserRepository userRepository;
-    private final FunctionRepository functionRepository;
     private final OrgUnitRepository orgUnitRepository;
     private final MongoTemplate mongoTemplate;
 
+    /**
+     * Findet Benutzer basierend auf den angegebenen Suchkriterien.
+     *
+     * @param suchkriterien Kriterien als Map.
+     * @return Eine Sammlung von Benutzern, die den Kriterien entsprechen.
+     */
     public @NonNull Collection<User> find(@NonNull final Map<String, String> suchkriterien) {
         log.debug("find: suchkriterien={}", suchkriterien);
 
         Query query = new Query();
-        if (suchkriterien.get("type") != null) {
-            query.addCriteria(Criteria.where("userType").is(suchkriterien.get("type")));
-        }
-        if (suchkriterien.get("role") != null) {
-            query.addCriteria(Criteria.where("userRole").is(suchkriterien.get("role")));
-        }
-        if (suchkriterien.get("active") != null) {
-            query.addCriteria(Criteria.where("active").is(suchkriterien.get("active")));
-        }
-        if (suchkriterien.get("orgUnit") != null) {
-            query.addCriteria(Criteria.where("orgUnit").is(suchkriterien.get("orgUnit")));
-        }
+        suchkriterien.forEach((key, value) -> {
+            if (value != null) {
+                query.addCriteria(Criteria.where(key).is(value));
+            }
+        });
 
         log.debug("Executing query: {}", query);
         return mongoTemplate.find(query, User.class);
     }
 
+    /**
+     * Findet einen Benutzer anhand seiner ID.
+     *
+     * @param id Benutzer-ID.
+     * @return Der Benutzer, falls gefunden.
+     * @throws UserNotFoundException Wenn kein Benutzer mit der ID existiert.
+     */
     public User findById(String id) {
         log.debug("Fetching user by ID: {}", id);
-        return userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(id));
+        return userRepository.findByUserId(id)
+            .orElseThrow(() -> new UserNotFoundException(String.format("Benutzer mit ID %s nicht gefunden", id)));
     }
 
-    public User findLeiterByUserId (final String userId) {
+    /**
+     * Findet den Leiter eines Benutzers basierend auf seiner Benutzer-ID.
+     *
+     * @param userId Benutzer-ID.
+     * @return Der Leiter, falls vorhanden.
+     */
+    public User findLeiterByUserId(final String userId) {
         log.debug("findLeiterByUserId: userId={}", userId);
-        final var userAntragsteller = userRepository.findByUserId(userId).orElseThrow();
+        final var userAntragsteller = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new UserNotFoundException(String.format("Benutzer mit ID %s nicht gefunden", userId)));
         log.debug("findLeiterByUserId: userAntragsteller={}", userAntragsteller);
         return findLeiter(userAntragsteller);
-//        final var userFunction = userAntragsteller.getUserRole();
-
-//        final var leiter = switch (userFunction) {
-//            case "lecturer", "adminTechnicalStaff" -> findLeiter(userAntragsteller);
-//            case "academicStaff" -> findLeiter(userAntragsteller);
-//            case "professor" -> findLeiterVonProfessor(userAntragsteller);
-//            default -> throw new IllegalStateException(String.format("Unexpected value: %s", userFunction));
-//        };
-//        log.debug("findLeiterByUserId: leiter={}", leiter);
-//        return leiter;
     }
 
+    /**
+     * Findet den Leiter für einen gegebenen Benutzer.
+     *
+     * @param antragsteller Der Benutzer, dessen Leiter gefunden werden soll.
+     * @return Der Leiter, falls vorhanden.
+     * @throws UserNotFoundException Wenn kein Leiter gefunden wurde.
+     */
     private User findLeiter(final User antragsteller) {
-        log.debug("findDekan: antragsteller={}", antragsteller);
+        log.debug("findLeiter: antragsteller={}", antragsteller.getId());
         final var userOrgUnit = antragsteller.getOrgUnit();
+
         if (Objects.equals(userOrgUnit, "A0029")) {
-            return antragsteller;
+            return antragsteller; // Der Benutzer ist selbst der Leiter
         }
 
-        final var orgUnit = orgUnitRepository.findByOrgId(userOrgUnit).orElseThrow();
+        final var orgUnit = orgUnitRepository.findByOrgId(userOrgUnit)
+            .orElseThrow(() -> new UserNotFoundException(
+                String.format("Organisationseinheit mit ID %s nicht gefunden", userOrgUnit)
+            ));
+
         final var leiterId = orgUnit.getLeiterId();
-        log.debug("findLeiterByUserId: leiterId={}", leiterId);
-        final var userLeiter = userRepository.findByUserId(leiterId).orElseThrow();
-        log.debug("findLeiterByUserId: userLeiter={}", userLeiter);
-        return userLeiter;
+        log.debug("findLeiter: leiterId={}", leiterId);
+
+        return userRepository.findByUserId(leiterId)
+            .orElseThrow(() -> new UserNotFoundException(
+                String.format("Leiter mit ID %s nicht gefunden", leiterId)
+            ));
     }
 }

@@ -13,10 +13,6 @@ server:
   shutdown: graceful
 
 spring:
-  autoconfigure:
-    exclude:
-      - com.c4_soft.springaddons.security.oidc.starter.synchronised.resourceserve.*
-
   ssl:
     bundle:
       pem:
