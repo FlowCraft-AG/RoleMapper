@@ -9,7 +9,7 @@ import { REFRESH_TOKEN } from './mutation/refresh';
 dotenv.config();
 const client = new GraphQLClient(
     process.env.NEXT_PUBLIC_BACKEND_CLIENT_URL ||
-        'https://localhost:3000/graphql',
+        'https://localhost:8080/graphql',
 );
 
 export async function getAuth(username: string, password: string) {
