@@ -1,0 +1,86 @@
+= FlowCraft Backend Projekthandbuch
+
+Dieses Projekthandbuch beschreibt die wichtigsten Modellklassen im FlowCraft Backend. Es werden Funktionen, Variablen, sowie genutzte Annotationen erklärt.
+
+== Modelle
+
+=== `BaseUserModel`
+Die Klasse `BaseUserModel` repräsentiert ein allgemeines Benutzer-Modell und dient als Basis für spezifische Benutzerklassen wie `StudentModel` und `EmployeeModel`.
+
+==== Funktionen:
+* **Konstruktor:** Übernimmt die Felder eines `User`-Objekts und initialisiert die Instanz.
+* `RepresentationModel`: Ermöglicht HATEOAS-Unterstützung durch Verlinkungen im REST-Kontext.
+
+==== Variablen:
+* `id`: Eindeutige Benutzer-ID.
+* `userId`: Benutzerkennung.
+* `userType`: Typ des Benutzers (`STUDENT`, `EMPLOYEE`).
+* `userRole`: Rolle des Benutzers.
+* `orgUnit`: Organisationseinheit.
+* `active`: Aktivstatus.
+* `validFrom`: Startdatum der Gültigkeit.
+* `validUntil`: Enddatum der Gültigkeit.
+
+==== Annotationen:
+* `@JsonInclude`: Schließt Felder mit `null`-Werten aus der JSON-Ausgabe aus.
+* `@JsonPropertyOrder`: Bestimmt die Reihenfolge der JSON-Felder.
+* `@Getter`/`@ToString`: Automatische Generierung von Getter-Methoden und `toString()`.
+
+---
+
+=== `StudentModel`
+Die Klasse `StudentModel` erweitert `BaseUserModel` und fügt spezifische Informationen für Studenten hinzu.
+
+==== Funktionen:
+* **Konstruktor:** Nimmt ein `User`- und ein `Student`-Objekt und überträgt die relevanten Felder.
+
+==== Variablen:
+* `courseOfStudy`: Studiengang des Studenten.
+* `courseOfStudyUnique`: Eindeutige Studiengangskennung.
+* `courseOfStudyShort`: Kurzform des Studiengangs.
+* `courseOfStudyName`: Vollständiger Name des Studiengangs.
+* `level`: Studienniveau (`Bachelor`, `Master`).
+* `examRegulation`: Prüfungsordnung.
+
+==== Annotationen:
+* `@JsonInclude`: Versteckt Felder mit `null`-Werten in der JSON-Ausgabe.
+* `@JsonPropertyOrder`: Legt die Reihenfolge der JSON-Felder fest.
+* `@Getter`/`@ToString`: Generiert automatisch Getter-Methoden und eine `toString()`-Methode.
+
+---
+
+=== `EmployeeModel`
+Die Klasse `EmployeeModel` erweitert `BaseUserModel` und ergänzt mitarbeiterspezifische Informationen.
+
+==== Funktionen:
+* **Konstruktor:** Nimmt ein `User`- und ein `Employee`-Objekt und überträgt die relevanten Felder.
+
+==== Variablen:
+* `costCenter`: Kostenstelle des Mitarbeiters.
+* `department`: Abteilung des Mitarbeiters.
+
+==== Annotationen:
+* `@JsonInclude`: Entfernt Felder mit `null`-Werten aus der JSON-Ausgabe.
+* `@JsonPropertyOrder`: Gibt die Reihenfolge der JSON-Felder vor.
+* `@Getter`/`@ToString`: Automatische Generierung von Getter-Methoden und einer `toString()`-Methode.
+
+---
+
+== Allgemeine Anmerkungen
+
+=== Annotationen im Überblick
+Die folgenden Annotationen werden in allen Modellen verwendet:
+* **`@JsonInclude`**: Schließt Felder aus der JSON-Ausgabe aus, die `null` sind. Dies reduziert die Größe der Antwort und erhöht die Lesbarkeit.
+* **`@JsonPropertyOrder`**: Sorgt für eine feste Reihenfolge der Felder in der JSON-Ausgabe, um Konsistenz sicherzustellen.
+* **`@Getter`**: Generiert automatisch Getter-Methoden für alle Variablen.
+* **`@ToString`**: Generiert eine `toString()`-Methode für die Klasse. Für sensible Felder sollte diese mit Vorsicht verwendet werden.
+
+=== Nutzung von HATEOAS
+* Die Klassen erben von `RepresentationModel`, was es ermöglicht, RESTful APIs mit Hypermedia-Links zu erweitern.
+* Links können durch die API hinzugefügt werden, um Ressourcen zu navigieren.
+
+---
+
+== Fazit
+
+Die Modellklassen sind klar strukturiert und bieten eine solide Grundlage für die Benutzerverwaltung im FlowCraft Backend. Durch die konsistente Nutzung von Annotationen und HATEOAS-Unterstützung sind sie optimal für eine moderne REST-API ausgelegt.

@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class Student {
     @Id
     private String id;
-    @Field("id")
     private String courseOfStudy;
     private String courseOfStudyUnique;
     private String courseOfStudyShort;

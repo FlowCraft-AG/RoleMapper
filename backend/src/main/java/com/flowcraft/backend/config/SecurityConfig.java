@@ -49,7 +49,7 @@ public sealed interface SecurityConfig permits ApplicationConfig {
                         EndpointRequest.to(HealthEndpoint.class),
                         EndpointRequest.to(PrometheusScrapeEndpoint.class)
                     ).permitAll()
-                    .requestMatchers(GET, "/v3/api-docs.yaml", "/v3/api-docs", "/graphiql").permitAll()
+                    .requestMatchers(GET, "/swagger-ui/**", "/v3/api-docs/**", "/graphiql").permitAll()
                     .requestMatchers("/error", "/error/**").permitAll()
                     .anyRequest().authenticated();
             })

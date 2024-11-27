@@ -47,7 +47,7 @@
         <enable.preview>--enable-preview</enable.preview>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-      <spring-addons-starter-oidc.version>7.8.0</spring-addons-starter-oidc.version>
+      <springdoc-openapi.version>2.7.0</springdoc-openapi.version>
       <camunda.version>8.7.0-alpha1</camunda.version>
     </properties>
     <dependencies>
@@ -134,6 +134,19 @@
 <!--        <artifactId>spring-addons-starter-oidc</artifactId>-->
 <!--        <version>${spring-addons-starter-oidc.version}</version>-->
 <!--      </dependency>-->
+<!--        D O K U M E N T A T I O N / S W A G G E R / O P E N - A P I -->
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>${springdoc-openapi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi</artifactId>
+        <version>${springdoc-openapi.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
       <!--                  C A M U N D A -->
         <dependency>
