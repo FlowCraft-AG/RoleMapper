@@ -40,12 +40,6 @@ export class User {
   @Prop()
   validUntil?: Date;
 
-  @Prop({ default: Date.now })
-  createdAt!: Date;
-
-  @Prop({ default: Date.now })
-  updatedAt!: Date;
-
   /**
    * Prüft, ob der Benutzer aktuell gültig ist.
    *

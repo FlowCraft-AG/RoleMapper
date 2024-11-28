@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Param, Query, Put, Delete } from '@nestjs/common';
-import { UserService } from './user.service';
-import { User } from './user.entity';
+import { Controller, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { User } from '../model/entity/user.entity.js';
+import { WriteService } from '../service/write.service.js';
 
 @Controller('users')
 export class writeController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: WriteService) { }
   @Post()
   async create(@Body() userData: Partial<User>): Promise<User> {
     return this.userService.create(userData);

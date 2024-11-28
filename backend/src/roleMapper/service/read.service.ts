@@ -4,7 +4,7 @@ import { Model, FilterQuery } from 'mongoose';
 import { User, UserDocument } from '../model/entity/user.entity.js';
 
 @Injectable()
-export class UserService {
+export class ReadService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
   /**

@@ -8,6 +8,7 @@ import { graphQlModuleOptions } from './config/graphql.js';
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { mongoDbName, validatedMongoDbUri } from './config/typeormOptions.js';
+import { RoleMapperModule } from './roleMapper/roleMapper.module.js';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { mongoDbName, validatedMongoDbUri } from './config/typeormOptions.js';
     MongooseModule.forRoot(validatedMongoDbUri, {
       dbName: mongoDbName,
     }),
+    RoleMapperModule
   ],
   controllers: [AppController],
   providers: [AppService],

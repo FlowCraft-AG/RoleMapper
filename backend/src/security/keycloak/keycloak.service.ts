@@ -58,7 +58,7 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
             return;
         }
 
-        const body = `username=${username}&password=${password}&grant_type=password&client_id=${clientId}&client_secret=${secret}`;
+        const body = `username=${username}&password=${password}&grant_type=password&client_id=${clientId}&client_secret=${secret}&scope=openid`;
         let response: AxiosResponse<Record<string, number | string>>;
         try {
             response = await this.#keycloakClient.post(

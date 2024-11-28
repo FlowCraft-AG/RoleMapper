@@ -1,119 +1,78 @@
-# Definition des Schemas
-schema {
-  query: Query
-  mutation: Mutation
-}
-
-# Abfragen
 type Query {
-  bankkonto(bankkontoId: ID!): Bankkonto
-  bankkonten(suchkriterien: SuchkriterienInput): [Bankkonto!]
+  users(filters: UserFilterInput): [User!]!
+  userById(id: ID!): User
+  userByUserId(userId: String!): User
 }
 
-# Mutationen (falls benötigt, hier nur zur Vollständigkeit)
 type Mutation {
-  create(input: bankkontoInput!): CreatePayload
-  update(input: bankkontoUpdateInput!): UpdatePayload
-  makeTransaktion(input: transaktionInput!): TransaktionPayload
-  delete(bankkontoId: ID!): Boolean
+  createUser(userData: CreateUserInput!): User!
+  updateUser(id: ID!, updateData: UpdateUserInput!): User
+  deleteUser(id: ID!): User
 
-  # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
+   # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
   token(username: String!, password: String!): TokenResult
   refresh(refresh_token: String!): TokenResult
 }
 
-type Kunde {
-  kundeId: ID!
-  name: String!
-  vorname: String!
-  email: String!
+type User {
+  id: ID!
+  userId: String!
+  userType: UserType!
+  userRole: String!
+  orgUnit: String
+  active: Boolean!
+  student: Student
+  employee: Employee
+  validFrom: String
+  validUntil: String
 }
 
-type Transaktion {
-  transaktionId: ID!
-  transaktionTyp: String!
-  betrag: Float!
-  absender: String
-  empfaenger: String
+input UserFilterInput {
+  userId: String
+  userType: UserType
+  userRole: String
+  orgUnit: String
+  active: Boolean
 }
 
-# Typdefinitionen
-type Bankkonto {
-  bankkontoId: ID!
-  version: Int!
-  saldo: Float!
-  transaktionLimit: Int
-  besitztTransaktionLimit: Boolean!
-  waehrungen: [String]
-  erstelltAm: String!
-  aktualisiertAm: String!
-  kunde: Kunde!
+enum UserType {
+  EMPLOYEE
+  STUDENT
 }
 
-# Enums
-enum TransaktionTyp {
-  EINZAHLUNG
-  AUSZAHLUNG
-  UEBERWEISUNG
-  EINKOMMEN
-  ZAHLUNG
+type Student {
+  id: ID!
+  courseOfStudy: String!
+  courseOfStudyUnique: String!
+  courseOfStudyShort: String!
+  courseOfStudyName: String!
+  level: String!
+  examRegulation: String!
 }
 
-# Suchkriterien für die Abfrage
-input SuchkriterienInput {
-  saldo: String
-  transaktionsLimit: Int
-  datum: String
-  transaktionTyp: String
-  absender: String
-  empfaenger: String
-  waehrungen: [String]
-  email: String
+type Employee {
+  costCenter: String!
+  department: String!
 }
 
-input KundeInput {
-  name: String!
-  vorname: String!
-  email: String!
+input CreateUserInput {
+  userId: String!
+  userType: UserType!
+  userRole: String!
+  orgUnit: String
+  active: Boolean = false
+  validFrom: String
+  validUntil: String
 }
 
-# Eingabedatentypen für Mutationen
-input bankkontoInput {
-  transaktionLimit: Int
-  besitztTransaktionLimit: Boolean!
-  waehrungen: [String!]!
-  kunde: KundeInput!
-}
-
-input transaktionInput {
-  betrag: Float!
-  absender: Int
-  empfaenger: Int
-  transaktionTyp: TransaktionTyp!
-}
-
-type CreatePayload {
-  bankkontoId: Int!
-}
-
-
-input bankkontoUpdateInput {
-  betrag: Float
-  transaktionLimit: Float
-  besitztTransaktionLimit: Boolean
-  waehrungen: [String]
-  bankkontoId: ID!
-  version: Int
-}
-
-type UpdatePayload {
-  version: Int
-}
-
-type TransaktionPayload {
-  transaktionID: ID!
-  saldo: Float!
-  bankkontoNeueVersion: Int!
+input UpdateUserInput {
+  userId: String
+  userType: UserType
+  userRole: String
+  orgUnit: String
+  active: Boolean
+  validFrom: String
+  validUntil: String
 }
 
 type TokenResult {
@@ -121,4 +80,6 @@ type TokenResult {
   expires_in: Int!
   refresh_token: String!
   refresh_expires_in: Int!
+  id_token: String!
+  scope: String!
 }
