@@ -39,7 +39,7 @@ public class AuthService {
         log.debug("login: username={}", username);
 
         final var tokenDTO = keycloakRepository.login(
-            String.format("grant_type=password&username=%s&password=%s&client_id=%s&client_secret%s",
+            String.format("grant_type=password&username=%s&password=%s&client_id=%s&client_secret%s&scope=openid",
                 username,
                 password,
                 keycloakProps.clientId(),

@@ -97,4 +97,6 @@ type LoginPayload {
   expiresIn: Int!
   refreshToken: String!
   refreshExpiresIn: Int!
+  idToken: String!
+  scope: String!
 }

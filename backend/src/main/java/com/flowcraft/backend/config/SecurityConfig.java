@@ -85,7 +85,7 @@ public sealed interface SecurityConfig permits ApplicationConfig {
     @Bean
     default CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://mydomain.com"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://mydomain.com", "http://localhost:3000"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));

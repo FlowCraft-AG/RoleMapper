@@ -1,96 +1,91 @@
+//'use server'
+
 import { GraphQLError } from 'graphql';
-import { redirect } from 'next/navigation.js';
+import { getLogger } from '../utils/logger';
+import { signOut } from 'next-auth/react';
 
 export async function handleGraphQLError(
-    error: any,
-    message?: string,
-): Promise<void> {
-    if (
-        error.response &&
-        error.response.errors &&
-        error.response.errors.length > 0
-    ) {
-        const errorMessage = await extractErrorMessage(
-            error.response.errors[0],
-        );
-        if (errorMessage == 'Unauthorized') {
-            alert('Dein Token ist abgelaufen');
-        }
-
-        if (errorMessage === 'Falscher Token') {
-            alert(errorMessage);
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-            }
-            redirect('/login');
-        }
-        throw new Error(errorMessage);
-    }
-    console.error(error);
-    throw new Error(
-        message ? message : 'Ein unbekannter Fehler ist aufgetreten.',
-    );
-}
-
-export async function extractErrorMessage(
-    error: GraphQLError,
+  error: any,
+  message?: string,
 ): Promise<string> {
-    if (
-        (error.extensions && error.extensions.code === 'BAD_USER_INPUT') ||
-        error.extensions.code === 'BAD_USER_INPUT'
-    ) {
-        let stacktrace: string[] | undefined;
+  const logger = getLogger(handleGraphQLError.name);
 
-        if (Array.isArray(error.extensions.stacktrace)) {
-            stacktrace = error.extensions.stacktrace as string[];
-        }
+  logger.fatal(error)
+  // Log the request details for debugging purposes
+  logger.error('Fehler bei der Anfrage: %o', {
+    Request: error.request.query,
+    Variables: error.request.variables,
+  });
 
-        if (
-            stacktrace &&
-            stacktrace.length > 0 &&
-            error.message === undefined
-        ) {
-            const firstEntry = stacktrace[0];
-            const errorMessage = firstEntry
-                .substring(firstEntry.indexOf(':') + 1)
-                .trim();
-            console.log('Unexpected BAD_USER_INPUT error:', stacktrace[0]);
-            return errorMessage;
-        }
+  // Handle GraphQL errors specifically
+  if (error.response && error.response.errors && error.response.errors.length > 0) {
+    // Extract the error message from the first error in the response
+    const errorMessage = await extractErrorMessage(error.response.errors[0]);
 
-        console.log(
-            'Unexpected BAD_USER_INPUT error:',
-            error.extensions.stacktrace,
-        );
-        console.error(error.message);
-        return (
-            error.message ||
-            'Ungültige Eingabe. Bitte überprüfen Sie Ihre Daten.'
-        );
+    // Log the data returned with the error for further debugging
+    logger.error('DIE ANFRAGE: %o', error.response.data);
+
+    // Handle specific error messages
+    if (errorMessage === 'Unauthorized') {
+      // Example action: alert the user about token expiration
+      //alert('Dein Token ist abgelaufen');
+      logger.error('Dein Token ist abgelaufen');
+
     }
 
-    return 'Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
+    if (errorMessage === 'Falscher Token') {
+      // Alert the user and redirect to the login page if the token is incorrect
+      //alert(errorMessage);
+      logger.error('Falscher Token ist abgelaufen und kann nicht erneuert werden!');
+    }
+
+    // Throw a specific error based on the extracted message
+    throw new Error(errorMessage);
+  }
+
+  // If no specific GraphQL error was found, log and throw a general error
+  return message ? message : 'Ein unbekannter Fehler ist aufgetreten.';
+
 }
 
-export interface GraphqlErrorResponse {
-    errors: GraphQLErrorItem[];
-    data: unknown;
-}
+// Function to extract error messages from GraphQL errors
+export async function extractErrorMessage(
+  error: GraphQLError,  // Use native GraphQLError type from graphql package
+): Promise<string> {
+  const logger = getLogger(extractErrorMessage.name);
 
-export interface GraphQLErrorItem {
-    message: string;
-    locations: StacktraceLocation[];
-    path: string[];
-    extensions: StacktraceExtension;
-}
+  // Log the error message and the path where it occurred
+  logger.error('%o', { MESSAGE: error.message, PATH: error.path });
 
-interface StacktraceLocation {
-    line: number;
-    column: number;
-}
+  // Handle specific GraphQL error codes
+  if (error.extensions?.code === 'BAD_USER_INPUT') {
+    let stacktrace: string[] | undefined;
 
-interface StacktraceExtension {
-    code: string;
-    stacktrace: string[];
+    // Check if stacktrace exists and is an array
+    if (Array.isArray(error.extensions.stacktrace)) {
+      stacktrace = error.extensions.stacktrace as string[];
+    }
+
+    // If a stacktrace exists and the message is undefined, extract it
+    if (stacktrace && stacktrace.length > 0 && error.message === undefined) {
+      const firstEntry = stacktrace[0];
+      const errorMessage = firstEntry
+        .substring(firstEntry.indexOf(':') + 1)
+        .trim();
+
+      // Log the specific BAD_USER_INPUT error for debugging
+      logger.error('Unexpected BAD_USER_INPUTs error: %o', stacktrace[0]);
+      return errorMessage;
+    }
+
+    // Log the stacktrace if available and return a user-friendly message
+    logger.error('Unexpected BAD_USER_INPUT error: %s', error.extensions.stacktrace);
+    logger.error(error.message);
+    return (
+      error.message || 'Ungültige Eingabe. Bitte überprüfen Sie Ihre Daten.'
+    );
+  }
+
+  // Return a generic error message for other types of errors
+  return 'Ein unbekannter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.';
 }

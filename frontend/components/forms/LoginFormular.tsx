@@ -5,7 +5,7 @@ import { LoginDaten } from '../../lib/interfaces';
 import { LoadingComponent } from '../LoadingComponent';
 import { ErrorBannerComponent } from '../ErrorBannerComponent';
 import { useRouter } from 'next/navigation';
-import { getAuth } from '../../api/auth';
+import { getAuth } from '../../api/authorization';
 
 export default function LoginForm() {
     const [loginDaten, setLoginDaten] = useState<LoginDaten>({
