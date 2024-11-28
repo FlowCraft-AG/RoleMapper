@@ -1,11 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 import { MongooseModule } from '@nestjs/mongoose';
+import { LoggerModule } from './logger/logger.module.js';
+import { KeycloakModule } from './security/keycloak/keycloak.module.js';
+import { graphQlModuleOptions } from './config/graphql.js';
+import { ApolloDriverConfig } from '@nestjs/apollo';
+import { GraphQLModule } from '@nestjs/graphql';
+import { mongoDbName, validatedMongoDbUri } from './config/typeormOptions.js';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/my-database-name'),
+    GraphQLModule.forRoot<ApolloDriverConfig>(graphQlModuleOptions),
+    LoggerModule,
+    KeycloakModule,
+    MongooseModule.forRoot(validatedMongoDbUri, {
+      dbName: mongoDbName,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

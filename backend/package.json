@@ -1,15 +1,32 @@
 {
-  "name": "backend",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "rolemapper",
+  "version": "0.1.0",
   "private": true,
+  "description": "Frontend für das dynamische Rollen- und Funktionsmanagement mit Camunda Workflow-Integration",
+  "author": {
+    "name": "FlowCraft AG",
+    "email": "info@flowcraft-ag.de",
+    "url": "https://www.flowcraft-ag.de"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flowcraft-ag/rolemapper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flowcraft-ag/rolemapper/issues"
+  },
+  "homepage": "https://www.flowcraft-ag.de/products/rolemapper",
   "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11.1",
+    "npm": ">=10.3.0"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -20,22 +37,43 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/apollo": "^12.2.1",
+    "@nestjs/graphql": "12.2.0",
     "@nestjs/common": "^10.0.0",
+    "class-validator": "0.14.1",
+    "class-transformer": "0.5.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/mongoose": "^10.1.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^8.0.7",
+    "chalk": "^5.3.0",
+    "figlet": "1.7.0",
+    "compression": "1.7.4",
+    "helmet": "^8.0.0",
     "mongoose": "^8.8.3",
+    "nest-keycloak-connect": "^1.10.1",
+    "nodemailer": "^6.9.16",
+    "pino": "^9.5.0",
+    "pino-pretty": "^13.0.0",
     "reflect-metadata": "^0.2.0",
+    "@js-temporal/polyfill": "0.4.4",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
+    "@tsconfig/node22": "22.0.0",
+    "@types/compression": "1.7.5",
     "@types/express": "^4.17.17",
+    "@types/figlet": "1.5.8",
     "@types/jest": "^29.5.2",
+    "@types/js-yaml": "4.0.9",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^20.3.1",
+    "@types/nodemailer": "6.4.16",
+    "@types/nodemailer-direct-transport": "1.0.35",
+    "@types/nodemailer-smtp-transport": "2.7.8",
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
