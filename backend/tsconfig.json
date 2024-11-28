@@ -1,42 +1,35 @@
 {
   "extends": ["@tsconfig/node22/tsconfig"],
   "ts-node": {
-    "esm": true,
-    "module": "es2022"
+    "esm": true
   },
   "compilerOptions": {
-    "module": "es2022",
+    "module": "esnext",
     "moduleResolution": "node",
-    "moduleDetection": "force",
+    "target": "es2024",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2022",
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
-    "skipLibCheck": true, // wegen @nestjs/graphql und @nestjs/apollo
-    "allowUnreachableCode": false, // return bei then-else und try-catch
-    "allowUnusedLabels": false, // Labels muessen auch benutzt werden
-    "esModuleInterop": true, // Kompatibilitaet zwischen CommonJS und ES Modulen
-    "forceConsistentCasingInFileNames": true, // Gross-/Kleinschreibung bei Dateinamen
+    "skipLibCheck": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "noErrorTruncation": true,
-    "noFallthroughCasesInSwitch": true, // "break" muss bei switch vorhanden sein
-    "noImplicitAny": true, // Fehler bei implizitem Typ "any"
-    "noImplicitOverride": true, // Schluesselwort "override"
-    "noImplicitReturns": true, // bei jedem Code-Pfad muss es "return" geben
-    "noImplicitThis": true, // Fehler bei this mit implizitem "any"
-    "noUncheckedIndexedAccess": true, // undefined bei Resultaten fuer Index-Signaturen
-    "noUnusedLocals": true, // keine nicht-benutzten lokalen Variablen
-    "noUnusedParameters": true, // keine nicht-benutzen Parameter
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "preserveWatchOutput": true,
-    "strict": true // alle "strict"-Optionen aktivieren
-    // "noImplicitAny": true, // Fehler bei implizitem Typ "any", default bei strict
-    // "noImplicitThis": true, // Fehler bei this mit implizitem "any", default bei strict
-    // "useUnknownInCatchVariables": true // unknown als default-Typ bei catch-Klauseln, default bei strict
-    // "noPropertyAccessFromIndexSignature": true, // Fehler in __tests__ bei dot-Zugriff auf nicht-definierte Properties, z.B. response.data.statusCode
-    // "allowJs": true, // wegen ts-jest und ESM
+    "strict": true
   }
 }
