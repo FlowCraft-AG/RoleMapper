@@ -1,16 +1,16 @@
-package com.flowcraft.backend.camunda.config;
+// package com.flowcraft.backend.camunda.config;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+// import io.camunda.zeebe.client.ZeebeClient;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class ZeebeConfig {
+// @Configuration
+// public class ZeebeConfig {
 
-    @Bean
-    public ZeebeClient zeebeClient() {
-        return ZeebeClient.newClientBuilder()
-            .usePlaintext()
-            .build();
-    }
-}
+//     @Bean
+//     public ZeebeClient zeebeClient() {
+//         return ZeebeClient.newClientBuilder()
+//             .usePlaintext()
+//             .build();
+//     }
+// }

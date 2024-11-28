@@ -22,6 +22,5 @@ public class OrgUnit {
     private String orgId;
     private String name;
     private String type;
-    @Field("leiter")
-    private String leiterId;
+    private String supervisor;
 }

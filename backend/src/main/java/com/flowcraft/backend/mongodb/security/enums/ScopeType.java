@@ -7,7 +7,8 @@ import java.util.stream.Stream;
 
 
 public enum ScopeType {
-    EMAIL_PROFILE("email profile");
+    EMAIL_PROFILE("email profile"),
+    OPENID_EMAIL_PROFILE("openid profile email");
 
     private final String value;
 

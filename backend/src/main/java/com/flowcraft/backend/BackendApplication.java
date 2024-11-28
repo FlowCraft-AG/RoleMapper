@@ -1,6 +1,6 @@
 package com.flowcraft.backend;
 
-import com.flowcraft.backend.camunda.worker.ServiceTaskWorker;
+// import com.flowcraft.backend.camunda.worker.ServiceTaskWorker;
 import com.flowcraft.backend.config.ApplicationConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +31,10 @@ import static org.springframework.hateoas.support.WebStack.WEBMVC;
 @EnableConfigurationProperties({KeycloakProps.class, MailProps.class})
 @EnableWebSecurity
 @EnableMethodSecurity
-public class BackendApplication implements CommandLineRunner {
-    private final ServiceTaskWorker serviceTaskWorker;
+public class BackendApplication
+    // implements CommandLineRunner
+{
+    // private final ServiceTaskWorker serviceTaskWorker;
 
     public static void main(String[] args) {
         final var app = new SpringApplication(BackendApplication.class);
@@ -40,11 +42,11 @@ public class BackendApplication implements CommandLineRunner {
         app.run(args);
     }
 
-    @Override
-    public void run(String... args) {
-        log.info("Starte Camunda-Prozessanwendung");
-        serviceTaskWorker.registerWorker();
-    }
+    // @Override
+    // public void run(String... args) {
+    //     log.info("Starte Camunda-Prozessanwendung");
+    //     serviceTaskWorker.registerWorker();
+    // }
 
     //    private static void deployBpmnFiles(ZeebeClient client) {
 //        File directory = new File("src/main/resources/camunda/");

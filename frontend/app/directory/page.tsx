@@ -12,9 +12,22 @@ export default function ActiveDirectoryPage() {
         id: "2",
         name: "Rektorat",
         children: [
-          { id: "3", name: "Rektorin: Max Muster" },
-          { id: "4", name: "Kanzler: Mina Muster" },
-          { id: "5", name: "Prorektoren: Michael Muster" },
+          {
+            id: "3",
+            name: "Rektorin",
+            children: [{
+              id: "1", name: "bero0002",
+            }
+            ]
+          },
+          {
+            id: "4",
+            name: "Prorektor",
+            children: [
+              { id: "1", name: "nera0001" },
+              { id: "2", name: "bujs0001" },
+            ]
+          },
           {
         id: "6",
         name: "Fakultäten",

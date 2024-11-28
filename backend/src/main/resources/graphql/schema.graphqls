@@ -14,6 +14,8 @@ type Mutation {
   createUser(input: CreateUserInput!): User
   updateUser(id: ID!, input: UpdateUserInput!): User
   deleteUser(id: ID!): Boolean
+  login(username: String, password: String): LoginPayload
+  refresh(refreshToken: String!): LoginPayload
 }
 
 type User {
@@ -83,4 +85,18 @@ input StudentInput {
 input EmployeeInput {
   costCenter: String!
   department: String!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+type LoginPayload {
+  accessToken: String!
+  expiresIn: Int!
+  refreshToken: String!
+  refreshExpiresIn: Int!
+  idToken: String!
+  scope: String!
 }
