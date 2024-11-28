@@ -1,27 +1,14 @@
-# While the Docker images themselves are supported for production usage,
-# this docker-compose.yaml is designed to be used by developers to run
-# an environment locally. It is not designed to be used in production.
-# We recommend to use Kubernetes in production with our Helm Charts:
-# https://docs.camunda.io/docs/self-managed/platform-deployment/kubernetes-helm/
-# For local development, we recommend using KIND instead of `docker-compose`:
-# https://docs.camunda.io/docs/self-managed/platform-deployment/kubernetes-helm/#installing-the-camunda-helm-chart-locally-using-kind
-
-# This is a lightweight configuration with Zeebe, Operate, Tasklist, and Elasticsearch
-# See docker-compose.yml for a configuration that also includes Optimize, Identity, and Keycloak.
-
 services:
-
-  zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
+  zeebe:
     image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.0.0}
     container_name: zeebe
     ports:
       - "26500:26500"
       - "9600:9600"
-    environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
+    environment:
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
       - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
-      # allow running with low disk space
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
       - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
@@ -33,12 +20,12 @@ services:
     depends_on:
       - elasticsearch
 
-  operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
+  operate:
     image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.0.0}
     container_name: operate
     ports:
       - "8081:8080"
-    environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
+    environment:
       - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
@@ -48,12 +35,12 @@ services:
       - zeebe
       - elasticsearch
 
-  tasklist: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#tasklist
+  tasklist:
     image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-8.0.0}
     container_name: tasklist
     ports:
       - "8082:8080"
-    environment: # https://docs.camunda.io/docs/self-managed/tasklist-deployment/configuration/
+    environment:
       - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
@@ -63,7 +50,7 @@ services:
       - zeebe
       - elasticsearch
 
-  elasticsearch: # https://hub.docker.com/_/elasticsearch
+  elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.0}
     container_name: elasticsearch
     ports:
@@ -72,7 +59,6 @@ services:
     environment:
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      # allow running with low disk space
       - cluster.routing.allocation.disk.threshold_enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
@@ -90,9 +76,85 @@ services:
     networks:
       - camunda-platform
 
+  optimize:
+    image: camunda/optimize:${CAMUNDA_OPTIMIZE_VERSION:-3.8.0}
+    container_name: optimize
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=elasticsearch
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    networks:
+      - camunda-platform
+    depends_on:
+      - elasticsearch
+
+  identity:
+    image: camunda/identity:${CAMUNDA_PLATFORM_VERSION:-8.0.0}
+    container_name: identity
+    ports:
+      - "8083:8080"
+    environment:
+      - IDENTITY_AUTH_PROVIDER_BACKEND_URL=http://keycloak:8080/realms/camunda
+      - IDENTITY_AUTH_OIDC_ISSUERURL=http://keycloak:8080/realms/camunda
+      - IDENTITY_AUTH_OIDC_CLIENTID=identity
+      - IDENTITY_AUTH_OIDC_CLIENTSECRET=PMxQOH7ceTznX6sh94akKg1nEksddJWf
+      - IDENTITY_LOGGING_LEVEL_ROOT=DEBUG
+    networks:
+      - camunda-platform
+    depends_on:
+      - keycloak
+
+  keycloak:
+    image: keycloak/keycloak:latest
+    #depends_on: [db]
+    ports:
+      - published: 8880
+        target: 8080
+      - published: 8843
+        target: 8443
+    volumes:
+      - type: bind
+        source: ../../../volumes/keycloak
+        target: /opt/keycloak/data
+      - type: bind
+        source: ../../../volumes/keys/key.pem
+        target: /opt/keycloak/conf/key.pem
+        read_only: true
+      - type: bind
+        source: ../../../volumes/keys/certificate.crt
+        target: /opt/keycloak/conf/certificate.crt
+        read_only: true
+    env_file: .env
+    hostname: keycloak
+    container_name: keycloak
+    user: keycloak:1000
+    networks:
+      - camunda-platform
+    depends_on:
+      - elasticsearch
+    entrypoint:
+      - '/opt/keycloak/bin/kc.sh'
+      - 'start-dev'
+      # - '--https-key-store-file=/opt/keycloak/conf/certificate.crt'
+      # - '--https-key-store-password=changeit'
+
+    cap_drop: [ALL]
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
+
+
+
 volumes:
   zeebe:
   elastic:
 
 networks:
   camunda-platform:
+    name: "camunda-platform"

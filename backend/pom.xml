@@ -149,11 +149,11 @@
       </dependency>
 
       <!--                  C A M U N D A -->
-        <dependency>
+        <!-- <dependency>
             <groupId>io.camunda</groupId>
             <artifactId>zeebe-client-java</artifactId>
             <version>${camunda.version}</version>
-        </dependency>
+        </dependency> -->
 <!--      <dependency>-->
 <!--        <groupId>io.camunda</groupId>-->
 <!--        <artifactId>spring-boot-starter-camunda-sdk</artifactId>-->

@@ -7,6 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.List;
 
 @Document(collection = "Functions")
 @Getter
@@ -17,6 +20,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Function {
     @Id
     private String id;
+    @Field("function_nam")
     private String name;
+    @Field("org_unit")
     private String orgUnit;
+    private List<String> user;
 }

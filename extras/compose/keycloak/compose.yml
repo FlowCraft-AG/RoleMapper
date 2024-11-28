@@ -23,7 +23,12 @@ services:
     hostname: keycloak
     container_name: keycloak
     user: keycloak:1000
-    entrypoint: ['/opt/keycloak/bin/kc.sh', 'start-dev']
+    entrypoint:
+      - '/opt/keycloak/bin/kc.sh'
+      - 'start-dev'
+      # - '--https-key-store-file=/opt/keycloak/conf/certificate.crt'
+      # - '--https-key-store-password=changeit'
+
     cap_drop: [ALL]
     deploy:
       resources:

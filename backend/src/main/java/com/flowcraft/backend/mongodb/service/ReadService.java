@@ -27,6 +27,7 @@ import java.util.Objects;
 public class ReadService {
 
     private final UserRepository userRepository;
+    private final FunctionRepository functionRepository;
     private final OrgUnitRepository orgUnitRepository;
     private final MongoTemplate mongoTemplate;
 
@@ -69,7 +70,7 @@ public class ReadService {
      * @param userId Benutzer-ID.
      * @return Der Leiter, falls vorhanden.
      */
-    public User findLeiterByUserId(final String userId) {
+    public User findLeiterByUserId2(final String userId) {
         log.debug("findLeiterByUserId: userId={}", userId);
         final var userAntragsteller = userRepository.findByUserId(userId)
             .orElseThrow(() -> new UserNotFoundException(String.format("Benutzer mit ID %s nicht gefunden", userId)));
@@ -92,17 +93,52 @@ public class ReadService {
             return antragsteller; // Der Benutzer ist selbst der Leiter
         }
 
-        final var orgUnit = orgUnitRepository.findByOrgId(userOrgUnit)
+        final var orgUnit = orgUnitRepository.findById(userOrgUnit)
             .orElseThrow(() -> new UserNotFoundException(
                 String.format("Organisationseinheit mit ID %s nicht gefunden", userOrgUnit)
             ));
 
-        final var leiterId = orgUnit.getLeiterId();
+        final var leiterFunctionId = orgUnit.getSupervisor();
+        log.debug("findLeiter: leiterId={}", leiterFunctionId);
+
+        final var leiterFunction = functionRepository.findById(leiterFunctionId);
+        log.debug("findLeiter: leiterFunction={}", leiterFunction);
+
+        final var leiterId = leiterFunction.get().getUser().getFirst();
         log.debug("findLeiter: leiterId={}", leiterId);
 
         return userRepository.findByUserId(leiterId)
             .orElseThrow(() -> new UserNotFoundException(
-                String.format("Leiter mit ID %s nicht gefunden", leiterId)
+                String.format("Leiter mit ID %s nicht gefunden", leiterFunction)
             ));
+    }
+
+    public User findLeiterByUserId(final String userKennung) {
+        final var userFunction = functionRepository.findByUserKennung(userKennung);
+        log.debug("findLeiterByUserId: userFunction={}", userFunction);
+
+        final var userOrgUnit = userFunction.get().getOrgUnit();
+        log.debug("findLeiterByUserId: UserOrgUnit={}", userOrgUnit);
+
+        if (Objects.equals(userOrgUnit, "6745da29a586857aa17d76d0")) {
+            return userRepository.findByUserId(userKennung).orElseThrow();
+        }
+
+        final var orgUnit = orgUnitRepository.findById(userOrgUnit);
+        log.debug("findLeiterByUserId: orgUnit={}", orgUnit);
+
+        final var orgUnitSupervisor = orgUnit.get().getSupervisor();
+        log.debug("findLeiterByUserId: orgUnitSupervisor={}", orgUnitSupervisor);
+
+        final var leiterFunction = functionRepository.findById(orgUnitSupervisor);
+        log.debug("findLeiterByUserId: leiterFunction={}", leiterFunction);
+
+        final var leiterId = leiterFunction.get().getUser().getFirst();
+        log.debug("findLeiterByUserId: leiterId={}", leiterId);
+
+        final var userLeiter = userRepository.findByUserId(leiterId).orElseThrow();
+        log.debug("findLeiterByUserId: userLeiter={}", userLeiter);
+
+        return userLeiter;
     }
 }
