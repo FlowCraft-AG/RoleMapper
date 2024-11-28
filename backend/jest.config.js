@@ -47,7 +47,6 @@ const jestConfig = {
     // Hoher Timeout-Wert, insbesondere fuer den ersten Mutation-Test
     testTimeout: 60_000,
     verbose: true,
-    // showSeed: true,
 };
 
 export default jestConfig;
