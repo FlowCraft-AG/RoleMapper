@@ -1,8 +1,8 @@
 {
   "name": "rolemapper",
-  "version": "0.1.0",
+  "version": "2024.11.28",
   "private": true,
-  "description": "Frontend für das dynamische Rollen- und Funktionsmanagement mit Camunda Workflow-Integration",
+  "description": "Backend für das dynamische Rollen- und Funktionsmanagement",
   "author": {
     "name": "FlowCraft AG",
     "email": "info@flowcraft-ag.de",

@@ -17,8 +17,8 @@ const { httpsOptions, port } = nodeConfig;
 const setupSwagger = (app: INestApplication) => {
   const config = new DocumentBuilder()
     .setTitle('RoleMapper')
-    .setDescription('Appserver zum verwalten von Bank Konten')
-    .setVersion('2024.10.1')
+    .setDescription(' "Backend für das dynamische Rollen- und Funktionsmanagement"')
+    .setVersion('2024.11.28')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
