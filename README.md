@@ -1,171 +1,173 @@
+# **RoleMapper** by FlowCraft AG
+
 ![Auto Assign](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/auto-assign.yml/badge.svg)
-
 ![Proof HTML](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/proof-html.yml/badge.svg)
-
-# RoleMapper by FlowCraft AG
 
 ## 📖 Inhaltsverzeichnis
 1. [Übersicht](#-übersicht)
 2. [Funktionen](#-funktionen)
 3. [Technologie-Stack](#-technologie-stack)
-4. [Installation](#-installation)
-5. [Konfiguration](#-konfiguration)
-6. [Nutzung](#-nutzung)
-7. [Team](#-team)
-8. [Contribution Guidelines](#-contribution-guidelines)
-9. [Lizenz](#-lizenz)
-10. [Kontakt](#-kontakt)
+4. [Projektstruktur](#-projektstruktur)
+5. [Installation](#-installation)
+6. [Konfiguration](#-konfiguration)
+7. [Nutzung](#-nutzung)
+8. [Entwicklung](#-entwicklung)
+9. [Contribution Guidelines](#-contribution-guidelines)
+10. [Lizenz](#-lizenz)
+11. [Kontakt](#-kontakt)
 
 ---
 
 ## 🔍 Übersicht
 
-**RoleMapper** ist ein fortschrittliches System von FlowCraft AG, das dynamisches Mapping von Rollen und Funktionen in Unternehmen ermöglicht. Es kombiniert eine intuitive Benutzeroberfläche mit einer leistungsstarken Backend-Architektur, um Berechtigungen und Prozesse flexibel und effizient zu verwalten. Dank Bootstrap ist das UI einfach und schnell gestaltbar.
+**RoleMapper** ist ein innovatives System von FlowCraft AG, das dynamisches Mapping von Rollen und Berechtigungen in Unternehmen ermöglicht. Mit einer modernen Benutzeroberfläche und einem skalierbaren Backend hilft es, Rechte effizient zu verwalten und Prozesse zu optimieren.
 
 ---
 
 ## ⚙️ Funktionen
 
-- **Dynamisches Rollen-Mapping:** Automatische Zuweisung von Rollen basierend auf Benutzerfunktionen und organisatorischen Prozessen.
-- **Zentrales Rechte-Management:** Verwaltung von Berechtigungen durch präzises Mapping auf Funktionen und Workflows.
-- **Workflow-Integration:** Unterstützung für Genehmigungs- und Automatisierungsprozesse durch Camunda BPM.
-- **Responsive Benutzeroberfläche:** Einfaches und funktionales UI mit Bootstrap-Komponenten.
+- **Dynamisches Rollen-Mapping:** Automatische Zuweisung basierend auf Benutzerfunktionen und Workflows.
+- **Zentrales Rechte-Management:** Effiziente Verwaltung von Berechtigungen.
+- **Workflow-Integration:** Unterstützt Genehmigungs- und Automatisierungsprozesse durch Camunda BPM.
+- **Responsives UI:** Moderne Benutzeroberfläche mit Next.js und Bootstrap.
 
 ---
 
 ## 🛠 Technologie-Stack
 
 ### Backend
-- **Datenbank:** MongoDB (Cloud-Instanz)
-- **Framework:** Spring Boot
-- **Programmiersprache:** Java 23
-- **Build-Tool:** Maven 3.9.9
-- **Authentifizierung und Autorisierung:** Keycloak
+- **Framework:** NestJS
+- **Programmiersprache:** TypeScript
+- **Datenbank:** MongoDB
+- **Authentifizierung:** Keycloak
 - **Workflow-Engine:** Camunda BPM
 
 ### Frontend
 - **Framework:** Next.js
 - **Programmiersprache:** TypeScript
 - **CSS-Framework:** Bootstrap 5
-- **Node.js-Version:** v23.3.0
+
+---
+
+## 📂 Projektstruktur
+
+```
+rolemapper/
+├── backend/           # NestJS Backend
+│   ├── src/           # Quellcode des Backends
+│   ├── test/          # Tests für das Backend
+│   └── package.json   # Abhängigkeiten des Backends
+├── frontend/          # Next.js Frontend
+│   ├── pages/         # Next.js-Seiten
+│   ├── components/    # Wiederverwendbare UI-Komponenten
+│   └── package.json   # Abhängigkeiten des Frontends
+├── shared/            # Geteilter Code (z. B. Typen oder Utils)
+└── docker-compose.yml # Docker-Setup für lokale Entwicklung
+```
 
 ---
 
 ## 📥 Installation
 
 ### Voraussetzungen
-- **Java:** Version 23
-- **Maven:** Version 3.9.9
-- **Node.js:** Version v23.3.0
-- **Datenbank:** MongoDB (Cloud-Instanz, z. B. MongoDB Atlas)
-- **Authentication-Server:** Keycloak
-- **Workflow-Engine:** Camunda BPM
+- **Node.js:** Version 18 oder höher
+- **Docker:** Für die lokale Entwicklung mit `docker-compose`
+- **MongoDB:** Zugang zu einer MongoDB-Instanz (z. B. MongoDB Atlas)
 
 ### Installationsanleitung
 
-#### Backend
 1. **Repository klonen:**
    ```bash
    git clone https://github.com/flowcraft-ag/rolemapper.git
+   cd rolemapper
    ```
-2. **In das Backend-Verzeichnis wechseln:**
-   ```bash
-   cd rolemapper/backend
-   ```
-3. **Abhängigkeiten installieren und Projekt bauen:**
-   ```bash
-   mvn clean install
-   ```
-4. **Konfiguriere MongoDB-Cloud-Verbindung:**
-   - Erstelle eine `application.properties`-Datei im Verzeichnis `src/main/resources` (falls nicht vorhanden).
-   - Füge folgende Zeilen hinzu:
-     ```properties
-     spring.data.mongodb.uri=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
+
+2. **Abhängigkeiten installieren:**
+   - **Backend:**
+     ```bash
+     cd backend
+     npm install
      ```
-   - Ersetze `<username>`, `<password>`, `<cluster-url>` und `<database>` durch deine MongoDB-Cloud-Daten.
+   - **Frontend:**
+     ```bash
+     cd ../frontend
+     npm install
+     ```
 
-5. **Anwendung starten:**
-   ```bash
-   mvn spring-boot:run
+3. **Umgebungsvariablen konfigurieren:**
+   Erstelle eine `.env`-Datei für Backend und Frontend. Beispiel für das Backend:
+   ```
+   MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
    ```
 
-#### Frontend
-1. **In das Frontend-Verzeichnis wechseln:**
-   ```bash
-   cd ../frontend
-   ```
-2. **Bootstrap installieren:**
-   ```bash
-   npm install bootstrap
-   ```
-3. **Bootstrap einbinden:**
-   Füge die folgende Zeile in `_app.tsx` oder `_app.jsx` hinzu:
-   ```javascript
-   import 'bootstrap/dist/css/bootstrap.min.css';
-   ```
-4. **Abhängigkeiten installieren:**
-   ```bash
-   npm install
-   ```
-5. **Anwendung starten:**
-   ```bash
-   npm run dev
-   ```
+4. **Anwendung starten:**
+   - Mit Docker:
+     ```bash
+     docker-compose up
+     ```
+   - Ohne Docker:
+     - **Backend starten:**
+       ```bash
+       cd backend
+       npm run start:dev
+       ```
+     - **Frontend starten:**
+       ```bash
+       cd ../frontend
+       npm run dev
+       ```
 
 ---
 
-## 🔧 Konfiguration
+## ⚙️ Konfiguration
 
-1. **Keycloak:**
-   - Richte Benutzer, Rollen und Clients entsprechend den Anforderungen ein.
-   - Definiere Berechtigungen und Zugriffsregeln im Keycloak-Admin-Panel.
+1. **Backend:**
+   - Bearbeite die Datei `.env` im `backend`-Verzeichnis, um die MongoDB-URI und andere Variablen festzulegen.
 
-2. **Camunda:**
-   - Erstelle Workflows im Camunda Modeler und importiere sie in die Engine.
-   - Konfiguriere Prozessdefinitionen und Genehmigungsworkflows.
+2. **Frontend:**
+   - Bearbeite die Datei `.env.local` im `frontend`-Verzeichnis, um die API-URL des Backends anzugeben:
+     ```
+     NEXT_PUBLIC_API_URL=http://localhost:4000/api
+     ```
 
 ---
 
 ## 🚀 Nutzung
 
-1. **Zugriff auf das Frontend:**
-   - Öffne `http://localhost:3000` in deinem Browser.
-   - Melde dich mit einem in Keycloak definierten Benutzerkonto an.
-
-2. **Verwaltung:**
-   - Über die Benutzeroberfläche kannst du Rollen, Funktionen und Rechte dynamisch verwalten.
+1. Öffne das Frontend unter `http://localhost:3000`.
+2. Melde dich mit einem in Keycloak definierten Benutzer an.
+3. Beginne mit der Verwaltung von Rollen und Berechtigungen.
 
 ---
 
-## 👥 Team
+## 🛠 Entwicklung
 
-RoleMapper wurde mit Leidenschaft von unserem Team bei FlowCraft AG entwickelt:
-
-- 🎯 **Projektmanager:** [Name des Projektmanagers]
-- 💻 **Backend-Entwickler:** [Name des Backend-Entwicklers]
-- 🌐 **Frontend-Entwickler:** [Name des Frontend-Entwicklers]
-- 🎨 **UX/UI-Designer:** [Name des Designers]
-- 🚀 **DevOps-Ingenieur:** [Name des DevOps-Ingenieurs]
-- ✅ **Qualitätssicherung:** [Name des QA-Verantwortlichen]
-
-Möchtest du Teil unseres Teams werden? Besuche unsere [Karriereseite](https://www.flowcraft-ag.de/jobs).
+- **Backend testen:**
+  ```bash
+  cd backend
+  npm test
+  ```
+- **Frontend testen:**
+  ```bash
+  cd frontend
+  npm test
+  ```
+- **Geteilter Code:** Teile Typen und Hilfsfunktionen im Ordner `shared/`.
 
 ---
 
 ## 🤝 Contribution Guidelines
 
-Wir freuen uns über Beiträge zur Weiterentwicklung von RoleMapper. Bitte halte dich an die folgenden Richtlinien:
-
 1. **Forke das Repository.**
-2. **Erstelle einen neuen Branch für deine Änderungen.**
-3. **Führe deine Änderungen aus und schreibe verständliche Commit-Messages.**
-4. **Sende einen Pull-Request mit einer klaren Beschreibung deiner Änderungen.**
+2. **Erstelle einen neuen Branch.**
+3. **Führe Änderungen durch und committe diese.**
+4. **Sende einen Pull Request.**
 
 ---
 
 ## 📜 Lizenz
 
-**RoleMapper** steht unter der [MIT-Lizenz](LICENSE). Sie erlaubt die freie Nutzung, Veränderung und Verbreitung des Codes, solange die Lizenzbedingungen eingehalten werden.
+**RoleMapper** steht unter der [MIT-Lizenz](LICENSE).
 
 ---
 
@@ -174,5 +176,3 @@ Wir freuen uns über Beiträge zur Weiterentwicklung von RoleMapper. Bitte halte
 - **FlowCraft AG**
 - [Website](https://www.flowcraft-ag.de)
 - [Support](mailto:support@flowcraft-ag.de)
-
----

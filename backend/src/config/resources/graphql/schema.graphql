@@ -1,0 +1,85 @@
+type Query {
+  users(filters: UserFilterInput): [User!]!
+  userById(id: ID!): User
+  userByUserId(userId: String!): User
+}
+
+type Mutation {
+  createUser(userData: CreateUserInput!): User!
+  updateUser(id: ID!, updateData: UpdateUserInput!): User
+  deleteUser(id: ID!): User
+
+   # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
+  token(username: String!, password: String!): TokenResult
+  refresh(refresh_token: String!): TokenResult
+}
+
+type User {
+  id: ID!
+  userId: String!
+  userType: String!
+  userRole: String!
+  orgUnit: String
+  active: Boolean!
+  student: Student
+  employee: Employee
+  validFrom: String
+  validUntil: String
+}
+
+input UserFilterInput {
+  userId: String
+  userType: UserType
+  userRole: String
+  orgUnit: String
+  active: Boolean
+}
+
+enum UserType {
+  employee
+  student
+}
+
+type Student {
+  id: ID!
+  courseOfStudy: String!
+  courseOfStudyUnique: String!
+  courseOfStudyShort: String!
+  courseOfStudyName: String!
+  level: String!
+  examRegulation: String!
+}
+
+type Employee {
+  costCenter: String!
+  department: String!
+}
+
+input CreateUserInput {
+  userId: String!
+  userType: UserType!
+  userRole: String!
+  orgUnit: String
+  active: Boolean = false
+  validFrom: String
+  validUntil: String
+}
+
+input UpdateUserInput {
+  userId: String
+  userType: UserType
+  userRole: String
+  orgUnit: String
+  active: Boolean
+  validFrom: String
+  validUntil: String
+}
+
+type TokenResult {
+  access_token: String!
+  expires_in: Int!
+  refresh_token: String!
+  refresh_expires_in: Int!
+  id_token: String!
+  scope: String!
+}
