@@ -1,13 +1,14 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ReadService } from '../service/read.service.js';
 import { User } from '../model/entity/user.entity.js';
+import { FilterQuery } from 'mongoose';
 
 @Controller('users')
 export class ReadController {
   constructor(private readonly userService: ReadService) { }
 
   @Get()
-  async findAll(@Query() filters: Partial<User>): Promise<User[]> {
+  async findAll(@Query() filters: FilterQuery<User>): Promise<User[]> {
     return this.userService.findAll(filters);
   }
 
