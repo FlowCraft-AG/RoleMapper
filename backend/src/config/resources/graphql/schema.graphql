@@ -2,6 +2,8 @@ type Query {
   users(filters: UserFilterInput): [User!]!
   userById(id: ID!): User
   userByUserId(userId: String!): User
+  processById(id: ID!): Process
+  executeQuery(processId: ID!, queryKey: String!, userId: String!): JSON
 }
 
 type Mutation {
@@ -54,6 +56,15 @@ type Employee {
   costCenter: String!
   department: String!
 }
+
+type Process {
+  _id: ID!
+  name: String!
+  pid: String!
+  queries: JSON
+}
+
+scalar JSON
 
 input CreateUserInput {
   userId: String!

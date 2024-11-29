@@ -1,5 +1,6 @@
-import { Employee, EmployeeSchema } from './employee.entity.js';
-import { Student, StudentSchema } from './student.entity.js';
+import { Function, FunctionSchema } from './function.entity.js';
+import { OrgUnit, OrgUnitSchema } from './org-unit.entity.js';
+import { Process, ProcessSchema } from './process.entity.js';
 import { User, UserSchema } from './user.entity.js';
 
 /**
@@ -8,6 +9,7 @@ import { User, UserSchema } from './user.entity.js';
  */
 export const entities = [
   { name: User.name, schema: UserSchema },
-  { name: Student.name, schema: StudentSchema },
-  { name: Employee.name, schema: EmployeeSchema },
+  { name: Function.name, schema: FunctionSchema },
+  { name: OrgUnit.name, schema: OrgUnitSchema },
+  { name: Process.name, schema: ProcessSchema }
 ];

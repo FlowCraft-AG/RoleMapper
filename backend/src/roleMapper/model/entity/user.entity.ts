@@ -1,43 +1,70 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Student, StudentSchema } from './student.entity.js';
-import { Employee, EmployeeSchema } from './employee.entity.js';
-import { Transform } from 'class-transformer';
+import * as mongoose from 'mongoose';
 
-export type UserDocument = User & Document;
+// Subschema für Student
+class Student {
+  @Prop({ required: true })
+  courseOfStudy!: string;
 
-@Schema({ collection: 'HKA_Users', timestamps: true })
-export class User {
-  @Transform(({ value }) => value?.toString())
-  @Prop({ type: String })
-  _id!: string;
+  @Prop({ required: true })
+  courseOfStudyUnique!: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
+  courseOfStudyShort!: string;
+
+  @Prop({ required: true })
+  courseOfStudyName!: string;
+
+  @Prop({ required: true })
+  level!: string;
+
+  @Prop({ required: true })
+  examRegulation!: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  _id!: mongoose.Types.ObjectId;
+}
+
+// Subschema für Employee
+class Employee {
+  @Prop({ required: true })
+  costCenter!: string;
+
+  @Prop({ required: true })
+  department!: string;
+}
+
+// Main User Schema
+@Schema({ timestamps: true, collection: 'HKA_Users' })
+export class User extends Document {
+  @Prop({ required: true })
   userId!: string;
 
-  @Prop({ required: true})
-  userType!: String;
+  @Prop({ required: true })
+  userType!: string;
 
   @Prop({ required: true })
   userRole!: string;
 
-  @Prop({ index: true })
+  @Prop({ required: true })
   orgUnit!: string;
 
-  @Prop({ index: true, default: false })
+  @Prop({ required: true, default: true })
   active!: boolean;
 
-  @Prop({ type: StudentSchema, required: false })
+  @Prop({ type: Date, required: true })
+  validFrom!: Date;
+
+  @Prop({ type: Date, required: true })
+  validUntil!: Date;
+
+  @Prop({ type: Student, required: false })
   student?: Student;
 
-  @Prop({ type: EmployeeSchema, required: false })
+  @Prop({ type: Employee, required: false })
   employee?: Employee;
-
-  @Prop()
-  validFrom?: Date;
-
-  @Prop()
-  validUntil?: Date;
 }
 
+export type UserDocument = User & Document;
 export const UserSchema = SchemaFactory.createForClass(User);
