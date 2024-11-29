@@ -1,10 +1,10 @@
 import { UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
-// import { BadUserInputError } from '../../bankkonto/resolver/errors.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { KeycloakService } from './keycloak.service.js';
+import { BadUserInputError } from '../../roleMapper/resolver/errors.js';
 
 /** Typdefinition für Token-Daten bei GraphQL */
 export type TokenInput = {
@@ -41,9 +41,9 @@ export class TokenResolver {
             password,
         });
         if (result === undefined) {
-            // throw new BadUserInputError(
-            //     'Falscher Benutzername oder falsches Passwort',
-            // );
+            throw new BadUserInputError(
+                'Falscher Benutzername oder falsches Passwort',
+            );
         }
 
         this.#logger.debug('token: result=%o', result);
@@ -59,7 +59,7 @@ export class TokenResolver {
 
         const result = await this.#keycloakService.refresh(refresh_token);
         if (result === undefined) {
-            // throw new BadUserInputError('Falscher Token');
+            throw new BadUserInputError('Falscher Token');
         }
 
         this.#logger.debug('refresh: result=%o', result);

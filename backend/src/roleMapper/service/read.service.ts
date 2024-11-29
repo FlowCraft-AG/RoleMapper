@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
 import { User, UserDocument } from '../model/entity/user.entity.js';
+import { getLogger } from '../../logger/logger.js';
 
 @Injectable()
 export class ReadService {
+  readonly #logger = getLogger(ReadService.name);
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
   /**
@@ -13,7 +15,11 @@ export class ReadService {
    * @returns Eine Liste von Benutzern.
    */
   async findAll(filters: FilterQuery<User> = {}): Promise<User[]> {
-    return this.userModel.find(filters).exec();
+    this.#logger.debug('ReadService: alle');
+    const users = await this.userModel.find(filters).exec();
+    this.#logger.debug('ReadService: users=%o', users.length);
+    return users;
+
   }
 
   /**

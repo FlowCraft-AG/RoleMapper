@@ -1,6 +1,6 @@
 export enum UserType {
-  EMPLOYEE = 'employee',
-  STUDENT = 'student',
+  employee = 'employee',
+  student = 'student',
 }
 
 export class UserTypeHelper {

@@ -17,7 +17,7 @@ type Mutation {
 type User {
   id: ID!
   userId: String!
-  userType: UserType!
+  userType: String!
   userRole: String!
   orgUnit: String
   active: Boolean!
@@ -36,8 +36,8 @@ input UserFilterInput {
 }
 
 enum UserType {
-  EMPLOYEE
-  STUDENT
+  employee
+  student
 }
 
 type Student {
