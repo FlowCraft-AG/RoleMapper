@@ -7,7 +7,7 @@ export class Process extends Document {
   name!: string;
 
   @Prop({ required: true })
-  pid!: string;
+  processId!: string;
 
   @Prop({ type: Object, required: true })
   roles!: Role[];

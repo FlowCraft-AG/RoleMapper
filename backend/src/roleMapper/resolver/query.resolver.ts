@@ -20,7 +20,7 @@ export class QueryResolver {
     this.#service = service;
   }
 
-  @Query('users')
+  @Query('getUsers')
   @Public()
   async users(@Args('filters', { nullable: true }) filters?: FilterQuery<User>): Promise<User[]> {
     this.#logger.debug('users: called');
@@ -28,27 +28,27 @@ export class QueryResolver {
     return this.#service.findAll(filters);
   }
 
-  @Query('userById')
+  @Query('getUserById')
   @Public()
   async userById(@Args('id') id: string): Promise<User | null> {
     return this.#service.findById(id);
   }
 
-  @Query('userByUserId')
+  @Query('getUserByUserId')
   @Public()
   async userByUserId(@Args('userId') userId: string): Promise<User | null> {
     return this.#service.findByUserId(userId);
   }
 
-  @Query(() => Process, { nullable: true })
+  @Query('getProcessById')
   @Public()
   async processById(@Args('id') id: string): Promise<Process | null> {
     return this.#service.findProcessByPid(id);
   }
 
-  @Query(() => Object, { nullable: true })
+  @Query('getProcessRoles')
   @Public()
-  async executeQuery(
+  async getRole(
     @Args('processId') processId: string,
     @Args('userId') userId: string,
   ): Promise<any> {

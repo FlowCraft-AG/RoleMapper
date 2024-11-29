@@ -1,5 +1,5 @@
 import { Function, FunctionSchema } from './function.entity.js';
-import { OrgUnit, OrgUnitSchema } from './org-unit.entity.js';
+import { OrgUnit, OrgUnitSchema } from './orgUnit.entity.js';
 import { Process, ProcessSchema } from './process.entity.js';
 import { Role, RoleSchema } from './roles.entity.js';
 import { User, UserSchema } from './user.entity.js';
