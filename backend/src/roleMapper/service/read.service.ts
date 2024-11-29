@@ -5,6 +5,7 @@ import { User, UserDocument } from '../model/entity/user.entity.js';
 import { getLogger } from '../../logger/logger.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { FunctionDocument } from '../model/entity/function.entity.js';
+import { RoleDocument, Role } from '../model/entity/roles.entity.js';
 
 @Injectable()
 export class ReadService {
@@ -12,15 +13,18 @@ export class ReadService {
   readonly #userModel: Model<UserDocument>;
   readonly #processModel: Model<ProcessDocument>;
   readonly #functionModel: Model<FunctionDocument>;
+  readonly #roleModel: Model<RoleDocument>;
 
   constructor(
     @InjectModel(User.name) userModel: Model<UserDocument>,
     @InjectModel(Process.name) processModel: Model<ProcessDocument>,
-    @InjectModel(Function.name) functionModel: Model<FunctionDocument>
+    @InjectModel(Function.name) functionModel: Model<FunctionDocument>,
+    @InjectModel(Role.name) roleModel: Model<RoleDocument>
   ) {
     this.#processModel = processModel;
     this.#userModel = userModel;
     this.#functionModel = functionModel;
+    this.#roleModel = roleModel;
    }
 
   /**
@@ -67,78 +71,165 @@ export class ReadService {
  * @returns Das Ergebnis der Aggregation.
  * @throws Fehler, wenn der Prozess oder die Query nicht gefunden wird oder die Aggregation fehlschlägt.
  */
-  async führeAbfrageAus(prozessId: string, abfrage: string, userId: string): Promise<any> {
-    this.#logger.debug('führeAbfrageAus: prozessId=%s, abfrage=%s, userId=%s', prozessId, abfrage, userId);
-
-    const process = await this.findProcessByPid(prozessId);
-    if (!process || !process.queries?.[abfrage]) {
-      throw new Error('Query not found');
-    }
-
-    const query = process.queries[abfrage];
-    if (!query) {
-      this.#logger.error(`Abfrage ${abfrage} im Prozess ${prozessId} nicht gefunden.`);
-      throw new Error('Abfrage nicht gefunden');
-    }
-
-    this.#logger.debug('führeAbfrageAus: query:%o', query)
-
-    try {
-      const result = await this.#functionModel.aggregate(query)
-        .option({ let: { userId } })
-        .exec();
-
-      this.#logger.debug('führeAbfrageAus: result=%o', result);
-      return result;
-    } catch (error) {
-      if (error instanceof Error) {
-        this.#logger.error(`Fehler bei der Ausführung der Abfrage ${abfrage} im Prozess ${prozessId}: ${error.message}`);
-      } else {
-        this.#logger.error(`Unbekannter Fehler bei der Ausführung der Abfrage ${abfrage} im Prozess ${prozessId}: ${JSON.stringify(error)}`);
-      }
-      throw error;
-    }
-  }
 
 
-    async führeAlleAbfragenAus(prozessId: string, benutzerId: string): Promise < Record < string, any >> {
-      this.#logger.debug('führeAlleAbfragenAus: prozessId=%s, benutzerId=%s', prozessId, benutzerId);
 
-      // Suche den Prozess anhand seiner ID
-      const prozess = await this.findProcessByPid(prozessId);
-      if(!prozess || !prozess.queries) {
+  //   async führeAlleAbfragenAus(prozessId: string, benutzerId: string): Promise < Record < string, any >> {
+  //     this.#logger.debug('führeAlleAbfragenAus: prozessId=%s, benutzerId=%s', prozessId, benutzerId);
+
+  //     // Suche den Prozess anhand seiner ID
+  //     const prozess = await this.findProcessByPid(prozessId);
+  //     this.#logger.debug('führeAlleAbfragenAus: prozess=%o', prozess);
+  //     if(!prozess || !prozess.roles) {
+  //     throw new Error('Keine Abfragen für diesen Prozess gefunden');
+  //   }
+
+  //   const ergebnisse: Record<string, any> = {};
+
+  //   this.#logger.debug('führeAlleAbfragenAus: roles=%o', Object.keys(prozess.roles));
+
+  //   try {
+  //     // Iteriere über alle Abfragen und führe sie aus
+  //     for (const [abfrageSchlüssel, roleId] of Object.entries(prozess.roles)) {
+  //       this.#logger.debug('Verarbeite Abfrage: %s', abfrageSchlüssel);
+
+  //       if (!roleId) {
+  //         this.#logger.warn('Abfrage %s hat keine gültige roleId. Überspringe.', abfrageSchlüssel);
+  //         continue;
+  //       }
+
+  //       const role = await this.#roleModel.findOne({ roleId }).exec();
+  //       this.#logger.debug('Verarbeite Abfrage: role=%s', role);
+  //       if (!role || !role.query) {
+  //         this.#logger.warn('Keine gültige Rolle oder Abfrage für roleId %s gefunden. Überspringe.', roleId);
+  //         continue;
+  //       }
+
+  //       const abfrage = role.query;
+  //       if (!Array.isArray(abfrage) || abfrage.length === 0) {
+  //         this.#logger.warn('Abfrage für roleId %s ist leer oder ungültig. Überspringe.', roleId);
+  //         continue;
+  //       }
+  //       this.#logger.debug('führeAlleAbfragenAus: abfrage=%o', abfrage)
+
+
+
+  //       try {
+  //         const ergebnis = await this.#functionModel.aggregate(abfrage)
+  //           .option({ let: { userId: benutzerId } })
+  //           .exec();
+
+  //         this.#logger.debug('Ergebnis für Abfrage %s: %o', abfrageSchlüssel, ergebnis);
+
+  //         // Speichere das Ergebnis unter dem jeweiligen Abfrageschlüssel
+  //         ergebnisse[abfrageSchlüssel] = ergebnis;
+  //       } catch (fehler) {
+  //         this.#logger.error('Fehler bei Abfrage %s: %o', abfrageSchlüssel, fehler);
+  //       }
+  //     }
+
+  //     return ergebnisse;
+  //   } catch (fehler) {
+  //     if (fehler instanceof Error) {
+  //       this.#logger.error(`Fehler bei der Ausführung der Abfragen im Prozess ${prozessId}: ${fehler.message}`);
+  //     } else {
+  //       this.#logger.error(`Unbekannter Fehler bei der Ausführung der Abfragen im Prozess ${prozessId}: ${JSON.stringify(fehler)}`);
+  //     }
+  //     throw fehler;
+  //   }
+  // }
+
+  async führeAlleAbfragenAus(prozessId: string, userId: string): Promise<Record<string, any>> {
+    this.#logger.debug('führeAlleAbfragenAus: prozessId=%s, benutzerId=%s', prozessId, userId);
+
+    // Prozess abrufen
+    const prozess = await this.findProcessByPid(prozessId);
+    this.#logger.debug('führeAlleAbfragenAus: prozess=%o', prozess);
+    if (!prozess || !prozess.roles) {
       throw new Error('Keine Abfragen für diesen Prozess gefunden');
     }
 
     const ergebnisse: Record<string, any> = {};
 
-    this.#logger.debug('führeAlleAbfragenAus: queries=%o', Object.keys(prozess.queries));
+    // Extrahiere die Rollen-IDs
+    const roleIds = prozess.roles.flatMap(role => Object.values(role)); // ["AS", "VG"]
+    this.#logger.debug('führeAlleAbfragenAus: roleIds=%o', roleIds);
+
+    // Rollen aus der Datenbank abrufen
+    const roles = await this.#roleModel.find({ roleId: { $in: roleIds } }).exec();
+    this.#logger.debug('führeAlleAbfragenAus: roles=%o', roles);
+
+    if (roles.length === 0) {
+      this.#logger.warn('Keine Rollen in der Datenbank gefunden für roleIds: %o', roleIds);
+    }
+
+    // Map erstellen, um Rollen effizient nach roleId zu finden
+    const rolesMap = new Map(roles.map(role => [role.roleId, role]));
+    this.#logger.debug('führeAlleAbfragenAus: rolesMap=%o', Array.from(rolesMap.entries()));
+
+    const start = Date.now();
 
     try {
-      // Iteriere über alle Abfragen und führe sie aus
-      for (const [abfrageSchlüssel, abfrage] of Object.entries(prozess.queries)) {
-        this.#logger.debug('Verarbeite Abfrage: %s', abfrageSchlüssel);
+      // Iteriere über die Rollen des Prozesses
+      for (const roleObj of prozess.roles) {
+        if (!roleObj || typeof roleObj !== 'object') {
+          this.#logger.warn('Ungültiges Rollenobjekt: %o', roleObj);
+          continue;
+        }
 
-        const ergebnis = await this.#functionModel.aggregate(abfrage)
-          .option({ let: { userId: benutzerId } })
-          .exec();
+        const entry = Object.entries(roleObj)[0];
+        if (!entry) {
+          this.#logger.warn('Keine Einträge in Rollenobjekt: %o', roleObj);
+          continue;
+        }
 
-        this.#logger.debug('Ergebnis für Abfrage %s: %o', abfrageSchlüssel, ergebnis);
+        const [roleKey, roleId] = entry;
+        this.#logger.debug('Verarbeite Abfrage: %s mit rollenId: %s', roleKey, roleId);
 
-        // Speichere das Ergebnis unter dem jeweiligen Abfrageschlüssel
-        ergebnisse[abfrageSchlüssel] = ergebnis;
+        const role = rolesMap.get(roleId);
+        if (!role || !role.query) {
+          this.#logger.warn('Überspringe Abfrage %s: Keine gültige Rolle gefunden (%s).', roleKey, roleId);
+          continue;
+        }
+
+        const abfrage = role.query;
+        if (!Array.isArray(abfrage) || abfrage.length === 0) {
+          this.#logger.warn('Überspringe Abfrage %s: Ungültige oder leere Abfrage.', roleKey);
+          continue;
+        }
+
+        this.#logger.debug('führeAlleAbfragenAus: abfrage=%o', abfrage);
+
+        try {
+          // Zeitmessung für die Aggregation
+          const aggregationStart = Date.now();
+          const ergebnis = await this.#functionModel.aggregate(abfrage)
+            .option({ let: { userId } })
+            .exec();
+          const aggregationTime = Date.now() - aggregationStart;
+
+          ergebnisse[roleKey] = ergebnis;
+          this.#logger.debug('Ergebnis für Abfrage %s: %o (Dauer: %d ms)', roleKey, ergebnis, aggregationTime);
+        } catch (fehler) {
+          this.#logger.error('Fehler bei Abfrage %s: %o', roleKey, fehler);
+        }
       }
 
       return ergebnisse;
     } catch (fehler) {
       if (fehler instanceof Error) {
-        this.#logger.error(`Fehler bei der Ausführung der Abfragen im Prozess ${prozessId}: ${fehler.message}`);
+        this.#logger.error(`Fehler bei der Verarbeitung: ${fehler.message}`);
       } else {
-        this.#logger.error(`Unbekannter Fehler bei der Ausführung der Abfragen im Prozess ${prozessId}: ${JSON.stringify(fehler)}`);
+        this.#logger.error(`Unbekannter Fehler: ${JSON.stringify(fehler)}`);
       }
       throw fehler;
+    } finally {
+      this.#logger.info(`Verarbeitung abgeschlossen in ${Date.now() - start}ms`);
     }
   }
+
+
+
 
 
 }

@@ -50,10 +50,9 @@ export class QueryResolver {
   @Public()
   async executeQuery(
     @Args('processId') processId: string,
-    @Args('queryKey') queryKey: string,
     @Args('userId') userId: string,
   ): Promise<any> {
-    this.#logger.debug(`executeQuery: processId=${processId}, queryKey=${queryKey}`);
+    this.#logger.debug(`executeQuery: processId=${processId}, userId=${userId}`);
     return this.#service.führeAlleAbfragenAus(processId, userId);
   }
 }

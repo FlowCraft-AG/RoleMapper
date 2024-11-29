@@ -10,7 +10,15 @@ export class Process extends Document {
   pid!: string;
 
   @Prop({ type: Object, required: true })
-  queries!: Record<string, any>;
+  roles!: Role[];
+}
+
+class Role {
+  @Prop({ required: true })
+  roleKey!: string;
+
+  @Prop({ required: true })
+  roleId!: string;
 }
 
 export type ProcessDocument = Process & Document;

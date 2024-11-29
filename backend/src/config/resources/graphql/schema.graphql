@@ -3,7 +3,7 @@ type Query {
   userById(id: ID!): User
   userByUserId(userId: String!): User
   processById(id: ID!): Process
-  executeQuery(processId: ID!, queryKey: String!, userId: String!): JSON
+  executeQuery(processId: ID!, userId: String!): JSON
 }
 
 type Mutation {
@@ -62,6 +62,13 @@ type Process {
   name: String!
   pid: String!
   queries: JSON
+}
+
+type Role {
+  _id: ID!
+  name: String!
+  roleId: String!
+  query: JSON
 }
 
 scalar JSON
