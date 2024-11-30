@@ -7,25 +7,40 @@ import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { FunctionDocument } from '../model/entity/function.entity.js';
 import { RoleDocument, Role } from '../model/entity/roles.entity.js';
 import { RolePayload, RoleResult } from '../model/interface/rolePayload.interface.js';
+import { OrgUnit, OrgUnitDocument } from '../model/entity/orgUnit.entity.js';
 
 @Injectable()
 export class ReadService {
   readonly #logger = getLogger(ReadService.name);
+
   readonly #userModel: Model<UserDocument>;
   readonly #processModel: Model<ProcessDocument>;
   readonly #functionModel: Model<FunctionDocument>;
+  readonly #orgUnitModel: Model<OrgUnitDocument>;
   readonly #roleModel: Model<RoleDocument>;
+
+  readonly #entityMap: Record<string, Model<any>>;
 
   constructor(
     @InjectModel(User.name) userModel: Model<UserDocument>,
     @InjectModel(Process.name) processModel: Model<ProcessDocument>,
     @InjectModel(Function.name) functionModel: Model<FunctionDocument>,
+    @InjectModel(OrgUnit.name) orgUnitModel: Model<OrgUnitDocument>,
     @InjectModel(Role.name) roleModel: Model<RoleDocument>
   ) {
     this.#processModel = processModel;
     this.#userModel = userModel;
     this.#functionModel = functionModel;
+    this.#orgUnitModel = orgUnitModel
     this.#roleModel = roleModel;
+
+    this.#entityMap = {
+      USERS: this.#userModel,
+      FUNCTIONS: this.#functionModel,
+      PROCESSES: this.#processModel,
+      ROLES: this.#roleModel,
+      ORG_UNITS: this.#orgUnitModel,
+    };
    }
 
   /**
@@ -157,9 +172,66 @@ export class ReadService {
     }
   }
 
+  /**
+     * Dynamische Filterung für eine bestimmte Entität
+     * @param entity - Ziel-Entität (z. B. USERS, FUNCTIONS)
+     * @param filters - Filterbedingungen
+     * @returns - Gefilterte Daten
+     */
+  async filterData(entity: string, filters?: FilterInput): Promise<any[]> {
+    const model = this.#entityMap[entity];
+    if (!model) {
+      throw new Error(`Unknown entity: ${entity}`);
+    }
+
+    const filterQuery = this.buildFilterQuery(filters);
+    return model.find(filterQuery).exec();
+  }
+
+  /**
+   * Rekursive Erstellung der MongoDB-Filter-Query
+   */
+  private buildFilterQuery(filters?: FilterInput): FilterQuery<any> {
+    if (!filters) return {};
+
+    const query: FilterQuery<any> = {};
+    if (filters.and) {
+      query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
+    }
+    if (filters.or) {
+      query.$or = filters.or.map((subFilter) => this.buildFilterQuery(subFilter));
+    }
+    if (filters.not) {
+      query.$not = this.buildFilterQuery(filters.not);
+    }
+    if (filters.field && filters.operator && filters.value !== undefined) {
+      query[filters.field] = { [filters.operator]: filters.value };
+    }
+
+    return query;
+  }
+
+}
+
+export interface AggregationRequest {
+  rootEntity: string; // Haupt-Entität
+  lookups?: LookupDefinition[]; // Verknüpfungen
+  filters?: FilterInput; // Dynamische Filter
+}
+
+export interface LookupDefinition {
+  from: string; // Ziel-Entität
+  localField: string; // Feld in der Haupt-Entität
+  foreignField: string; // Feld in der Ziel-Entität
+  as: string; // Alias für verknüpfte Daten
+}
 
 
-
-
-
+export interface FilterInput {
+  and?: FilterInput[];  // Logischer UND-Operator
+  or?: FilterInput[];   // Logischer ODER-Operator
+  not?: FilterInput;    // Logischer NOT-Operator
+  field?: string;        // Feldname, auf das der Filter angewendet wird
+  operator?: string;     // Vergleichsoperator (z.B. "$eq", "$in", "$gt")
+  value?: any;           // Wert, der mit dem Feld verglichen wird
 }

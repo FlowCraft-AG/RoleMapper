@@ -21,5 +21,5 @@ class Role {
   roleId!: string;
 }
 
-export type ProcessDocument = Process & Document;
+export type ProcessDocument = Process & Document; 
 export const ProcessSchema = SchemaFactory.createForClass(Process);

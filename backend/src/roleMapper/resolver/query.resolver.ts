@@ -1,5 +1,5 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { ReadService } from '../service/read.service.js';
+import { FilterInput, ReadService } from '../service/read.service.js';
 import { User } from '../model/entity/user.entity.js';
 import { UseFilters, UseInterceptors } from '@nestjs/common';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
@@ -54,5 +54,27 @@ export class QueryResolver {
   ): Promise<any> {
     this.#logger.debug(`executeQuery: processId=${processId}, userId=${userId}`);
     return this.#service.führeAlleAbfragenAus(processId, userId);
+  }
+
+  /**
+   * Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern
+   * @param entity - Die Ziel-Entität (z. B. USERS, FUNCTIONS)
+   * @param filters - Dynamische Filterkriterien
+   */
+  @Query(() => [Object])
+  @Public()
+  async getData(
+    @Args('entity') entity: string, // Enum EntityType
+    @Args('filters', { nullable: true }) filters?: FilterInput,
+  ): Promise<any[]> {
+    this.logDebug(entity, filters); // Debugging-Log für Eingaben
+    return this.#service.filterData(entity, filters);
+  }
+
+  private logDebug(entity: string, filters?: FilterInput): void {
+    console.debug(`[DataResolver] getData called with entity: ${entity}`);
+    if (filters) {
+      console.debug(`[DataResolver] Filters:`, JSON.stringify(filters, null, 2));
+    }
   }
 }

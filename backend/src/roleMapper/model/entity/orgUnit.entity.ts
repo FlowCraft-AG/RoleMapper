@@ -13,4 +13,5 @@ export class OrgUnit extends Document {
   supervisor?: String;
 }
 
+export type OrgUnitDocument = OrgUnit & Document;
 export const OrgUnitSchema = SchemaFactory.createForClass(OrgUnit);

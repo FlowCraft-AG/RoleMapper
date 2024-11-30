@@ -25,6 +25,9 @@ type Query {
 
   # Query für die Aggregation
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
+
+  getData(entity: EntityType!, filters: FilterInput): [JSON!]!
+  getDataDynamic(request: AggregationRequest!): [JSON!]!
 }
 
 type Function {
@@ -74,6 +77,7 @@ type User {
   employee: Employee
   validFrom: String!
   validUntil: String!
+  functionName: String,
 }
 
 type Student {
@@ -140,6 +144,15 @@ type Mutation {
   # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
   token(username: String!, password: String!): TokenResult
   refresh(refresh_token: String!): TokenResult
+
+  # Zentrale Funktion zum Erstellen von Daten
+  createData(request: CrudRequest!): JSON!
+
+  # Zentrale Funktion zum Aktualisieren von Daten
+  updateData(request: CrudRequest!): JSON!
+
+  # Zentrale Funktion zum Löschen von Daten
+  deleteData(request: DeleteRequest!): Boolean!
 }
 
 # Benutzerbezogene Inputs
@@ -263,4 +276,50 @@ enum UserRole {
 }
 
 
+# Allgemeine Eingabe für Create und Update
+input CrudRequest {
+  entity: EntityType!    # Ziel-Entität (z. B. USERS, FUNCTIONS, ORG_UNITS)
+  data: JSON!            # Die zu erstellenden oder aktualisierenden Daten
+  filter: JSON           # Filter, um die zu aktualisierenden Datensätze zu bestimmen (nur bei Update)
+}
+
+# Eingabe für Delete
+input DeleteRequest {
+  entity: EntityType!    # Ziel-Entität (z. B. USERS, FUNCTIONS, ORG_UNITS)
+  filter: JSON!          # Filter, um die zu löschenden Datensätze zu bestimmen
+}
+
+# Mögliche Entitäten, auf die CRUD angewendet wird
+enum EntityType {
+  USERS
+  FUNCTIONS
+  PROCESSES
+  ROLES
+  ORG_UNITS
+}
+
+input AggregationRequest {
+  rootEntity: EntityType!         # Die Haupt-Entität
+  lookups: [LookupDefinition!]       # Dynamische Verknüpfungen zu anderen Entitäten
+  filters: FilterInput            # Globale Filter
+}
+
+input LookupDefinition {
+  from: EntityType!               # Die zu verknüpfende Entität
+  localField: String!             # Feld der Haupt-Entität
+  foreignField: String!           # Feld der Ziel-Entität
+  as: String!                     # Alias für die verknüpften Daten
+}
+
+# Flexible Filterbedingungen
+input FilterInput {
+  and: [FilterInput]
+  or: [FilterInput]
+  not: FilterInput
+  field: String          # Das zu filternde Feld
+  operator: String       # Vergleichsoperator (z. B. $eq, $in, $gte, etc.)
+  value: JSON            # Der Wert, mit dem verglichen wird
+}
+
+# Rückgabewert kann flexibel bleiben (JSON)
 scalar JSON
