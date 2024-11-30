@@ -3,8 +3,8 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { KeycloakService } from './keycloak.service.js';
 import { BadUserInputError } from '../../roleMapper/resolver/errors.js';
+import { KeycloakService } from './keycloak.service.js';
 
 /** Typdefinition für Token-Daten bei GraphQL */
 export type TokenInput = {

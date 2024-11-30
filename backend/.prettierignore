@@ -1,6 +1,2 @@
 package.json
 ReadMe.md
-src/config/dev/mysql/*.sql
-src/config/dev/postgres/*.sql
-src/config/dev/sqlite/*.sql
-src/config/typeormNamingStrategy.ts

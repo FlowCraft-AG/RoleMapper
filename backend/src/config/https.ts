@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { VOLUMES_DIR } from './app.js';
 
-const KEYS_DIR = path.resolve(VOLUMES_DIR,'keys');
+const KEYS_DIR = path.resolve(VOLUMES_DIR, 'keys');
 console.debug('tlsDir = %s', KEYS_DIR);
 
 export const httpsOptions: HttpsOptions = {

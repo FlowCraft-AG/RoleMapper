@@ -1,13 +1,26 @@
-import { User } from "../entity/user.entity";
+import { User } from '../entity/user.entity.js';
 
-
-// Interface für die Rückgabe einzelner Rollen und deren Benutzer
+/**
+ * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
+ */
 export interface RoleResult {
-  roleName: string; // Dynamischer Rollenname (z.B. "Antragssteller")
-  users: User[]; // Benutzer, die dieser Rolle zugeordnet sind
+    /**
+     * Dynamischer Rollenname (z.B. "Antragssteller").
+     */
+    roleName: string;
+
+    /**
+     * Benutzer, die dieser Rolle zugeordnet sind.
+     */
+    users: User[];
 }
 
-// Interface für die gesamte Rückgabe (z.B. für mehrere Rollen in einem Prozess)
+/**
+ * Interface für die gesamte Rückgabe (z.B. für mehrere Rollen in einem Prozess).
+ */
 export interface RolePayload {
-  roles: RoleResult[]; // Liste der Rollen mit ihren jeweiligen Benutzern
+    /**
+     * Liste der Rollen mit ihren jeweiligen Benutzern.
+     */
+    roles: RoleResult[];
 }

@@ -1,51 +1,28 @@
 type Query {
-  # Benutzerbezogene Abfragen
-  getUsers(filters: UserFilterInput): [User!]!
-  getUserById(id: ID!): User
-  getUserByUserId(userId: String!): User
-
-  # Funktionsbezogene Abfragen
-  getFunctionById(id: ID!): Function
-  getFunctionByType(type: String!): Function
-  getFunctions(filters: FunctionFilterInput): [Function!]!
-
-  # Prozessbezogene Abfragen
-  getProcessById(id: ID!): Process
-  getProcessByProcessId(processId: String!): Process
-  getProcesses: [Process!]!
-
-  # Rollenbezogene Abfragen
-  getRoleById(id: ID!): Role
-  getRoleByRoleId(roleId: String!): Role
-  getRoles: [Role!]!
-
-  # Organisationsbezogene Abfragen
-  getOrgUnitById(id: ID!): OrgUnit
-  getOrgUnits(filter: OrgUnitFilterInput): [OrgUnit!]!
-
-  # Query für die Aggregation
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
-
   getData(entity: EntityType!, filters: FilterInput): [JSON!]!
-  getDataDynamic(request: AggregationRequest!): [JSON!]!
 }
 
-type Function {
-  functionName: String!
-  users: [String!]!
-  orgUnit: String!
-}
-
-type OrgUnit {
-  name: String!
+type DataPayload {
+  functionName: String
+  users: [String!]
+  orgUnit: String
+  name: String
   parentId: ID
   supervisor: String
-}
-
-type Role {
-  name: String!
   roleId: String
   query: [QueryStage!]
+  processId: String
+  roles: [ProcessRole!]
+  _id: ID
+  userId: String
+  userType: String
+  userRole: String
+  active: Boolean
+  student: Student
+  employee: Employee
+  validFrom: String
+  validUntil: String
 }
 
 type QueryStage {
@@ -53,12 +30,6 @@ type QueryStage {
   # Hier verwenden wir ein generisches JSON-Objekt.
   key: String
   value: String
-}
-
-type Process {
-  name: String!
-  processId: String!
-  roles: [ProcessRole!]!
 }
 
 type ProcessRole {
@@ -115,54 +86,91 @@ type RoleResult {
 
 
 type Mutation {
-  # Benutzerbezogene Mutationen
-  createUser(userData: CreateUserInput!): User!
-  updateUser(id: ID!, updateData: UpdateUserInput!): User
-  deleteUser(id: ID!): User
-
-  # Funktionsbezogene Mutationen
-  createFunction(functionData: CreateFunctionInput!): Function!
-  updateFunction(id: ID!, updateData: UpdateFunctionInput!): Function
-  deleteFunction(id: ID!): Function
-
-  # Organisationsbezogene Mutationen
-  createOrgUnit(orgUnitData: CreateOrgUnitInput!): OrgUnit!
-  updateOrgUnit(id: ID!, updateData: UpdateOrgUnitInput!): OrgUnit
-  deleteOrgUnit(id: ID!): OrgUnit
-
-  # Rollenbezogene Mutationen
-  createRole(roleData: CreateRoleInput!): Role!
-  updateRole(id: ID!, updateData: UpdateRoleInput!): Role
-  deleteRole(id: ID!): Role
-
-  # Prozessbezogene Mutationen
-  createProcess(processData: CreateProcessInput!): Process!
-  updateProcess(id: ID!, updateData: UpdateProcessInput!): Process
-  deleteProcess(id: ID!): Process
 
   # Authentifizierungsbezogene Mutationen
   # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
   token(username: String!, password: String!): TokenResult
   refresh(refresh_token: String!): TokenResult
 
-  # Zentrale Funktion zum Erstellen von Daten
-  createData(request: CrudRequest!): JSON!
-
-  # Zentrale Funktion zum Aktualisieren von Daten
-  updateData(request: CrudRequest!): JSON!
-
-  # Zentrale Funktion zum Löschen von Daten
-  deleteData(request: DeleteRequest!): Boolean!
+  executeMutation(input: MutationInput!): MutationResponse!
 }
 
-# Benutzerbezogene Inputs
-input UserFilterInput {
-  userId: String
-  userType: UserType
-  userRole: UserRole
-  orgUnit: String
-  active: Boolean
+enum OperationType {
+  CREATE
+  UPDATE
+  DELETE
 }
+
+input MutationInput {
+  entity: EntityType!      # Ziel-Entität (z. B. USERS, FUNCTIONS)
+  operation: OperationType! # Art der Mutation: CREATE, UPDATE, DELETE
+  data: JSON           # Daten für CREATE oder UPDATE
+  filter: FilterInput  # Filter für UPDATE oder DELETE
+}
+
+type MutationResponse {
+  success: Boolean! # Ob die Operation erfolgreich war
+  message: String   # Optionaler Fehler oder Erfolgstext
+  result: JSON      # Das Ergebnis der Mutation (z. B. das erstellte oder aktualisierte Objekt)
+}
+
+enum FilterOptions {
+  userId
+  userType
+  userRole
+  orgUnit
+  active
+  users
+  functionName
+  name
+  roleId
+  processId
+  roles
+  arentId
+  supervisor
+}
+
+# Mögliche Entitäten, auf die CRUD angewendet wird
+enum EntityType {
+  USERS
+  FUNCTIONS
+  PROCESSES
+  ROLES
+  ORG_UNITS
+}
+
+# Flexible Filterbedingungen
+input FilterInput {
+  field: FilterOptions         # Das zu filternde Feld
+  operator: Operator      # Vergleichsoperator (z. B. $eq, $in, $gte, etc.)
+  value: JSON            # Der Wert, mit dem verglichen wird
+}
+
+enum Operator {
+  EQ
+  In
+  GTE
+}
+
+# Rückgabewert kann flexibel bleiben (JSON)
+scalar JSON
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 input CreateUserInput {
   userId: String!
@@ -184,12 +192,6 @@ input UpdateUserInput {
   validUntil: String
 }
 
-# Funktionsbezogene Inputs
-input FunctionFilterInput {
-  users: [String!]
-  orgUnit: String
-}
-
 input CreateFunctionInput {
   functionName: String!
   users: [String!]!
@@ -200,12 +202,6 @@ input UpdateFunctionInput {
   functionName: String
   users: [String!]
   orgUnit: String
-}
-
-# Rollenbezogene Inputs
-input RoleFilterInput {
-  name: String
-  roleId: String
 }
 
 input CreateRoleInput {
@@ -225,13 +221,6 @@ input QueryStageInput {
   value: String
 }
 
-# Prozessbezogene Inputs
-input CreateProcessInput {
-  name: String!
-  processId: String!
-  roles: [ProcessRoleInput!]!
-}
-
 input UpdateProcessInput {
   name: String
   processId: String
@@ -241,13 +230,6 @@ input UpdateProcessInput {
 input ProcessRoleInput {
   roleKey: String!
   roleId: String!
-}
-
-# Organisationsbezogene Inputs
-input OrgUnitFilterInput {
-  name: String
-  parentId: ID
-  supervisor: String
 }
 
 input CreateOrgUnitInput {
@@ -274,52 +256,3 @@ enum UserRole {
   adminTechnicalStaff
 
 }
-
-
-# Allgemeine Eingabe für Create und Update
-input CrudRequest {
-  entity: EntityType!    # Ziel-Entität (z. B. USERS, FUNCTIONS, ORG_UNITS)
-  data: JSON!            # Die zu erstellenden oder aktualisierenden Daten
-  filter: JSON           # Filter, um die zu aktualisierenden Datensätze zu bestimmen (nur bei Update)
-}
-
-# Eingabe für Delete
-input DeleteRequest {
-  entity: EntityType!    # Ziel-Entität (z. B. USERS, FUNCTIONS, ORG_UNITS)
-  filter: JSON!          # Filter, um die zu löschenden Datensätze zu bestimmen
-}
-
-# Mögliche Entitäten, auf die CRUD angewendet wird
-enum EntityType {
-  USERS
-  FUNCTIONS
-  PROCESSES
-  ROLES
-  ORG_UNITS
-}
-
-input AggregationRequest {
-  rootEntity: EntityType!         # Die Haupt-Entität
-  lookups: [LookupDefinition!]       # Dynamische Verknüpfungen zu anderen Entitäten
-  filters: FilterInput            # Globale Filter
-}
-
-input LookupDefinition {
-  from: EntityType!               # Die zu verknüpfende Entität
-  localField: String!             # Feld der Haupt-Entität
-  foreignField: String!           # Feld der Ziel-Entität
-  as: String!                     # Alias für die verknüpften Daten
-}
-
-# Flexible Filterbedingungen
-input FilterInput {
-  and: [FilterInput]
-  or: [FilterInput]
-  not: FilterInput
-  field: String          # Das zu filternde Feld
-  operator: String       # Vergleichsoperator (z. B. $eq, $in, $gte, etc.)
-  value: JSON            # Der Wert, mit dem verglichen wird
-}
-
-# Rückgabewert kann flexibel bleiben (JSON)
-scalar JSON
