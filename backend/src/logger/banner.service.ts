@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import { release, type, userInfo } from 'node:os';
 import process from 'node:process';
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 import { nodeConfig } from '../config/node.js';
 import { getLogger } from './logger.js';
 
