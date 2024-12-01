@@ -2,7 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
 
-// Subschema für Student
+/**
+ * Definiert das Subschema für die Student-Entität.
+ */
 class Student {
     @Prop({ required: true })
     courseOfStudy!: string;
@@ -26,7 +28,9 @@ class Student {
     _id!: mongoose.Types.ObjectId;
 }
 
-// Subschema für Employee
+/**
+ * Definiert das Subschema für die Employee-Entität.
+ */
 class Employee {
     @Prop({ required: true })
     costCenter!: string;
@@ -35,7 +39,9 @@ class Employee {
     department!: string;
 }
 
-// Main User Schema
+/**
+ * Definiert das Schema für die User-Entität.
+ */
 @Schema({ timestamps: true, collection: 'HKA_Users' })
 export class User extends Document {
     @Prop({ required: true })

@@ -1,11 +1,7 @@
 /* eslint-disable camelcase, @typescript-eslint/naming-convention */
 
 import { Injectable } from '@nestjs/common';
-import axios, {
-    type AxiosInstance,
-    type AxiosResponse,
-    type RawAxiosRequestHeaders,
-} from 'axios';
+import axios, { type AxiosInstance, type AxiosResponse, type RawAxiosRequestHeaders } from 'axios';
 import {
     type KeycloakConnectOptions,
     type KeycloakConnectOptionsFactory,
@@ -61,11 +57,9 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         const body = `username=${username}&password=${password}&grant_type=password&client_id=${clientId}&client_secret=${secret}&scope=openid`;
         let response: AxiosResponse<Record<string, number | string>>;
         try {
-            response = await this.#keycloakClient.post(
-                paths.accessToken,
-                body,
-                { headers: this.#headers },
-            );
+            response = await this.#keycloakClient.post(paths.accessToken, body, {
+                headers: this.#headers,
+            });
         } catch {
             this.#logger.warn('token: Fehler bei %s', paths.accessToken);
             return;

@@ -5,8 +5,7 @@ import { logLevel } from './logger.js';
 const prettyPrint: string | undefined = config.health?.prettyPrint;
 
 export const healthConfig = {
-    prettyPrint:
-        prettyPrint !== undefined && prettyPrint.toLowerCase() === 'true',
+    prettyPrint: prettyPrint !== undefined && prettyPrint.toLowerCase() === 'true',
 } as const;
 
 if (logLevel === 'debug') {

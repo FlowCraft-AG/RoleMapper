@@ -13,10 +13,5 @@ export const nodeConfig = {
     port,
     resourcesDir: RESOURCES_DIR,
     httpsOptions,
-    nodeEnv: NODE_ENV as
-        | 'development'
-        | 'PRODUCTION'
-        | 'production'
-        | 'test'
-        | undefined,
+    nodeEnv: NODE_ENV as 'development' | 'PRODUCTION' | 'production' | 'test' | undefined,
 } as const;

@@ -12,13 +12,8 @@ const { log } = config;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const logDir: string | undefined =
-    (log?.dir as string | undefined) === undefined
-        ? undefined
-        : log.dir.trimEnd(); // eslint-disable-line @typescript-eslint/no-unsafe-call
-const logFile =
-    logDir === undefined
-        ? logFileDefault
-        : path.resolve(logDir, logFileNameDefault);
+    (log?.dir as string | undefined) === undefined ? undefined : log.dir.trimEnd(); // eslint-disable-line @typescript-eslint/no-unsafe-call
+const logFile = logDir === undefined ? logFileDefault : path.resolve(logDir, logFileNameDefault);
 const pretty = log?.pretty === true;
 
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
@@ -30,9 +25,7 @@ if (env.LOG_LEVEL !== undefined) {
 }
 export const logLevel = logLevelTmp;
 
-console.debug(
-    `logger config: logLevel=${logLevel}, logFile=${logFile}, pretty=${pretty}`,
-);
+console.debug(`logger config: logLevel=${logLevel}, logFile=${logFile}, pretty=${pretty}`);
 
 const fileOptions = {
     level: logLevel,

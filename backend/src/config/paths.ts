@@ -1,5 +1,5 @@
 export const paths = {
-    rest: 'rest',
+    roleMapper: 'roleMapper',
     auth: 'auth',
     token: 'token',
     refresh: 'refresh',

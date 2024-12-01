@@ -30,10 +30,8 @@ export class QueryResolver {
         @Args('processId') processId: string,
         @Args('userId') userId: string,
     ): Promise<any> {
-        this.#logger.debug(
-            `executeQuery: processId=${processId}, userId=${userId}`,
-        );
-        return this.#service.führeAlleAbfragenAus(processId, userId);
+        this.#logger.debug(`executeQuery: processId=${processId}, userId=${userId}`);
+        return this.#service.findProcessRoles(processId, userId);
     }
 
     static readonly SUPPORTED_ENTITIES: string[] = [
@@ -75,10 +73,7 @@ export class QueryResolver {
     private logDebug(entity: string, filters?: FilterInput): void {
         console.debug(`[DataResolver] getData called with entity: ${entity}`);
         if (filters) {
-            console.debug(
-                `[DataResolver] Filters:`,
-                JSON.stringify(filters, null, 2),
-            );
+            console.debug(`[DataResolver] Filters:`, JSON.stringify(filters, null, 2));
         }
     }
 }

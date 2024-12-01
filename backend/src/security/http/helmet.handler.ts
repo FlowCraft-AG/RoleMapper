@@ -1,11 +1,4 @@
-import {
-    contentSecurityPolicy,
-    frameguard,
-    hidePoweredBy,
-    hsts,
-    noSniff,
-    xssFilter,
-} from 'helmet';
+import { contentSecurityPolicy, frameguard, hidePoweredBy, hsts, noSniff, xssFilter } from 'helmet';
 
 /**
  * Security-Funktionen für z.B. CSP, XSS, Click-Jacking, HSTS und MIME-Sniffing.

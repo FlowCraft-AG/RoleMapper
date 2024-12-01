@@ -9,8 +9,7 @@ import { env } from './env.js';
 import { httpsOptions } from './https.js';
 
 const { keycloak } = config;
-const authServerUrl =
-    (keycloak?.authServerUrl as string | undefined) ?? 'http://localhost:8880';
+const authServerUrl = (keycloak?.authServerUrl as string | undefined) ?? 'http://localhost:8880';
 // Keycloak ist in Sicherheits-Bereich (= realms) unterteilt
 const realm = (keycloak?.realm as string | undefined) ?? 'nest';
 const clientId = (keycloak?.clientId as string | undefined) ?? 'nest-client';
@@ -24,9 +23,7 @@ export const keycloakConnectOptions: KeycloakConnectConfig = {
     authServerUrl,
     realm,
     clientId,
-    secret:
-        CLIENT_SECRET ??
-        'ERROR: Umgebungsvariable CLIENT_SECRET nicht gesetzt!',
+    secret: CLIENT_SECRET ?? 'ERROR: Umgebungsvariable CLIENT_SECRET nicht gesetzt!',
     policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
     tokenValidation,
 };

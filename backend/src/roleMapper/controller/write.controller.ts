@@ -6,13 +6,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import {
-    ApiBearerAuth,
-    ApiBody,
-    ApiOperation,
-    ApiResponse,
-    ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard, Roles } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
@@ -181,11 +175,7 @@ export class WriteController {
                     break;
 
                 case 'UPDATE':
-                    result = await this.#service.updateEntity(
-                        entity,
-                        filter,
-                        data,
-                    );
+                    result = await this.#service.updateEntity(entity, filter, data);
                     break;
 
                 case 'DELETE':
@@ -193,10 +183,7 @@ export class WriteController {
                     break;
 
                 default:
-                    throw new BadRequestException(
-                        'Nicht unterstützte Operation: %s',
-                        operation,
-                    );
+                    throw new BadRequestException('Nicht unterstützte Operation: %s', operation);
             }
 
             return {
@@ -205,10 +192,7 @@ export class WriteController {
                 result,
             };
         } catch (error) {
-            this.#logger.error(
-                'executeData: Fehler bei der Ausführung der Operation: %o',
-                error,
-            );
+            this.#logger.error('executeData: Fehler bei der Ausführung der Operation: %o', error);
             throw new BadRequestException((error as Error).message);
         }
     }

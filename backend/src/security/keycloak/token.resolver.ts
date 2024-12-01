@@ -41,9 +41,7 @@ export class TokenResolver {
             password,
         });
         if (result === undefined) {
-            throw new BadUserInputError(
-                'Falscher Benutzername oder falsches Passwort',
-            );
+            throw new BadUserInputError('Falscher Benutzername oder falsches Passwort');
         }
 
         this.#logger.debug('token: result=%o', result);

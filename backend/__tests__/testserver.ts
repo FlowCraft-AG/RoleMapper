@@ -1,15 +1,11 @@
-import {
-    HttpStatus,
-    type INestApplication,
-    ValidationPipe,
-} from '@nestjs/common';
+import { GraphQLRequest } from '@apollo/server';
+import { HttpStatus, type INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import mongoose from 'mongoose';
 import { Agent } from 'node:https';
 import { AppModule } from '../src/app.module.js';
 import { nodeConfig } from '../src/config/node.js';
 import { paths } from '../src/config/paths.js';
-import { GraphQLRequest } from '@apollo/server';
 
 export const tokenPath = `${paths.auth}/${paths.token}`;
 export const refreshPath = `${paths.auth}/${paths.refresh}`;

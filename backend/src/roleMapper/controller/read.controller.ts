@@ -7,7 +7,9 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import {
+    ApiBadRequestResponse,
     ApiBearerAuth,
+    ApiOkResponse,
     ApiOperation,
     ApiParam,
     ApiQuery,
@@ -15,17 +17,70 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'nest-keycloak-connect';
+import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { RolePayload } from '../model/interface/rolePayload.interface.js';
+import { User } from '../model/entity/user.entity.js';
 import { FilterInput } from '../resolver/filterInput.js';
 import { ReadService } from '../service/read.service.js';
+
+/** href-Link für HATEOAS */
+export type Link = {
+    /** href-Link für HATEOAS-Links */
+    readonly href: string;
+};
+
+/** Links für HATEOAS */
+export type Links = {
+    /** self-Link */
+    readonly self: Link;
+    /** Optionaler Linke für list */
+    readonly list?: Link;
+    /** Optionaler Linke für add */
+    readonly add?: Link;
+    /** Optionaler Linke für update */
+    readonly update?: Link;
+    /** Optionaler Linke für remove */
+    readonly remove?: Link;
+};
+
+export interface RolePayload {
+    roles: RoleResult[];
+}
+
+/**
+ * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
+ */
+export interface RoleResult {
+    /**
+     * Dynamischer Rollenname (z.B. "Antragssteller").
+     */
+    roleName: string;
+    /**
+     * Benutzer, die dieser Rolle zugeordnet sind.
+     */
+    users: User[];
+}
+
+/**
+ * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
+ */
+export interface RoleResult {
+    /**
+     * Dynamischer Rollenname (z.B. "Antragssteller").
+     */
+    roleName: string;
+    /**
+     * Benutzer, die dieser Rolle zugeordnet sind.
+     */
+    users: User[];
+}
 
 /**
  * Controller für Leseoperationen.
  */
-@ApiTags('Read Operations')
-@Controller()
+@ApiTags('Role Mapper REST-API')
+@Controller(paths.roleMapper)
 @ApiBearerAuth()
 @UseInterceptors(ResponseTimeInterceptor)
 export class ReadController {
@@ -49,9 +104,8 @@ export class ReadController {
         description:
             'Gibt die Rollen zurück, die einem Benutzer in einem spezifischen Prozess zugeordnet sind.',
     })
-    @ApiResponse({
-        status: 200,
-        description: 'Rollen erfolgreich abgerufen.',
+    @ApiOkResponse({
+        description: 'Das Bankkonto wurde gefunden',
         schema: {
             example: {
                 roles: [
@@ -67,10 +121,7 @@ export class ReadController {
             },
         },
     })
-    @ApiResponse({
-        status: 400,
-        description: 'Ungültige Parameter.',
-    })
+    @ApiBadRequestResponse({ description: 'Ungültige Parameter.' })
     @ApiQuery({
         name: 'processId',
         required: true,
@@ -83,21 +134,18 @@ export class ReadController {
         description: 'Die ID des Benutzers.',
         example: 'muud0001',
     })
-    async getProcessRoles(
-        @Query('processId') processId: string,
-        @Query('userId') userId: string,
-    ): Promise<RolePayload> {
-        this.#logger.debug(
-            `[ReadController] getProcessRoles aufgerufen mit processId: ${processId}, userId: ${userId}`,
-        );
-        return this.#service.führeAlleAbfragenAus(processId, userId);
+    async getProcessRoles(@Query('processId') processId: string, @Query('userId') userId: string) {
+        this.#logger.debug('getProcessRoles: processId=%s, userId: %s', processId, userId);
+
+        const rolePayload: RolePayload = await this.#service.findProcessRoles(processId, userId);
+        return rolePayload;
     }
 
     /**
      * Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
      * @param {string} entity - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
      * @param {string} field - Das Feld, auf das der Filter angewendet wird.
-     * @param {string} operator - Der Operator für den Vergleich (z. B. '=', '!=', '<', '>').
+     * @param {string} operator - Der Operator für den Vergleich (z. B. EQ($eq), IN($in), GTE($gte).
      * @param {any} value - Der Wert, mit dem das Feld verglichen wird.
      * @returns {Promise<any[]>} - Die gefilterten Daten.
      * @throws {Error} - Wenn die Entität nicht unterstützt wird.
@@ -124,8 +172,7 @@ export class ReadController {
     })
     @ApiResponse({
         status: 400,
-        description:
-            'Nicht unterstützte Entität oder ungültige Filterparameter.',
+        description: 'Nicht unterstützte Entität oder ungültige Filterparameter.',
     })
     @ApiParam({
         name: 'entity',
@@ -142,8 +189,7 @@ export class ReadController {
     @ApiQuery({
         name: 'operator',
         required: false,
-        description:
-            'Der Operator für den Vergleich (z. B. EQ($eq), IN($in), GTE($gte)).',
+        description: 'Der Operator für den Vergleich (z. B. EQ($eq), IN($in), GTE($gte)).',
         example: 'EQ',
     })
     @ApiQuery({

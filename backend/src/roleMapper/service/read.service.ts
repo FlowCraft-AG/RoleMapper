@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
@@ -7,11 +7,8 @@ import { OrgUnit, OrgUnitDocument } from '../model/entity/orgUnit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
-import {
-    RolePayload,
-    RoleResult,
-} from '../model/interface/rolePayload.interface.js';
 //TODO: eingemeinsames FilterInput
+import { RoleResult } from '../controller/read.controller.js';
 import { FilterInput } from './filterInput.js';
 
 @Injectable()
@@ -37,149 +34,74 @@ export class ReadService {
     }
 
     /**
-     * Führt eine dynamische Query aus einem Process-Dokument aus.
-     * @param prozessId Die ID des Prozesses.
-     * @param abfrage Der Schlüssel der Query im Prozess.
-     * @returns Das Ergebnis der Aggregation.
-     * @throws Fehler, wenn der Prozess oder die Query nicht gefunden wird oder die Aggregation fehlschlägt.
+     * Sucht die Rollen und die zugehörigen Benutzer für einen gegebenen Prozess.
+     *
+     * @param {string} processId - Die ID des Prozesses, für den die Rollen gesucht werden.
+     * @param {string} userId - Die ID des Benutzers, der die Anfrage stellt (für Abfragen verwendet).
+     * @returns {Promise<{ roles: RoleResult[] }>} Eine Liste der Rollen und der zugehörigen Benutzer.
+     * @throws {NotFoundException} Wenn der Prozess keine definierten Rollen hat.
      */
-    async führeAlleAbfragenAus(
-        processId: string,
-        userId: string,
-    ): Promise<RolePayload> {
-        this.#logger.debug(
-            'führeAlleAbfragenAus: processId=%s, userId=%s',
-            processId,
-            userId,
+    async findProcessRoles(processId: string, userId: string) {
+        this.#logger.debug('findProcessRoles: processId=%s, userId=%s', processId, userId);
+
+        // 1. Abrufen des Prozesses und Validierung, ob Rollen existieren
+        const process = await this.#models.PROCESSES!.findOne({ processId }).exec();
+        if (!process?.roles) {
+            throw new NotFoundException('Keine Rollen für diesen Prozess gefunden.');
+        }
+
+        // 2. Extrahieren der Rollen-IDs aus dem Prozess
+        const roleIds = process.roles.flatMap(Object.values);
+        this.#logger.debug('roleIds=%o', roleIds);
+
+        // 3. Abrufen der Rollen aus der Datenbank und Erstellen einer Map für schnellen Zugriff
+        const rolesMap = new Map(
+            (await this.#models.ROLES!.find({ roleId: { $in: roleIds } }).exec()).map(
+                ({ roleId, query }) => [roleId, query],
+            ),
         );
 
-        if (!this.#models.PROCESSES) {
-            throw new Error('Process model is not defined.');
+        if (!rolesMap.size) {
+            this.#logger.warn('Keine Rollen gefunden für: %o', roleIds);
         }
-        // Prozess abrufen
-        const process: Process = await this.#models.PROCESSES.findOne({
-            processId,
-        }).exec();
-        this.#logger.debug('Prozess gefunden: %o', process);
+        this.#logger.debug('rolesMap=%o', [...rolesMap.entries()]);
 
-        if (!process || !process.roles) {
-            throw new Error('Keine Rollen für diesen Prozess gefunden.');
-        }
-        if (!this.#models.ROLES) {
-            throw new Error('Role model is not defined.');
-        }
-        // Extrahiere die Rollen-IDs
-        const roleIds = process.roles.flatMap((role) => Object.values(role));
-        const roles = await this.#models.ROLES.find({
-            roleId: { $in: roleIds },
-        }).exec();
-        this.#logger.debug('Rollen-IDs: %o', roleIds);
+        // 4. Verarbeiten jeder Rolle: Benutzer suchen und Ergebnisse erstellen
+        const results = (
+            await Promise.all(
+                process.roles.map(async (roleObj: Role) => {
+                    const [roleKey, roleId] = Object.entries(roleObj ?? {})[0] || [];
+                    this.#logger.debug('Verarbeite Rolle %s (%s)', roleKey, roleId);
+                    if (!roleKey || !roleId || !rolesMap.has(roleId)) {
+                        this.#logger.warn(
+                            'Ungültige oder fehlende Rolle: %s (%o)',
+                            roleId,
+                            roleObj,
+                        );
+                        return null;
+                    }
 
-        // Rollen aus der Datenbank abrufen
-        this.#logger.debug('Gefundene Rollen: %o', roles);
-
-        if (!roles.length) {
-            this.#logger.warn(
-                'Keine Rollen in der Datenbank gefunden für: %o',
-                roleIds,
-            );
-        }
-
-        // Map für schnelles Nachschlagen erstellen
-        const rolesMap = new Map(roles.map((role) => [role.roleId, role]));
-        this.#logger.debug('Rollen-Map: %o', Array.from(rolesMap.entries()));
-
-        const results: RoleResult[] = [];
-        const start = Date.now();
-
-        try {
-            for (const roleObj of process.roles) {
-                if (!roleObj || typeof roleObj !== 'object') {
-                    this.#logger.warn('Ungültiges Rollenobjekt: %o', roleObj);
-                    continue;
-                }
-
-                const entry = Object.entries(roleObj)[0];
-                if (!entry) {
-                    this.#logger.warn(
-                        'Keine Einträge in Rollenobjekt: %o',
-                        roleObj,
-                    );
-                    continue;
-                }
-
-                const [roleKey, roleId] = entry;
-
-                this.#logger.debug(
-                    'Verarbeite Rolle: %s mit ID: %s',
-                    roleKey,
-                    roleId,
-                );
-
-                const role = rolesMap.get(roleId);
-                if (!role || !role.query) {
-                    this.#logger.warn(
-                        'Überspringe Rolle %s: Keine gültigen Daten gefunden (%s).',
-                        roleKey,
-                        roleId,
-                    );
-                    continue;
-                }
-                if (!this.#models.FUNCTIONS) {
-                    throw new Error('Function model is not defined.');
-                }
-                if (!Array.isArray(role.query) || !role.query.length) {
-                    this.#logger.warn(
-                        'Überspringe Rolle %s: Leere oder ungültige Abfrage.',
-                        roleKey,
-                    );
-                    continue;
-                }
-                const query = role.query;
-                if (!Array.isArray(query) || !query.length) {
-                    this.#logger.warn(
-                        'Überspringe Rolle %s: Leere oder ungültige Abfrage.',
-                        roleKey,
-                    );
-                    continue;
-                }
-
-                try {
-                    const aggregationStart = Date.now();
-                    const users: User[] =
-                        await this.#models.FUNCTIONS.aggregate(query)
+                    try {
+                        // Abfrage der Benutzer, die der Rolle entsprechen
+                        const users = await this.#models
+                            .FUNCTIONS!.aggregate(rolesMap.get(roleId)!)
                             .option({ let: { userId } })
                             .exec();
-                    const aggregationTime = Date.now() - aggregationStart;
+                        this.#logger.debug('Ergebnis für Rolle %s: %o', roleKey, users);
 
-                    this.#logger.debug(
-                        'Ergebnis für Rolle %s: %o (Dauer: %d ms)',
-                        roleKey,
-                        users,
-                        aggregationTime,
-                    );
+                        return { roleName: roleKey, users };
+                    } catch (error) {
+                        this.#logger.error('Fehler bei Rolle %s: %o', roleKey, error);
+                        return null;
+                    }
+                }),
+            )
+        ).filter(Boolean);
 
-                    results.push({
-                        roleName: roleKey,
-                        users,
-                    });
-                } catch (error) {
-                    this.#logger.error(
-                        'Fehler bei der Verarbeitung der Rolle %s: %o',
-                        roleKey,
-                        error,
-                    );
-                }
-            }
-
-            this.#logger.info(
-                `Verarbeitung abgeschlossen in ${Date.now() - start}ms`,
-            );
-            return { roles: results };
-        } catch (error) {
-            this.#logger.error('Fehler bei der Verarbeitung: %o', error);
-            throw error;
-        }
+        // 5. Abschließende Log-Ausgabe und Rückgabe der Ergebnisse
+        this.#logger.info('findProcessRoles: Verarbeitung abgeschlossen');
+        this.#logger.debug('Ergebnisse: %o', results);
+        return { roles: results as RoleResult[] };
     }
 
     /**
@@ -192,17 +114,12 @@ export class ReadService {
         const model = this.#models[entity];
         if (!model) {
             const validEntities = Object.keys(this.#models).join(', ');
-            throw new Error(
-                `Unknown entity: ${entity}. Supported entities: ${validEntities}`,
-            );
+            throw new Error(`Unknown entity: ${entity}. Supported entities: ${validEntities}`);
         }
 
         const filterQuery = this.buildFilterQuery(filters);
         console.debug(`[FilterService] Entity: ${entity}`);
-        console.debug(
-            `[FilterService] Filter Query:`,
-            JSON.stringify(filterQuery, null, 2),
-        );
+        console.debug(`[FilterService] Filter Query:`, JSON.stringify(filterQuery, null, 2));
 
         return model.find(filterQuery).exec();
     }
@@ -222,14 +139,10 @@ export class ReadService {
         };
 
         if (filters.and) {
-            query.$and = filters.and.map((subFilter) =>
-                this.buildFilterQuery(subFilter),
-            );
+            query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
         }
         if (filters.or) {
-            query.$or = filters.or.map((subFilter) =>
-                this.buildFilterQuery(subFilter),
-            );
+            query.$or = filters.or.map((subFilter) => this.buildFilterQuery(subFilter));
         }
         if (filters.not) {
             query.$not = this.buildFilterQuery(filters.not);
@@ -240,11 +153,7 @@ export class ReadService {
                 throw new Error(`Invalid operator: ${filters.operator}`);
             }
             query[filters.field] = { [mongoOperator]: filters.value };
-        } else if (
-            filters.field ||
-            filters.operator ||
-            filters.value !== undefined
-        ) {
+        } else if (filters.field || filters.operator || filters.value !== undefined) {
             throw new Error(
                 `Invalid filter: field, operator, and value must all be defined for a single filter.`,
             );

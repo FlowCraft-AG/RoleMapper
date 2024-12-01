@@ -1,13 +1,4 @@
-// eslint-disable-next-line max-classes-per-file
-import {
-    Body,
-    Controller,
-    HttpCode,
-    HttpStatus,
-    Post,
-    Res,
-    UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Res, UseInterceptors } from '@nestjs/common';
 import {
     ApiConsumes,
     ApiOkResponse,
@@ -59,10 +50,7 @@ export class TokenController {
     @ApiUnauthorizedResponse({
         description: 'Benutzername oder Passwort sind falsch.',
     })
-    async token(
-        @Body() { username, password }: TokenData,
-        @Res() res: Response,
-    ) {
+    async token(@Body() { username, password }: TokenData, @Res() res: Response) {
         this.#logger.debug('token: username=%s', username);
 
         const result = await this.#keycloakService.token({
