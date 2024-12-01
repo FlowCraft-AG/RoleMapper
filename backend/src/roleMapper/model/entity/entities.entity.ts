@@ -31,3 +31,39 @@ export const entities = entitySchemas.map(({ name, schema }) => ({
     name,
     schema,
 }));
+
+/**
+ * Eine Liste der unterstützten Entitäten für dynamische Abfragen.
+ * Diese Entitäten werden für Validierungszwecke und Typensicherheit verwendet.
+ *
+ * - `USERS`: Repräsentiert Benutzerinformationen.
+ * - `FUNCTIONS`: Repräsentiert Funktionen innerhalb der Organisation.
+ * - `PROCESSES`: Repräsentiert Prozesse, die dynamisch abgefragt werden können.
+ * - `ROLES`: Repräsentiert Rollen, die bestimmten Prozessen zugeordnet sind.
+ * - `ORG_UNITS`: Repräsentiert organisatorische Einheiten.
+ *
+ * **Wartungshinweis:**
+ * - Neue Entitäten können einfach zu diesem Array hinzugefügt werden.
+ * - Der Typ `SupportedEntities` wird automatisch synchronisiert, um die neuen Werte zu berücksichtigen.
+ */
+export const SUPPORTED_ENTITIES = ['USERS', 'FUNCTIONS', 'PROCESSES', 'ROLES', 'ORG_UNITS'] as const;
+
+/**
+ * Typdefinition für unterstützte Entitäten.
+ * Dieser Typ wird dynamisch aus der Liste `SUPPORTED_ENTITIES` generiert.
+ *
+ * **Vorteile:**
+ * - Bietet strikte Typprüfung für dynamische Abfragen.
+ * - Stellt sicher, dass nur gültige Entitäten verwendet werden können.
+ *
+ * **Beispiel:**
+ * ```typescript
+ * function validateEntity(entity: SupportedEntities) {
+ *  
+ * }
+ * validateEntity('USERS'); // ✅ Gültig
+ * validateEntity('INVALID'); // ❌ Fehler bei der Kompilierung
+ * ```
+ */
+export type SupportedEntities = typeof SUPPORTED_ENTITIES[number];
+

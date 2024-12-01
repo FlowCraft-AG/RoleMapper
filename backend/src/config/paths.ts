@@ -1,5 +1,7 @@
 export const paths = {
-    roleMapper: 'roleMapper',
+  roleMapper: 'roleMapper',
+  processRoles: 'process-roles',
+  data: 'data',
     auth: 'auth',
     token: 'token',
     refresh: 'refresh',

@@ -4,6 +4,7 @@ import {
     Get,
     Param,
     Query,
+    Req,
     UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -17,12 +18,15 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'nest-keycloak-connect';
+import { Request } from 'express';
 import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { User } from '../model/entity/user.entity.js';
 import { ReadService } from '../service/read.service.js';
 import { type FilterDTO } from '../model/dto/filter.dto.js';
+import { SUPPORTED_ENTITIES, SupportedEntities } from '../model/entity/entities.entity.js';
+import { getBaseUri } from '../utils/getBaseUri.js';
 
 /** href-Link für HATEOAS */
 export type Link = {
@@ -41,7 +45,9 @@ export type Links = {
     /** Optionaler Linke für update */
     readonly update?: Link;
     /** Optionaler Linke für remove */
-    readonly remove?: Link;
+  readonly remove?: Link;
+  readonly antragsteller?: Link;
+    readonly  vorgesetzter?: Link;
 };
 
 export interface RolePayload {
@@ -99,7 +105,7 @@ export class ReadController {
    * @param {string} userId - Die ID des Benutzers.
    * @returns {Promise<RolePayload>} - Die Rollen des Prozesses.
    */
-  @Get('process-roles')
+  @Get(paths.processRoles)
   @Public()
   @ApiOperation({
     summary: 'Lese die Rollen eines Prozesses.',
@@ -135,7 +141,9 @@ export class ReadController {
   async getProcessRoles(
     @Query('processId') processId: string,
     @Query('userId') userId: string,
+    @Req() req: Request,
   ): Promise<RolePayload> {
+    const baseUri = getBaseUri(req);
     this.#logger.debug('getProcessRoles: processId=%s, userId=%s', processId, userId);
 
     const rolePayload: RolePayload = await this.#service.findProcessRoles(processId, userId);
@@ -144,20 +152,23 @@ export class ReadController {
       ...rolePayload,
       _links: {
         self: {
-          href: `${paths.roleMapper}/process-roles?processId=${processId}&userId=${userId}`,
+          href: `${baseUri}/${paths.processRoles}?processId=${processId}&userId=${userId}`,
         },
-      },
-    };
+        antragsteller: {
+          href: `${baseUri}/${SUPPORTED_ENTITIES[0]}/${paths.data}?field=userId&operator=EQ&value=${userId}`,
+        },
+      }
+    }
   }
 
   /**
    * Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
-   * @param {string} entity - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
+   * @param {string} collection - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
    * @param {FilterDTO} filter - Die Filterbedingungen.
    * @returns {Promise<any[]>} - Die gefilterten Daten.
    * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
    */
-  @Get(':entity/data')
+  @Get(`:entity/${paths.data}`)
   @Public()
   @ApiOperation({
     summary: 'Führt eine Abfrage für eine Collection mit Filtern aus.',
@@ -183,42 +194,30 @@ export class ReadController {
     description: 'Nicht unterstützte Entität oder ungültige Filterparameter.',
   })
   @ApiParam({
-    name: 'entity',
+    name: 'collection',
     required: true,
     description: 'Die Ziel-Entität, z. B. USERS, FUNCTIONS, PROCESSES.',
     example: 'USERS',
   })
   async getData(
-    @Param('entity') entity: string,
+    @Param('entity') collection: string,
     @Query() filter: FilterDTO,
   ): Promise<any[]> {
-    this.validateEntity(entity);
-
-    this.#logger.debug('[ReadController] getData aufgerufen mit Entität: %s, Filter: %o', entity, filter);
-
-    return this.#service.findData(entity, filter);
+    this.validateEntity(collection);
+    this.#logger.debug('getData: collection=%s, filter=%o', collection, filter);
+    return this.#service.findData(collection, filter);
   }
 
   /**
-   * Validiert, ob die angegebene Entität unterstützt wird.
-   * @param {string} entity - Die zu validierende Entität.
-   * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
-   */
-  private validateEntity(entity: string): void {
-    if (!ReadController.SUPPORTED_ENTITIES.includes(entity)) {
+ * Validiert, ob die angegebene Entität unterstützt wird.
+ * @param {string} collection - Die zu validierende Entität.
+ * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
+ */
+  private validateEntity(collection: string): void {
+    if (!SUPPORTED_ENTITIES.includes(collection as SupportedEntities)) {
       throw new BadRequestException(
-        `Nicht unterstützte Entität: ${entity}. Unterstützte Entitäten sind: ${ReadController.SUPPORTED_ENTITIES.join(
-          ', ',
-        )}`,
+        `Nicht unterstützte Entität: ${collection}. Unterstützte Entitäten sind: ${SUPPORTED_ENTITIES.join(', ')}`,
       );
     }
   }
-
-  static readonly SUPPORTED_ENTITIES: string[] = [
-    'USERS',
-    'FUNCTIONS',
-    'PROCESSES',
-    'ROLES',
-    'ORG_UNITS',
-  ];
 }

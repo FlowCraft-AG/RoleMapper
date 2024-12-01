@@ -6,11 +6,7 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from './http-exception.filter.js';
 import { FilterDTO } from '../model/dto/filter.dto.js';
-
-/**
- * Enum der unterstützten Entitäten für dynamische Abfragen.
- */
-export type SupportedEntities = 'USERS' | 'FUNCTIONS' | 'PROCESSES' | 'ROLES' | 'ORG_UNITS';
+import { SupportedEntities } from '../model/entity/entities.entity.js';
 
 @Resolver('RoleMapper')
 @UseFilters(HttpExceptionFilter)
