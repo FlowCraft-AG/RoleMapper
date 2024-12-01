@@ -21,8 +21,8 @@ import { MutationResponse } from '../resolver/mutation.response.js';
 import { ReadService } from '../service/read.service.js';
 import { WriteService } from '../service/write.service.js';
 
-@ApiTags('Mutations')
-@Controller('execute')
+@ApiTags('Write')
+@Controller()
 @UseInterceptors(ResponseTimeInterceptor)
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -54,54 +54,49 @@ export class WriteController {
         examples: {
             create: {
                 summary: 'CREATE Operation',
-            value: {
-              entity: "FUNCTIONS",
-              operation: "CREATE",
-              data: {
-                functionName: "Macher",
-                users: "gyca1011",
-                orgUnit: "Stundent"
-              }
-            },
+                value: {
+                    entity: 'FUNCTIONS',
+                    operation: 'CREATE',
+                    data: {
+                        functionName: 'Macher',
+                        users: 'gyca1011',
+                        orgUnit: 'Stundent',
+                    },
+                },
             },
             update: {
                 summary: 'UPDATE Operation',
-              value: {
-                entity: "FUNCTIONS",
-                operation: "UPDATE",
-                data: {
-                  functionName: "IT Macher",
-                  users: [
-                    "gyca1011",
-                    "kwin0101"
-                  ],
-                  orgUnit: "Stundent X"
+                value: {
+                    entity: 'FUNCTIONS',
+                    operation: 'UPDATE',
+                    data: {
+                        functionName: 'IT Macher',
+                        users: ['gyca1011', 'kwin0101'],
+                        orgUnit: 'Stundent X',
+                    },
+                    filter: {
+                        field: 'functionName',
+                        operator: 'EQ',
+                        value: 'Macher',
+                    },
                 },
-                filter: {
-                  field: "functionName",
-                  operator: "EQ",
-                  value: "Macher"
-                }
-              }
-,
             },
             delete: {
                 summary: 'DELETE Operation',
-              value: {
-                entity: "FUNCTIONS",
-                operation: "DELETE",
-                data: {
-                  functionName: "Macher",
-                  users: "gyca1011",
-                  orgUnit: "Stundent"
+                value: {
+                    entity: 'FUNCTIONS',
+                    operation: 'DELETE',
+                    data: {
+                        functionName: 'Macher',
+                        users: 'gyca1011',
+                        orgUnit: 'Stundent',
+                    },
+                    filter: {
+                        field: 'functionName',
+                        operator: 'EQ',
+                        value: 'IT Macher',
+                    },
                 },
-                filter: {
-                field: "functionName",
-                operator: "EQ",
-                  value: "IT Macher"
-                }
-              }
-,
             },
         },
     })
@@ -112,46 +107,42 @@ export class WriteController {
         examples: {
             create: {
                 summary: 'Erfolgreiches CREATE',
-            value: {
-              success: true,
-              message: "CREATE Operation erfolgreich.",
-              result: {
-                functionName: "Macher",
-                users: [
-                  "gyca1011"
-                ],
-                orgUnit: "Stundent",
-                _id: "674b7fc8a348e76ef9eeb159",
-                __v: 0
-              }
-            },
+                value: {
+                    success: true,
+                    message: 'CREATE Operation erfolgreich.',
+                    result: {
+                        functionName: 'Macher',
+                        users: ['gyca1011'],
+                        orgUnit: 'Stundent',
+                        _id: '674b7fc8a348e76ef9eeb159',
+                        __v: 0,
+                    },
+                },
             },
             update: {
                 summary: 'Erfolgreiches UPDATE',
-              value: {
-                success: true,
-                message: "UPDATE Operation erfolgreich.",
-                result: {
-                  acknowledged: true,
-                  modifiedCount: 1,
-                  upsertedId: null,
-                  upsertedCount: 0,
-                  matchedCount: 1
-                }
-              },
+                value: {
+                    success: true,
+                    message: 'UPDATE Operation erfolgreich.',
+                    result: {
+                        acknowledged: true,
+                        modifiedCount: 1,
+                        upsertedId: null,
+                        upsertedCount: 0,
+                        matchedCount: 1,
+                    },
+                },
             },
             delete: {
                 summary: 'Erfolgreiches DELETE',
-              value:
-
-              {
-                success: true,
-                message: "DELETE Operation erfolgreich.",
-                result: {
-                  acknowledged: true,
-                  deletedCount: 1
-                }
-              },
+                value: {
+                    success: true,
+                    message: 'DELETE Operation erfolgreich.',
+                    result: {
+                        acknowledged: true,
+                        deletedCount: 1,
+                    },
+                },
             },
         },
     })
@@ -177,9 +168,8 @@ export class WriteController {
         status: 500,
         description: 'Interner Serverfehler',
     })
-    async executeMutation(
-        @Body() input: MutationInput,
-    ): Promise<MutationResponse> {
+    async executeData(@Body() input: MutationInput): Promise<MutationResponse> {
+        this.#logger.debug('executeData: input=%o', input);
         const { entity, operation, data, filter } = input;
 
         try {
@@ -204,7 +194,8 @@ export class WriteController {
 
                 default:
                     throw new BadRequestException(
-                        `Nicht unterstützte Operation: ${operation}`,
+                        'Nicht unterstützte Operation: %s',
+                        operation,
                     );
             }
 
@@ -215,9 +206,8 @@ export class WriteController {
             };
         } catch (error) {
             this.#logger.error(
-                `[WriteController] Fehler bei der Ausführung der Mutation: ${
-                    (error as Error).message
-                }`,
+                'executeData: Fehler bei der Ausführung der Operation: %o',
+                error,
             );
             throw new BadRequestException((error as Error).message);
         }

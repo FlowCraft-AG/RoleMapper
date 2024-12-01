@@ -108,6 +108,11 @@ input MutationInput {
   filter: FilterInput  # Filter für UPDATE oder DELETE
 }
 
+input DataInput {
+  functionName: String
+  users: [String!]
+  orgUnit: String
+}
 type MutationResponse {
   success: Boolean! # Ob die Operation erfolgreich war
   message: String   # Optionaler Fehler oder Erfolgstext
