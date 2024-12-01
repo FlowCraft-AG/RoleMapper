@@ -101,7 +101,7 @@ export class ReadService {
    * @returns {Promise<any[]>} Eine Liste der gefilterten Daten.
    * @throws {BadRequestException} Wenn die Entität nicht unterstützt wird.
    */
-  async findData(entity: string, filters: FilterDTO): Promise<any[]> {
+  async findData(entity: string, filters: FilterDTO | undefined): Promise<any[]> {
     this.#logger.debug('findData: entity=%s, filters=%o', entity, filters);
 
     const model = this.#models[entity];
@@ -126,7 +126,7 @@ export class ReadService {
    * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
    * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
    */
-  private buildFilterQuery(filters: FilterDTO): FilterQuery<any> {
+  private buildFilterQuery(filters: FilterDTO | undefined): FilterQuery<any> {
     if (!filters) return {};
 
     const query: FilterQuery<any> = {};

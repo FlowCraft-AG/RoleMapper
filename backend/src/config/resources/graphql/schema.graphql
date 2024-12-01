@@ -153,8 +153,10 @@ input FilterInput {
 
 enum Operator {
   EQ
-  In
+  IN
   GTE
+  LTE
+  LIKE
 }
 
 # Rückgabewert kann flexibel bleiben (JSON)

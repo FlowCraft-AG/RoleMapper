@@ -10,13 +10,7 @@ import { FilterDTO } from '../model/dto/filter.dto.js';
 /**
  * Enum der unterstützten Entitäten für dynamische Abfragen.
  */
-export enum SupportedEntities {
-  USERS = 'USERS',
-  FUNCTIONS = 'FUNCTIONS',
-  PROCESSES = 'PROCESSES',
-  ROLES = 'ROLES',
-  ORG_UNITS = 'ORG_UNITS',
-}
+export type SupportedEntities = 'USERS' | 'FUNCTIONS' | 'PROCESSES' | 'ROLES' | 'ORG_UNITS';
 
 @Resolver('RoleMapper')
 @UseFilters(HttpExceptionFilter)
@@ -61,7 +55,8 @@ export class QueryResolver {
     this.logDebug(entity, filters);
 
     try {
-      return await this.#service.findData(entity, filters ?? new FilterDTO());
+      this.#logger.debug('getData: entity=%s, filters=%o', entity, filters);
+      return await this.#service.findData(entity, filters);
     } catch (error) {
       this.#logger.error(`getData: Fehler bei der Verarbeitung von ${entity}`, error);
       throw new BadRequestException(`Fehler bei der Verarbeitung von ${entity}`);
