@@ -62,7 +62,7 @@ export class QueryResolver {
         }
 
         this.logDebug(entity, filters);
-        return this.#service.filterData(entity, filters);
+        return this.#service.findData(entity, filters);
     }
 
     /**

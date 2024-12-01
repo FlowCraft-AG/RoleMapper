@@ -34,7 +34,7 @@ export class FilterInput {
     field?: string;
 
     /**
-     * Der Operator, der für den Vergleich verwendet wird (z.B. '=', '!=', '<', '>').
+     * Der Operator, der für den Vergleich verwendet wird (z. B. EQ($eq), IN($in), GTE($gte)).
      * @type {string}
      */
     @Field({ nullable: true })

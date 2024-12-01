@@ -220,7 +220,7 @@ export class ReadController {
             filter,
         );
 
-        return this.#service.filterData(entity, filter);
+        return this.#service.findData(entity, filter);
     }
 
     static readonly SUPPORTED_ENTITIES: string[] = [

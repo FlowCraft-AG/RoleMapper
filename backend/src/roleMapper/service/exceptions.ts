@@ -7,10 +7,24 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 
 /**
- * Exception-Klasse für eine bereits existierende Kunden-Id.
+ * Fehler bei der Verwendung eines ungültigen Operators in der Filter-Query.
  */
-export class ProcessNotFoundException extends HttpException {
-    constructor(readonly processId: string) {
-        super(`Der Prozess ${processId} existiert nicht.`, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
+export class InvalidOperatorException extends HttpException {
+  constructor(operator: string) {
+    super(`Ungültiger Operator: ${operator}`, HttpStatus.BAD_REQUEST);
+    this.name = 'InvalidOperatorException';
+  }
 }
+
+/**
+ * Fehler bei unvollständigen oder ungültigen Filterbedingungen.
+ */
+export class InvalidFilterException extends HttpException {
+  constructor(missingFields: string[]) {
+    const message = `Ungültiger Filter: Die folgenden Angaben fehlen oder sind unvollständig: ${missingFields.join(', ')}.`;
+    super(message, HttpStatus.BAD_REQUEST);
+    this.name = 'InvalidFilterException';
+  }
+}
+
+
