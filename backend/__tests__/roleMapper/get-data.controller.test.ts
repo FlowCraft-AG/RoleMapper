@@ -71,8 +71,6 @@ describe('RoleMapper API: get Data', () => {
             `${ENDPOINTS.USERS}/data`,
         );
 
-
-
         validateResponse(status, headers);
         expect(data).toBeDefined();
         expect(data.length).toBe(EXPECTED_RESULTS.USERS_COUNT);
