@@ -21,6 +21,9 @@ jobs:
     - name: go to backend directory
       run: cd backend
 
+    - name:  ls -al
+      run: ls -al
+
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:

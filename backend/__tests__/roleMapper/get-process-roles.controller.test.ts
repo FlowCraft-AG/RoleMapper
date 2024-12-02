@@ -41,7 +41,7 @@ describe('get Process Roles REST', () => {
     // Tests für gültige Anfragen
     // -------------------------------------------------------------------------
 
-  test('[REST] Rollen zum Dienstreiseantragprozess zum user muud0001', async () => {
+    test('[REST] Rollen zum Dienstreiseantragprozess zum user muud0001', async () => {
         // given
         const query = `?processId=${DIENSTREISEANTRAG}&userId=${USER1}`;
 
@@ -96,7 +96,7 @@ describe('get Process Roles REST', () => {
         ]);
     });
 
-  test('[REST] Rollen zum Dienstreiseantragprozess zum user rost0001', async () => {
+    test('[REST] Rollen zum Dienstreiseantragprozess zum user rost0001', async () => {
         // given
         const url = `?processId=${DIENSTREISEANTRAG}&userId=${USER2}`;
 
@@ -114,7 +114,7 @@ describe('get Process Roles REST', () => {
         expect(data.roles[1]?.roleName).toEqual('Vorgesetzter');
     });
 
-  test('[REST] Rollen zum Reisekostenprozess zum user rost0001', async () => {
+    test('[REST] Rollen zum Reisekostenprozess zum user rost0001', async () => {
         // given
         const query = `?processId=${REISEKOSTENANTRAG}&userId=${USER2}`;
 
@@ -218,7 +218,7 @@ describe('get Process Roles REST', () => {
     // Tests für ungültige Anfragen
     // -------------------------------------------------------------------------
 
-  test('[REST] Ungültiger Prozess', async () => {
+    test('[REST] Ungültiger Prozess', async () => {
         // given
         const url = `?processId=${UNGÜLTIGER_PROZESS}&userId=${USER1}`;
 
@@ -236,7 +236,7 @@ describe('get Process Roles REST', () => {
         });
     });
 
-  test('[REST] Ungültiger User', async () => {
+    test('[REST] Ungültiger User', async () => {
         // given
         const url = `?processId=${DIENSTREISEANTRAG}&userId=${UNGÜLTIGER_USER}`;
 
