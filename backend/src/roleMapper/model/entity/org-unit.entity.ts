@@ -10,11 +10,11 @@ export class OrgUnit extends Document {
     name!: string;
 
     @Prop({ required: false })
-    parent_id?: Types.ObjectId;
+    parentId?: Types.ObjectId;
 
     @Prop({ required: false })
     supervisor?: string;
 }
 
 export type OrgUnitDocument = OrgUnit & Document;
-export const OrgUnitSchema = SchemaFactory.createForClass(OrgUnit);
+export const ORG_UNIT_SCHEMA = SchemaFactory.createForClass(OrgUnit);

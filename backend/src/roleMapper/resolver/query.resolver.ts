@@ -3,7 +3,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { FilterDTO } from '../model/dto/filter.dto.js';
+import { FilterInputDTO } from '../model/dto/filter.dto.js';
 import { SupportedEntities } from '../model/entity/entities.entity.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from './http-exception.filter.js';
@@ -38,7 +38,7 @@ export class QueryResolver {
     /**
      * Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
      * @param {SupportedEntities} entity - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
-     * @param {FilterDTO} [filters] - Dynamische Filterkriterien.
+     * @param {FilterInputDTO} [filters] - Dynamische Filterkriterien.
      * @returns {Promise<any[]>} - Die gefilterten Daten.
      * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
      */
@@ -46,7 +46,7 @@ export class QueryResolver {
     @Public()
     async getData(
         @Args('entity') entity: SupportedEntities,
-        @Args('filters') filters: FilterDTO,
+        @Args('filters') filters: FilterInputDTO,
     ): Promise<any[]> {
         try {
             this.#logger.debug('getData: entity=%s, filters=%o', entity, filters);

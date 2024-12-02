@@ -17,4 +17,4 @@ export class Role extends Document {
 }
 
 export type RoleDocument = Role & Document;
-export const RoleSchema = SchemaFactory.createForClass(Role);
+export const ROLE_SCHEMA = SchemaFactory.createForClass(Role);

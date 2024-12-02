@@ -25,6 +25,7 @@ class Student {
     examRegulation!: string;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId })
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     _id!: mongoose.Types.ObjectId;
 }
 
@@ -73,4 +74,4 @@ export class User extends Document {
 }
 
 export type UserDocument = User & Document;
-export const UserSchema = SchemaFactory.createForClass(User);
+export const USER_SCHEMA = SchemaFactory.createForClass(User);

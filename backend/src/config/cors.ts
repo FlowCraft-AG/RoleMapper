@@ -1,4 +1,4 @@
-import { type CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface.js';
+import { type CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 export const corsOptions: CorsOptions = {
     // Access-Control-Allow-Origin (nur Requests von origin zulassen)

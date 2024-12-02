@@ -1,3 +1,5 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable sonarjs/no-duplicate-string */
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';

@@ -9,7 +9,7 @@ const { NODE_ENV, CLIENT_SECRET, LOG_LEVEL, START_DB_SERVER } = process.env;
 /**
  * Umgebungsvariable zur Konfiguration
  */
-export const env = {
+export const environment = {
     NODE_ENV,
     CLIENT_SECRET,
     LOG_LEVEL,

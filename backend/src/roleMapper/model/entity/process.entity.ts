@@ -28,4 +28,4 @@ export class Process extends Document {
 }
 
 export type ProcessDocument = Process & Document;
-export const ProcessSchema = SchemaFactory.createForClass(Process);
+export const PROCESS_SCHEMA = SchemaFactory.createForClass(Process);

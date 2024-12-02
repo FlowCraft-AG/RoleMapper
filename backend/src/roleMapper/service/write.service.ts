@@ -3,21 +3,33 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
+import {
+    FilterQuery,
+    Model,
+    UpdateQuery,
+    UpdateWithAggregationPipeline,
+    UpdateWriteOpResult,
+} from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
-import { SUPPORTED_ENTITIES, SupportedEntities } from '../model/entity/entities.entity.js';
+import { DataInputDTO } from '../model/dto/data.dto.js';
+import { FilterInputDTO } from '../model/dto/filter.dto.js';
+import {
+    Collections,
+    SUPPORTED_ENTITIES,
+    SupportedEntities,
+} from '../model/entity/entities.entity.js';
 import { FunctionDocument } from '../model/entity/function.entity.js';
-import { OrgUnit, OrgUnitDocument } from '../model/entity/orgUnit.entity.js';
+import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
-import { FilterInput } from '../resolver/filterInput.js';
+import { MutationResponse } from '../resolver/mutation.response.js';
 
 @Injectable()
 export class WriteService {
     readonly #logger = getLogger(WriteService.name);
 
-    readonly #modelMap: Record<string, Model<any>>;
+    readonly #modelMap: Record<string, Model<Collections>>;
 
     constructor(
         @InjectModel(User.name) userModel: Model<UserDocument>,
@@ -38,19 +50,21 @@ export class WriteService {
     /**
      * Erstellt eine neue Entität.
      * @param {string} entity - Der Name der Entität.
-     * @param {any} data - Die Daten für die neue Entität.
-     * @returns {Promise<any>} - Die erstellte Entität.
+     * @param {DataInputDTO} data - Die Daten für die neue Entität.
+     * @returns {Promise<Collections>} - Die erstellte Entität.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async createEntity(entity: string, data: any): Promise<any> {
+    async createEntity(entity: string, data: DataInputDTO | undefined): Promise<Collections> {
         this.#logger.debug('createEntity: entity=%s, data=%o', entity, data);
 
         if (!SUPPORTED_ENTITIES.includes(entity as SupportedEntities)) {
             throw new Error(`Invalid entity: ${entity}`);
         }
 
-        const model = this.#modelMap[entity as SupportedEntities];
-        if (!model) {
+        const model: Model<Collections> = this.#modelMap[
+            entity as SupportedEntities
+        ] as Model<Collections> & { __v: number };
+        if (model === undefined) {
             throw new Error(`Entity model not found for: ${entity}`);
         }
 
@@ -60,16 +74,16 @@ export class WriteService {
     /**
      * Aktualisiert eine oder mehrere Entitäten.
      * @param {string} entity - Der Name der Entität.
-     * @param {FilterInput | undefined} filter - Die Filterkriterien.
+     * @param {FilterInputDTO | undefined} filter - Die Filterkriterien.
      * @param {any} data - Die neuen Daten für die Entität.
      * @returns {Promise<any>} - Das Ergebnis der Aktualisierung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
     async updateEntity(
         entity: string,
-        filter: FilterInput | undefined,
+        filter: FilterInputDTO | undefined,
         data: UpdateWithAggregationPipeline | UpdateQuery<any> | undefined,
-    ): Promise<any> {
+    ): Promise<UpdateWriteOpResult> {
         this.#logger.debug('updateEntity: entity=%s, filter=%o, data=%o', entity, filter, data);
         const model = this.#modelMap[entity as SupportedEntities];
         if (!model) throw new Error(`Unknown entity: ${entity}`);
@@ -81,25 +95,33 @@ export class WriteService {
     /**
      * Löscht eine oder mehrere Entitäten.
      * @param {string} entity - Der Name der Entität.
-     * @param {FilterInput | undefined} filter - Die Filterkriterien.
+     * @param {FilterInputDTO | undefined} filter - Die Filterkriterien.
      * @returns {Promise<any>} - Das Ergebnis der Löschung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async deleteEntity(entity: string, filter: FilterInput | undefined): Promise<any> {
+    async deleteEntity(
+        entity: string,
+        filter: FilterInputDTO | undefined,
+    ): Promise<MutationResponse> {
         this.#logger.debug('deleteEntity: entity=%s, filter=%o', entity, filter);
         const model = this.#modelMap[entity as SupportedEntities];
         if (!model) throw new Error(`Unknown entity: ${entity}`);
 
         const filterQuery = this.buildFilterQuery(filter);
-        return model.deleteMany(filterQuery).exec();
+        const result = await model.deleteMany(filterQuery).exec();
+        return {
+            success: result.deletedCount > 0,
+            message:
+                result.deletedCount > 0 ? 'Deletion successful' : 'No documents matched the filter',
+        };
     }
 
     /**
      * Erstellt eine Filterabfrage aus den gegebenen Filtern.
-     * @param {FilterInput | undefined} filters - Die Filterkriterien.
+     * @param {FilterInputDTO | undefined} filters - Die Filterkriterien.
      * @returns {FilterQuery<any>} - Die erstellte Filterabfrage.
      */
-    private buildFilterQuery(filters?: FilterInput): FilterQuery<any> {
+    private buildFilterQuery(filters?: FilterInputDTO): FilterQuery<any> {
         if (!filters) return {};
 
         const query: FilterQuery<any> = {};

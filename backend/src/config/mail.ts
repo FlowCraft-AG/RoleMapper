@@ -1,3 +1,5 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type Options } from 'nodemailer/lib/smtp-transport';
 import { config } from './app.js';
 import { logLevel } from './logger.js';

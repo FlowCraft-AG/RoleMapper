@@ -1,15 +1,15 @@
-import { Function, FunctionSchema } from './function.entity.js';
-import { OrgUnit, OrgUnitSchema } from './orgUnit.entity.js';
-import { Process, ProcessSchema } from './process.entity.js';
-import { Role, RoleSchema } from './roles.entity.js';
-import { User, UserSchema } from './user.entity.js';
+import { Function, FUNCTION_SCHEMA } from './function.entity.js';
+import { ORG_UNIT_SCHEMA, OrgUnit } from './org-unit.entity.js';
+import { Process, PROCESS_SCHEMA } from './process.entity.js';
+import { Role, ROLE_SCHEMA } from './roles.entity.js';
+import { User, USER_SCHEMA } from './user.entity.js';
 
 /**
  * Definiert eine Mongoose-Entität und deren Schema.
  */
 type EntitySchema = {
     name: string;
-    schema: any;
+    schema: CollectionSchema;
 };
 
 /**
@@ -17,11 +17,11 @@ type EntitySchema = {
  * Wird für die Registrierung im Modul verwendet.
  */
 const entitySchemas: EntitySchema[] = [
-    { name: User.name, schema: UserSchema },
-    { name: Function.name, schema: FunctionSchema },
-    { name: OrgUnit.name, schema: OrgUnitSchema },
-    { name: Process.name, schema: ProcessSchema },
-    { name: Role.name, schema: RoleSchema },
+    { name: User.name, schema: USER_SCHEMA },
+    { name: Function.name, schema: FUNCTION_SCHEMA },
+    { name: OrgUnit.name, schema: ORG_UNIT_SCHEMA },
+    { name: Process.name, schema: PROCESS_SCHEMA },
+    { name: Role.name, schema: ROLE_SCHEMA },
 ];
 
 /**
@@ -72,3 +72,11 @@ export const SUPPORTED_ENTITIES = [
  * ```
  */
 export type SupportedEntities = (typeof SUPPORTED_ENTITIES)[number];
+
+export type Collections = User | Function | OrgUnit | Process | Role;
+export type CollectionSchema =
+    | typeof USER_SCHEMA
+    | typeof FUNCTION_SCHEMA
+    | typeof ORG_UNIT_SCHEMA
+    | typeof PROCESS_SCHEMA
+    | typeof ROLE_SCHEMA;

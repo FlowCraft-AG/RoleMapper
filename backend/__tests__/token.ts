@@ -1,5 +1,5 @@
 import { type AxiosInstance, type AxiosResponse } from 'axios';
-import { type GraphQLQuery } from './bankkonto/bankkonto-mutation.resolver.test.js';
+// import { type GraphQLQuery } from './bankkonto/bankkonto-mutation.resolver.test.js';
 import { httpsAgent, tokenPath } from './testserver.js';
 
 type TokenResult = {
@@ -26,26 +26,26 @@ export const tokenRest = async (
     return response.data.access_token;
 };
 
-export const tokenGraphQL = async (
-    axiosInstance: AxiosInstance,
-    username: string = usernameDefault,
-    password: string = passwordDefault,
-): Promise<string> => {
-    const body: GraphQLQuery = {
-        query: `
-            mutation {
-                token(
-                    username: "${username}",
-                    password: "${password}"
-                ) {
-                    access_token
-                }
-            }
-        `,
-    };
+// export const tokenGraphQL = async (
+//     axiosInstance: AxiosInstance,
+//     username: string = usernameDefault,
+//     password: string = passwordDefault,
+// ): Promise<string> => {
+//     const body: GraphQLQuery = {
+//         query: `
+//             mutation {
+//                 token(
+//                     username: "${username}",
+//                     password: "${password}"
+//                 ) {
+//                     access_token
+//                 }
+//             }
+//         `,
+//     };
 
-    console.debug('username and password: user=%s, pass=%s', username, password);
-    const response = await axiosInstance.post('graphql', body, { httpsAgent });
-    console.debug('response: res=%o', response.data);
-    return response.data.data.token.access_token; // eslint-disable-line @typescript-eslint/no-unsafe-return
-};
+//     console.debug('username and password: user=%s, pass=%s', username, password);
+//     const response = await axiosInstance.post('graphql', body, { httpsAgent });
+//     console.debug('response: res=%o', response.data);
+//     return response.data.data.token.access_token; // eslint-disable-line @typescript-eslint/no-unsafe-return
+// };

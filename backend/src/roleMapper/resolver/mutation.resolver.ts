@@ -38,10 +38,6 @@ export class MutationResolver {
                     result = await this.service.deleteEntity(entity, filter);
                     break;
                 }
-
-                default: {
-                    throw new Error(`Unsupported operation: ${operation}`);
-                }
             }
 
             return {
@@ -53,7 +49,7 @@ export class MutationResolver {
             return {
                 success: false,
                 message: (error as Error).message,
-                result: null,
+                result: undefined,
             };
         }
     }

@@ -1,4 +1,4 @@
-import { type HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface.js';
+import { type HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { VOLUMES_DIR } from './app.js';

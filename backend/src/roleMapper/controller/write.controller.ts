@@ -109,6 +109,7 @@ export class WriteController {
                         users: ['gyca1011'],
                         orgUnit: 'Stundent',
                         _id: '674b7fc8a348e76ef9eeb159',
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
                         __v: 0,
                     },
                 },
@@ -121,7 +122,7 @@ export class WriteController {
                     result: {
                         acknowledged: true,
                         modifiedCount: 1,
-                        upsertedId: null,
+                        upsertedId: undefined,
                         upsertedCount: 0,
                         matchedCount: 1,
                     },
@@ -149,7 +150,7 @@ export class WriteController {
                 value: {
                     success: false,
                     message: 'Nicht unterstützte Operation: INVALID_OPERATION',
-                    result: null,
+                    result: undefined,
                 },
             },
         },
@@ -183,10 +184,6 @@ export class WriteController {
                 case 'DELETE': {
                     result = await this.#service.deleteEntity(entity, filter);
                     break;
-                }
-
-                default: {
-                    throw new BadRequestException('Nicht unterstützte Operation: %s', operation);
                 }
             }
 

@@ -1,4 +1,8 @@
-import { afterAll, beforeAll, describe, test } from '@jest/globals';
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/naming-convention */
+import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import axios from 'axios';

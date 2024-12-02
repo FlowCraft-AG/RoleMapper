@@ -1,3 +1,6 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { GraphQLRequest } from '@apollo/server';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
@@ -40,7 +43,7 @@ describe('get Process Roles GraphQL', () => {
         client = axios.create({
             baseURL,
             httpsAgent,
-            validateStatus: (status) => status < 500, // eslint-disable-line @typescript-eslint/no-magic-numbers
+            validateStatus: (status) => status < 500,
         });
     });
 
@@ -75,9 +78,6 @@ describe('get Process Roles GraphQL', () => {
             graphqlPath,
             body,
         );
-
-        // then
-        console.log('Response:', status, data);
 
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu); // eslint-disable-line sonarjs/no-duplicate-string
@@ -122,9 +122,6 @@ describe('get Process Roles GraphQL', () => {
             graphqlPath,
             body,
         );
-
-        // then
-        console.log('Response:', status, data);
 
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
@@ -171,7 +168,6 @@ describe('get Process Roles GraphQL', () => {
         );
 
         // then
-        console.log('Response:', status, data);
 
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);

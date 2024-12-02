@@ -1,46 +1,35 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 /**
  * Mögliche Operatoren für Filterbedingungen.
  */
-export enum FilterOperator {
-    EQ = '$eq',
-    IN = '$in',
-    GTE = '$gte',
-    LTE = '$lte',
-    LIKE = '$like',
-}
-
-registerEnumType(FilterOperator, {
-    name: 'FilterOperator',
-    description: 'Operatoren für Filterbedingungen.',
-});
+export type FilterOperator = 'EQ' | 'IN' | 'GTE' | 'LTE' | 'LIKE';
 
 /**
  * Definiert die Eingabeparameter für Filter in GraphQL-Abfragen.
  */
 @InputType()
-export class FilterDTO {
+export class FilterInputDTO {
     /**
      * Eine Liste von Filterbedingungen, die alle erfüllt sein müssen (AND).
-     * @type {FilterDTO[]}
+     * @type {FilterInputDTO[]}
      */
-    @Field(() => [FilterDTO], { nullable: true })
-    and?: FilterDTO[];
+    @Field(() => [FilterInputDTO], { nullable: true })
+    and?: FilterInputDTO[];
 
     /**
      * Eine Liste von Filterbedingungen, von denen mindestens eine erfüllt sein muss (OR).
-     * @type {FilterDTO[]}
+     * @type {FilterInputDTO[]}
      */
-    @Field(() => [FilterDTO], { nullable: true })
-    or?: FilterDTO[];
+    @Field(() => [FilterInputDTO], { nullable: true })
+    or?: FilterInputDTO[];
 
     /**
      * Eine Filterbedingung, die nicht erfüllt sein darf (NOT).
-     * @type {FilterDTO}
+     * @type {FilterInputDTO}
      */
-    @Field(() => FilterDTO, { nullable: true })
-    not?: FilterDTO;
+    @Field(() => FilterInputDTO, { nullable: true })
+    not?: FilterInputDTO;
 
     /**
      * Das Feld, auf das der Filter angewendet wird.
@@ -53,7 +42,7 @@ export class FilterDTO {
      * Der Operator, der für den Vergleich verwendet wird (z. B. EQ, IN, GTE, LTE, LIKE).
      * @type {FilterOperator}
      */
-    @Field(() => FilterOperator, { nullable: true })
+    @Field({ nullable: true })
     operator?: FilterOperator;
 
     /**

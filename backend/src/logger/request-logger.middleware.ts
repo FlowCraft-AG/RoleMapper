@@ -6,7 +6,7 @@ import { getLogger } from './logger.js';
 export class RequestLoggerMiddleware implements NestMiddleware {
     readonly #logger = getLogger(RequestLoggerMiddleware.name);
 
-    use(request: Request, _res: Response, next: NextFunction) {
+    use(request: Request, _response: Response, next: NextFunction) {
         const { method, originalUrl, headers } = request;
         this.#logger.debug('method=%s, url=%s, header=%o', method, originalUrl, headers);
         next();

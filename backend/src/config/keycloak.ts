@@ -1,3 +1,6 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/operator-linebreak */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
     type KeycloakConnectConfig,
     PolicyEnforcementMode,
@@ -5,7 +8,7 @@ import {
 } from 'nest-keycloak-connect';
 import { Agent } from 'node:https';
 import { config } from './app.js';
-import { env as environment } from './env.js';
+import { environment } from './environment.js';
 import { httpsOptions } from './https.js';
 
 const { keycloak } = config;
@@ -30,7 +33,7 @@ export const keycloakConnectOptions: KeycloakConnectConfig = {
 if (NODE_ENV === 'development') {
     console.debug('keycloakConnectOptions = %o', keycloakConnectOptions);
 } else {
-    const { secret, ...keycloakConnectOptionsLog } = keycloakConnectOptions;
+    const { ...keycloakConnectOptionsLog } = keycloakConnectOptions;
     console.debug('keycloakConnectOptions = %o', keycloakConnectOptionsLog);
 }
 

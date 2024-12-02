@@ -6,10 +6,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
 import { RoleResult } from '../controller/read.controller.js';
-import { FilterDTO } from '../model/dto/filter.dto.js';
+import { FilterInputDTO } from '../model/dto/filter.dto.js';
 import { SupportedEntities } from '../model/entity/entities.entity.js';
 import { Function, FunctionDocument } from '../model/entity/function.entity.js';
-import { OrgUnit, OrgUnitDocument } from '../model/entity/orgUnit.entity.js';
+import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
@@ -107,11 +107,11 @@ export class ReadService {
      * Führt eine dynamische Filterung für eine angegebene Entität durch.
      *
      * @param {string} entity - Der Name der Ziel-Entität (z. B. `USERS`, `FUNCTIONS`).
-     * @param {FilterDTO} filters - Die Filterbedingungen.
+     * @param {FilterInputDTO} filters - Die Filterbedingungen.
      * @returns {Promise<any[]>} Eine Liste der gefilterten Daten.
      * @throws {BadRequestException} Wenn die Entität nicht unterstützt wird.
      */
-    async findData(entity: string, filters: FilterDTO): Promise<any[]> {
+    async findData(entity: string, filters: FilterInputDTO): Promise<any[]> {
         this.#logger.debug('findData: entity=%s, filters=%o', entity, filters);
 
         const model = this.#modelMap[entity as SupportedEntities];
@@ -132,13 +132,14 @@ export class ReadService {
     /**
      * Erstellt rekursiv eine MongoDB-Filter-Query basierend auf den angegebenen Bedingungen.
      *
-     * @param {FilterDTO} filters - Die Filterbedingungen in einem rekursiven Schema.
+     * @param {FilterInputDTO} filters - Die Filterbedingungen in einem rekursiven Schema.
      * @returns {FilterQuery<any>} Die generierte MongoDB-Query.
      * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
      * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
      */
-    private buildFilterQuery(filters?: FilterDTO): FilterQuery<any> {
+    private buildFilterQuery(filters?: FilterInputDTO): FilterQuery<any> {
         if (this.isEmptyFilter(filters)) {
+            this.#logger.debug('buildFilterQuery: keine Filterbedingungen angegeben');
             return {};
         }
 
@@ -156,30 +157,24 @@ export class ReadService {
         return query;
     }
 
-    private isEmptyFilter(filters?: FilterDTO): boolean {
-        return (
-            !filters ||
-            (Object.keys(filters).length === 0 &&
-                filters.field === null &&
-                filters.operator === null &&
-                filters.value === undefined)
-        );
+    private isEmptyFilter(filters?: FilterInputDTO): boolean {
+        return !filters || Object.keys(filters).length === 0;
     }
 
-    private processLogicalOperators(filters: FilterDTO, query: FilterQuery<any>): void {
+    private processLogicalOperators(filters: FilterInputDTO, query: FilterQuery<any>): void {
         if (filters.and)
             query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
         if (filters.or) query.$or = filters.or.map((subFilter) => this.buildFilterQuery(subFilter));
         if (filters.not) query.$not = this.buildFilterQuery(filters.not);
     }
 
-    private isAnyFieldSet(filters: FilterDTO): boolean {
+    private isAnyFieldSet(filters: FilterInputDTO): boolean {
         return (
             filters.field !== null || filters.operator !== undefined || filters.value !== undefined
         );
     }
 
-    private validateFilterFields(filters: FilterDTO): void {
+    private validateFilterFields(filters: FilterInputDTO): void {
         const missingFields: string[] = [];
         if (filters.field === null) missingFields.push('Feld');
         if (filters.operator === undefined) missingFields.push('Operator');
@@ -190,7 +185,7 @@ export class ReadService {
         }
     }
 
-    private buildFieldQuery(filters: FilterDTO, query: FilterQuery<any>): void {
+    private buildFieldQuery(filters: FilterInputDTO, query: FilterQuery<any>): void {
         const OPERATOR_MAP: Record<string, string> = {
             EQ: '$eq',
             IN: '$in',

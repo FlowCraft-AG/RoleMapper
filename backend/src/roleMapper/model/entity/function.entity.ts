@@ -17,4 +17,4 @@ export class Function extends Document {
 }
 
 export type FunctionDocument = Function & Document;
-export const FunctionSchema = SchemaFactory.createForClass(Function);
+export const FUNCTION_SCHEMA = SchemaFactory.createForClass(Function);

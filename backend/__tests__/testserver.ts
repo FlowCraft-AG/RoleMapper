@@ -24,7 +24,7 @@ const mongoUri = process.env.TEST_MONGODB_URI!;
 const connectToMongoDB = async () => {
     if (!mongoUri) {
         console.error('MongoDB-URI fehlt. Bitte setzen Sie die Umgebungsvariable MONGODB_URI.');
-        process.exit(1);
+        throw new Error('MongoDB-URI fehlt. Bitte setzen Sie die Umgebungsvariable MONGODB_URI.');
     }
 
     try {
@@ -33,24 +33,24 @@ const connectToMongoDB = async () => {
         console.info('Erfolgreich mit MongoDB verbunden.');
     } catch (error) {
         console.error('Fehler beim Verbinden mit MongoDB:', error);
-        process.exit(1);
+        throw new Error('Fehler beim Verbinden mit MongoDB');
     }
 };
 
 // -----------------------------------------------------------------------------
 // Hilfsfunktion zur Ermittlung eines freien Ports
 // -----------------------------------------------------------------------------
-const getFreePort = async (port = 3000): Promise<number> => {
-    console.info(`Versuche freien Port zu finden, starte bei ${port}...`);
+const getFreePort = async (startPort: number): Promise<number> => {
+    console.info(`Versuche freien Port zu finden, starte bei ${startPort}...`);
     return new Promise((resolve) => {
         const server = createServer();
-        server.listen(port, () => {
+        server.listen(startPort, () => {
             server.close(() => {
-                console.info(`Freier Port gefunden: ${port}`);
-                resolve(port);
+                console.info(`Freier Port gefunden: ${startPort}`);
+                resolve(startPort);
             });
         });
-        server.on('error', () => resolve(port + 1));
+        server.on('error', () => resolve(startPort + 1));
     });
 };
 
@@ -77,18 +77,19 @@ export const startServer = async (): Promise<INestApplication> => {
         );
 
         currentPort = await getFreePort(port);
-        await server.listen(port);
-        console.info(`Server läuft unter https://${host}:${port}`);
+        await server.listen(currentPort);
+        console.info(`Server läuft unter https://${host}:${currentPort}`);
         return server;
     } catch (error) {
         console.error('Fehler beim Starten des Servers:', error);
+        // eslint-disable-next-line n/no-process-exit, unicorn/no-process-exit
         process.exit(1);
     }
 };
 
 export const shutdownServer = async (): Promise<void> => {
     try {
-        if (server) {
+        if (server !== undefined) {
             await server.close();
             console.info('Server erfolgreich beendet.');
         }

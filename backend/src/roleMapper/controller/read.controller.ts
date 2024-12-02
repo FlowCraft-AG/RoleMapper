@@ -22,7 +22,7 @@ import { Public } from 'nest-keycloak-connect';
 import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { type FilterDTO } from '../model/dto/filter.dto.js';
+import { type FilterInputDTO } from '../model/dto/filter.dto.js';
 import { SUPPORTED_ENTITIES, SupportedEntities } from '../model/entity/entities.entity.js';
 import { User } from '../model/entity/user.entity.js';
 import { ReadService } from '../service/read.service.js';
@@ -52,6 +52,7 @@ export type Links = {
 
 export type RolePayload = {
     roles: RoleResult[];
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     _links?: Links;
 };
 
@@ -148,7 +149,7 @@ export class ReadController {
     /**
      * Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
      * @param {string} collection - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
-     * @param {FilterDTO} filter - Die Filterbedingungen.
+     * @param {FilterInputDTO} filter - Die Filterbedingungen.
      * @returns {Promise<any[]>} - Die gefilterten Daten.
      * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
      */
@@ -183,7 +184,10 @@ export class ReadController {
         description: 'Die Ziel-Entität, z. B. USERS, FUNCTIONS, PROCESSES.',
         example: 'USERS',
     })
-    async getData(@Param('entity') collection: string, @Query() filter: FilterDTO): Promise<any[]> {
+    async getData(
+        @Param('entity') collection: string,
+        @Query() filter: FilterInputDTO,
+    ): Promise<any[]> {
         this.validateEntity(collection);
         this.#logger.debug('getData: collection=%s, filter=%o', collection, filter);
 

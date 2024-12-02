@@ -104,7 +104,7 @@ enum OperationType {
 input MutationInput {
   entity: EntityType!      # Ziel-Entität (z. B. USERS, FUNCTIONS)
   operation: OperationType! # Art der Mutation: CREATE, UPDATE, DELETE
-  data: JSON           # Daten für CREATE oder UPDATE
+  data: DataInput      # Daten für CREATE oder UPDATE
   filter: FilterInput  # Filter für UPDATE oder DELETE
 }
 
@@ -112,6 +112,16 @@ input DataInput {
   functionName: String
   users: [String!]
   orgUnit: String
+  userId: String
+  userType: String
+  userRole: String
+  active: String
+  name: String
+  roleId: String
+  processId: String
+  roles: String
+  arentId: String
+  supervisor: String
 }
 type MutationResponse {
   success: Boolean! # Ob die Operation erfolgreich war

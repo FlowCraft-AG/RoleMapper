@@ -25,8 +25,8 @@ export class BannerService implements OnApplicationBootstrap {
 
         try {
             // Banner generieren und mit Farben ausgeben
-            const banner = await figletAsync('RoleMapper');
-            console.log(chalk.blueBright('\n' + banner)); // Banner in Blau
+            const banner = (await figletAsync('RoleMapper')) as string;
+            this.#logger.info(chalk.blueBright(`\n${banner}`)); // Banner in Blau
         } catch (error) {
             this.#logger.error(chalk.red('Fehler beim Generieren des Banners mit figlet:'), error);
         }

@@ -2,7 +2,7 @@
  * Das Modul besteht aus der Klasse {@linkcode HttpExceptionFilter}.
  * @packageDocumentation
  */
-import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException } from '@nestjs/common';
+import { Catch, type ExceptionFilter, HttpException } from '@nestjs/common';
 import { BadUserInputError } from './errors.js';
 
 @Catch(HttpException)
@@ -13,7 +13,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
      * @param {ArgumentsHost} _host - Das Argument-Host-Objekt.
      * @throws {BadUserInputError} - Wenn die Ausnahme abgefangen wird.
      */
-    catch(exception: HttpException, _host: ArgumentsHost) {
+    catch(exception: HttpException) {
         const response = exception.getResponse();
         if (typeof response === 'string') {
             throw new BadUserInputError(response, exception);
