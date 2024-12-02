@@ -46,7 +46,13 @@ export const entities = entitySchemas.map(({ name, schema }) => ({
  * - Neue Entitäten können einfach zu diesem Array hinzugefügt werden.
  * - Der Typ `SupportedEntities` wird automatisch synchronisiert, um die neuen Werte zu berücksichtigen.
  */
-export const SUPPORTED_ENTITIES = ['USERS', 'FUNCTIONS', 'PROCESSES', 'ROLES', 'ORG_UNITS'] as const;
+export const SUPPORTED_ENTITIES = [
+    'USERS',
+    'FUNCTIONS',
+    'PROCESSES',
+    'ROLES',
+    'ORG_UNITS',
+] as const;
 
 /**
  * Typdefinition für unterstützte Entitäten.
@@ -59,11 +65,10 @@ export const SUPPORTED_ENTITIES = ['USERS', 'FUNCTIONS', 'PROCESSES', 'ROLES', '
  * **Beispiel:**
  * ```typescript
  * function validateEntity(entity: SupportedEntities) {
- *  
+ *
  * }
  * validateEntity('USERS'); // ✅ Gültig
  * validateEntity('INVALID'); // ❌ Fehler bei der Kompilierung
  * ```
  */
-export type SupportedEntities = typeof SUPPORTED_ENTITIES[number];
-
+export type SupportedEntities = (typeof SUPPORTED_ENTITIES)[number];

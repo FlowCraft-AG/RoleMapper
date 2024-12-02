@@ -10,7 +10,7 @@ import { paths } from '../../config/paths.js';
 const port = `:${nodeConfig.port}`;
 
 export const getBaseUri = ({ protocol, hostname, url }: Request) => {
-    // Query-String entfernen, falls vorhanden
+  // Query-String entfernen, falls vorhanden
   let basePath = url.includes('?') ? url.slice(0, url.lastIndexOf('?')) : url;
 
   // '/process-roles' entfernen, falls es am Ende steht
@@ -18,6 +18,5 @@ export const getBaseUri = ({ protocol, hostname, url }: Request) => {
     basePath = basePath.slice(0, -`/${paths.processRoles}`.length);
   }
 
-
-    return `${protocol}://${hostname}${port}${basePath}`;
+  return `${protocol}://${hostname}${port}${basePath}`;
 };

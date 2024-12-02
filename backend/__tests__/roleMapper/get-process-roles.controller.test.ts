@@ -8,6 +8,7 @@ import { host, httpsAgent, port, shutdownServer, startServer } from '../testserv
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
 
+let baseURI: string = '';
 const DIENSTREISEANTRAG = 'DA0001';
 const REISEKOSTENANTRAG = 'RA0001';
 const USER1 = 'muud0001';
@@ -25,7 +26,8 @@ describe('get Process Roles', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
         await startServer();
-        const baseURL = `https://${host}:${port}/roleMapper/process-roles`;
+        baseURI = `https://${host}:${port}/roleMapper`;
+        const baseURL = `${baseURI}/process-roles`;
         client = axios.create({
             baseURL,
             httpsAgent,
@@ -36,6 +38,10 @@ describe('get Process Roles', () => {
     afterAll(async () => {
         await shutdownServer();
     });
+
+    // -------------------------------------------------------------------------
+    // Tests für gültige Anfragen
+    // -------------------------------------------------------------------------
 
     test('Rollen zum Dienstreiseantragprozess zum user muud0001', async () => {
         // given
@@ -48,8 +54,7 @@ describe('get Process Roles', () => {
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
 
-        expect(data).toEqual({
-            roles: [
+        expect(data.roles).toEqual([
                 {
                     roleName: 'Antragssteller',
                     users: [
@@ -91,7 +96,7 @@ describe('get Process Roles', () => {
                     ],
                 },
             ],
-        });
+        );
     });
 
     test('Rollen zum Dienstreiseantragprozess zum user rost0001', async () => {
@@ -112,107 +117,109 @@ describe('get Process Roles', () => {
         expect(data.roles[1]?.roleName).toEqual('Vorgesetzter');
     });
 
-    test('Rollen zum Reisekostenprozess zum user rost0001', async () => {
-        // given
-        const url = `?processId=${REISEKOSTENANTRAG}&userId=${USER2}`;
+  test('Rollen zum Reisekostenprozess zum user rost0001', async () => {
+    // given
+    const query = `?processId=${REISEKOSTENANTRAG}&userId=${USER2}`;
 
-        // when
-        const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(url);
+    // when
+    const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(query);
 
-        // then
-        expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
+    // then
+    expect(status).toBe(HttpStatus.OK);
+    expect(headers['content-type']).toMatch(/json/iu);
 
-        expect(data).toEqual({
-            roles: [
-                {
-                    roleName: 'Rechnungsprüfung',
-                    users: [
-                        {
-                            functionName: 'Leitung (Finanzen)',
-                            _id: '673ede38e1746bf8e6aa1b35',
-                            userId: 'kodo0001',
-                            userType: 'employee',
-                            userRole: 'adminTechnicalStaff',
-                            orgUnit: 'A0021',
-                            active: true,
-                            validFrom: '2010-03-01T00:00:00.000Z',
-                            validUntil: '2100-12-31T23:59:59.000Z',
-                            employee: {
-                                costCenter: 'A0021',
-                                department: 'Hochschulverwaltung',
-                            },
-                        },
-                    ],
-                },
-                {
-                    roleName: 'Finanzabteilung',
-                    users: [
-                        {
-                            functionName: 'Leitung (Finanzen)',
-                            _id: '673ede38e1746bf8e6aa1b31',
-                            userId: 'scdo0001',
-                            userType: 'employee',
-                            userRole: 'adminTechnicalStaff',
-                            orgUnit: 'A0021',
-                            active: true,
-                            validFrom: '2022-07-12T00:00:00.000Z',
-                            validUntil: '2100-12-31T00:00:00.000Z',
-                            employee: {
-                                costCenter: 'A0021',
-                                department: 'Hochschulverwaltung',
-                            },
-                        },
-                        {
-                            functionName: 'Leitung (Finanzen)',
-                            _id: '673ede38e1746bf8e6aa1b35',
-                            userId: 'kodo0001',
-                            userType: 'employee',
-                            userRole: 'adminTechnicalStaff',
-                            orgUnit: 'A0021',
-                            active: true,
-                            validFrom: '2010-03-01T00:00:00.000Z',
-                            validUntil: '2100-12-31T23:59:59.000Z',
-                            employee: {
-                                costCenter: 'A0021',
-                                department: 'Hochschulverwaltung',
-                            },
-                        },
-                        {
-                            functionName: 'Mitarbeiter (Finanzen)',
-                            _id: '673ede38e1746bf8e6aa1b37',
-                            userId: 'dita0001',
-                            userType: 'employee',
-                            userRole: 'adminTechnicalStaff',
-                            orgUnit: 'A0021',
-                            active: true,
-                            validFrom: '2008-09-01T00:00:00.000Z',
-                            validUntil: '2025-12-31T23:59:59.000Z',
-                            employee: {
-                                costCenter: 'A0021',
-                                department: 'Hochschulverwaltung',
-                            },
-                        },
-                        {
-                            functionName: 'Mitarbeiter (Finanzen)',
-                            _id: '673ede38e1746bf8e6aa1b34',
-                            userId: 'bola0001',
-                            userType: 'employee',
-                            userRole: 'phdStudent',
-                            orgUnit: 'A0021',
-                            active: true,
-                            validFrom: '2021-01-20T00:00:00.000Z',
-                            validUntil: '2026-12-31T22:59:59.000Z',
-                            employee: {
-                                costCenter: 'A0021',
-                                department: 'Hochschulverwaltung',
-                            },
-                        },
-                    ],
-                },
-            ],
-        });
-    });
+    expect(data.roles).toEqual([
+      {
+        roleName: 'Rechnungsprüfung',
+        users: [
+          {
+            functionName: 'Leitung (Finanzen)',
+            _id: '673ede38e1746bf8e6aa1b35',
+            userId: 'kodo0001',
+            userType: 'employee',
+            userRole: 'adminTechnicalStaff',
+            orgUnit: 'A0021',
+            active: true,
+            validFrom: '2010-03-01T00:00:00.000Z',
+            validUntil: '2100-12-31T23:59:59.000Z',
+            employee: {
+              costCenter: 'A0021',
+              department: 'Hochschulverwaltung',
+            },
+          },
+        ],
+      },
+      {
+        roleName: 'Finanzabteilung',
+        users: [
+          {
+            functionName: 'Leitung (Finanzen)',
+            _id: '673ede38e1746bf8e6aa1b31',
+            userId: 'scdo0001',
+            userType: 'employee',
+            userRole: 'adminTechnicalStaff',
+            orgUnit: 'A0021',
+            active: true,
+            validFrom: '2022-07-12T00:00:00.000Z',
+            validUntil: '2100-12-31T00:00:00.000Z',
+            employee: {
+              costCenter: 'A0021',
+              department: 'Hochschulverwaltung',
+            },
+          },
+          {
+            functionName: 'Leitung (Finanzen)',
+            _id: '673ede38e1746bf8e6aa1b35',
+            userId: 'kodo0001',
+            userType: 'employee',
+            userRole: 'adminTechnicalStaff',
+            orgUnit: 'A0021',
+            active: true,
+            validFrom: '2010-03-01T00:00:00.000Z',
+            validUntil: '2100-12-31T23:59:59.000Z',
+            employee: {
+              costCenter: 'A0021',
+              department: 'Hochschulverwaltung',
+            },
+          },
+          {
+            functionName: 'Mitarbeiter (Finanzen)',
+            _id: '673ede38e1746bf8e6aa1b37',
+            userId: 'dita0001',
+            userType: 'employee',
+            userRole: 'adminTechnicalStaff',
+            orgUnit: 'A0021',
+            active: true,
+            validFrom: '2008-09-01T00:00:00.000Z',
+            validUntil: '2025-12-31T23:59:59.000Z',
+            employee: {
+              costCenter: 'A0021',
+              department: 'Hochschulverwaltung',
+            },
+          },
+          {
+            functionName: 'Mitarbeiter (Finanzen)',
+            _id: '673ede38e1746bf8e6aa1b34',
+            userId: 'bola0001',
+            userType: 'employee',
+            userRole: 'phdStudent',
+            orgUnit: 'A0021',
+            active: true,
+            validFrom: '2021-01-20T00:00:00.000Z',
+            validUntil: '2026-12-31T22:59:59.000Z',
+            employee: {
+              costCenter: 'A0021',
+              department: 'Hochschulverwaltung',
+            },
+          },
+        ],
+      },
+    ]);
+  });
+
+    // -------------------------------------------------------------------------
+    // Tests für ungültige Anfragen
+    // -------------------------------------------------------------------------
 
     test('Ungültiger Prozess', async () => {
         // given
