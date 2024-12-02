@@ -1,7 +1,11 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/operator-linebreak */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, UpdateQuery, UpdateWithAggregationPipeline } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
+import { SUPPORTED_ENTITIES, SupportedEntities } from '../model/entity/entities.entity.js';
 import { FunctionDocument } from '../model/entity/function.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/orgUnit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
@@ -13,7 +17,7 @@ import { FilterInput } from '../resolver/filterInput.js';
 export class WriteService {
     readonly #logger = getLogger(WriteService.name);
 
-    readonly #entityMap: Record<string, Model<any>>;
+    readonly #modelMap: Record<string, Model<any>>;
 
     constructor(
         @InjectModel(User.name) userModel: Model<UserDocument>,
@@ -22,7 +26,7 @@ export class WriteService {
         @InjectModel(OrgUnit.name) orgUnitModel: Model<OrgUnitDocument>,
         @InjectModel(Role.name) roleModel: Model<RoleDocument>,
     ) {
-        this.#entityMap = {
+        this.#modelMap = {
             USERS: userModel,
             FUNCTIONS: functionModel,
             PROCESSES: processModel,
@@ -40,8 +44,15 @@ export class WriteService {
      */
     async createEntity(entity: string, data: any): Promise<any> {
         this.#logger.debug('createEntity: entity=%s, data=%o', entity, data);
-        const model = this.#entityMap[entity];
-        if (!model) throw new Error(`Unknown entity: ${entity}`);
+
+        if (!SUPPORTED_ENTITIES.includes(entity as SupportedEntities)) {
+            throw new Error(`Invalid entity: ${entity}`);
+        }
+
+        const model = this.#modelMap[entity as SupportedEntities];
+        if (!model) {
+            throw new Error(`Entity model not found for: ${entity}`);
+        }
 
         return model.create(data);
     }
@@ -54,9 +65,13 @@ export class WriteService {
      * @returns {Promise<any>} - Das Ergebnis der Aktualisierung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async updateEntity(entity: string, filter: FilterInput | undefined, data: any): Promise<any> {
+    async updateEntity(
+        entity: string,
+        filter: FilterInput | undefined,
+        data: UpdateWithAggregationPipeline | UpdateQuery<any> | undefined,
+    ): Promise<any> {
         this.#logger.debug('updateEntity: entity=%s, filter=%o, data=%o', entity, filter, data);
-        const model = this.#entityMap[entity];
+        const model = this.#modelMap[entity as SupportedEntities];
         if (!model) throw new Error(`Unknown entity: ${entity}`);
 
         const filterQuery = this.buildFilterQuery(filter);
@@ -72,7 +87,7 @@ export class WriteService {
      */
     async deleteEntity(entity: string, filter: FilterInput | undefined): Promise<any> {
         this.#logger.debug('deleteEntity: entity=%s, filter=%o', entity, filter);
-        const model = this.#entityMap[entity];
+        const model = this.#modelMap[entity as SupportedEntities];
         if (!model) throw new Error(`Unknown entity: ${entity}`);
 
         const filterQuery = this.buildFilterQuery(filter);
@@ -104,13 +119,17 @@ export class WriteService {
         if (filters.not) {
             query.$not = this.buildFilterQuery(filters.not);
         }
-        if (filters.field && filters.operator && filters.value !== undefined) {
+        if (filters.field! && filters.operator !== undefined && filters.value !== undefined) {
             const mongoOperator = OPERATOR_MAP[filters.operator];
-            if (!mongoOperator) {
+            if (!mongoOperator!) {
                 throw new Error(`Invalid operator: ${filters.operator}`);
             }
             query[filters.field] = { [mongoOperator]: filters.value };
-        } else if (filters.field || filters.operator || filters.value !== undefined) {
+        } else if (
+            filters.field! ||
+            filters.operator !== undefined ||
+            filters.value !== undefined
+        ) {
             throw new Error(
                 `Invalid filter: field, operator, and value must all be defined for a single filter.`,
             );

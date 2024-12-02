@@ -7,10 +7,10 @@ import { User, UserSchema } from './user.entity.js';
 /**
  * Definiert eine Mongoose-Entität und deren Schema.
  */
-interface EntitySchema {
+type EntitySchema = {
     name: string;
     schema: any;
-}
+};
 
 /**
  * Liste aller Mongoose-Entitäten und deren Schemas.

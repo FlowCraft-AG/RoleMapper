@@ -65,5 +65,5 @@ export class FilterDTO {
         description:
             'Der Wert, mit dem das Feld verglichen wird. Unterstützte Typen: String, Int, Float, Boolean.',
     })
-    value?: string | number | boolean | Array<string | number | boolean>;
+    value?: string | number | boolean | (string | number | boolean)[];
 }

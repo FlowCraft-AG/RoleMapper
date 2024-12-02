@@ -48,26 +48,12 @@ export class QueryResolver {
         @Args('entity') entity: SupportedEntities,
         @Args('filters') filters: FilterDTO,
     ): Promise<any[]> {
-        this.logDebug(entity, filters);
-
         try {
             this.#logger.debug('getData: entity=%s, filters=%o', entity, filters);
             return await this.#service.findData(entity, filters);
         } catch (error) {
             this.#logger.error(`getData: Fehler bei der Verarbeitung von ${entity}`, error);
             throw new BadRequestException(`Fehler bei der Verarbeitung von ${entity}`);
-        }
-    }
-
-    /**
-     * Protokolliert Debug-Informationen.
-     * @param {SupportedEntities} entity - Die Ziel-Entität.
-     * @param {FilterDTO} [filters] - Die Filterkriterien.
-     */
-    private logDebug(entity: SupportedEntities, filters?: FilterDTO): void {
-        this.#logger.debug(`[QueryResolver] getData aufgerufen mit entity=${entity}`);
-        if (filters) {
-            this.#logger.debug(`[QueryResolver] Filters:`, JSON.stringify(filters, null, 2));
         }
     }
 }

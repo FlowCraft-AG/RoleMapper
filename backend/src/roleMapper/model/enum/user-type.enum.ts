@@ -3,12 +3,12 @@ export enum UserType {
     student = 'student',
 }
 
-export class UserTypeHelper {
+export const UserTypeHelper = {
     /**
      * Konvertiert einen String in das entsprechende UserType-Enum.
      * @param value - Der zu konvertierende String.
      */
-    static of(value: string): UserType {
+    of(value: string): UserType {
         if (!value || value.trim() === '') {
             throw new Error('UserType darf nicht null oder leer sein');
         }
@@ -17,18 +17,18 @@ export class UserTypeHelper {
             (type) => type.toLowerCase() === value.toLowerCase(),
         );
 
-        if (!userType) {
+        if (userType == undefined) {
             throw new Error(`Ungültiger UserType: ${value}`);
         }
 
         return userType as UserType;
-    }
+    },
 
     /**
      * Gibt den typ des Enums zurück.
      * @param userType - Das UserType-Enum.
      */
-    static getTyp(userType: UserType): string {
+    getTyp(userType: UserType): string {
         return userType;
-    }
-}
+    },
+};

@@ -34,12 +34,12 @@ jobs:
       run: npm install
       working-directory: backend
 
-    - name: Run linter
-      run: npm run lint
+    - name: Run ESLint
+      run: npm run eslint
       working-directory: backend
 
     - name: Run tests
-      run: npm test
+      run: npm t
       working-directory: backend
 
     - name: Audit dependencies
@@ -51,3 +51,4 @@ jobs:
       with:
         name: test-results
         path: backend/test-results/
+

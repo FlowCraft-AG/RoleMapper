@@ -3,7 +3,7 @@ import process from 'node:process';
 
 dotenv.config();
 
-const { NODE_ENV, CLIENT_SECRET, LOG_LEVEL, START_DB_SERVER } = process.env; // eslint-disable-line n/no-process-env
+const { NODE_ENV, CLIENT_SECRET, LOG_LEVEL, START_DB_SERVER } = process.env;
 
 /* eslint-disable @typescript-eslint/naming-convention */
 /**

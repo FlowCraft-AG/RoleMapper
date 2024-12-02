@@ -24,20 +24,24 @@ export class MutationResolver {
             let result;
 
             switch (operation) {
-                case 'CREATE':
+                case 'CREATE': {
                     result = await this.service.createEntity(entity, data);
                     break;
+                }
 
-                case 'UPDATE':
+                case 'UPDATE': {
                     result = await this.service.updateEntity(entity, filter, data);
                     break;
+                }
 
-                case 'DELETE':
+                case 'DELETE': {
                     result = await this.service.deleteEntity(entity, filter);
                     break;
+                }
 
-                default:
+                default: {
                     throw new Error(`Unsupported operation: ${operation}`);
+                }
             }
 
             return {

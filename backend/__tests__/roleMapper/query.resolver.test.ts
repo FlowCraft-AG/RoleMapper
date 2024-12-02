@@ -1,10 +1,10 @@
-import { GraphQLRequest } from '@apollo/server';
+import type { GraphQLRequest } from '@apollo/server';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { type GraphQLFormattedError } from 'graphql';
 import { type RolePayload } from '../../src/roleMapper/controller/read.controller.js';
-import { User } from '../../src/roleMapper/model/entity/user.entity.js';
+import type { User } from '../../src/roleMapper/model/entity/user.entity.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 
 export type GraphQLResponseBody = {
@@ -78,6 +78,7 @@ describe('get Process Roles GraphQL', () => {
 
         // then
         console.log('Response:', status, data);
+
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu); // eslint-disable-line sonarjs/no-duplicate-string
         expect(data.errors).toBeUndefined();
@@ -124,8 +125,9 @@ describe('get Process Roles GraphQL', () => {
 
         // then
         console.log('Response:', status, data);
+
         expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu); // eslint-disable-line sonarjs/no-duplicate-string
+        expect(headers['content-type']).toMatch(/json/iu);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 
@@ -170,8 +172,9 @@ describe('get Process Roles GraphQL', () => {
 
         // then
         console.log('Response:', status, data);
+
         expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu); // eslint-disable-line sonarjs/no-duplicate-string
+        expect(headers['content-type']).toMatch(/json/iu);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 

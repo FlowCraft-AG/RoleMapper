@@ -26,7 +26,7 @@ import { type FilterDTO } from '../model/dto/filter.dto.js';
 import { SUPPORTED_ENTITIES, SupportedEntities } from '../model/entity/entities.entity.js';
 import { User } from '../model/entity/user.entity.js';
 import { ReadService } from '../service/read.service.js';
-import { getBaseUri } from '../utils/getBaseUri.js';
+import { getBaseUri } from '../utils/uri-helper.js';
 
 /** href-Link für HATEOAS */
 export type Link = {
@@ -50,15 +50,15 @@ export type Links = {
     readonly vorgesetzter?: Link;
 };
 
-export interface RolePayload {
+export type RolePayload = {
     roles: RoleResult[];
     _links?: Links;
-}
+};
 
 /**
  * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
  */
-export interface RoleResult {
+export type RoleResult = {
     /**
      * Dynamischer Rollenname (z.B. "Antragssteller").
      */
@@ -67,22 +67,7 @@ export interface RoleResult {
      * Benutzer, die dieser Rolle zugeordnet sind.
      */
     users: User[];
-}
-
-/**
- * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
- */
-export interface RoleResult {
-    /**
-     * Dynamischer Rollenname (z.B. "Antragssteller").
-     */
-    roleName: string;
-    /**
-     * Benutzer, die dieser Rolle zugeordnet sind.
-     */
-    users: User[];
-}
-
+};
 /**
  * Controller für Leseoperationen.
  */
@@ -140,9 +125,9 @@ export class ReadController {
     async getProcessRoles(
         @Query('processId') processId: string,
         @Query('userId') userId: string,
-        @Req() req: Request,
+        @Req() request: Request,
     ): Promise<RolePayload> {
-        const baseUri = getBaseUri(req);
+        const baseUri = getBaseUri(request);
         this.#logger.debug('getProcessRoles: processId=%s, userId=%s', processId, userId);
 
         const rolePayload: RolePayload = await this.#service.findProcessRoles(processId, userId);

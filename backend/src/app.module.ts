@@ -3,9 +3,12 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { graphQlModuleOptions } from './config/graphql.js';
-import { mongoDbName, validatedMongoDbUri } from './config/mongoDb.js';
+import {
+    mongoDbName as mongoDatabaseName,
+    validatedMongoDbUri as validatedMongoDatabaseUri,
+} from './config/mongoDb.js';
 import { LoggerModule } from './logger/logger.module.js';
-import { RoleMapperModule } from './roleMapper/roleMapper.module.js';
+import { RoleMapperModule } from './roleMapper/role-mapper.module.js';
 import { KeycloakModule } from './security/keycloak/keycloak.module.js';
 
 @Module({
@@ -13,8 +16,8 @@ import { KeycloakModule } from './security/keycloak/keycloak.module.js';
         GraphQLModule.forRoot<ApolloDriverConfig>(graphQlModuleOptions),
         LoggerModule,
         KeycloakModule,
-        MongooseModule.forRoot(validatedMongoDbUri, {
-            dbName: mongoDbName,
+        MongooseModule.forRoot(validatedMongoDatabaseUri, {
+            dbName: mongoDatabaseName,
         }),
         RoleMapperModule,
     ],

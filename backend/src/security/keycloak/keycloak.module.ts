@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, KeycloakConnectModule, RoleGuard } from 'nest-keycloak-connect';

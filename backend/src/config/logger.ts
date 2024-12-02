@@ -2,7 +2,7 @@ import path from 'node:path';
 import pino from 'pino';
 import { type PrettyOptions } from 'pino-pretty';
 import { config } from './app.js';
-import { env } from './env.js';
+import { env as environment } from './env.js';
 
 const logDirDefault = 'log';
 const logFileNameDefault = 'server.log';
@@ -17,13 +17,13 @@ const logFile = logDir === undefined ? logFileDefault : path.resolve(logDir, log
 const pretty = log?.pretty === true;
 
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
-let logLevelTmp: LogLevel = 'info';
-if (env.LOG_LEVEL !== undefined) {
-    logLevelTmp = env.LOG_LEVEL as LogLevel;
+let logLevelTemporary: LogLevel = 'info';
+if (environment.LOG_LEVEL !== undefined) {
+    logLevelTemporary = environment.LOG_LEVEL as LogLevel;
 } else if (log?.level !== undefined) {
-    logLevelTmp = log?.level as LogLevel;
+    logLevelTemporary = log?.level as LogLevel;
 }
-export const logLevel = logLevelTmp;
+export const logLevel = logLevelTemporary;
 
 console.debug(`logger config: logLevel=${logLevel}, logFile=${logFile}, pretty=${pretty}`);
 

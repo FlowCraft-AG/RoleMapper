@@ -1,9 +1,10 @@
 import { afterAll, beforeAll, describe, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import type { AxiosInstance, AxiosResponse } from 'axios';
+import axios from 'axios';
 import { SUPPORTED_ENTITIES } from '../../src/roleMapper/model/entity/entities.entity.js';
-import { Function } from '../../src/roleMapper/model/entity/function.entity.js';
-import { Process } from '../../src/roleMapper/model/entity/process.entity.js';
+import type { Function } from '../../src/roleMapper/model/entity/function.entity.js';
+import type { Process } from '../../src/roleMapper/model/entity/process.entity.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 
 // -----------------------------------------------------------------------------
@@ -72,6 +73,7 @@ describe('RoleMapper API: get Data', () => {
         );
 
         validateResponse(status, headers);
+
         expect(data).toBeDefined();
         expect(data.length).toBe(EXPECTED_RESULTS.USERS_COUNT);
     });
@@ -82,6 +84,7 @@ describe('RoleMapper API: get Data', () => {
         );
 
         validateResponse(status, headers);
+
         expect(data).toBeDefined();
         expect(data.length).toBe(1);
         expect(data[0].userId).toBe(TEST_DATA.USER_ID);
@@ -93,11 +96,12 @@ describe('RoleMapper API: get Data', () => {
         );
 
         validateResponse(status, headers);
+
         expect(data).toBeDefined();
 
-        data.forEach((fn) => {
-            expect(fn.users).toContain(TEST_DATA.EMPLOYEE_ID);
-        });
+        for (const function_ of data) {
+            expect(function_.users).toContain(TEST_DATA.EMPLOYEE_ID);
+        }
     });
 
     test('Alle Prozesse', async () => {
@@ -106,6 +110,7 @@ describe('RoleMapper API: get Data', () => {
         );
 
         validateResponse(status, headers);
+
         expect(data).toBeDefined();
         expect(data.length).toBe(EXPECTED_RESULTS.PROCESSES_COUNT);
     });
@@ -116,6 +121,7 @@ describe('RoleMapper API: get Data', () => {
         );
 
         validateResponse(status, headers);
+
         expect(data).toBeDefined();
         expect(data[0]?.processId).toBe(TEST_DATA.PROCESS_ID);
     });
@@ -126,6 +132,7 @@ describe('RoleMapper API: get Data', () => {
         );
 
         validateResponse(status, headers);
+
         expect(data).toBeDefined();
         expect(data.length).toBe(EXPECTED_RESULTS.ROLES_COUNT);
     });
@@ -136,6 +143,7 @@ describe('RoleMapper API: get Data', () => {
         );
 
         validateResponse(status, headers);
+
         expect(data).toBeDefined();
         expect(data.length).toBe(EXPECTED_RESULTS.ORG_UNITS_COUNT);
     });

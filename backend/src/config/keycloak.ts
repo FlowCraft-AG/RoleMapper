@@ -5,7 +5,7 @@ import {
 } from 'nest-keycloak-connect';
 import { Agent } from 'node:https';
 import { config } from './app.js';
-import { env } from './env.js';
+import { env as environment } from './env.js';
 import { httpsOptions } from './https.js';
 
 const { keycloak } = config;
@@ -17,7 +17,7 @@ const tokenValidation =
     (keycloak?.tokenValidation as TokenValidation | undefined) ??
     (TokenValidation.ONLINE as TokenValidation);
 
-const { CLIENT_SECRET, NODE_ENV } = env;
+const { CLIENT_SECRET, NODE_ENV } = environment;
 
 export const keycloakConnectOptions: KeycloakConnectConfig = {
     authServerUrl,

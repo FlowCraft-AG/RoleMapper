@@ -1,9 +1,13 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/operator-linebreak */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
 import { RoleResult } from '../controller/read.controller.js';
 import { FilterDTO } from '../model/dto/filter.dto.js';
+import { SupportedEntities } from '../model/entity/entities.entity.js';
 import { Function, FunctionDocument } from '../model/entity/function.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/orgUnit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
@@ -15,7 +19,7 @@ import { InvalidFilterException, InvalidOperatorException } from './exceptions.j
 export class ReadService {
     readonly #logger = getLogger(ReadService.name);
 
-    readonly #models: Record<string, Model<any>>;
+    readonly #modelMap: Record<string, Model<any>>;
 
     constructor(
         @InjectModel(User.name) userModel: Model<UserDocument>,
@@ -24,7 +28,7 @@ export class ReadService {
         @InjectModel(OrgUnit.name) orgUnitModel: Model<OrgUnitDocument>,
         @InjectModel(Role.name) roleModel: Model<RoleDocument>,
     ) {
-        this.#models = {
+        this.#modelMap = {
             USERS: userModel,
             FUNCTIONS: functionModel,
             PROCESSES: processModel,
@@ -44,52 +48,57 @@ export class ReadService {
     async findProcessRoles(processId: string, userId: string): Promise<{ roles: RoleResult[] }> {
         this.#logger.debug('findProcessRoles: processId=%s, userId=%s', processId, userId);
 
-        const process = await this.#models.PROCESSES!.findOne({ processId }).exec();
+        const process = (await this.#modelMap.PROCESSES!.findOne({ processId }).exec()) as
+            | Process
+            | undefined;
         if (!process?.roles) {
             throw new NotFoundException(`Keine Rollen für diesen Prozess gefunden. ${processId}`);
         }
 
-        if (!(await this.#models.USERS!.exists({ userId }))) {
+        if (!(await this.#modelMap.USERS!.exists({ userId }))) {
             throw new NotFoundException(`Keinen Benutzer gefunden mit der userId: ${userId}`);
         }
 
-        const roleIds = process.roles.flatMap(Object.values);
+        const roleIds = process.roles.flatMap(
+            (element): string[] => Object.values(element) as string[],
+        );
         this.#logger.debug('roleIds=%o', roleIds);
 
-        const roles = await this.#models.ROLES!.find({ roleId: { $in: roleIds } }).exec();
+        const roles = await this.#modelMap.ROLES!.find({ roleId: { $in: roleIds } }).exec();
         this.#logger.debug('findProcessRoles: roles=%o', roles);
         const rolesMap = new Map(roles.map(({ roleId, query }) => [roleId, query]));
         this.#logger.debug('findProcessRoles: rolesMap=%o', rolesMap);
 
-        if (!rolesMap.size) {
+        if (rolesMap.size === 0) {
             this.#logger.warn('findProcessRoles: Keine Rollen gefunden für: %o', roleIds);
         }
 
-        const results = (
-            await Promise.all(
-                process.roles.map(async (roleObj: Role) => {
-                    const [roleKey, roleId] = Object.entries(roleObj ?? {})[0] || [];
-                    this.#logger.debug('findProcessRoles: roleKey=%s, roleId=%s', roleKey, roleId);
-                    if (!roleKey || !roleId || !rolesMap.has(roleId)) {
-                        this.#logger.warn('Ungültige oder fehlende Rolle: %o', roleObj);
-                        return null;
-                    }
+        const results = await Promise.all(
+            process.roles.map(async (roleObject: any) => {
+                const [roleKey, roleId] =
+                    Object.entries((roleObject as Record<string, unknown>) ?? {})[0] ?? [];
+                this.#logger.debug('findProcessRoles: roleKey=%s, roleId=%s', roleKey, roleId);
+                // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+                if (roleKey === null || !roleId || !rolesMap.has(roleId)) {
+                    this.#logger.warn('Ungültige oder fehlende Rolle: %o', roleObject);
+                    return;
+                }
 
-                    try {
-                        const queryPipeline = rolesMap.get(roleId)!;
-                        const users = await this.#models
-                            .FUNCTIONS!.aggregate(queryPipeline)
-                            .option({ let: { userId } })
-                            .exec();
-                        return { roleName: roleKey, users };
-                    } catch (error) {
-                        this.#logger.error('Fehler bei Rolle %s: %o', roleKey, error);
-                        return null;
-                    }
-                }),
-            )
-        ).filter(Boolean);
-
+                try {
+                    const queryPipeline = rolesMap.get(roleId)! as any[];
+                    const users = await this.#modelMap
+                        .FUNCTIONS!.aggregate(queryPipeline)
+                        .option({ let: { userId } })
+                        .exec();
+                    return { roleName: roleKey, users };
+                } catch (error) {
+                    this.#logger.error('Fehler bei Rolle %s: %o', roleKey, error);
+                    return;
+                }
+            }),
+        );
+        const filteredResults = results.filter(Boolean);
+        this.#logger.debug('findProcessRoles: filteredResults=%o', filteredResults);
         this.#logger.info('findProcessRoles: Verarbeitung abgeschlossen');
         return { roles: results as RoleResult[] };
     }
@@ -105,9 +114,9 @@ export class ReadService {
     async findData(entity: string, filters: FilterDTO): Promise<any[]> {
         this.#logger.debug('findData: entity=%s, filters=%o', entity, filters);
 
-        const model = this.#models[entity];
+        const model = this.#modelMap[entity as SupportedEntities];
         if (!model) {
-            const validEntities = Object.keys(this.#models).join(', ');
+            const validEntities = Object.keys(this.#modelMap).join(', ');
             throw new BadRequestException(
                 `Nicht unterstützte Entität: ${entity}. Unterstützte Entitäten sind: ${validEntities}`,
             );
@@ -116,6 +125,7 @@ export class ReadService {
         const filterQuery = this.buildFilterQuery(filters);
         this.#logger.debug('findData: Filter Query=%o', filterQuery);
 
+        // eslint-disable-next-line unicorn/no-array-callback-reference
         return model.find(filterQuery).exec();
     }
 
@@ -128,18 +138,59 @@ export class ReadService {
      * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
      */
     private buildFilterQuery(filters?: FilterDTO): FilterQuery<any> {
-        if (
-            !filters ||
-            (Object.keys(filters).length === 0 &&
-                !filters.field &&
-                !filters.operator &&
-                filters.value === undefined)
-        ) {
+        if (this.isEmptyFilter(filters)) {
             return {};
         }
 
         const query: FilterQuery<any> = {};
 
+        if (filters) {
+            this.processLogicalOperators(filters, query);
+        }
+
+        if (filters && this.isAnyFieldSet(filters)) {
+            this.validateFilterFields(filters);
+            this.buildFieldQuery(filters, query);
+        }
+
+        return query;
+    }
+
+    private isEmptyFilter(filters?: FilterDTO): boolean {
+        return (
+            !filters ||
+            (Object.keys(filters).length === 0 &&
+                filters.field === null &&
+                filters.operator === null &&
+                filters.value === undefined)
+        );
+    }
+
+    private processLogicalOperators(filters: FilterDTO, query: FilterQuery<any>): void {
+        if (filters.and)
+            query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
+        if (filters.or) query.$or = filters.or.map((subFilter) => this.buildFilterQuery(subFilter));
+        if (filters.not) query.$not = this.buildFilterQuery(filters.not);
+    }
+
+    private isAnyFieldSet(filters: FilterDTO): boolean {
+        return (
+            filters.field !== null || filters.operator !== undefined || filters.value !== undefined
+        );
+    }
+
+    private validateFilterFields(filters: FilterDTO): void {
+        const missingFields: string[] = [];
+        if (filters.field === null) missingFields.push('Feld');
+        if (filters.operator === undefined) missingFields.push('Operator');
+        if (filters.value === undefined) missingFields.push('Wert');
+
+        if (missingFields.length > 0) {
+            throw new InvalidFilterException(missingFields);
+        }
+    }
+
+    private buildFieldQuery(filters: FilterDTO, query: FilterQuery<any>): void {
         const OPERATOR_MAP: Record<string, string> = {
             EQ: '$eq',
             IN: '$in',
@@ -148,33 +199,11 @@ export class ReadService {
             LIKE: '$regex',
         };
 
-        // Rekursive Verarbeitung von logischen Operatoren
-        if (filters.and)
-            query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
-        if (filters.or) query.$or = filters.or.map((subFilter) => this.buildFilterQuery(subFilter));
-        if (filters.not) query.$not = this.buildFilterQuery(filters.not);
-
-        // Prüfen, ob entweder alle Felder leer sind oder alle ausgefüllt sind
-        const isAnyFieldSet = filters.field || filters.operator || filters.value !== undefined;
-        if (isAnyFieldSet) {
-            const missingFields: string[] = [];
-            if (!filters.field) missingFields.push('Feld');
-            if (!filters.operator) missingFields.push('Operator');
-            if (filters.value === undefined) missingFields.push('Wert');
-
-            if (missingFields.length) {
-                throw new InvalidFilterException(missingFields);
-            }
-
-            // Operator validieren und Query erstellen
-            const mongoOperator = OPERATOR_MAP[filters.operator!];
-            if (!mongoOperator) {
-                throw new InvalidOperatorException(filters.operator!);
-            }
-
-            query[filters.field!] = { [mongoOperator]: filters.value };
+        const mongoOperator = OPERATOR_MAP[filters.operator!]!;
+        if (mongoOperator === null) {
+            throw new InvalidOperatorException(filters.operator!);
         }
 
-        return query;
+        query[filters.field!] = { [mongoOperator]: filters.value };
     }
 }

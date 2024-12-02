@@ -85,8 +85,8 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
                 { headers: this.#headersAuthorization },
                 // { headers: this.#headersBasic },
             );
-        } catch (err) {
-            this.#logger.warn('err=%o', err);
+        } catch (error) {
+            this.#logger.warn('err=%o', error);
             this.#logger.warn(
                 'refresh: Fehler bei POST-Request: path=%s, body=%o',
                 paths.accessToken,
@@ -101,13 +101,13 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
     #logPayload(response: AxiosResponse<Record<string, string | number>>) {
         const { access_token } = response.data;
         // Payload ist der mittlere Teil zwischen 2 Punkten und mit Base64 codiert
-        const [, payloadStr] = (access_token as string).split('.');
+        const [, payloadString] = (access_token as string).split('.');
 
         // Base64 decodieren
-        if (payloadStr === undefined) {
+        if (payloadString === undefined) {
             return;
         }
-        const payloadDecoded = atob(payloadStr);
+        const payloadDecoded = atob(payloadString);
 
         // JSON-Objekt fuer Payload aus dem decodierten String herstellen
 
@@ -115,6 +115,7 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         const payload = JSON.parse(payloadDecoded);
         const { azp, exp, resource_access } = payload;
         this.#logger.debug('#logPayload: exp=%s', exp);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const { roles } = resource_access[azp]; // eslint-disable-line security/detect-object-injection
         /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 

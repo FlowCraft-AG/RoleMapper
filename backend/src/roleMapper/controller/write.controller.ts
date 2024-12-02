@@ -170,20 +170,24 @@ export class WriteController {
             let result;
 
             switch (operation) {
-                case 'CREATE':
+                case 'CREATE': {
                     result = await this.#service.createEntity(entity, data);
                     break;
+                }
 
-                case 'UPDATE':
+                case 'UPDATE': {
                     result = await this.#service.updateEntity(entity, filter, data);
                     break;
+                }
 
-                case 'DELETE':
+                case 'DELETE': {
                     result = await this.#service.deleteEntity(entity, filter);
                     break;
+                }
 
-                default:
+                default: {
                     throw new BadRequestException('Nicht unterstützte Operation: %s', operation);
+                }
             }
 
             return {

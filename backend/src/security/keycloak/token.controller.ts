@@ -50,7 +50,7 @@ export class TokenController {
     @ApiUnauthorizedResponse({
         description: 'Benutzername oder Passwort sind falsch.',
     })
-    async token(@Body() { username, password }: TokenData, @Res() res: Response) {
+    async token(@Body() { username, password }: TokenData, @Res() response: Response) {
         this.#logger.debug('token: username=%s', username);
 
         const result = await this.#keycloakService.token({
@@ -58,10 +58,10 @@ export class TokenController {
             password,
         });
         if (result === undefined) {
-            return res.sendStatus(HttpStatus.UNAUTHORIZED);
+            return response.sendStatus(HttpStatus.UNAUTHORIZED);
         }
 
-        return res.json(result).send();
+        return response.json(result).send();
     }
 
     @Post(paths.refresh)
@@ -71,16 +71,16 @@ export class TokenController {
     @ApiOperation({ summary: 'Refresh für vorhandenen Token' })
     @ApiOkResponse({ description: 'Erfolgreich aktualisiert.' })
     @ApiUnauthorizedResponse({ description: 'Ungültiger Token.' })
-    async refresh(@Body() body: Refresh, @Res() res: Response) {
+    async refresh(@Body() body: Refresh, @Res() response: Response) {
         // eslint-disable-next-line camelcase, @typescript-eslint/naming-convention
         const { refresh_token } = body;
         this.#logger.debug('refresh: refresh_token=%s', refresh_token);
 
         const result = await this.#keycloakService.refresh(refresh_token);
         if (result === undefined) {
-            return res.sendStatus(HttpStatus.UNAUTHORIZED);
+            return response.sendStatus(HttpStatus.UNAUTHORIZED);
         }
 
-        return res.json(result).send();
+        return response.json(result).send();
     }
 }

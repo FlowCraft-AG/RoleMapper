@@ -1,4 +1,4 @@
-import { GraphQLRequest } from '@apollo/server';
+import type { GraphQLRequest } from '@apollo/server';
 import { HttpStatus, type INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import mongoose from 'mongoose';
@@ -16,7 +16,7 @@ export type GraphQLQuery = Pick<GraphQLRequest, 'query'>;
 const { httpsOptions } = nodeConfig;
 
 // MongoDB Cloud-Verbindungs-URI
-const mongoUri = process.env.TEST_MONGODB_URI as string;
+const mongoUri = process.env.TEST_MONGODB_URI!;
 
 // -----------------------------------------------------------------------------
 // MongoDB-Verbindung prüfen
