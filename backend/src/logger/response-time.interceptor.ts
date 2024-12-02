@@ -23,8 +23,7 @@ export class ResponseTimeInterceptor implements NestInterceptor {
             finalize: () => {
                 const response = context.switchToHttp().getResponse<Response>();
                 const { statusCode, statusMessage } = response;
-                const responseTime =
-                    Temporal.Now.instant().epochMilliseconds - start;
+                const responseTime = Temporal.Now.instant().epochMilliseconds - start;
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (statusMessage === undefined) {
                     // GraphQL

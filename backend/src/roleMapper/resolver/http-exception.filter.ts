@@ -2,12 +2,7 @@
  * Das Modul besteht aus der Klasse {@linkcode HttpExceptionFilter}.
  * @packageDocumentation
  */
-import {
-    type ArgumentsHost,
-    Catch,
-    type ExceptionFilter,
-    HttpException,
-} from '@nestjs/common';
+import { type ArgumentsHost, Catch, type ExceptionFilter, HttpException } from '@nestjs/common';
 import { BadUserInputError } from './errors.js';
 
 @Catch(HttpException)

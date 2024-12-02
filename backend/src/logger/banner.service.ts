@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import { release, type, userInfo } from 'node:os';
 import process from 'node:process';
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 import { nodeConfig } from '../config/node.js';
 import { getLogger } from './logger.js';
 
@@ -28,34 +28,22 @@ export class BannerService implements OnApplicationBootstrap {
             const banner = await figletAsync('RoleMapper');
             console.log(chalk.blueBright('\n' + banner)); // Banner in Blau
         } catch (err) {
-            this.#logger.error(
-                chalk.red('Fehler beim Generieren des Banners mit figlet:'),
-                err,
-            );
+            this.#logger.error(chalk.red('Fehler beim Generieren des Banners mit figlet:'), err);
         }
 
         // Umgebungsinformationen mit Farben ausgeben
         this.#logger.info(chalk.green('=== Anwendungsinformationen ==='));
-        this.#logger.info(
-            chalk.cyan('Anwendungsname: ') + chalk.yellow('RoleMapper'),
-        );
-        this.#logger.info(
-            chalk.cyan('Node.js-Version: ') + chalk.yellow(process.version),
-        );
+        this.#logger.info(chalk.cyan('Anwendungsname: ') + chalk.yellow('RoleMapper'));
+        this.#logger.info(chalk.cyan('Node.js-Version: ') + chalk.yellow(process.version));
         this.#logger.info(chalk.cyan('Umgebung: ') + chalk.yellow(nodeEnv));
         this.#logger.info(chalk.cyan('Host: ') + chalk.yellow(host));
         this.#logger.info(chalk.cyan('Port: ') + chalk.yellow(port.toString()));
         this.#logger.info(chalk.cyan('Datenbank: ') + chalk.yellow('MongoDB'));
         this.#logger.info(
-            chalk.cyan('Betriebssystem: ') +
-                chalk.yellow(`${type()} (${release()})`),
+            chalk.cyan('Betriebssystem: ') + chalk.yellow(`${type()} (${release()})`),
         );
-        this.#logger.info(
-            chalk.cyan('Benutzer: ') + chalk.yellow(userInfo().username),
-        );
-        this.#logger.info(
-            chalk.cyan('Swagger UI: ') + chalk.yellowBright('/swagger'),
-        );
+        this.#logger.info(chalk.cyan('Benutzer: ') + chalk.yellow(userInfo().username));
+        this.#logger.info(chalk.cyan('Swagger UI: ') + chalk.yellowBright('/swagger'));
         this.#logger.info(chalk.green('==============================='));
     }
 }

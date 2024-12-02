@@ -76,7 +76,7 @@ module.exports = {
         ],
         '@typescript-eslint/no-base-to-string': ['error', { ignoredTypeNames: ['RegExp', 'boolean'] }],
         '@typescript-eslint/no-confusing-void-expression': ['error', { ignoreArrowShorthand: true }],
-        '@typescript-eslint/no-deprecated': 'error',
+        '@typescript-eslint/no-deprecated': 'warn',
         '@typescript-eslint/no-dupe-class-members': 'error',
         '@typescript-eslint/no-dynamic-delete': 'error',
         '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],

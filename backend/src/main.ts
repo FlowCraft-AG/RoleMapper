@@ -1,10 +1,6 @@
 import { type INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-    DocumentBuilder,
-    type SwaggerCustomOptions,
-    SwaggerModule,
-} from '@nestjs/swagger';
+import { DocumentBuilder, type SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
 import { AppModule } from './app.module.js';
 import { corsOptions } from './config/cors.js';
@@ -17,9 +13,7 @@ const { httpsOptions, port } = nodeConfig;
 const setupSwagger = (app: INestApplication) => {
     const config = new DocumentBuilder()
         .setTitle('RoleMapper')
-        .setDescription(
-            ' "Backend für das dynamische Rollen- und Funktionsmanagement"',
-        )
+        .setDescription(' "Backend für das dynamische Rollen- und Funktionsmanagement"')
         .setVersion('2024.11.28')
         .addBearerAuth()
         .build();

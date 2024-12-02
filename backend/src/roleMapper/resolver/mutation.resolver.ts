@@ -17,9 +17,7 @@ export class MutationResolver {
      */
     @Mutation(() => MutationResponse)
     @Public()
-    async executeMutation(
-        @Args('input') input: MutationInput,
-    ): Promise<MutationResponse> {
+    async executeMutation(@Args('input') input: MutationInput): Promise<MutationResponse> {
         const { entity, operation, data, filter } = input;
 
         try {
@@ -31,11 +29,7 @@ export class MutationResolver {
                     break;
 
                 case 'UPDATE':
-                    result = await this.service.updateEntity(
-                        entity,
-                        filter,
-                        data,
-                    );
+                    result = await this.service.updateEntity(entity, filter, data);
                     break;
 
                 case 'DELETE':

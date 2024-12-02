@@ -54,17 +54,8 @@ export class WriteService {
      * @returns {Promise<any>} - Das Ergebnis der Aktualisierung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async updateEntity(
-        entity: string,
-        filter: FilterInput | undefined,
-        data: any,
-    ): Promise<any> {
-        this.#logger.debug(
-            'updateEntity: entity=%s, filter=%o, data=%o',
-            entity,
-            filter,
-            data,
-        );
+    async updateEntity(entity: string, filter: FilterInput | undefined, data: any): Promise<any> {
+        this.#logger.debug('updateEntity: entity=%s, filter=%o, data=%o', entity, filter, data);
         const model = this.#entityMap[entity];
         if (!model) throw new Error(`Unknown entity: ${entity}`);
 
@@ -79,15 +70,8 @@ export class WriteService {
      * @returns {Promise<any>} - Das Ergebnis der Löschung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async deleteEntity(
-        entity: string,
-        filter: FilterInput | undefined,
-    ): Promise<any> {
-        this.#logger.debug(
-            'deleteEntity: entity=%s, filter=%o',
-            entity,
-            filter,
-        );
+    async deleteEntity(entity: string, filter: FilterInput | undefined): Promise<any> {
+        this.#logger.debug('deleteEntity: entity=%s, filter=%o', entity, filter);
         const model = this.#entityMap[entity];
         if (!model) throw new Error(`Unknown entity: ${entity}`);
 
@@ -112,14 +96,10 @@ export class WriteService {
         };
 
         if (filters.and) {
-            query.$and = filters.and.map((subFilter) =>
-                this.buildFilterQuery(subFilter),
-            );
+            query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
         }
         if (filters.or) {
-            query.$or = filters.or.map((subFilter) =>
-                this.buildFilterQuery(subFilter),
-            );
+            query.$or = filters.or.map((subFilter) => this.buildFilterQuery(subFilter));
         }
         if (filters.not) {
             query.$not = this.buildFilterQuery(filters.not);
@@ -130,11 +110,7 @@ export class WriteService {
                 throw new Error(`Invalid operator: ${filters.operator}`);
             }
             query[filters.field] = { [mongoOperator]: filters.value };
-        } else if (
-            filters.field ||
-            filters.operator ||
-            filters.value !== undefined
-        ) {
+        } else if (filters.field || filters.operator || filters.value !== undefined) {
             throw new Error(
                 `Invalid filter: field, operator, and value must all be defined for a single filter.`,
             );
