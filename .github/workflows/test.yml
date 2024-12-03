@@ -12,8 +12,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+      TEST_MONGODB_DATABASE: ${{ secrets.TEST_MONGODB_DATABASE }}
 
     steps:
+    - name: Print ref name
+      run: echo "This workflow was triggered by ${{ github.ref_name }}
+
+    - name: Print actor (Collaborator)
+      run: echo "The actor is ${{ github.actor }}"
+
     - name: Checkout code
       uses: actions/checkout@v2
 
