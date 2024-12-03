@@ -28,10 +28,7 @@ jobs:
         ports:
           - 8880:8080
         options: >-
-          --health-cmd="curl -f http://localhost:8080/realms/master || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --entrypoint "/opt/keycloak/bin/kc.sh" -- start-dev
 
     steps:
     - name: Print ref name
