@@ -11,5 +11,5 @@ module.exports = {
         invalidLink: true,
     },
     name: 'RoleMapper Backend API Documentation',
-    readme: './README.md',
+    readme: '../README.md',
 };
