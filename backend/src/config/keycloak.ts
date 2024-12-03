@@ -26,7 +26,8 @@ export const keycloakConnectOptions: KeycloakConnectConfig = {
     authServerUrl,
     realm,
     clientId,
-  secret: KEYCLOAK_CLIENT_SECRET ?? 'ERROR: Umgebungsvariable KEYCLOAK_CLIENT_SECRET nicht gesetzt!',
+    secret:
+        KEYCLOAK_CLIENT_SECRET ?? 'ERROR: Umgebungsvariable KEYCLOAK_CLIENT_SECRET nicht gesetzt!',
     policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
     tokenValidation,
 };
