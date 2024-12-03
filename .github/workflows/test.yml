@@ -42,6 +42,16 @@ jobs:
       run: npm t
       working-directory: backend
 
+    - name: Run Coverage Tests with Istanbul
+      run: npm run test:istanbul
+      working-directory: backend
+
+    - name: Upload Jest Test Coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: jest-coverage
+        path: ./backend/coverage
+
     - name: Audit dependencies
       run: npm audit --audit-level=high
       working-directory: backend
