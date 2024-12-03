@@ -66,7 +66,6 @@
     "js-yaml": "4.1.0",
     "mongoose": "^8.8.3",
     "nest-keycloak-connect": "^1.10.1",
-    "net": "^1.0.2",
     "nodemailer": "^6.9.16",
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0",

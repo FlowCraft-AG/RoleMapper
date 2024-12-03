@@ -1,10 +1,13 @@
 import { ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { graphQlModuleOptions } from './config/graphql.js';
 import { mongoDatabaseName, validatedMongoDatabaseUri } from './config/mongo-database.js';
 import { LoggerModule } from './logger/logger.module.js';
+import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
+import { ReadController } from './role-mapper/controller/read.controller.js';
+import { WriteController } from './role-mapper/controller/write.controller.js';
 import { RoleMapperModule } from './role-mapper/role-mapper.module.js';
 import { KeycloakModule } from './security/keycloak/keycloak.module.js';
 
@@ -19,4 +22,10 @@ import { KeycloakModule } from './security/keycloak/keycloak.module.js';
         RoleMapperModule,
     ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(RequestLoggerMiddleware)
+            .forRoutes(ReadController, WriteController, 'auth', 'graphql');
+    }
+}
