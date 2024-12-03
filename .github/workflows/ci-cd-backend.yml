@@ -17,7 +17,7 @@ jobs:
         working-directory: backend
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,16 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.node-version }}
-          path: dist
-
-      - name: zip node_modules
-        run: zip -r nm.zip node_modules
-
-      - name: Upload node_modules folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: node_modules-${{ matrix.node-version }}
-          path: nm.zip
+          path: backend/dist
 
   analyze:
     runs-on: ubuntu-latest
@@ -71,7 +62,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -101,7 +92,7 @@ jobs:
     needs: [build, analyze]
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -110,7 +101,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-${{ matrix.node-version }}
-          path: dist
+          path: backend/dist
 
       - name: Package distribution
         run: zip -r dist.zip dist
@@ -119,7 +110,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-package-${{ matrix.node-version }}
-          path: dist.zip
+          path: backend/dist.zip
 
   docker:
     defaults:
@@ -129,7 +120,7 @@ jobs:
     needs: package
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [22.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -146,7 +137,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-package-${{ matrix.node-version }}
-          path: ./
+          path: ./backend
 
       - name: unzip dist folder
         run: unzip dist.zip -d ./dist
