@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - name: Print ref name
-      run: echo "This workflow was triggered by ${{ github.ref_name }}
+      run: echo "This workflow was triggered by ${{ github.ref_name }}"
 
     - name: Print actor (Collaborator)
       run: echo "The actor is ${{ github.actor }}"
