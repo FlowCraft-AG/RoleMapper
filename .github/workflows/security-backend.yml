@@ -73,13 +73,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Run Docker Scout CVE Scan
-        run: docker scout cves --format markdown -o docker-cve-report.md calebscript/role-mapper:2024.12.1
+        run: docker scout cves calebscript/role-mapper:2024.12.1 > docker-cve-report.md
+
 
       - name: Upload Docker Scout CVE Report
         uses: actions/upload-artifact@v4
         with:
           name: docker-scout-cve-report
-          path: docker-cve-report.json
+          path: docker-cve-report.md
 
       - name: Run Docker Scout Quickview
         run: docker scout quickview -o docker-quickview-report.txt calebscript/role-mapper:2024.12.1
