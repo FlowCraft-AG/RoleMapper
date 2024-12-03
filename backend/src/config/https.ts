@@ -15,9 +15,9 @@ console.debug('tlsDir = %s', KEYS_DIR);
 
 export const httpsOptions = {
     key: existsSync(path.resolve(KEYS_DIR, 'key.pem'))
-        ? readFileSync(path.resolve(KEYS_DIR, 'key.pem'), 'utf8')
+        ? readFileSync(path.resolve(KEYS_DIR, 'key.pem'))
         : process.env.KEY,
     cert: existsSync(path.resolve(KEYS_DIR, 'certificate.crt'))
-        ? readFileSync(path.resolve(KEYS_DIR, 'certificate.crt'), 'utf8')
+        ? readFileSync(path.resolve(KEYS_DIR, 'certificate.crt'))
         : process.env.CERTIFICATE,
 };
