@@ -52,6 +52,6 @@ export const httpsAgent = new Agent({
         httpsOptions.cert !== undefined &&
         httpsOptions.cert !== null &&
         httpsOptions.cert.length > 0
-            ? Buffer.from(httpsOptions.cert, 'utf8')
+            ? Buffer.from(httpsOptions.cert)
             : undefined,
 });
