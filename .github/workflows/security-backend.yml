@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: owasp-dependency-check-report
-          path: ./backend/dc-report/*.html
+          path: ./dc-report/*.html
 
       # - name: Authenticate with Snyk
       #   run: npm run snyk:auth ${{ secrets.SNYK_TOKEN }}
@@ -66,24 +66,23 @@ jobs:
       #     name: snyk-report
       #     path: backend/snyk-results.json
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@v2
+      #   with:
+      #     username: ${{ secrets.DOCKER_USER }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Run Docker Scout CVE Scan
-        run: docker scout cves calebscript/role-mapper:2024.12.1 > docker-cve-report.md
+      # - name: Run Docker Scout CVE Scan
+      #   run: docker scout cves --format markdown -o docker-cve-report.md calebscript/role-mapper:2024.12.1
 
+      # - name: Upload Docker Scout CVE Report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: docker-scout-cve-report
+      #     path: docker-cve-report.json
 
-      - name: Upload Docker Scout CVE Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-scout-cve-report
-          path: docker-cve-report.md
-
-      - name: Run Docker Scout Quickview
-        run: docker scout quickview -o docker-quickview-report.txt calebscript/role-mapper:2024.12.1
+      # - name: Run Docker Scout Quickview
+      #   run: docker scout quickview -o docker-quickview-report.txt calebscript/role-mapper:2024.12.1
 
       - name: Upload Docker Scout Quickview Report
         uses: actions/upload-artifact@v4
