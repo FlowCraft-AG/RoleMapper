@@ -3,7 +3,7 @@ import process from 'node:process';
 
 dotenv.config();
 
-const { NODE_ENV, CLIENT_SECRET, LOG_LEVEL, START_DB_SERVER } = process.env;
+const { NODE_ENV, KEYCLOAK_CLIENT_SECRET, LOG_LEVEL, START_DB_SERVER } = process.env;
 
 /* eslint-disable @typescript-eslint/naming-convention */
 /**
@@ -11,7 +11,7 @@ const { NODE_ENV, CLIENT_SECRET, LOG_LEVEL, START_DB_SERVER } = process.env;
  */
 export const environment = {
     NODE_ENV,
-    CLIENT_SECRET,
+    KEYCLOAK_CLIENT_SECRET,
     LOG_LEVEL,
     START_DB_SERVER,
 } as const;

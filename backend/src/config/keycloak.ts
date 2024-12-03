@@ -20,13 +20,13 @@ const tokenValidation =
     (keycloak?.tokenValidation as TokenValidation | undefined) ??
     (TokenValidation.ONLINE as TokenValidation);
 
-const { CLIENT_SECRET, NODE_ENV } = environment;
+const { KEYCLOAK_CLIENT_SECRET, NODE_ENV } = environment;
 
 export const keycloakConnectOptions: KeycloakConnectConfig = {
     authServerUrl,
     realm,
     clientId,
-    secret: CLIENT_SECRET ?? 'ERROR: Umgebungsvariable CLIENT_SECRET nicht gesetzt!',
+  secret: KEYCLOAK_CLIENT_SECRET ?? 'ERROR: Umgebungsvariable KEYCLOAK_CLIENT_SECRET nicht gesetzt!',
     policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
     tokenValidation,
 };
