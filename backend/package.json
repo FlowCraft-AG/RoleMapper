@@ -40,6 +40,7 @@
     "prettier": "prettier --cache --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "prettier:check": "prettier --cache --check \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "depcheck": "depcheck",
+    "typedoc": "typedoc",
     "eslint": "eslint src __tests__"
   },
   "dependencies": {
@@ -110,6 +111,7 @@
     "eslint-plugin-security-node": "1.1.4",
     "eslint-plugin-sonarjs": "0.25.1",
     "eslint-plugin-unicorn": "55.0.0",
+    "typedoc": "0.26.7",
     "jest": "^29.5.0",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "4.1.0",

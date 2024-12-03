@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - caleb
     tags:
       - 'v*'  # Nur für Versionstags (z.B. v1.0.0)
 jobs:
