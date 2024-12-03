@@ -54,16 +54,17 @@ jobs:
 
       - name: Authenticate with Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
+        working-directory: backend
 
       - name: Run Snyk Test
         run: snyk test
         working-directory: backend
 
-      - name: Upload Snyk Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: snyk-report
-          path: backend/snyk-results.json
+      # - name: Upload Snyk Report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: snyk-report
+      #     path: backend/snyk-results.json
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -72,7 +73,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Run Docker Scout CVE Scan
-        run: docker scout cves --format json calebscript/role-mapper:2024.12.1
+        run: docker scout cves --format markdown -o docker-cve-report.md calebscript/role-mapper:2024.12.1
 
       - name: Upload Docker Scout CVE Report
         uses: actions/upload-artifact@v4
@@ -81,14 +82,14 @@ jobs:
           path: docker-cve-report.json
 
       - name: Run Docker Scout Quickview
-        run: docker scout quickview --format json calebscript/role-mapper:2024.12.1
+        run: docker scout quickview -o docker-quickview-report.txt calebscript/role-mapper:2024.12.1
 
       - name: Upload Docker Scout Quickview Report
         uses: actions/upload-artifact@v4
         with:
           name: docker-scout-quickview-report
-          path: docker-quickview-report.json
-          
+          path: docker-quickview-report.txt
+
       - name: SonarQube Scan
         uses: sonarsource/sonarcloud-github-action@v1
         env:
