@@ -6,9 +6,9 @@ import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import axios from 'axios';
-import { SUPPORTED_ENTITIES } from '../../src/roleMapper/model/entity/entities.entity.js';
-import type { Function } from '../../src/roleMapper/model/entity/function.entity.js';
-import type { Process } from '../../src/roleMapper/model/entity/process.entity.js';
+import { SUPPORTED_ENTITIES } from '../../src/role-mapper/model/entity/entities.entity.js';
+import type { Function } from '../../src/role-mapper/model/entity/function.entity.js';
+import type { Process } from '../../src/role-mapper/model/entity/process.entity.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 
 // -----------------------------------------------------------------------------

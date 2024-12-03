@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { graphQlModuleOptions } from './config/graphql.js';
 import { mongoDatabaseName, validatedMongoDatabaseUri } from './config/mongo-database.js';
 import { LoggerModule } from './logger/logger.module.js';
-import { RoleMapperModule } from './roleMapper/role-mapper.module.js';
+import { RoleMapperModule } from './role-mapper/role-mapper.module.js';
 import { KeycloakModule } from './security/keycloak/keycloak.module.js';
 
 @Module({

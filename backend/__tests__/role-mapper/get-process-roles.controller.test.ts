@@ -3,7 +3,7 @@
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import { type RolePayload } from '../../src/roleMapper/controller/read.controller.js';
+import { type RolePayload } from '../../src/role-mapper/controller/read.controller.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 
 // -----------------------------------------------------------------------------
