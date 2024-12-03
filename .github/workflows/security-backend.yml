@@ -53,7 +53,7 @@ jobs:
           path: ./backend/dc-report/*.html
 
       - name: Authenticate with Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+        run: npm run snyk:auth ${{ secrets.SNYK_TOKEN }}
         working-directory: backend
 
       - name: Run Snyk Test
