@@ -55,8 +55,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            "-Dsonar.projectKey=roleMapper
-            -Dsonar.organization=h-ka.de"
+            -Dsonar.projectKey=roleMapper
+            -Dsonar.organization=h-ka.de
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=./backend
 
       - name: Authenticate with Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
