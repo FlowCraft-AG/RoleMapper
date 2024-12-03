@@ -1,23 +1,35 @@
 name: CI/CD Pipeline
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
+      - caleb
     tags:
-      - 'v*' # Nur für Versionstags (z.B. v1.0.0)
-
+      - 'v*'  # Nur für Versionstags (z.B. v1.0.0)
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
     steps:
+      - name: Print ref name
+        run: echo "This workflow was triggered by ${{ github.ref_name }}"
+
+      - name: Print actor
+        run: echo "The actor is ${{ github.actor }}"
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -29,23 +41,35 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
-      - name: Upload build artifacts
+      - name: Upload dist folder
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: dist-${{ matrix.node-version }}
           path: dist
+
+      - name: zip node_modules
+        run: zip -r nm.zip node_modules
+
+      - name: Upload node_modules folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: node_modules-${{ matrix.node-version }}
+          path: nm.zip
 
   analyze:
     runs-on: ubuntu-latest
     needs: build
+    strategy:
+      matrix:
+        node-version: [20.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -54,45 +78,83 @@ jobs:
       - name: Lint code
         run: npm run eslint
 
-      - name: Run security audit
+      - name: Security audit
         run: npm audit --omit=dev
 
-      - name: Generate documentation
+      - name: Generate documentation (TypeDoc)
         run: npm run typedoc
 
   package:
     runs-on: ubuntu-latest
     needs: [build, analyze]
+    strategy:
+      matrix:
+        node-version: [20.x]
     steps:
-      - name: Download build artifacts
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download dist folder
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts
+          name: dist-${{ matrix.node-version }}
+          path: dist
 
-      - name: Package application
+      - name: Package distribution
         run: zip -r dist.zip dist
 
-      - name: Upload packaged artifacts
+      - name: Upload package
         uses: actions/upload-artifact@v4
         with:
-          name: packaged-artifacts
+          name: dist-package-${{ matrix.node-version }}
           path: dist.zip
 
   docker:
     runs-on: ubuntu-latest
     needs: package
+    strategy:
+      matrix:
+        node-version: [20.x]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download packaged artifacts
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download dist folder
         uses: actions/download-artifact@v4
         with:
-          name: packaged-artifacts
+          name: dist-package-${{ matrix.node-version }}
+          path: ./
+
+      - name: unzip dist folder
+        run: unzip dist.zip -d ./dist
+
+      - name: Create .env file
+        run: |
+          echo "NODE_ENV=development" >> .env
+          echo "CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> .env
+          echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> .env
+          echo "SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}" >> .env
 
       - name: Build Docker image
         run: |
-          docker build -t flowcraft/role-mapper:2024.12.1 .
+          docker build \
+            --build-arg NODE_ENV=development \
+            --build-arg CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
+            --build-arg SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
+            --build-arg SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
+            -t flowcraft/role-mapper:2024.12.1 .
+
+      - name: Clean up .env file
+        run: rm .env
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -100,5 +162,7 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push Docker image
-        run: docker push flowcraft/role-mapper:2024.12.1
+      - name: Push Docker image to registry
+        run: |
+          docker tag flowcraft/role-mapper:2024.12.1 calebscript/role-mapper:2024.12.1
+          docker push calebscript/role-mapper:2024.12.1
