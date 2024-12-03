@@ -2,7 +2,7 @@ name: Security Pipeline
 on:
   push:
     branches:
-      - main
+      - CD/CI---Security
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
@@ -52,17 +52,6 @@ jobs:
           name: owasp-dependency-check-report
           path: ./backend/dc-report/*.html
 
-      - name: SonarQube Scan
-        uses: sonarsource/sonarcloud-github-action@v1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=roleMapper
-            -Dsonar.organization=h-ka.de
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.sources=./backend
-
       - name: Authenticate with Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
@@ -99,3 +88,14 @@ jobs:
         with:
           name: docker-scout-quickview-report
           path: docker-quickview-report.json
+          
+      - name: SonarQube Scan
+        uses: sonarsource/sonarcloud-github-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=roleMapper
+            -Dsonar.organization=h-ka.de
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=./backend
