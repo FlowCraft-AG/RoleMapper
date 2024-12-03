@@ -7,6 +7,6 @@ const KEYS_DIR = path.resolve(VOLUMES_DIR, 'keys');
 console.debug('tlsDir = %s', KEYS_DIR);
 
 export const httpsOptions: HttpsOptions = {
-    key: readFileSync(path.resolve(KEYS_DIR, 'key.pem')), // eslint-disable-line security/detect-non-literal-fs-filename
-    cert: readFileSync(path.resolve(KEYS_DIR, 'certificate.crt')), // eslint-disable-line security/detect-non-literal-fs-filename
+  key: readFileSync(path.resolve(KEYS_DIR, 'key.pem')) || process.env.KEY, // eslint-disable-line security/detect-non-literal-fs-filename
+  cert: readFileSync(path.resolve(KEYS_DIR, 'certificate.crt')) || process.env.CERTIFICATE, // eslint-disable-line security/detect-non-literal-fs-filename
 };
