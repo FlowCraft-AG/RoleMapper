@@ -1,7 +1,6 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable security/detect-non-literal-fs-filename */
-import { type HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { VOLUMES_DIR } from './app.js';
 
