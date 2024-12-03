@@ -18,7 +18,7 @@ jobs:
       KEY: ${{ secrets.KEY }}
       CERTIFICATE: ${{ secrets.CERTIFICATE }}
       KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
-      
+
     steps:
     - name: Print ref name
       run: echo "This workflow was triggered by ${{ github.ref_name }}"
@@ -44,6 +44,12 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: backend
+
+    - name: Create log file
+      run: |
+        mkdir -p log
+        touch log/server.log
       working-directory: backend
 
     - name: Run ESLint
