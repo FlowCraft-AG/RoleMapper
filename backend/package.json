@@ -41,6 +41,8 @@
     "prettier:check": "prettier --cache --check \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "depcheck": "depcheck",
     "typedoc": "typedoc",
+    "snyk:auth": "echo https://app.snyk.io/account && snyk auth",
+    "snyk": "snyk test",
     "eslint": "eslint src __tests__"
   },
   "dependencies": {
