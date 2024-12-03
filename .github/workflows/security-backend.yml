@@ -2,6 +2,7 @@ name: Security Pipeline
 on:
   schedule:
     - cron: '0 3 * * *'
+  workflow_dispatch:
 
 jobs:
   security:
@@ -45,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: owasp-dependency-check-report
-          path: ./dc-report/*.html
+          path: ./backend/dc-report/*.html
 
       - name: SonarQube Scan
         uses: sonarsource/sonarcloud-github-action@v1
@@ -64,4 +65,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: snyk-report
-          path: snyk-results.json
+          path: backend/snyk-results.json
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Run Docker Scout CVE Scan
+        run: docker scout cves --format json calebscript/role-mapper:2024.12.1
+
+      - name: Run Docker Scout Quickview
+        run: docker scout quickview --format json calebscript/role-mapper:2024.12.1

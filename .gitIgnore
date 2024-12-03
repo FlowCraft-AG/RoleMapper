@@ -177,6 +177,7 @@ coverage
 
 # SonarQube
 .sonar
+sonar-project.properties
 
 # Snyk
 .snyk

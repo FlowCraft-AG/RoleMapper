@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline Backend
 
 on:
   pull_request:
@@ -27,12 +27,6 @@ jobs:
 
       - name: Print actor
         run: echo "The actor is ${{ github.actor }}"
-
-      - name: Check working directory
-        run: pwd
-
-      - name: List backend directory
-        run: ls -al
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -83,6 +77,12 @@ jobs:
 
       - name: Generate documentation (TypeDoc)
         run: npm run typedoc
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.extras/docs/api
 
   package:
     runs-on: ubuntu-latest
