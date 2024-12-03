@@ -18,6 +18,7 @@ jobs:
       KEY: ${{ secrets.KEY }}
       CERTIFICATE: ${{ secrets.CERTIFICATE }}
       KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+      
     steps:
     - name: Print ref name
       run: echo "This workflow was triggered by ${{ github.ref_name }}"
