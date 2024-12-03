@@ -176,3 +176,7 @@ rolemapper/
 - **FlowCraft AG**
 - [Website](https://www.flowcraft-ag.de)
 - [Support](mailto:support@flowcraft-ag.de)
+
+## Dokumentation
+
+[Github Pages](https://FlowCraft-AG.github.io/RoleMapper/ )
