@@ -44,6 +44,7 @@ jobs:
       - name: Run OWASP Dependency Check
         run: |
           dependency-check/dependency-check/bin/dependency-check.sh --project "Role Mapper" --scan . --nvdApiKey ${{ secrets.NVD_API_KEY }} --format "HTML" --out dependency-check-report
+        working-directory: backend
 
       - name: Upload Dependency Check Report
         uses: actions/upload-artifact@v4
