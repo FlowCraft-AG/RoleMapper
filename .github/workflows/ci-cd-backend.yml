@@ -20,14 +20,14 @@ jobs:
       matrix:
         node-version: [20.x]
     steps:
-      - name: Print ref name
-        run: echo "This workflow was triggered by ${{ github.ref_name }}"
-
-      - name: Print actor
-        run: echo "The actor is ${{ github.actor }}"
-
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Print ref name
+        run: echo "This workflow was triggered by ${{ github.ref_name }}"
+  
+      - name: Print actor
+        run: echo "The actor is ${{ github.actor }}"
 
       - name: Check working directory
         run: pwd
