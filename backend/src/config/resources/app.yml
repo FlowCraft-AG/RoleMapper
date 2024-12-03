@@ -5,16 +5,6 @@ node:
   port: 3000
 
 # ==============================================================================
-# D a t e n b a n k
-# ==============================================================================
-
-db:
-  # uri: mongodb+srv://$awp:fN7HPdrwr0TzHzKU@hka-test0.re2qw.mongodb.net/
-  uri: mongodb+srv://calebscript:zQy5Liiub3DeaDje@hka-cluster.q49rh.mongodb.net/?retryWrites=true&w=majority&appName=hka-cluster
-  name: OrgPermissions
-  type: postgres
-
-# ==============================================================================
 # K e y c l o a k
 # ==============================================================================
 keycloak:
