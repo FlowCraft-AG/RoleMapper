@@ -54,11 +54,11 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
-      - name: Upload dist folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.node-version }}
-          path: backend/dist
+      # - name: Upload dist folder
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: dist-${{ matrix.node-version }}
+      #     path: backend/dist
 
       - name: Save dist path
         run: echo "DIST_PATH=dist" >> $GITHUB_ENV
@@ -87,7 +87,7 @@ jobs:
 
       - name: gib dist pfad
         run: ls $DIST_PATH
-        
+
       - name: Restore Node.js modules from cache
         uses: actions/cache@v4
         with:
@@ -134,14 +134,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download dist folder
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-${{ matrix.node-version }}
-          path: backend/dist
+      # - name: Download dist folder
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: dist-${{ matrix.node-version }}
+      #     path: backend/dist
 
       - name: Package distribution
-        run: zip -r dist.zip dist
+        run: zip -r dist.zip $DIST_PATH
 
       - name: Upload package
         uses: actions/upload-artifact@v4
@@ -170,17 +170,17 @@ jobs:
       - name: Restore Node.js modules from cache
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          path: backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
 
-      - name: Download dist folder
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-package-${{ matrix.node-version }}
-          path: ./backend
+      # - name: Download dist folder
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: dist-package-${{ matrix.node-version }}
+      #     path: ./backend
 
       - name: unzip dist folder
-        run: unzip dist.zip -d ./dist
+        run: unzip dist.zip -d $DIST_PATH
 
       - name: Create .env file
         run: |
