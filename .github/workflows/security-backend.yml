@@ -93,6 +93,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=FlowCraft-AG_RoleMapper
+            -Dsonar.projectName=RoleMapper
+            -Dsonar.organization=flowcraft-ag
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=./backend
+            -Dsonar.branch.name=${{ github.ref_name }}
 
 
       # - name: Official SonarQube Scan
