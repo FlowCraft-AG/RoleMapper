@@ -1,8 +1,8 @@
 name: Security Pipeline
 on:
-  push:
+  pull_request:
     branches:
-      - CD/CI---Security
+      - main
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
@@ -18,58 +18,58 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Dependency Check
-      #   uses: dependency-check/Dependency-Check_Action@1.1.0
-      #   id: Depcheck
-      #   with:
-      #     project: 'Role Mapper'
-      #     path: './backend'
-      #     format: 'HTML'
+      - name: Dependency Check
+        uses: dependency-check/Dependency-Check_Action@1.1.0
+        id: Depcheck
+        with:
+          project: 'Role Mapper'
+          path: './backend'
+          format: 'HTML'
 
-      # - name: Upload Test results
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #      name: Depcheck report
-      #      path: ${{github.workspace}}/reports
+      - name: Upload Test results
+        uses: actions/upload-artifact@v4
+        with:
+           name: Depcheck report
+           path: ${{github.workspace}}/reports
 
-      # - name: Install Snyk
-      #   run: npm install -g snyk
+      - name: Install Snyk
+        run: npm install -g snyk
 
-      # - name: Setup Snyk
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      #   run: snyk auth "$SNYK_TOKEN"
-      # - run: snyk monitor
+      - name: Setup Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth "$SNYK_TOKEN"
+      - run: snyk monitor
 
-      # - name: install snyk-to-html
-      #   run: |
-      #     # Install the Snyk JSON to HTML Mapper using npm
-      #     npm install snyk-to-html -g
-      #     # Convert JSON output from `snyk test --json` into a static HTML
-      #     snyk test --json | snyk-to-html -o snyk-result.html
-      #     mkdir downloads
-      #     ls -la
-      #     cp -v snyk-result.html downloads
+      - name: install snyk-to-html
+        run: |
+          # Install the Snyk JSON to HTML Mapper using npm
+          npm install snyk-to-html -g
+          # Convert JSON output from `snyk test --json` into a static HTML
+          snyk test --json | snyk-to-html -o snyk-result.html
+          mkdir downloads
+          ls -la
+          cp -v snyk-result.html downloads
 
-      # - name: Use the Upload Artifact GitHub Action
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: snyk-results
-      #     path: ./backend/downloads
+      - name: Use the Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-results
+          path: ./backend/downloads
 
-      # - name: SonarQube Cloud Scan
-      #   uses: SonarSource/sonarcloud-github-action@master
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   with:
-      #     args: >
-      #       -Dsonar.projectKey=FlowCraft-AG_RoleMapper
-      #       -Dsonar.projectName=RoleMapper
-      #       -Dsonar.organization=flowcraft-ag
-      #       -Dsonar.host.url=https://sonarcloud.io
-      #       -Dsonar.sources=./backend
-      #       -Dsonar.branch.name=${{ github.ref_name }}
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=FlowCraft-AG_RoleMapper
+            -Dsonar.projectName=RoleMapper
+            -Dsonar.organization=flowcraft-ag
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=./backend
+            -Dsonar.branch.name=${{ github.ref_name }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3.3.0
