@@ -1,0 +1,57 @@
+= CRON-Konfiguration Beispiele
+
+== CRON-Feldübersicht
+
+[cols="2,3"]
+|===
+| **Feld** | **Beschreibung**
+
+| Minute
+| Minute der Stunde (`0-59`)
+
+| Stunde
+| Stunde des Tages (`0-23`)
+
+| Tag des Monats
+| Tag im Monat (`1-31`)
+
+| Monat
+| Monat des Jahres (`1-12` oder `jan-dec`)
+
+| Wochentag
+| Tag der Woche (`0-7` – `0` und `7` = Sonntag)
+|===
+
+== CRON-Beispiele
+
+=== Täglich zu bestimmten Zeiten
+- `0 2 * * *`: Jeden Tag um **02:00 Uhr**.
+- `30 6 * * *`: Jeden Tag um **06:30 Uhr**.
+- `45 23 * * *`: Jeden Tag um **23:45 Uhr**.
+
+=== Stündlich
+- `0 * * * *`: Jede volle Stunde.
+- `30 * * * *`: Jede Stunde um Minute **30**.
+- `*/15 * * * *`: Alle 15 Minuten (z. B. 00:00, 00:15, 00:30, 00:45).
+
+=== Wöchentlich
+- `0 9 * * 1`: Jeden Montag um **09:00 Uhr**.
+- `30 16 * * 5`: Jeden Freitag um **16:30 Uhr**.
+- `0 8 * * 0`: Jeden Sonntag um **08:00 Uhr**.
+
+=== Monatlich
+- `0 3 1 * *`: Jeden Monat am **1. Tag** um **03:00 Uhr**.
+- `15 14 15 * *`: Jeden Monat am **15. Tag** um **14:15 Uhr**.
+
+=== Mehrfach täglich oder an mehreren Wochentagen
+- `0 2,14 * * *`: Jeden Tag um **02:00 Uhr** und **14:00 Uhr**.
+- `30 6 * * 1,3,5`: Jeden Montag, Mittwoch und Freitag um **06:30 Uhr**.
+- `0 8-18 * * *`: Jede volle Stunde zwischen **08:00 Uhr** und **18:00 Uhr**.
+
+=== Kombinierte Bedingungen
+- `*/10 9-17 * * 1-5`: Alle 10 Minuten von **09:00 Uhr** bis **17:59 Uhr**, Montag bis Freitag.
+- `15 10 1,15 * 3`: Am **1.** und **15.** jedes Monats im **März** um **10:15 Uhr**.
+
+== Nützliche CRON-Generatoren
+- https://crontab.guru[Crontab.guru]
+- https://www.freeformatter.com/cron-expression-generator-quartz.html[FreeFormatter CRON Generator]
