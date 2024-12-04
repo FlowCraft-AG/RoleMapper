@@ -116,14 +116,14 @@ jobs:
           command: quickview
           image: calebscript/role-mapper:2024.12.1
           format: markdown
-          output: docker-scout-report.md
+          output: docker/docker-scout-report.md
 
       - name: Docker Scout CVE Analysis
         uses: docker/scout-action@v1.15.1
         with:
           command: cves
           image: calebscript/role-mapper:2024.12.1
-          output: docker-cve-report.md
+          output: docker2/docker-cve-report.md
 
 
 
