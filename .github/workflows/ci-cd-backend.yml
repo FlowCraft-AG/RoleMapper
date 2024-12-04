@@ -3,10 +3,11 @@ name: CI/CD Pipeline Backend
 on:
   pull_request:
     branches:
-      - main
+      - '**'
   push:
     branches:
       - main
+      - CD/CI---Security
     tags:
       - 'v*'  # Nur für Versionstags (z.B. v1.0.0)
 jobs:
@@ -28,6 +29,9 @@ jobs:
       - name: Print actor
         run: echo "The actor is ${{ github.actor }}"
 
+      - name: Print tag
+        run: echo "The actor is ${{ github.ref_name }}"
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -42,11 +46,14 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
-      - name: Upload dist folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.node-version }}
-          path: backend/dist
+      - name: Save dist folder for subsequent jobs
+        run: echo "dist=dist" >> $GITHUB_ENV
+
+      # - name: Upload dist folder
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: dist-${{ matrix.node-version }}
+      #     path: backend/dist
 
   analyze:
     runs-on: ubuntu-latest
@@ -84,6 +91,18 @@ jobs:
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           publish_dir: ./docs/backend
 
+      - name: Comment Lint and Audit Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Analysis Complete: Code Lint and Audit Passed ✅',
+            })
+
   package:
     runs-on: ubuntu-latest
     defaults:
@@ -97,14 +116,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download dist folder
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-${{ matrix.node-version }}
-          path: backend/dist
+      # - name: Download dist folder
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: dist-${{ matrix.node-version }}
+      #     path: backend/dist
+
+      - name: Ensure dist folder is available
+        run: |
+          if [ -d "$dist" ]; then
+            echo "Dist folder exists: $dist"
+          else
+            echo "Dist folder is missing!"
+            exit 1
+          fi
 
       - name: Package distribution
-        run: zip -r dist.zip dist
+        run: |
+         zip -r dist.zip $dist
 
       - name: Upload package
         uses: actions/upload-artifact@v4
