@@ -146,10 +146,14 @@ jobs:
       - name: gib dist pfad
         run: ls $DIST_PATH
 
-      - name: Package distribution
+      - name: create dist
         run: |
-         ls $DIST_PATH
-         zip -r dist.zip $DIST_PATH
+           cat < dist
+           $DIST_PATH
+           EOF
+
+      - name: Package distribution
+        run: zip -r dist.zip dist
 
       - name: Upload package
         uses: actions/upload-artifact@v4
