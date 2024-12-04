@@ -3,7 +3,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { graphQlModuleOptions } from './config/graphql.js';
-import { mongoDatabaseName, validatedMongoDatabaseUri } from './config/mongo-database.js';
+import { database } from './config/mongo-database.js';
 import { LoggerModule } from './logger/logger.module.js';
 import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
 import { ReadController } from './role-mapper/controller/read.controller.js';
@@ -16,8 +16,8 @@ import { KeycloakModule } from './security/keycloak/keycloak.module.js';
         GraphQLModule.forRoot<ApolloDriverConfig>(graphQlModuleOptions),
         LoggerModule,
         KeycloakModule,
-        MongooseModule.forRoot(validatedMongoDatabaseUri, {
-            dbName: mongoDatabaseName,
+        MongooseModule.forRoot(database.databaseUri, {
+            dbName: database.databaseName,
         }),
         RoleMapperModule,
     ],

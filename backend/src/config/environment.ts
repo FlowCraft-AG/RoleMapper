@@ -3,7 +3,16 @@ import process from 'node:process';
 
 dotenv.config();
 
-const { NODE_ENV, KEYCLOAK_CLIENT_SECRET, LOG_LEVEL, START_DB_SERVER } = process.env;
+const {
+    NODE_ENV,
+    KEYCLOAK_CLIENT_SECRET,
+    LOG_LEVEL,
+    START_DB_SERVER,
+    MONGODB_URI,
+    MONGODB_DATABASE,
+    TEST_MONGODB_URI,
+    TEST_MONGODB_DATABASE,
+} = process.env;
 
 /* eslint-disable @typescript-eslint/naming-convention */
 /**
@@ -14,6 +23,10 @@ export const environment = {
     KEYCLOAK_CLIENT_SECRET,
     LOG_LEVEL,
     START_DB_SERVER,
+    MONGODB_URI,
+    MONGODB_DATABASE,
+    TEST_MONGODB_URI,
+    TEST_MONGODB_DATABASE,
 } as const;
 /* eslint-enable @typescript-eslint/naming-convention */
 
