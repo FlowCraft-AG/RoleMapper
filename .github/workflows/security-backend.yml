@@ -95,14 +95,14 @@ jobs:
           path: docker-scout-quickview.md
 
 
-      - name: Docker Scout Quickview
+      - name: Docker Scout Cves
         id: docker-scout-cves
         uses: docker/scout-action@v1.15.1
         with:
           command: cves
           image: calebscript/role-mapper:2024.12.1
 
-      - name: Save Quickview Markdown to File
+      - name: Save Cves Markdown to File
         run: |
           echo "${{ steps.docker-scout-cves.outputs.cves }}" > docker-scout-cves.md
 
@@ -114,6 +114,3 @@ jobs:
 
       - name: ls -al
         run: ls -al
-
-      - name: ls al (bakcedn)
-        run: ls -al backend
