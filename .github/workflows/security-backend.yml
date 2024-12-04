@@ -1,8 +1,8 @@
 name: Security Pipeline
 on:
-  push:
-    branches:
-      - CD/CI---Security
+  # push:
+  #   branches:
+  #     - CD/CI---Security
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:

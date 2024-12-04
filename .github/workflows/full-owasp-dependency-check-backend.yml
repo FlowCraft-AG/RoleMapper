@@ -21,7 +21,9 @@ jobs:
       - name: Install OWASP Dependency-Check
         run: |
           curl -L https://github.com/jeremylong/DependencyCheck/releases/download/v11.1.0/dependency-check-11.1.0-release.zip -o dependency-check-11.1.0-release.zip
+          ls -al
           unzip dependency-check-11.1.0-release.zip -d dependency-check
+          ls -al
           chmod +x dependency-check/bin/dependency-check.sh
 
       - name: Run OWASP Dependency Check
