@@ -105,37 +105,73 @@ jobs:
 
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Docker Scout
+      - name: Docker Scout Quickview
+        id: docker-scout-quickview
         uses: docker/scout-action@v1.15.1
         with:
           command: quickview
           image: calebscript/role-mapper:2024.12.1
-          format: markdown
-          output: docker-scout-report.md
 
-      - name: Docker Scout CVE Analysis
-        uses: docker/scout-action@v1.15.1
-        with:
-          command: cves
-          image: calebscript/role-mapper:2024.12.1
-          output: docker-cve-report.md
+      - name: Save Quickview Markdown to File
+        run: |
+          echo "${{ steps.docker-scout-quickview.outputs.quickview }}" > docker-scout-quickview.md
 
       - name: Upload Docker Scout Quickview Report
         uses: actions/upload-artifact@v3
         with:
           name: docker-scout-quickview
-          path: docker-scout-report.md
+          path: docker-scout-quickview.md
 
-      - name: Upload Docker Scout CVE Report
+
+      - name: Docker Scout Quickview
+        id: docker-scout-cves
+        uses: docker/scout-action@v1.15.1
+        with:
+          command: quickview
+          image: calebscript/role-mapper:2024.12.1
+
+      - name: Save Quickview Markdown to File
+        run: |
+          echo "${{ steps.docker-scout-cves.outputs.quickview }}" > docker-scout-cves.md
+
+      - name: Upload Docker Scout Quickview Report
         uses: actions/upload-artifact@v3
         with:
-          name: docker-scout-cve-report
-          path: docker-cve-report.md
+          name: docker-scout-cves
+          path: docker-scout-cves.md
+
+
+      # - name: Docker Scout
+      #   uses: docker/scout-action@v1.15.1
+      #   with:
+      #     command: quickview
+      #     image: calebscript/role-mapper:2024.12.1
+      #     format: markdown
+      #     output: docker-scout-report.md
+
+      # - name: Docker Scout CVE Analysis
+      #   uses: docker/scout-action@v1.15.1
+      #   with:
+      #     command: cves
+      #     image: calebscript/role-mapper:2024.12.1
+      #     output: docker-cve-report.md
+
+      # - name: Upload Docker Scout Quickview Report
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: docker-scout-quickview
+      #     path: docker-scout-report.md
+
+      # - name: Upload Docker Scout CVE Report
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: docker-scout-cve-report
+      #     path: docker-cve-report.md
 
 
 
