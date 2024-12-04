@@ -63,7 +63,7 @@ jobs:
 
       - name: save dist folder
         run: |
-         echo "DIST_PATH=$(pwd)/dist" >> $GITHUB_ENV
+         echo "DIST_PATH=dist" >> $GITHUB_ENV
 
 
   # analyze:
