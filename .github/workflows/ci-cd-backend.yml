@@ -140,6 +140,9 @@ jobs:
       #     name: dist-${{ matrix.node-version }}
       #     path: backend/dist
 
+      - name: gib dist pfad
+        run: ls $DIST_PATH
+        
       - name: Package distribution
         run: zip -r dist.zip $DIST_PATH
 
@@ -172,9 +175,6 @@ jobs:
         with:
           path: backend/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
-
-      - name: gib dist pfad
-        run: ls $DIST_PATH
 
       # - name: Download dist folder
       #   uses: actions/download-artifact@v4
