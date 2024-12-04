@@ -1,11 +1,11 @@
 import { environment } from './environment.js';
 
+// eslint-disable-next-line @stylistic/operator-linebreak
 const { NODE_ENV, MONGODB_URI, MONGODB_DATABASE, TEST_MONGODB_URI, TEST_MONGODB_DATABASE } =
     environment;
 
 let mongoDatabaseUri: string | undefined;
 let mongoDatabaseName: string | undefined;
-
 
 // Hilfsfunktion zur Überprüfung, ob eine Umgebungsvariable definiert ist
 function ensureEnvironmentVariableDefined(
