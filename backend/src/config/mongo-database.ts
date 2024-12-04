@@ -1,6 +1,5 @@
 import { environment } from './environment.js';
 
-// eslint-disable-next-line @stylistic/operator-linebreak
 const { NODE_ENV, MONGODB_URI, MONGODB_DATABASE, TEST_MONGODB_URI, TEST_MONGODB_DATABASE } =
     environment;
 
