@@ -28,7 +28,7 @@
     "@apollo/client": "^3.11.10",
     "@heroicons/react": "^2.2.0",
     "bootstrap": "^5.3.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "fs-extra": "^11.2.0",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2",
