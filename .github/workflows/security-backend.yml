@@ -60,6 +60,7 @@ jobs:
       - name: Delete the downloads directory
         run: |
           rm -rf ./downloads
+          rm -f ./snyk-result.html
 
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarcloud-github-action@master
