@@ -21,14 +21,12 @@ jobs:
       - name: Install OWASP Dependency-Check
         run: |
           curl -L https://github.com/jeremylong/DependencyCheck/releases/download/v11.1.0/dependency-check-11.1.0-release.zip -o dependency-check-11.1.0-release.zip
-          ls -al
           unzip dependency-check-11.1.0-release.zip -d dependency-check
-          ls -al
-          chmod +x dependency-check/bin/dependency-check.sh
+          chmod +x dependency-check/dependency-check
 
       - name: Run OWASP Dependency Check
         run: |
-          dependency-check/bin/dependency-check.sh \
+          dependency-check/dependency-check/bin/dependency-check.sh \
             --project "Role Mapper" \
             --scan . \
             --nvdApiKey ${{ secrets.NVD_API_KEY }} \
