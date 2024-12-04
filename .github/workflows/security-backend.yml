@@ -23,9 +23,9 @@ jobs:
            restore-keys: |
              ${{ runner.os }}-node-
 
-      - name: Install dependencies
-        run: npm ci
-        working-directory: backend
+      # - name: Install dependencies
+      #   run: npm ci
+      #   working-directory: backend
 
       # - name: Install OWASP Dependency-Check
       #   run: |
@@ -45,6 +45,25 @@ jobs:
       #     name: owasp-dependency-check-report
       #     path: ./backend/dependency-check-report/*.html
 
+
+
+      - name: Dependency Check
+        uses: dependency-check/Dependency-Check_Action@1.1.0
+        id: Depcheck
+        with:
+          project: 'Role Mapper'
+          path: './backend'
+          format: 'HTML'
+          out: 'reports/dependency-check'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+           name: Depcheck report
+           path: ${{github.workspace}}/backend/reports/dependency-check
 
 
       # - name: Install Snyk
@@ -76,18 +95,6 @@ jobs:
       #     name: snyk-results
       #     path: ./backend/downloads
 
-
-      # - name: Set up Java 17
-      #   uses: actions/setup-java@v4
-      #   with:
-      #     distribution: 'temurin'
-      #     java-version: '17'
-
-      # - name: Build with Maven
-      #   run: mvn -B package --file ./backend/pom.xml
-      #   working-directory: backend
-
-
       # - name: SonarQube Cloud Scan
       #   uses: SonarSource/sonarcloud-github-action@master
       #   env:
@@ -102,99 +109,43 @@ jobs:
       #       -Dsonar.sources=./backend
       #       -Dsonar.branch.name=${{ github.ref_name }}
 
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@v3.3.0
+      #   with:
+      #     username: ${{ secrets.DOCKER_USER }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
 
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3.3.0
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Docker Scout Quickview
-        id: docker-scout-quickview
-        uses: docker/scout-action@v1.15.1
-        with:
-          command: quickview
-          image: calebscript/role-mapper:2024.12.1
-
-      - name: Save Quickview Markdown to File
-        run: |
-          echo "${{ steps.docker-scout-quickview.outputs.quickview }}" > docker-scout-quickview.md
-
-      - name: Upload Docker Scout Quickview Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: docker-scout-quickview
-          path: docker-scout-quickview.md
-
-
-      - name: Docker Scout Quickview
-        id: docker-scout-cves
-        uses: docker/scout-action@v1.15.1
-        with:
-          command: quickview
-          image: calebscript/role-mapper:2024.12.1
-
-      - name: Save Quickview Markdown to File
-        run: |
-          echo "${{ steps.docker-scout-cves.outputs.quickview }}" > docker-scout-cves.md
-
-      - name: Upload Docker Scout Quickview Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: docker-scout-cves
-          path: docker-scout-cves.md
-
-
-      # - name: Docker Scout
+      # - name: Docker Scout Quickview
+      #   id: docker-scout-quickview
       #   uses: docker/scout-action@v1.15.1
       #   with:
       #     command: quickview
       #     image: calebscript/role-mapper:2024.12.1
-      #     format: markdown
-      #     output: docker-scout-report.md
 
-      # - name: Docker Scout CVE Analysis
-      #   uses: docker/scout-action@v1.15.1
-      #   with:
-      #     command: cves
-      #     image: calebscript/role-mapper:2024.12.1
-      #     output: docker-cve-report.md
+      # - name: Save Quickview Markdown to File
+      #   run: |
+      #     echo "${{ steps.docker-scout-quickview.outputs.quickview }}" > docker-scout-quickview.md
 
       # - name: Upload Docker Scout Quickview Report
       #   uses: actions/upload-artifact@v3
       #   with:
       #     name: docker-scout-quickview
-      #     path: docker-scout-report.md
+      #     path: docker-scout-quickview.md
 
-      # - name: Upload Docker Scout CVE Report
-      #   uses: actions/upload-artifact@v3
+
+      # - name: Docker Scout Quickview
+      #   id: docker-scout-cves
+      #   uses: docker/scout-action@v1.15.1
       #   with:
-      #     name: docker-scout-cve-report
-      #     path: docker-cve-report.md
+      #     command: quickview
+      #     image: calebscript/role-mapper:2024.12.1
 
-
-
-
-
-
-
-      # - name: Run Docker Scout CVE Scan
-      #   run: docker scout cves --format markdown -o docker-cve-report.md calebscript/role-mapper:2024.12.1
-
-      # - name: Upload Docker Scout CVE Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: docker-scout-cve-report
-      #     path: docker-cve-report.json
-
-      # - name: Run Docker Scout Quickview
-      #   run: docker scout quickview -o docker-quickview-report.txt calebscript/role-mapper:2024.12.1
+      # - name: Save Quickview Markdown to File
+      #   run: |
+      #     echo "${{ steps.docker-scout-cves.outputs.quickview }}" > docker-scout-cves.md
 
       # - name: Upload Docker Scout Quickview Report
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@v3
       #   with:
-      #     name: docker-scout-quickview-report
-      #     path: docker-quickview-report.txt
-
-
+      #     name: docker-scout-cves
+      #     path: docker-scout-cves.md
