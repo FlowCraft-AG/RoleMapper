@@ -95,7 +95,6 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=FlowCraft-AG_RoleMapper \
-            -Dsonar.organization=FlowCraft-AG
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=./backend
             -Dsonar.branch.name=${{ github.ref_name }}
