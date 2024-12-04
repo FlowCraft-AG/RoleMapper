@@ -183,7 +183,99 @@ describe('get Process Roles GraphQL', () => {
         expect(roles).toHaveLength(2);
         expect(roles[1]?.users).toHaveLength(4);
     });
+    // -----------------------------------------------------------------------------
+    // Additional Tests for QueryResolver
+    // -----------------------------------------------------------------------------
 
+    test('[GRAPHQL] Dynamische Abfrage für USERS mit Filtern', async () => {
+      // given
+      const body: GraphQLRequest = {
+        query: `
+        {
+          getData(entity: USERS, filters: { key: "department", value: "IT" }) {
+            userId
+            functionName
+          }
+        }
+        `,
+      };
+
+      // when
+      const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
+        graphqlPath,
+        body,
+      );
+
+      // then
+      expect(status).toBe(HttpStatus.OK);
+      expect(headers['content-type']).toMatch(/json/iu);
+      expect(data.errors).toBeUndefined();
+      expect(data.data).toBeDefined();
+
+      const { getData } = data.data!;
+      expect(getData).toBeInstanceOf(Array);
+      expect(getData.length).toBeGreaterThan(0);
+      expect(getData[0]).toHaveProperty('userId');
+      expect(getData[0]).toHaveProperty('functionName');
+    });
+
+    test('[GRAPHQL] Dynamische Abfrage für FUNCTIONS ohne Filter', async () => {
+      // given
+      const body: GraphQLRequest = {
+        query: `
+        {
+          getData(entity: FUNCTIONS) {
+            functionName
+            description
+          }
+        }
+        `,
+      };
+
+      // when
+      const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
+        graphqlPath,
+        body,
+      );
+
+      // then
+      expect(status).toBe(HttpStatus.OK);
+      expect(headers['content-type']).toMatch(/json/iu);
+      expect(data.errors).toBeUndefined();
+      expect(data.data).toBeDefined();
+
+      const { getData } = data.data!;
+      expect(getData).toBeInstanceOf(Array);
+      expect(getData.length).toBeGreaterThan(0);
+      expect(getData[0]).toHaveProperty('functionName');
+      expect(getData[0]).toHaveProperty('description');
+    });
+
+    test('[GRAPHQL] Fehlerhafte Abfrage für nicht unterstützte Entität', async () => {
+      // given
+      const body: GraphQLRequest = {
+        query: `
+        {
+          getData(entity: INVALID_ENTITY) {
+            key
+            value
+          }
+        }
+        `,
+      };
+
+      // when
+      const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
+        graphqlPath,
+        body,
+      );
+
+      // then
+      expect(status).toBe(HttpStatus.BAD_REQUEST);
+      expect(headers['content-type']).toMatch(/json/iu);
+      expect(data.errors).toBeDefined();
+      expect(data.data).toBeNull();
+    });
     // -------------------------------------------------------------------------
     // Tests für ungültige Anfragen
     // -------------------------------------------------------------------------
