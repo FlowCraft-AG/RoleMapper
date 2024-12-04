@@ -54,82 +54,67 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
-      # - name: Upload dist folder
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: dist-${{ matrix.node-version }}
-      #     path: backend/dist
-      #     retention-days: 1
-
-      - name: save dist folder
-        run: |
-         echo "DIST_PATH=dist" >> $GITHUB_ENV
-
-      - name: ls -al
-        run: ls -al
-
-      - name: ls -al dist folder
-        run: ls -al ${{ env.DIST_PATH }}
-
-      - name: ls -al $dist
-        run: ls -al $DIST_PATH
+      - name: Upload dist folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.node-version }}
+          path: backend/dist
+          retention-days: 1
 
 
+  analyze:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    needs: build
+    strategy:
+      matrix:
+        node-version: [22.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
-  # analyze:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: backend
-  #   needs: build
-  #   strategy:
-  #     matrix:
-  #       node-version: [22.x]
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+      - name: gib dist pfad
+        run: ls $DIST_PATH
 
-  #     - name: Setup Node.js ${{ matrix.node-version }}
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: ${{ matrix.node-version }}
+      - name: Restore Node.js modules from cache
+        uses: actions/cache@v4
+        with:
+          path: backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
 
-  #     - name: gib dist pfad
-  #       run: ls $DIST_PATH
+      - name: Lint code
+        run: npm run eslint
 
-  #     - name: Restore Node.js modules from cache
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: backend/node_modules
-  #         key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
+      - name: Security audit
+        run: npm audit --omit=dev
 
-  #     - name: Lint code
-  #       run: npm run eslint
+      - name: Generate documentation (TypeDoc)
+        run: npm run typedoc
 
-  #     - name: Security audit
-  #       run: npm audit --omit=dev
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          publish_dir: ./docs/backend
 
-  #     - name: Generate documentation (TypeDoc)
-  #       run: npm run typedoc
-
-  #     - name: Deploy to GitHub Pages
-  #       uses: peaceiris/actions-gh-pages@v3
-  #       with:
-  #         github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-  #         publish_dir: ./docs/backend
-
-  #     - name: Comment Lint and Audit Results
-  #       if: github.event_name == 'pull_request'
-  #       uses: actions/github-script@v7
-  #       with:
-  #         script: |
-  #           github.rest.issues.createComment({
-  #             issue_number: context.issue.number,
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             body: 'Analysis Complete: Code Lint and Audit Passed ✅',
-  #           })
+      - name: Comment Lint and Audit Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Analysis Complete: Code Lint and Audit Passed ✅',
+            })
 
   package:
     runs-on: ubuntu-latest
@@ -144,20 +129,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Download dist folder
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: dist-${{ matrix.node-version }}
-      #     path: backend/dist
-
-      - name: ls -al dist folder
-        run: ls -al ${{ env.DIST_PATH }}
-
-      - name: ls -al $dist
-        run: ls -al $DIST_PATH
+      - name: Download dist folder
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ matrix.node-version }}
+          path: backend/dist
 
       - name: Package distribution
-        run: zip -r dist.zip ${{ env.DIST_PATH }}
+        run: zip -r dist.zip ./dist
 
       - name: Upload package
         uses: actions/upload-artifact@v4
