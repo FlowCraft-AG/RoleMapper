@@ -47,59 +47,34 @@ jobs:
 
 
 
-      - name: Install Snyk
-        run: npm install -g snyk
-        working-directory: backend
+      # - name: Install Snyk
+      #   run: npm install -g snyk
+      #   working-directory: backend
 
-      - name: Setup Snyk
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk auth "$SNYK_TOKEN"
-      - run: snyk monitor
-        working-directory: backend
-
-      - name: install snyk-to-html
-        run: |
-          # Install the Snyk JSON to HTML Mapper using npm
-          npm install snyk-to-html -g
-          # Convert JSON output from `snyk test --json` into a static HTML
-          snyk test --json | snyk-to-html -o snyk-result.html
-          mkdir downloads
-          ls -la
-          cp -v snyk-result.html downloads
-        working-directory: backend
-
-      # save the HTML in the artifact
-      - name: Use the Upload Artifact GitHub Action
-        uses: actions/upload-artifact@v4
-        with:
-          name: snyk-results
-          path: ./backend/downloads
-
-
-
-
-
-
-
-
-
-
-
-
-      # - uses: actions/setup-node@v4
-      #   with:
-      #     node-version: "14"
-      # - run: npm install snyk -g # install snyk
-      # - run: snyk -v
       # - name: Setup Snyk
       #   env:
       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       #   run: snyk auth "$SNYK_TOKEN"
+      # - run: snyk monitor
       #   working-directory: backend
 
+      # - name: install snyk-to-html
+      #   run: |
+      #     # Install the Snyk JSON to HTML Mapper using npm
+      #     npm install snyk-to-html -g
+      #     # Convert JSON output from `snyk test --json` into a static HTML
+      #     snyk test --json | snyk-to-html -o snyk-result.html
+      #     mkdir downloads
+      #     ls -la
+      #     cp -v snyk-result.html downloads
+      #   working-directory: backend
 
-
+      # # save the HTML in the artifact
+      # - name: Use the Upload Artifact GitHub Action
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: snyk-results
+      #     path: ./backend/downloads
 
 
       # - name: Set up Java 17
@@ -107,7 +82,30 @@ jobs:
       #   with:
       #     distribution: 'temurin'
       #     java-version: '17'
-      #     overwrite-settings: false
+
+      # - name: Build with Maven
+      #   run: mvn -B package --file ./backend/pom.xml
+      #   working-directory: backend
+
+
+      - name: Official SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=roleMapper
+            -Dsonar.organization=h-ka.de
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=./backend
+
+
+
+
+
+
+
+
 
       # - name: Log in to Docker Hub
       #   uses: docker/login-action@v2
@@ -133,13 +131,4 @@ jobs:
       #     name: docker-scout-quickview-report
       #     path: docker-quickview-report.txt
 
-      # - name: SonarQube Scan
-      #   uses: sonarsource/sonarcloud-github-action@v1
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   with:
-      #     args: >
-      #       -Dsonar.projectKey=roleMapper
-      #       -Dsonar.organization=h-ka.de
-      #       -Dsonar.host.url=https://sonarcloud.io
-      #       -Dsonar.sources=./backend
+
