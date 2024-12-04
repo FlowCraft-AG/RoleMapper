@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
@@ -59,6 +56,10 @@ jobs:
         with:
           name: snyk-results
           path: ./backend/downloads
+
+      - name: Delete the downloads directory
+        run: |
+          rm -rf ./downloads
 
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarcloud-github-action@master
