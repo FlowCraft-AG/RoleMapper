@@ -32,10 +32,10 @@ jobs:
       - name: Print tag
         run: echo "The actor is ${{ github.ref_name }}"
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
+      # - name: Setup Node.js ${{ matrix.node-version }}
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: ${{ matrix.node-version }}
 
       - name: Cache Node.js modules
         uses: actions/cache@v4
