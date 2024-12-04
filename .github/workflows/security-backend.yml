@@ -98,6 +98,14 @@ jobs:
             -Dsonar.organization=h-ka.de
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=./backend
+
+      - name: Run SonarCloud Scan
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=RoleMapper \
+            -Dsonar.organization=h-ka.de \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.sources=./backend \
             -Dsonar.branch.name=${{ github.ref_name }}
 
 
