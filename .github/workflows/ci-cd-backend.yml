@@ -85,11 +85,14 @@ jobs:
       #   with:
       #     node-version: ${{ matrix.node-version }}
 
+      - name: gib dist pfad
+        run: ls $DIST_PATH
+        
       - name: Restore Node.js modules from cache
         uses: actions/cache@v4
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          path: backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
 
       - name: Lint code
         run: npm run eslint
