@@ -6,6 +6,7 @@ const { NODE_ENV, MONGODB_URI, MONGODB_DATABASE, TEST_MONGODB_URI, TEST_MONGODB_
 let mongoDatabaseUri: string | undefined;
 let mongoDatabaseName: string | undefined;
 
+
 // Hilfsfunktion zur Überprüfung, ob eine Umgebungsvariable definiert ist
 function ensureEnvironmentVariableDefined(
     variable: string | undefined,
