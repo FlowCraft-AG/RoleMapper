@@ -1,0 +1,37 @@
+name: Full Daily OWASP Dependency Check (Backend)
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  dependency-check:
+    defaults:
+      run:
+        working-directory: backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install OWASP Dependency-Check
+        run: |
+          curl -L https://github.com/jeremylong/DependencyCheck/releases/download/v11.1.0/dependency-check-11.1.0-release.zip -o dependency-check-11.1.0-release.zip
+          unzip dependency-check-11.1.0-release.zip -d dependency-check
+          chmod +x dependency-check/dependency-check
+
+      - name: Run OWASP Dependency Check
+        run: |
+          dependency-check/dependency-check/bin/dependency-check.sh \
+            --project "Role Mapper" \
+            --scan . \
+            --nvdApiKey ${{ secrets.NVD_API_KEY }} \
+            --format "HTML" \
+            --out dependency-check-report
+
+      - name: Upload Dependency Check Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-dependency-check-report
+          path: ./backend/dependency-check-report/*.html

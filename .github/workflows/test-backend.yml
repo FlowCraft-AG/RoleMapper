@@ -4,15 +4,16 @@ on:
   pull_request:
     branches:
       - '**'
-  push:
-    branches:
-      - '**'
   # schedule:
   #   - cron: '0 2 * * *'
   #   - cron: '0 16 * * *'
 
 jobs:
   test:
+    name: Test Backend
+    defaults:
+      run:
+        working-directory: backend
     runs-on: ubuntu-latest
     env:
       TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
@@ -46,25 +47,20 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      working-directory: backend
 
     - name: Create log file
       run: |
         mkdir -p log
         touch log/server.log
-      working-directory: backend
 
     - name: Run ESLint
       run: npm run eslint
-      working-directory: backend
 
     - name: Run tests
       run: npm t
-      working-directory: backend
 
     - name: Run Coverage Tests with Istanbul
       run: npm run test:istanbul
-      working-directory: backend
 
     - name: Upload Jest Test Coverage
       uses: actions/upload-artifact@v4
@@ -74,4 +70,3 @@ jobs:
 
     - name: Audit dependencies
       run: npm audit --audit-level=high
-      working-directory: backend
