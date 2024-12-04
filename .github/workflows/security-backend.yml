@@ -83,6 +83,9 @@ jobs:
         with:
           command: quickview
           image: calebscript/role-mapper:2024.12.1
+          summary: false
+          write-comment: true        # PR-Kommentar aktivieren
+          keep-previous-comments: false # Alte Kommentare aktualisieren statt behalten
 
       - name: Save Quickview Markdown to File
         run: |
@@ -94,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: docker-scout-quickview
-          path: docker-scout-quickview.md
+          path: backend/docker-scout-quickview.md
 
 
       - name: Docker Scout Cves
@@ -103,6 +106,9 @@ jobs:
         with:
           command: cves
           image: calebscript/role-mapper:2024.12.1
+          summary: false
+          write-comment: true        # PR-Kommentar aktivieren
+          keep-previous-comments: false # Alte Kommentare aktualisieren statt behalten
 
       - name: Save Cves Markdown to File
         run: |
@@ -115,6 +121,3 @@ jobs:
         with:
           name: docker-scout-cves
           path: backend/docker-scout-cves.md
-
-      - name: ls -al
-        run: ls -al
