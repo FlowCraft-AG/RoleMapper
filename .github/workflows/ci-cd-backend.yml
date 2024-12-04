@@ -175,7 +175,7 @@ jobs:
           path: ./backend
 
       - name: unzip dist folder
-        run: unzip dist.zip -d $DIST_PATH
+        run: unzip dist.zip -d ./dist
 
       - name: Create .env file
         run: |
