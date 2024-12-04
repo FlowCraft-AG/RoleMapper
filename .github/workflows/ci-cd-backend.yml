@@ -53,6 +53,14 @@ jobs:
         run: |
           echo "Using dist folder from previous job: $dist"
 
+      - name: ls -al
+        run: ls -al
+
+      - name: Verify dist folder in build job
+        run: |
+          echo "Contents of dist folder:"
+          ls -al dist
+
       # - name: Upload dist folder
       #   uses: actions/upload-artifact@v4
       #   with:
