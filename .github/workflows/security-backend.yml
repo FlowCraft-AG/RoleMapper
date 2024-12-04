@@ -1,8 +1,8 @@
 name: Security Pipeline
 on:
-  # push:
-  #   branches:
-  #     - CD/CI---Security
+  push:
+    branches:
+      - CD/CI---Security
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
@@ -99,12 +99,12 @@ jobs:
         id: docker-scout-cves
         uses: docker/scout-action@v1.15.1
         with:
-          command: quickview
+          command: cves
           image: calebscript/role-mapper:2024.12.1
 
       - name: Save Quickview Markdown to File
         run: |
-          echo "${{ steps.docker-scout-cves.outputs.quickview }}" > docker-scout-cves.md
+          echo "${{ steps.docker-scout-cves.outputs.cves }}" > docker-scout-cves.md
 
       - name: Upload Docker Scout Cves Report
         uses: actions/upload-artifact@v4
