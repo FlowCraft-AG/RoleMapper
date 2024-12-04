@@ -65,6 +65,14 @@ jobs:
         run: |
          echo "DIST_PATH=dist" >> $GITHUB_ENV
 
+      - name: ls -al dist folder
+        run: ls -al ${{ env.DIST_PATH }}
+
+      - name: ls -al $dist
+        run: ls -al $DIST_PATH
+
+
+
 
   # analyze:
   #   runs-on: ubuntu-latest
