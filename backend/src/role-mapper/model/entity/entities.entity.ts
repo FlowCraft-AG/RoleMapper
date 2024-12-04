@@ -80,3 +80,5 @@ export type CollectionSchema =
     | typeof ORG_UNIT_SCHEMA
     | typeof PROCESS_SCHEMA
     | typeof ROLE_SCHEMA;
+
+export type GetData = User[] | Function[] | OrgUnit[] | Process[] | Role[];

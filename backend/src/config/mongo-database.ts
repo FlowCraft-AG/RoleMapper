@@ -8,7 +8,7 @@ let mongoDatabaseUri: string | undefined;
 let mongoDatabaseName: string | undefined;
 
 // Hilfsfunktion zur Überprüfung, ob eine Umgebungsvariable definiert ist
-function ensureEnvironmentVariableDefined(
+export function ensureEnvironmentVariableDefined(
     variable: string | undefined,
     variableName: string,
 ): string {
