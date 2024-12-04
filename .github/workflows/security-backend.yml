@@ -94,19 +94,21 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=RoleMapper
+            -Dsonar.projectKey=FlowCraft-AG_RoleMapper \
+            -Dsonar.projectName=RoleMapper
             -Dsonar.organization=h-ka.de
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.sources=./backend
-
-      - name: Run SonarCloud Scan
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=RoleMapper \
-            -Dsonar.organization=h-ka.de \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.sources=./backend \
             -Dsonar.branch.name=${{ github.ref_name }}
+
+      # - name: Run SonarCloud Scan
+      #   run: |
+      #     sonar-scanner \
+      #       -Dsonar.projectKey=RoleMapper \
+      #       -Dsonar.organization=h-ka.de \
+      #       -Dsonar.host.url=https://sonarcloud.io \
+      #       -Dsonar.sources=./backend \
+      #       -Dsonar.branch.name=${{ github.ref_name }}
 
 
 
