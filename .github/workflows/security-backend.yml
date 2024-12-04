@@ -86,7 +86,9 @@ jobs:
 
       - name: Save Quickview Markdown to File
         run: |
-          echo "${{ steps.docker-scout-quickview.outputs.quickview }}" > docker-scout-quickview.md
+          cat <<EOF > docker-scout-quickview.md
+          ${{ steps.docker-scout-quickview.outputs.quickview }}
+          EOF
 
       - name: Upload Docker Scout Quickview Report
         uses: actions/upload-artifact@v4
@@ -104,7 +106,9 @@ jobs:
 
       - name: Save Cves Markdown to File
         run: |
-          echo "${{ steps.docker-scout-cves.outputs.cves }}" > docker-scout-cves.md
+          cat <<EOF > docker-scout-cves.md
+          ${{ steps.docker-scout-cves.outputs.cves }}
+          EOF
 
       - name: Upload Docker Scout Cves Report
         uses: actions/upload-artifact@v4
