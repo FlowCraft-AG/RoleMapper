@@ -45,7 +45,7 @@ jobs:
       #     name: owasp-dependency-check-report
       #     path: ./backend/dependency-check-report/*.html
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: "14"
       - run: npm install snyk -g # install snyk
@@ -68,7 +68,7 @@ jobs:
 
       # save the HTML in the artifact
       - name: Use the Upload Artifact GitHub Action
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: results
           path: ./backend/downloads
