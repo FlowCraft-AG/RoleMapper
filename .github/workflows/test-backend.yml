@@ -13,6 +13,9 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        node-version: [22.x]
     name: Test Backend
     defaults:
       run:
@@ -26,19 +29,19 @@ jobs:
       KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
     - name: Print ref name
       run: echo "This workflow was triggered by ${{ github.ref_name }}"
 
     - name: Print actor (Collaborator)
       run: echo "The actor is ${{ github.actor }}"
 
-    - name: Checkout code
-      uses: actions/checkout@v2
-
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '22'
+        node-version: ${{ matrix.node-version }}
 
     - name: Cache Node.js modules
       uses: actions/cache@v3
