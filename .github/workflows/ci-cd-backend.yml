@@ -65,6 +65,9 @@ jobs:
         run: |
          echo "DIST_PATH=dist" >> $GITHUB_ENV
 
+      - name: ls -al
+        run: ls -al
+
       - name: ls -al dist folder
         run: ls -al ${{ env.DIST_PATH }}
 
