@@ -9,43 +9,14 @@ on:
 
 jobs:
   security:
+    defaults:
+      run:
+        working-directory: backend
     name: Security Scans (OWASP Dependency Check, SonarQube, Snyk)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      # - name: Cache Node modules
-      #   uses: actions/cache@v3
-      #   with:
-      #      path: backend/node_modules
-      #      key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      #      restore-keys: |
-      #        ${{ runner.os }}-node-
-
-      # - name: Install dependencies
-      #   run: npm ci
-      #   working-directory: backend
-
-      # - name: Install OWASP Dependency-Check
-      #   run: |
-      #     curl -L https://github.com/jeremylong/DependencyCheck/releases/download/v11.1.0/dependency-check-11.1.0-release.zip -o dependency-check-11.1.0-release.zip
-      #     unzip dependency-check-11.1.0-release.zip -d dependency-check
-      #     chmod +x dependency-check/dependency-check
-      #   working-directory: backend
-
-      # - name: Run OWASP Dependency Check
-      #   run: |
-      #     dependency-check/dependency-check/bin/dependency-check.sh --project "Role Mapper" --scan . --nvdApiKey ${{ secrets.NVD_API_KEY }} --format "HTML" --out dependency-check-report
-      #   working-directory: backend
-
-      # - name: Upload Dependency Check Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: owasp-dependency-check-report
-      #     path: ./backend/dependency-check-report/*.html
-
-
 
       - name: Dependency Check
         uses: dependency-check/Dependency-Check_Action@1.1.0
@@ -61,87 +32,82 @@ jobs:
            name: Depcheck report
            path: ${{github.workspace}}/reports
 
+      - name: Install Snyk
+        run: npm install -g snyk
 
-      # - name: Install Snyk
-      #   run: npm install -g snyk
-      #   working-directory: backend
+      - name: Setup Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth "$SNYK_TOKEN"
+      - run: snyk monitor
 
-      # - name: Setup Snyk
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      #   run: snyk auth "$SNYK_TOKEN"
-      # - run: snyk monitor
-      #   working-directory: backend
+      - name: install snyk-to-html
+        run: |
+          # Install the Snyk JSON to HTML Mapper using npm
+          npm install snyk-to-html -g
+          # Convert JSON output from `snyk test --json` into a static HTML
+          snyk test --json | snyk-to-html -o snyk-result.html
+          mkdir downloads
+          ls -la
+          cp -v snyk-result.html downloads
 
-      # - name: install snyk-to-html
-      #   run: |
-      #     # Install the Snyk JSON to HTML Mapper using npm
-      #     npm install snyk-to-html -g
-      #     # Convert JSON output from `snyk test --json` into a static HTML
-      #     snyk test --json | snyk-to-html -o snyk-result.html
-      #     mkdir downloads
-      #     ls -la
-      #     cp -v snyk-result.html downloads
-      #   working-directory: backend
+      - name: Use the Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-results
+          path: ./backend/downloads
 
-      # # save the HTML in the artifact
-      # - name: Use the Upload Artifact GitHub Action
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: snyk-results
-      #     path: ./backend/downloads
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=FlowCraft-AG_RoleMapper
+            -Dsonar.projectName=RoleMapper
+            -Dsonar.organization=flowcraft-ag
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.sources=./backend
+            -Dsonar.branch.name=${{ github.ref_name }}
 
-      # - name: SonarQube Cloud Scan
-      #   uses: SonarSource/sonarcloud-github-action@master
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #   with:
-      #     args: >
-      #       -Dsonar.projectKey=FlowCraft-AG_RoleMapper
-      #       -Dsonar.projectName=RoleMapper
-      #       -Dsonar.organization=flowcraft-ag
-      #       -Dsonar.host.url=https://sonarcloud.io
-      #       -Dsonar.sources=./backend
-      #       -Dsonar.branch.name=${{ github.ref_name }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3.3.0
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # - name: Log in to Docker Hub
-      #   uses: docker/login-action@v3.3.0
-      #   with:
-      #     username: ${{ secrets.DOCKER_USER }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker Scout Quickview
+        id: docker-scout-quickview
+        uses: docker/scout-action@v1.15.1
+        with:
+          command: quickview
+          image: calebscript/role-mapper:2024.12.1
 
-      # - name: Docker Scout Quickview
-      #   id: docker-scout-quickview
-      #   uses: docker/scout-action@v1.15.1
-      #   with:
-      #     command: quickview
-      #     image: calebscript/role-mapper:2024.12.1
+      - name: Save Quickview Markdown to File
+        run: |
+          echo "${{ steps.docker-scout-quickview.outputs.quickview }}" > docker-scout-quickview.md
 
-      # - name: Save Quickview Markdown to File
-      #   run: |
-      #     echo "${{ steps.docker-scout-quickview.outputs.quickview }}" > docker-scout-quickview.md
-
-      # - name: Upload Docker Scout Quickview Report
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: docker-scout-quickview
-      #     path: docker-scout-quickview.md
+      - name: Upload Docker Scout Quickview Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-scout-quickview
+          path: docker-scout-quickview.md
 
 
-      # - name: Docker Scout Quickview
-      #   id: docker-scout-cves
-      #   uses: docker/scout-action@v1.15.1
-      #   with:
-      #     command: quickview
-      #     image: calebscript/role-mapper:2024.12.1
+      - name: Docker Scout Quickview
+        id: docker-scout-cves
+        uses: docker/scout-action@v1.15.1
+        with:
+          command: quickview
+          image: calebscript/role-mapper:2024.12.1
 
-      # - name: Save Quickview Markdown to File
-      #   run: |
-      #     echo "${{ steps.docker-scout-cves.outputs.quickview }}" > docker-scout-cves.md
+      - name: Save Quickview Markdown to File
+        run: |
+          echo "${{ steps.docker-scout-cves.outputs.quickview }}" > docker-scout-cves.md
 
-      # - name: Upload Docker Scout Quickview Report
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: docker-scout-cves
-      #     path: docker-scout-cves.md
+      - name: Upload Docker Scout Quickview Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-scout-cves
+          path: docker-scout-cves.md
