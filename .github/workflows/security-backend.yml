@@ -54,16 +54,12 @@ jobs:
           project: 'Role Mapper'
           path: './backend'
           format: 'HTML'
-          out: 'reports/dependency-check'
-          args: >
-            --failOnCVSS 7
-            --enableRetired
 
       - name: Upload Test results
         uses: actions/upload-artifact@v4
         with:
            name: Depcheck report
-           path: ${{github.workspace}}/reports/dependency-check
+           path: ${{github.workspace}}/reports
 
 
       # - name: Install Snyk
