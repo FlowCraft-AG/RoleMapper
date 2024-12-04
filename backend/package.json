@@ -81,7 +81,7 @@
     "@jest/globals": "^29.7.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
-    "@nestjs/testing": "^10.0.0",
+    "@nestjs/testing": "^10.4.13",
     "@stylistic/eslint-plugin": "2.8.0",
     "@tsconfig/node22": "22.0.0",
     "@types/chalk": "^0.4.31",
