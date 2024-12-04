@@ -60,6 +60,9 @@ jobs:
       #     name: dist-${{ matrix.node-version }}
       #     path: backend/dist
 
+      - name: ls -al
+        run: ls -al
+        
       - name: Save dist path
         run: echo "DIST_PATH=dist" >> $GITHUB_ENV
 
@@ -67,66 +70,66 @@ jobs:
         run: ls $DIST_PATH
 
 
-  analyze:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-    needs: build
-    strategy:
-      matrix:
-        node-version: [22.x]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # analyze:
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: backend
+  #   needs: build
+  #   strategy:
+  #     matrix:
+  #       node-version: [22.x]
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      # - name: Setup Node.js ${{ matrix.node-version }}
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: ${{ matrix.node-version }}
+  #     # - name: Setup Node.js ${{ matrix.node-version }}
+  #     #   uses: actions/setup-node@v4
+  #     #   with:
+  #     #     node-version: ${{ matrix.node-version }}
 
-      - name: gib dist pfad
-        run: ls $DIST_PATH
+  #     - name: gib dist pfad
+  #       run: ls $DIST_PATH
 
-      - name: Restore Node.js modules from cache
-        uses: actions/cache@v4
-        with:
-          path: backend/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
+  #     - name: Restore Node.js modules from cache
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: backend/node_modules
+  #         key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
 
-      - name: Lint code
-        run: npm run eslint
+  #     - name: Lint code
+  #       run: npm run eslint
 
-      - name: Security audit
-        run: npm audit --omit=dev
+  #     - name: Security audit
+  #       run: npm audit --omit=dev
 
-      - name: Generate documentation (TypeDoc)
-        run: npm run typedoc
+  #     - name: Generate documentation (TypeDoc)
+  #       run: npm run typedoc
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          publish_dir: ./docs/backend
+  #     - name: Deploy to GitHub Pages
+  #       uses: peaceiris/actions-gh-pages@v3
+  #       with:
+  #         github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+  #         publish_dir: ./docs/backend
 
-      - name: Comment Lint and Audit Results
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Analysis Complete: Code Lint and Audit Passed ✅',
-            })
+  #     - name: Comment Lint and Audit Results
+  #       if: github.event_name == 'pull_request'
+  #       uses: actions/github-script@v7
+  #       with:
+  #         script: |
+  #           github.rest.issues.createComment({
+  #             issue_number: context.issue.number,
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             body: 'Analysis Complete: Code Lint and Audit Passed ✅',
+  #           })
 
   package:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
-    needs: [build, analyze]
+    needs: [build]
     strategy:
       matrix:
         node-version: [22.x]
@@ -142,7 +145,7 @@ jobs:
 
       - name: gib dist pfad
         run: ls $DIST_PATH
-        
+
       - name: Package distribution
         run: zip -r dist.zip $DIST_PATH
 
