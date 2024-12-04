@@ -1,9 +1,6 @@
-name: Full OWASP Dependency Check
+name: Full Daily OWASP Dependency Check (Backend)
 
 on:
-  push:
-    branches:
-      - CD/CI---Security
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:

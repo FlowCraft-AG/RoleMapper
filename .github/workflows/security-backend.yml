@@ -89,7 +89,7 @@ jobs:
           echo "${{ steps.docker-scout-quickview.outputs.quickview }}" > docker-scout-quickview.md
 
       - name: Upload Docker Scout Quickview Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docker-scout-quickview
           path: docker-scout-quickview.md
@@ -106,8 +106,14 @@ jobs:
         run: |
           echo "${{ steps.docker-scout-cves.outputs.quickview }}" > docker-scout-cves.md
 
-      - name: Upload Docker Scout Quickview Report
-        uses: actions/upload-artifact@v3
+      - name: Upload Docker Scout Cves Report
+        uses: actions/upload-artifact@v4
         with:
           name: docker-scout-cves
           path: docker-scout-cves.md
+
+      - name: ls -al
+        run: ls -al
+
+      - name: ls al (bakcedn)
+        run: ls -al backend
