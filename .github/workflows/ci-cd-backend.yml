@@ -148,9 +148,8 @@ jobs:
 
       - name: create dist
         run: |
-           cat < dist
-           $DIST_PATH
-           EOF
+           mkdir -p dist
+           cp -r $DIST_PATH/* dist
 
       - name: Package distribution
         run: zip -r dist.zip dist
