@@ -21,7 +21,7 @@ export class BannerService implements OnApplicationBootstrap {
      * Beim Bootstrap der Anwendung Informationen und ein Banner ausgeben.
      */
     async onApplicationBootstrap() {
-        const { host, nodeEnv, port } = nodeConfig;
+        const { host, nodeEnv, port, databaseName } = nodeConfig;
 
         try {
             // Banner generieren und mit Farben ausgeben
@@ -38,7 +38,7 @@ export class BannerService implements OnApplicationBootstrap {
         this.#logger.info(chalk.cyan('Umgebung: ') + chalk.yellow(nodeEnv));
         this.#logger.info(chalk.cyan('Host: ') + chalk.yellow(host));
         this.#logger.info(chalk.cyan('Port: ') + chalk.yellow(port.toString()));
-        this.#logger.info(chalk.cyan('Datenbank: ') + chalk.yellow('MongoDB'));
+        this.#logger.info(chalk.cyan('Datenbank: ') + chalk.yellow(databaseName));
         this.#logger.info(
             chalk.cyan('Betriebssystem: ') + chalk.yellow(`${type()} (${release()})`),
         );

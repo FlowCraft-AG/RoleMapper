@@ -1,15 +1,45 @@
-import * as dotenv from 'dotenv';
+import { environment } from './environment.js';
 
-// Laden der .env-Datei
-dotenv.config();
+// eslint-disable-next-line @stylistic/operator-linebreak
+const { NODE_ENV, MONGODB_URI, MONGODB_DATABASE, TEST_MONGODB_URI, TEST_MONGODB_DATABASE } =
+    environment;
 
-export const mongoDatabaseUri = process.env.TEST_MONGODB_URI;
-if (mongoDatabaseUri === undefined) {
-    throw new Error(
-        'Die Umgebungsvariable MONGODB_URI ist nicht definiert. Bitte prüfe deine .env-Datei.',
-    );
+let mongoDatabaseUri: string | undefined;
+let mongoDatabaseName: string | undefined;
+
+// Hilfsfunktion zur Überprüfung, ob eine Umgebungsvariable definiert ist
+function ensureEnvironmentVariableDefined(
+    variable: string | undefined,
+    variableName: string,
+): string {
+    if (variable === undefined) {
+        throw new Error(
+            `Die Umgebungsvariable ${variableName} ist nicht definiert. Bitte prüfe deine .env-Datei.`,
+        );
+    }
+    return variable;
 }
 
-// Hier stellt TypeScript sicher, dass mongoUri ein string ist
-export const validatedMongoDatabaseUri: string = mongoDatabaseUri;
-export const mongoDatabaseName = process.env.TEST_MONGODB_DATABASE ?? 'default-database';
+if (NODE_ENV === 'test') {
+    // Für die Testumgebung
+    mongoDatabaseUri = ensureEnvironmentVariableDefined(TEST_MONGODB_URI, 'TEST_MONGODB_URI');
+    mongoDatabaseName = TEST_MONGODB_DATABASE;
+    if (mongoDatabaseName === undefined) {
+        throw new Error(
+            'Die Umgebungsvariable TEST_MONGODB_DATABASE ist nicht definiert. Bitte prüfe deine .env-Datei.',
+        );
+    }
+} else {
+    // Für andere Umgebungen (z.B. Produktion)
+    mongoDatabaseUri = ensureEnvironmentVariableDefined(MONGODB_URI, 'MONGODB_URI');
+    mongoDatabaseName = ensureEnvironmentVariableDefined(MONGODB_DATABASE, 'MONGODB_DATABASE');
+}
+
+// Sicherstellen, dass die Variablen vom Typ string sind
+const validatedMongoDatabaseUri: string = mongoDatabaseUri;
+const validatedMongoDatabaseName: string = mongoDatabaseName;
+
+export const database = {
+    databaseName: validatedMongoDatabaseName,
+    databaseUri: validatedMongoDatabaseUri,
+} as const;
