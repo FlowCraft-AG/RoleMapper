@@ -27,31 +27,59 @@ jobs:
         run: npm ci
         working-directory: backend
 
+      # - name: Install OWASP Dependency-Check
+      #   run: |
+      #     curl -L https://github.com/jeremylong/DependencyCheck/releases/download/v11.1.0/dependency-check-11.1.0-release.zip -o dependency-check-11.1.0-release.zip
+      #     unzip dependency-check-11.1.0-release.zip -d dependency-check
+      #     chmod +x dependency-check/dependency-check
+      #   working-directory: backend
+
+      # - name: Run OWASP Dependency Check
+      #   run: |
+      #     dependency-check/dependency-check/bin/dependency-check.sh --project "Role Mapper" --scan . --nvdApiKey ${{ secrets.NVD_API_KEY }} --format "HTML" --out dependency-check-report
+      #   working-directory: backend
+
+      # - name: Upload Dependency Check Report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: owasp-dependency-check-report
+      #     path: ./backend/dependency-check-report/*.html
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: npm install snyk -g # install snyk
+      - run: snyk -v
+      - name: Setup Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth "$SNYK_TOKEN"
+        working-directory: backend
+
+      - name: install snyk-to-html
+        run: |
+          # Install the Snyk JSON to HTML Mapper using npm
+          npm install snyk-to-html -g
+          # Convert JSON output from `snyk test --json` into a static HTML
+          snyk test --json | snyk-to-html -o result.html
+          mkdir downloads
+          cp -v /home/runner/work/java-goof/java-goof/*.html /home/runner/work/java-goof/java-goof/downloads
+        working-directory: backend
+
+      # save the HTML in the artifact
+      - name: Use the Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v2
+        with:
+          name: results
+          path: ./backend/downloads
+
+
       # - name: Set up Java 17
       #   uses: actions/setup-java@v4
       #   with:
       #     distribution: 'temurin'
       #     java-version: '17'
       #     overwrite-settings: false
-
-      - name: Install OWASP Dependency-Check
-        run: |
-          curl -L https://github.com/jeremylong/DependencyCheck/releases/download/v11.1.0/dependency-check-11.1.0-release.zip -o dependency-check-11.1.0-release.zip
-          unzip dependency-check-11.1.0-release.zip -d dependency-check
-          chmod +x dependency-check/dependency-check
-        working-directory: backend
-
-      - name: Run OWASP Dependency Check
-        run: |
-          dependency-check/dependency-check/bin/dependency-check.sh --project "Role Mapper" --scan . --nvdApiKey ${{ secrets.NVD_API_KEY }} --format "HTML" --out dependency-check-report
-        working-directory: backend
-
-      - name: Upload Dependency Check Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: owasp-dependency-check-report
-          path: ./backend/dependency-check-report/*.html
-
 
       # - name: Authenticate with Snyk
       #   run: npm run snyk:auth ${{ secrets.SNYK_TOKEN }}
