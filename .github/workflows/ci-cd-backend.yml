@@ -62,7 +62,7 @@ jobs:
 
       - name: ls -al
         run: ls -al
-        
+
       - name: Save dist path
         run: echo "DIST_PATH=dist" >> $GITHUB_ENV
 
@@ -147,7 +147,9 @@ jobs:
         run: ls $DIST_PATH
 
       - name: Package distribution
-        run: zip -r dist.zip $DIST_PATH
+        run: |
+         ls $DIST_PATH
+         zip -r dist.zip $DIST_PATH
 
       - name: Upload package
         uses: actions/upload-artifact@v4
@@ -179,11 +181,11 @@ jobs:
           path: backend/node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('backend/package-lock.json') }}
 
-      # - name: Download dist folder
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: dist-package-${{ matrix.node-version }}
-      #     path: ./backend
+      - name: Download dist folder
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-package-${{ matrix.node-version }}
+          path: ./backend
 
       - name: unzip dist folder
         run: unzip dist.zip -d $DIST_PATH
