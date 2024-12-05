@@ -109,8 +109,8 @@ yarn-error.log*
 next-env.d.ts
 
 # Tests
-__tests__/
-__mocks__/
+# __tests__/
+# __mocks__/
 
 
 
