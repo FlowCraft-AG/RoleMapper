@@ -15,14 +15,37 @@ class Role {
 /**
  * Definiert das Schema für die Process-Entität.
  */
+/**
+ * Repräsentiert einen Prozess in der Datenbank.
+ *
+ * @schema Processes - Die Sammlung, in der die Prozesse gespeichert werden.
+ */
 @Schema({ collection: 'Processes' })
 export class Process extends Document {
+    /**
+     * Der Name des Prozesses.
+     *
+     * @type {string}
+     * @required
+     */
     @Prop({ required: true })
     name!: string;
 
+    /**
+     * Die eindeutige ID des Prozesses.
+     *
+     * @type {string}
+     * @required
+     */
     @Prop({ required: true })
     processId!: string;
 
+    /**
+     * Die Rollen, die dem Prozess zugeordnet sind.
+     *
+     * @type {Role[]}
+     * @required
+     */
     @Prop({ type: [Role], required: true })
     roles!: Role[];
 }

@@ -157,10 +157,22 @@ export class ReadService {
         return query;
     }
 
+    /**
+     * Überprüft, ob der Filter leer ist.
+     *
+     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @returns {boolean} `true`, wenn der Filter leer ist, andernfalls `false`.
+     */
     private isEmptyFilter(filters?: FilterInputDTO): boolean {
         return !filters || Object.keys(filters).length === 0;
     }
 
+    /**
+     * Verarbeitet logische Operatoren (`and`, `or`, `not`) im Filter.
+     *
+     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterQuery<any>} query - Die MongoDB-Query.
+     */
     private processLogicalOperators(filters: FilterInputDTO, query: FilterQuery<any>): void {
         if (filters.and)
             query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
@@ -168,12 +180,24 @@ export class ReadService {
         if (filters.not) query.$not = this.buildFilterQuery(filters.not);
     }
 
+    /**
+     * Überprüft, ob mindestens ein Feld im Filter gesetzt ist.
+     *
+     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @returns {boolean} `true`, wenn mindestens ein Feld gesetzt ist, andernfalls `false`.
+     */
     private isAnyFieldSet(filters: FilterInputDTO): boolean {
         return (
             filters.field !== null || filters.operator !== undefined || filters.value !== undefined
         );
     }
 
+    /**
+     * Validiert die Felder im Filter.
+     *
+     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
+     */
     private validateFilterFields(filters: FilterInputDTO): void {
         const missingFields: string[] = [];
         if (filters.field === null) missingFields.push('Feld');
@@ -185,6 +209,13 @@ export class ReadService {
         }
     }
 
+    /**
+     * Erstellt eine MongoDB-Query für ein einzelnes Feld.
+     *
+     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterQuery<any>} query - Die MongoDB-Query.
+     * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
+     */
     private buildFieldQuery(filters: FilterInputDTO, query: FilterQuery<any>): void {
         const OPERATOR_MAP: Record<string, string> = {
             EQ: '$eq',

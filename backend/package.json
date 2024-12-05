@@ -37,7 +37,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:istanbul": "npm t -- --coverage",
     "sonar": "node scripts/sonar-scanner",
-    "prettier": "prettier --cache --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
+    "prettier": "prettier --cache --write \"src/**/*.ts\" \"__tests__/**/*.ts\" \"__mocks__/**/*.ts\"",
     "prettier:check": "prettier --cache --check \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "depcheck": "depcheck",
     "typedoc": "typedoc",
