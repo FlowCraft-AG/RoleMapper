@@ -6,12 +6,29 @@ import { Document, PipelineStage } from 'mongoose';
  */
 @Schema({ collection: 'Roles' })
 export class Role extends Document {
+    /**
+     * Der Name der Rolle.
+     *
+     * @type {string}
+     * @memberof Role
+     * @required
+     */
     @Prop({ required: true })
     name!: string;
 
+    /**
+     * Die eindeutige Kennung für die Rolle.
+     *
+     * @type {string}
+     * @memberof Role
+     * @optional
+     */
     @Prop({ required: false })
     roleId?: string;
 
+    /**
+     * Die Abfrage-Pipeline-Stufen, die mit der Rolle verbunden sind.
+     */
     @Prop({ type: [Object], required: false })
     query?: PipelineStage[];
 }

@@ -15,6 +15,175 @@ import { MutationResponse } from '../resolver/mutation.response.js';
 import { ReadService } from '../service/read.service.js';
 import { WriteService } from '../service/write.service.js';
 
+/**
+ * Controller für Schreiboperationen (CREATE, UPDATE, DELETE) auf Entitäten.
+ *
+ * @class
+ * @classdesc Diese Klasse stellt Endpunkte für die Ausführung von Mutationen bereit.
+ *
+ * @example
+ * // Beispiel für eine CREATE Operation
+ * const input = {
+ *   entity: 'FUNCTIONS',
+ *   operation: 'CREATE',
+ *   data: {
+ *     functionName: 'Macher',
+ *     users: 'gyca1011',
+ *     orgUnit: 'Stundent',
+ *   },
+ * };
+ * const response = await writeController.executeData(input);
+ *
+ * @example
+ * // Beispiel für eine UPDATE Operation
+ * const input = {
+ *   entity: 'FUNCTIONS',
+ *   operation: 'UPDATE',
+ *   data: {
+ *     functionName: 'IT Macher',
+ *     users: ['gyca1011', 'kwin0101'],
+ *     orgUnit: 'Stundent X',
+ *   },
+ *   filter: {
+ *     field: 'functionName',
+ *     operator: 'EQ',
+ *     value: 'Macher',
+ *   },
+ * };
+ * const response = await writeController.executeData(input);
+ *
+ * @example
+ * // Beispiel für eine DELETE Operation
+ * const input = {
+ *   entity: 'FUNCTIONS',
+ *   operation: 'DELETE',
+ *   data: {
+ *     functionName: 'Macher',
+ *     users: 'gyca1011',
+ *     orgUnit: 'Stundent',
+ *   },
+ *   filter: {
+ *     field: 'functionName',
+ *     operator: 'EQ',
+ *     value: 'IT Macher',
+ *   },
+ * };
+ * const response = await writeController.executeData(input);
+ *
+ * @see {@link MutationInput}
+ * @see {@link MutationResponse}
+ */
+/**
+ * @swagger
+ * tags:
+ *   - name: Write
+ *     description: Endpoints for performing mutations (CREATE, UPDATE, DELETE)
+ *
+ * @swagger
+ * /:
+ *   post:
+ *     summary: Führt eine Mutation aus (CREATE, UPDATE, DELETE)
+ *     description: Führt eine Mutation für eine angegebene Entität aus. Unterstützte Operationen sind: CREATE, UPDATE, DELETE.
+ *     tags: [Write]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       description: Eingabeparameter für die Mutation
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/MutationInput'
+ *           examples:
+ *             create:
+ *               summary: CREATE Operation
+ *               value:
+ *                 entity: 'FUNCTIONS'
+ *                 operation: 'CREATE'
+ *                 data:
+ *                   functionName: 'Macher'
+ *                   users: 'gyca1011'
+ *                   orgUnit: 'Stundent'
+ *             update:
+ *               summary: UPDATE Operation
+ *               value:
+ *                 entity: 'FUNCTIONS'
+ *                 operation: 'UPDATE'
+ *                 data:
+ *                   functionName: 'IT Macher'
+ *                   users: ['gyca1011', 'kwin0101']
+ *                   orgUnit: 'Stundent X'
+ *                 filter:
+ *                   field: 'functionName'
+ *                   operator: 'EQ'
+ *                   value: 'Macher'
+ *             delete:
+ *               summary: DELETE Operation
+ *               value:
+ *                 entity: 'FUNCTIONS'
+ *                 operation: 'DELETE'
+ *                 data:
+ *                   functionName: 'Macher'
+ *                   users: 'gyca1011'
+ *                   orgUnit: 'Stundent'
+ *                 filter:
+ *                   field: 'functionName'
+ *                   operator: 'EQ'
+ *                   value: 'IT Macher'
+ *     responses:
+ *       200:
+ *         description: Erfolgreiche Mutation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MutationResponse'
+ *             examples:
+ *               create:
+ *                 summary: Erfolgreiches CREATE
+ *                 value:
+ *                   success: true
+ *                   message: 'CREATE Operation erfolgreich.'
+ *                   result:
+ *                     functionName: 'Macher'
+ *                     users: ['gyca1011']
+ *                     orgUnit: 'Stundent'
+ *                     _id: '674b7fc8a348e76ef9eeb159'
+ *                     __v: 0
+ *               update:
+ *                 summary: Erfolgreiches UPDATE
+ *                 value:
+ *                   success: true
+ *                   message: 'UPDATE Operation erfolgreich.'
+ *                   result:
+ *                     acknowledged: true
+ *                     modifiedCount: 1
+ *                     upsertedId: null
+ *                     upsertedCount: 0
+ *                     matchedCount: 1
+ *               delete:
+ *                 summary: Erfolgreiches DELETE
+ *                 value:
+ *                   success: true
+ *                   message: 'DELETE Operation erfolgreich.'
+ *                   result:
+ *                     acknowledged: true
+ *                     deletedCount: 1
+ *       400:
+ *         description: Ungültige Eingabeparameter
+ *         content:
+ *           application/json:
+ *             examples:
+ *               error:
+ *                 summary: Ungültige Operation
+ *                 value:
+ *                   success: false
+ *                   message: 'Nicht unterstützte Operation: INVALID_OPERATION'
+ *                   result: null
+ *       401:
+ *         description: Nicht autorisiert
+ *       500:
+ *         description: Interner Serverfehler
+ */
 @ApiTags('Write')
 @Controller()
 @UseInterceptors(ResponseTimeInterceptor)

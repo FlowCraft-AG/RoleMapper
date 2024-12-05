@@ -4,6 +4,11 @@ import { Document } from 'mongoose';
 /**
  * Definiert das Schema für die Function-Entität.
  */
+/**
+ * Repräsentiert eine Function-Entität in der Datenbank.
+ *
+ * @schema Functions
+ */
 @Schema({ collection: 'Functions' })
 export class Function extends Document {
     @Prop({ required: true })

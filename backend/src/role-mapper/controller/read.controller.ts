@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable security/detect-object-injection */
 import {
     BadRequestException,
     Controller,
@@ -36,6 +38,8 @@ export type Link = {
 
 /** Links für HATEOAS */
 export type Links = {
+    /** Dynamische Links für Benutzer innerhalb jeder Rolle */
+    [roleName: string]: Record<string, Link> | Link | undefined;
     /** self-Link */
     readonly self: Link;
     /** Optionaler Linke für list */
@@ -46,8 +50,6 @@ export type Links = {
     readonly update?: Link;
     /** Optionaler Linke für remove */
     readonly remove?: Link;
-    readonly antragsteller?: Link;
-    readonly vorgesetzter?: Link;
 };
 
 export type RolePayload = {
@@ -67,10 +69,45 @@ export type RoleResult = {
     /**
      * Benutzer, die dieser Rolle zugeordnet sind.
      */
-    users: User[];
+    users: (User & { functionName: string })[];
 };
 /**
  * Controller für Leseoperationen.
+ */
+/**
+ * @class ReadController
+ * @description Controller für das Lesen von Rollen und Daten in der Role Mapper REST-API.
+ *
+ * @constructor
+ * @param {ReadService} readService - Der Service, der für das Lesen von Rollen und Daten verwendet wird.
+ *
+ * @method getProcessRoles
+ * @description Führt eine Abfrage aus, um die Rollen eines Prozesses zu erhalten.
+ * @param {string} processId - Die ID des Prozesses.
+ * @param {string} userId - Die ID des Benutzers.
+ * @param {Request} request - Das HTTP-Request-Objekt.
+ * @returns {Promise<RolePayload>} - Die Rollen des Prozesses.
+ *
+ * @method getData
+ * @description Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
+ * @param {string} collection - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
+ * @param {FilterInputDTO} filter - Die Filterbedingungen.
+ * @returns {Promise<any[]>} - Die gefilterten Daten.
+ * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
+ *
+ * @method validateEntity
+ * @description Validiert, ob die angegebene Entität unterstützt wird.
+ * @param {string} collection - Die zu validierende Entität.
+ * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
+ *
+ * @method #createHateoasLinks
+ * @description Diese Funktion erstellt HATEOAS-Links basierend auf den RoleNames im RolePayload.
+ * Sie fügt Links für jede Rolle in _links hinzu, um die Navigation zu ermöglichen.
+ * @param {string} baseUri - Die Basis-URL, die zur Erstellung der Links verwendet wird.
+ * @param {RolePayload} rolePayload - Die Payload mit den Rollen und Benutzerdaten.
+ * @param {string} processId - Die Prozess-ID, die zur Erstellung der Links verwendet wird.
+ * @param {string} userId - Die Benutzer-ID, die zur Erstellung der Links verwendet wird.
+ * @returns {Links} - Ein RolePayload-Objekt mit hinzugefügten HATEOAS-Links.
  */
 @ApiTags('Role Mapper REST-API')
 @Controller(paths.roleMapper)
@@ -132,18 +169,8 @@ export class ReadController {
         this.#logger.debug('getProcessRoles: processId=%s, userId=%s', processId, userId);
 
         const rolePayload: RolePayload = await this.#service.findProcessRoles(processId, userId);
-
-        return {
-            ...rolePayload,
-            _links: {
-                self: {
-                    href: `${baseUri}/${paths.processRoles}?processId=${processId}&userId=${userId}`,
-                },
-                antragsteller: {
-                    href: `${baseUri}/${SUPPORTED_ENTITIES[0]}/${paths.data}?field=userId&operator=EQ&value=${userId}`,
-                },
-            },
-        };
+        rolePayload._links = this.#createHateoasLinks(baseUri, rolePayload, processId, userId);
+        return rolePayload;
     }
 
     /**
@@ -205,5 +232,54 @@ export class ReadController {
                 `Nicht unterstützte Entität: ${collection}. Unterstützte Entitäten sind: ${SUPPORTED_ENTITIES.join(', ')}`,
             );
         }
+    }
+
+    /**
+     * Diese Funktion erstellt HATEOAS-Links basierend auf den RoleNames im RolePayload.
+     * Sie fügt Links für jede Rolle in _links hinzu, um die Navigation zu ermöglichen.
+     * @param baseUri Die Basis-URL, die zur Erstellung der Links verwendet wird.
+     * @param rolePayload Die Payload mit den Rollen und Benutzerdaten.
+     * @param processId Die Prozess-ID, die zur Erstellung der Links verwendet wird.
+     * @param userId Die Benutzer-ID, die zur Erstellung der Links verwendet wird.
+     * @returns Ein RolePayload-Objekt mit hinzugefügten HATEOAS-Links.
+     */
+    #createHateoasLinks(
+        baseUri: string,
+        rolePayload: RolePayload,
+        processId: string,
+        userId: string,
+    ): Links {
+        const links: Links = {
+            self: {
+                href: `${baseUri}/process-roles?processId=${processId}&userId=${userId}`,
+            },
+        };
+
+        // Iteriere über alle Rollen im Payload
+        for (const role of rolePayload.roles) {
+            const roleLinkName = role.roleName.toLowerCase();
+            this.#logger.debug('roleLinkName=%s', roleLinkName);
+
+            // Erstelle den Link für die gesamte Rolle
+            if (!links[roleLinkName]) {
+                links[roleLinkName] = {};
+            }
+            this.#logger.debug('roleLinkName=%s', roleLinkName);
+
+            // Iteriere über alle Benutzer in der Rolle
+            for (const user of role.users) {
+                const userLinkName = user.userId; // Verwende die userId als Schlüssel
+                this.#logger.debug('userLinkName=%s', userLinkName);
+
+                // Füge den Link für den Benutzer hinzu
+                if (!(links[roleLinkName] as Record<string, Link>)[userLinkName]) {
+                    (links[roleLinkName] as Record<string, Link>)[userLinkName] = {
+                        href: `${baseUri}/USERS/data?field=userId&operator=EQ&value=${user.userId}`,
+                    };
+                }
+            }
+        }
+
+        return links;
     }
 }

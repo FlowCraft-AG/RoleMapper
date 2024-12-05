@@ -17,9 +17,7 @@ const { log } = config;
 const logDirectory: string | undefined =
     (log?.dir as string | undefined) === undefined ? undefined : log.dir.trimEnd(); // eslint-disable-line @typescript-eslint/no-unsafe-call
 const logFile =
-    logDirectory === undefined
-        ? logFileDefault
-        : path.resolve(logDirectoryDefault, logFileNameDefault);
+    logDirectory === undefined ? logFileDefault : path.resolve(logDirectory, logFileNameDefault);
 const pretty = log?.pretty === true;
 
 export type LogLevel = 'error' | 'warn' | 'info' | 'debug';

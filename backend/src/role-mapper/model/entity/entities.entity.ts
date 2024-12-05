@@ -15,6 +15,19 @@ type EntitySchema = {
 /**
  * Liste aller Mongoose-Entitäten und deren Schemas.
  * Wird für die Registrierung im Modul verwendet.
+ *
+ * Eine Liste von EntitySchemas, die verschiedene Entitäten und ihre zugehörigen Schemata repräsentiert.
+ *
+ * @type {EntitySchema[]}
+ * @property {string} name - Der Name der Entität.
+ * @property {object} schema - Das Schema der Entität.
+ *
+ * Enthaltene Entitäten:
+ * - User: Das Schema für Benutzer.
+ * - Function: Das Schema für Funktionen.
+ * - OrgUnit: Das Schema für Organisationseinheiten.
+ * - Process: Das Schema für Prozesse.
+ * - Role: Das Schema für Rollen.
  */
 const entitySchemas: EntitySchema[] = [
     { name: User.name, schema: USER_SCHEMA },

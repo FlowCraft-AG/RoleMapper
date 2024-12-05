@@ -293,4 +293,87 @@ describe('get Process Roles GraphQL', () => {
         expect(data.errors).toBeDefined();
         expect(data.data).toBeUndefined();
     });
+
+    test('[GRAPHQL] getProcessRoles with invalid processId', async () => {
+        // given
+        const body: GraphQLRequest = {
+            query: `
+    {
+            getProcessRoles(processId: "INVALID_PROCESS", userId: "${USER1}") {
+                roles {
+                    roleName
+                    users {
+                        userId
+                        functionName
+                    }
+                }
+            }
+    }
+        `,
+        };
+
+        // when
+        const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
+            graphqlPath,
+            body,
+        );
+
+        // then
+        expect(status).toBe(HttpStatus.OK);
+        expect(headers['content-type']).toMatch(/json/iu);
+        expect(data.errors).toBeDefined();
+        expect(data.data).toBeNull();
+    });
+
+    test('[GRAPHQL] getData with invalid filters', async () => {
+        // given
+        const body: GraphQLRequest = {
+            query: `
+    {
+        getData(entity: ${ENDPOINTS.USERS}, filters: { field: "invalidField", operator: EQ, value: "invalidValue" })
+    }
+        `,
+        };
+
+        // when
+        const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
+            graphqlPath,
+            body,
+        );
+
+        // then
+        expect(status).toBe(HttpStatus.BAD_REQUEST);
+        expect(headers['content-type']).toMatch(/json/iu);
+        expect(data.errors).toBeDefined();
+        expect(data.data).toBeUndefined();
+    });
+
+    test('[GRAPHQL] getData without filters', async () => {
+        // given
+        const body: GraphQLRequest = {
+            query: `
+    {
+        getData(entity: ${ENDPOINTS.ORG_UNITS})
+    }
+        `,
+        };
+
+        // when
+        const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
+            graphqlPath,
+            body,
+        );
+
+        // then
+        expect(status).toBe(HttpStatus.OK);
+        expect(headers['content-type']).toMatch(/json/iu);
+        expect(data.errors).toBeUndefined();
+        expect(data.data).toBeDefined();
+
+        const { getData } = data.data!;
+
+        expect(getData).toBeInstanceOf(Array);
+        expect((getData as any[]).length).toBeGreaterThan(0);
+        expect((getData as { orgUnitName: string }[])[0]).toHaveProperty('name');
+    });
 });

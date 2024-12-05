@@ -108,7 +108,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-
+# Tests
+# __tests__/
+# __mocks__/
 
 
 
@@ -173,7 +175,7 @@ Thumbs.db
 coverage
 .nyc_output
 .clinic
-# __tests__/bankkonto/__snapshots__
+# __tests__/roleMapper/__snapshots__
 
 # SonarQube
 .sonar
@@ -206,5 +208,4 @@ snyk-*.log
 
 
 # Volumes
-
 volumes/**
