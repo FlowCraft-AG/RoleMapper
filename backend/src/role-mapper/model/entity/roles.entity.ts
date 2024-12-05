@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, PipelineStage } from 'mongoose';
 
 /**
  * Definiert das Schema für die Role-Entität.
@@ -29,6 +29,8 @@ export class Role extends Document {
     /**
      * Die Abfrage-Pipeline-Stufen, die mit der Rolle verbunden sind.
      */
+    @Prop({ type: [Object], required: false })
+    query?: PipelineStage[];
 }
 
 export type RoleDocument = Role & Document;

@@ -69,7 +69,7 @@ export type RoleResult = {
     /**
      * Benutzer, die dieser Rolle zugeordnet sind.
      */
-    users: User[];
+    users: (User & { functionName: string })[];
 };
 /**
  * Controller für Leseoperationen.

@@ -1,4 +1,4 @@
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
 
@@ -66,6 +66,7 @@ class Employee {
  * @schema HKA_Users
  * @timestamps true
  */
+@Schema({ collection: 'HKA_Users' })
 export class User extends Document {
     /**
      * Eindeutige Benutzer-ID.
