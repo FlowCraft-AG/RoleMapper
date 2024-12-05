@@ -52,10 +52,10 @@ spring.log
 **/test-output/
 
 # Sensitive files
-# *.key
-# *.pem
+*.key
+*.pem
 *.p12
-# *.crt
+*.crt
 *.env*
 
 # Node.js
@@ -207,4 +207,4 @@ snyk-*.log
 
 # Volumes
 
-# volumes/**
+volumes/**
