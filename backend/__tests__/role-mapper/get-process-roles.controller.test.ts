@@ -16,6 +16,7 @@ const USER1 = 'muud0001';
 const USER2 = 'rost0001';
 const UNGÜLTIGER_PROZESS = 'DA0000';
 const UNGÜLTIGER_USER = 'muud0000';
+const USER_OHNE_VORGESETZTEN = 'hobi1013'
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -253,6 +254,24 @@ describe('get Process Roles REST', () => {
             statusCode: HttpStatus.NOT_FOUND,
             error: 'Not Found',
             message: `Keinen Benutzer gefunden mit der userId: ${UNGÜLTIGER_USER}`,
+        });
+    });
+
+    test('[REST] User ohne Vorgesetzten', async () => {
+        // given
+        const url = `?processId=${DIENSTREISEANTRAG}&userId=${USER_OHNE_VORGESETZTEN}`;
+
+        // when
+        const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(url);
+
+        // then
+        expect(status).toBe(HttpStatus.NOT_FOUND);
+        expect(headers['content-type']).toMatch(/json/iu);
+
+        expect(data).toEqual({
+            statusCode: HttpStatus.NOT_FOUND,
+            error: 'Not Found',
+            message: `Keinen Vorgesetzten für den Benutzer mit der userId: ${USER_OHNE_VORGESETZTEN}`,
         });
     });
 });
