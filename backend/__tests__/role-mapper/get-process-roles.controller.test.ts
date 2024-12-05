@@ -16,7 +16,7 @@ const USER1 = 'muud0001';
 const USER2 = 'rost0001';
 const UNGÜLTIGER_PROZESS = 'DA0000';
 const UNGÜLTIGER_USER = 'muud0000';
-const USER_OHNE_VORGESETZTEN = 'hobi1013'
+const USER_OHNE_VORGESETZTEN = 'hobi1013';
 
 // -----------------------------------------------------------------------------
 // T e s t s
