@@ -87,8 +87,8 @@ jobs:
       - name: Lint code
         run: npm run eslint
 
-      # - name: Security audit
-      #   run: npm audit --omit=dev
+      - name: Security audit
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Generate documentation (TypeDoc)
         run: npm run typedoc
