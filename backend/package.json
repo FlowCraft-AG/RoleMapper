@@ -44,8 +44,8 @@
     "snyk:auth": "snyk auth",
     "snyk:authCli": "echo https://app.snyk.io/account && snyk auth",
     "snyk": "snyk test",
-    "eslint:nt": "eslint src",
-    "eslint": "eslint src __tests__ __mocks__"
+    "eslint:nt": "eslint src __tests__ __mocks__",
+    "eslint:ci": "eslint src __tests__"
   },
   "dependencies": {
     "@apollo/server": "4.11.0",

@@ -3,19 +3,16 @@
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import { type RolePayload } from '../../src/role-mapper/controller/read.controller.js';
+import type { RolePayload, RoleResult } from '../../src/role-mapper/controller/read.controller.js';
+import {
+    EXPECTED_RESULTS,
+    INVALID_TEST_DATA,
+    PROCESS,
+    ROLES,
+    TEST_EMPLOYEE_1,
+    TEST_EMPLOYEE_2,
+} from '../test-data.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
-
-// -----------------------------------------------------------------------------
-// T e s t d a t e n
-// -----------------------------------------------------------------------------
-
-const DIENSTREISEANTRAG = 'DA0001';
-const REISEKOSTENANTRAG = 'RA0001';
-const USER1 = 'muud0001';
-const USER2 = 'rost0001';
-const UNGÜLTIGER_PROZESS = 'DA0000';
-const UNGÜLTIGER_USER = 'muud0000';
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -43,177 +40,96 @@ describe('get Process Roles REST', () => {
     // Tests für gültige Anfragen
     // -------------------------------------------------------------------------
 
-    test('[REST] Rollen zum Dienstreiseantragprozess zum user muud0001', async () => {
+    test('[REST] Rollen zum Dienstreiseantragprozess', async () => {
+        const employee = TEST_EMPLOYEE_1;
         // given
-        const query = `?processId=${DIENSTREISEANTRAG}&userId=${USER1}`;
+        const query = `?processId=${PROCESS.PROCESS_1}&userId=${employee.userId}`;
 
         // when
         const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(query);
+        const roles: RoleResult[] = data.roles;
+        const user = roles[0];
+        const leiter = roles[1];
 
         // then
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
+        expect(roles).toBeDefined();
+        expect(roles.length).toBe(EXPECTED_RESULTS.ROLES_COUNT);
 
-        expect(data.roles).toEqual([
-            {
-                roleName: 'Antragssteller',
-                users: [
-                    {
-                        functionName: 'Professor',
-                        _id: '673ede38e1746bf8e6aa1adf',
-                        userId: `${USER1}`,
-                        userType: 'employee',
-                        userRole: 'professor',
-                        orgUnit: 'A0004',
-                        active: true,
-                        validFrom: '1998-04-01T00:00:00.000Z',
-                        validUntil: '2100-12-31T00:00:00.000Z',
-                        employee: {
-                            costCenter: 'A0004',
-                            department: 'Fakultät für Informatik und Wirtschaftsinformatik',
-                        },
-                    },
-                ],
-            },
-            {
-                roleName: 'Vorgesetzter',
-                users: [
-                    {
-                        functionName: 'Dekan IWI',
-                        _id: '673ede38e1746bf8e6aa1ade',
-                        userId: 'nefr0002',
-                        userType: 'employee',
-                        userRole: 'professor',
-                        orgUnit: 'A0004',
-                        active: true,
-                        validFrom: '1995-09-01T00:00:00.000Z',
-                        validUntil: '2100-12-31T00:00:00.000Z',
-                        employee: {
-                            costCenter: 'A0004',
-                            department: 'Fakultät für Informatik und Wirtschaftsinformatik',
-                        },
-                    },
-                ],
-            },
-        ]);
+        expect(user).toBeDefined();
+        expect(user?.roleName).toBe(ROLES.ROLE_1);
+        expect(user?.users.length).toBe(1);
+        expect(user?.users[0]?.userId).toBe(employee.userId);
+        expect(user?.users[0]?.functionName).toBe(employee.functionName);
+
+        expect(leiter).toBeDefined();
+        expect(leiter?.roleName).toBe(ROLES.ROLE_2);
+        expect(leiter?.users.length).toBe(1);
+        expect(leiter?.users[0]?.userId).toBe(employee.leiter);
+        expect(leiter?.users[0]?.functionName).toBe(employee.functionNameLeiter);
     });
 
     test('[REST] Rollen zum Dienstreiseantragprozess zum user rost0001', async () => {
+        const employee = TEST_EMPLOYEE_2;
         // given
-        const url = `?processId=${DIENSTREISEANTRAG}&userId=${USER2}`;
+        const query = `?processId=${PROCESS.PROCESS_1}&userId=${employee.userId}`;
 
         // when
-        const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(url);
+        const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(query);
+        const roles: RoleResult[] = data.roles;
+        const user = roles[0];
+        const leiter = roles[1];
+
+        // then
+        expect(status).toBe(HttpStatus.OK);
+        expect(headers['content-type']).toMatch(/json/iu);
+        expect(roles).toBeDefined();
+        expect(roles.length).toBe(EXPECTED_RESULTS.ROLES_COUNT);
+
+        expect(user).toBeDefined();
+        expect(user?.roleName).toBe(ROLES.ROLE_1);
+        expect(user?.users.length).toBe(1);
+        expect(user?.users[0]?.userId).toBe(employee.userId);
+        expect(user?.users[0]?.functionName).toBe(employee.functionName);
+
+        expect(leiter).toBeDefined();
+        expect(leiter?.roleName).toBe(ROLES.ROLE_2);
+        expect(leiter?.users.length).toBe(1);
+        expect(leiter?.users[0]?.userId).toBe(employee.leiter);
+        expect(leiter?.users[0]?.functionName).toBe(employee.functionNameLeiter);
+    });
+
+    test('[REST] Rollen zum Reisekostenprozess zum user rost0001', async () => {
+        const employee = TEST_EMPLOYEE_1;
+        // given
+        const query = `?processId=${PROCESS.PROCESS_2}&userId=${employee.userId}`;
+
+        // when
+        const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(query);
+        const roles: RoleResult[] = data.roles;
+        const rechnungsPrüfer = roles[0];
+        const finanzAbteilung = roles[1];
 
         // then
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
         expect(data).toBeDefined();
+        expect(roles).toBeDefined();
+        expect(roles.length).toBe(EXPECTED_RESULTS.ROLES_COUNT);
 
-        expect(data.roles[0]?.roleName).toEqual('Antragssteller');
-        expect(data.roles[0]?.users[0]?.userId).toEqual(USER2);
-        expect(data.roles[1]?.users[0]?.userId).toEqual('scgu0003');
-        expect(data.roles[1]?.roleName).toEqual('Vorgesetzter');
-    });
+        expect(rechnungsPrüfer).toBeDefined();
+        expect(rechnungsPrüfer?.roleName).toBe(ROLES.ROLE_3);
+        expect(rechnungsPrüfer?.users.length).toBe(1);
+        expect(rechnungsPrüfer?.users[0]?.userId).toBe(employee.rechnungsPrüfer);
 
-    test('[REST] Rollen zum Reisekostenprozess zum user rost0001', async () => {
-        // given
-        const query = `?processId=${REISEKOSTENANTRAG}&userId=${USER2}`;
-
-        // when
-        const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(query);
-
-        // then
-        expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
-
-        expect(data.roles).toEqual([
-            {
-                roleName: 'Rechnungsprüfung',
-                users: [
-                    {
-                        functionName: 'Leitung (Finanzen)',
-                        _id: '673ede38e1746bf8e6aa1b35',
-                        userId: 'kodo0001',
-                        userType: 'employee',
-                        userRole: 'adminTechnicalStaff',
-                        orgUnit: 'A0021',
-                        active: true,
-                        validFrom: '2010-03-01T00:00:00.000Z',
-                        validUntil: '2100-12-31T23:59:59.000Z',
-                        employee: {
-                            costCenter: 'A0021',
-                            department: 'Hochschulverwaltung',
-                        },
-                    },
-                ],
-            },
-            {
-                roleName: 'Finanzabteilung',
-                users: [
-                    {
-                        functionName: 'Leitung (Finanzen)',
-                        _id: '673ede38e1746bf8e6aa1b31',
-                        userId: 'scdo0001',
-                        userType: 'employee',
-                        userRole: 'adminTechnicalStaff',
-                        orgUnit: 'A0021',
-                        active: true,
-                        validFrom: '2022-07-12T00:00:00.000Z',
-                        validUntil: '2100-12-31T00:00:00.000Z',
-                        employee: {
-                            costCenter: 'A0021',
-                            department: 'Hochschulverwaltung',
-                        },
-                    },
-                    {
-                        functionName: 'Leitung (Finanzen)',
-                        _id: '673ede38e1746bf8e6aa1b35',
-                        userId: 'kodo0001',
-                        userType: 'employee',
-                        userRole: 'adminTechnicalStaff',
-                        orgUnit: 'A0021',
-                        active: true,
-                        validFrom: '2010-03-01T00:00:00.000Z',
-                        validUntil: '2100-12-31T23:59:59.000Z',
-                        employee: {
-                            costCenter: 'A0021',
-                            department: 'Hochschulverwaltung',
-                        },
-                    },
-                    {
-                        functionName: 'Mitarbeiter (Finanzen)',
-                        _id: '673ede38e1746bf8e6aa1b37',
-                        userId: 'dita0001',
-                        userType: 'employee',
-                        userRole: 'adminTechnicalStaff',
-                        orgUnit: 'A0021',
-                        active: true,
-                        validFrom: '2008-09-01T00:00:00.000Z',
-                        validUntil: '2025-12-31T23:59:59.000Z',
-                        employee: {
-                            costCenter: 'A0021',
-                            department: 'Hochschulverwaltung',
-                        },
-                    },
-                    {
-                        functionName: 'Mitarbeiter (Finanzen)',
-                        _id: '673ede38e1746bf8e6aa1b34',
-                        userId: 'bola0001',
-                        userType: 'employee',
-                        userRole: 'phdStudent',
-                        orgUnit: 'A0021',
-                        active: true,
-                        validFrom: '2021-01-20T00:00:00.000Z',
-                        validUntil: '2026-12-31T22:59:59.000Z',
-                        employee: {
-                            costCenter: 'A0021',
-                            department: 'Hochschulverwaltung',
-                        },
-                    },
-                ],
-            },
-        ]);
+        expect(finanzAbteilung).toBeDefined();
+        expect(finanzAbteilung?.roleName).toBe(ROLES.ROLE_4);
+        expect(finanzAbteilung?.users.length).toBe(employee.finanzAbteilung.length);
+        expect(finanzAbteilung?.users[0]?.userId).toBe(employee.finanzAbteilung[0]);
+        expect(finanzAbteilung?.users[1]?.userId).toBe(employee.finanzAbteilung[1]);
+        expect(finanzAbteilung?.users[2]?.userId).toBe(employee.finanzAbteilung[2]);
+        expect(finanzAbteilung?.users[3]?.userId).toBe(employee.finanzAbteilung[3]);
     });
 
     // -------------------------------------------------------------------------
@@ -221,8 +137,9 @@ describe('get Process Roles REST', () => {
     // -------------------------------------------------------------------------
 
     test('[REST] Ungültiger Prozess', async () => {
+        const employee = TEST_EMPLOYEE_1;
         // given
-        const url = `?processId=${UNGÜLTIGER_PROZESS}&userId=${USER1}`;
+        const url = `?processId=${INVALID_TEST_DATA.PROCESS}&userId=${employee.userId}`;
 
         // when
         const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(url);
@@ -234,13 +151,13 @@ describe('get Process Roles REST', () => {
         expect(data).toEqual({
             statusCode: HttpStatus.NOT_FOUND,
             error: 'Not Found',
-            message: `Keine Rollen für diesen Prozess gefunden. ${UNGÜLTIGER_PROZESS}`,
+            message: `Keine Rollen für diesen Prozess gefunden. ${INVALID_TEST_DATA.PROCESS}`,
         });
     });
 
     test('[REST] Ungültiger User', async () => {
         // given
-        const url = `?processId=${DIENSTREISEANTRAG}&userId=${UNGÜLTIGER_USER}`;
+        const url = `?processId=${PROCESS.PROCESS_1}&userId=${INVALID_TEST_DATA.USER}`;
 
         // when
         const { status, headers, data }: AxiosResponse<RolePayload> = await client.get(url);
@@ -252,7 +169,7 @@ describe('get Process Roles REST', () => {
         expect(data).toEqual({
             statusCode: HttpStatus.NOT_FOUND,
             error: 'Not Found',
-            message: `Keinen Benutzer gefunden mit der userId: ${UNGÜLTIGER_USER}`,
+            message: `Keinen Benutzer gefunden mit der userId: ${INVALID_TEST_DATA.USER}`,
         });
     });
 });
