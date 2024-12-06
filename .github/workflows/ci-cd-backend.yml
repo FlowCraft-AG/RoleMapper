@@ -131,7 +131,6 @@ jobs:
     defaults:
       run:
         working-directory: backend
-    name: Deployment (Docker)
     runs-on: ubuntu-latest
     needs: package
     strategy:
