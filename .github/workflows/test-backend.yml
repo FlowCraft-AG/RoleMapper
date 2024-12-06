@@ -24,6 +24,37 @@ jobs:
       KEY: ${{ secrets.KEY }}
       CERTIFICATE: ${{ secrets.CERTIFICATE }}
       KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+      NODE_ENV: testp
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
+      USER_1: ${{ secrets.USER_1 }}
+      LEITER_1: ${{ secrets.LEITER_1 }}
+      FUNCTION_1: ${{ secrets.FUNCTION_1 }}
+      FUNCTION_2: ${{ secrets.FUNCTION_2 }}
+      USER_2: ${{ secrets.USER_2 }}
+      LEITER_2: ${{ secrets.LEITER_2 }}
+      FUNCTION_3: ${{ secrets.FUNCTION_3 }}
+      FUNCTION_4: ${{ secrets.FUNCTION_4 }}
+      PROCESS_1: ${{ secrets.PROCESS_1 }}
+      PROCESS_2: ${{ secrets.PROCESS_2 }}
+      ROLE_NAME_1: ${{ secrets.ROLE_NAME_1 }}
+      ROLE_NAME_2: ${{ secrets.ROLE_NAME_2 }}
+      ROLE_NAME_3: ${{ secrets.ROLE_NAME_3 }}
+      ROLE_NAME_4: ${{ secrets.ROLE_NAME_4 }}
+      PRUEFER: ${{ secrets.PRUEFER }}
+      FINANZ_ABTEILUNG_1: ${{ secrets.FINANZ_ABTEILUNG_1 }}
+      FINANZ_ABTEILUNG_2: ${{ secrets.FINANZ_ABTEILUNG_2 }}
+      FINANZ_ABTEILUNG_3: ${{ secrets.FINANZ_ABTEILUNG_3 }}
+      FINANZ_ABTEILUNG_4: ${{ secrets.FINANZ_ABTEILUNG_4 }}
+      INVALID_USER_ID: ${{ secrets.INVALID_USER_ID }}
+      INVALID_EMPLOYEE_ID: ${{ secrets.INVALID_EMPLOYEE_ID }}
+      INVALID_PROCESS_ID: ${{ secrets.INVALID_PROCESS_ID }}
+      USERS_COUNT: ${{ secrets.USERS_COUNT }}
+      FUNCTIONS_COUNT: ${{ secrets.FUNCTIONS_COUNT }}
+      PROCESSES_COUNT: ${{ secrets.PROCESSES_COUNT }}
+      ROLES_COUNT: ${{ secrets.ROLES_COUNT }}
+      ROLE_COUNT: ${{ secrets.ROLE_COUNT }}
+      ORG_UNITS_COUNT: ${{ secrets.ORG_UNITS_COUNT }}
 
     steps:
     - name: Checkout code
