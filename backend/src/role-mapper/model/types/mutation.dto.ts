@@ -4,7 +4,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
  * Definiert die Antwortstruktur für Mutationen in GraphQL.
  */
 @ObjectType()
-export class MutationResponse {
+export class MutationPayload {
     /**
      * Gibt an, ob die Mutation erfolgreich war.
      * @type {boolean}

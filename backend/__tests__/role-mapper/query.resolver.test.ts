@@ -6,8 +6,8 @@ import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { type GraphQLFormattedError } from 'graphql';
-import { type RolePayload } from '../../src/role-mapper/controller/read.controller.js';
 import type { User } from '../../src/role-mapper/model/entity/user.entity.js';
+import { type RolePayload } from '../../src/role-mapper/model/types/role-payload.type.js';
 import {
     ENDPOINTS,
     EXPECTED_RESULTS,

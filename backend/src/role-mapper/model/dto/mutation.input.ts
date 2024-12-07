@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { DataInputDTO } from '../model/dto/data.dto.js';
-import { FilterInputDTO } from '../model/dto/filter.dto.js';
+import { DataInputDTO } from './data.dto.js';
+import { FilterInputDTO } from './filter.dto.js';
 
 /**
  * Definiert die Eingabeparameter für Mutationen in GraphQL.

@@ -18,12 +18,12 @@ import {
     SUPPORTED_ENTITIES,
     SupportedEntities,
 } from '../model/entity/entities.entity.js';
-import { FunctionDocument } from '../model/entity/function.entity.js';
+import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
-import { MutationResponse } from '../resolver/mutation.response.js';
+import { MutationPayload } from '../model/types/mutation.dto.js';
 
 @Injectable()
 export class WriteService {
@@ -34,7 +34,7 @@ export class WriteService {
     constructor(
         @InjectModel(User.name) userModel: Model<UserDocument>,
         @InjectModel(Process.name) processModel: Model<ProcessDocument>,
-        @InjectModel(Function.name) functionModel: Model<FunctionDocument>,
+        @InjectModel(Mandates.name) functionModel: Model<MandateDocument>,
         @InjectModel(OrgUnit.name) orgUnitModel: Model<OrgUnitDocument>,
         @InjectModel(Role.name) roleModel: Model<RoleDocument>,
     ) {
@@ -102,7 +102,7 @@ export class WriteService {
     async deleteEntity(
         entity: string,
         filter: FilterInputDTO | undefined,
-    ): Promise<MutationResponse> {
+    ): Promise<MutationPayload> {
         this.#logger.debug('deleteEntity: entity=%s, filter=%o', entity, filter);
         const model = this.#modelMap[entity as SupportedEntities];
         if (!model) throw new Error(`Unknown entity: ${entity}`);

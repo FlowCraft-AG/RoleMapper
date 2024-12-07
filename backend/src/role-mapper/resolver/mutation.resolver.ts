@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
+import { MutationInput } from '../model/dto/mutation.input.js';
+import { MutationPayload } from '../model/types/mutation.dto.js';
 import { WriteService } from '../service/write.service.js';
-import { MutationInput } from './mutation.input.js';
-import { MutationResponse } from './mutation.response.js';
 
 @Resolver()
 @Injectable()
@@ -13,11 +13,11 @@ export class MutationResolver {
     /**
      * Führt eine Mutation basierend auf den Eingabeparametern aus.
      * @param {MutationInput} input - Die Eingabeparameter für die Mutation.
-     * @returns {Promise<MutationResponse>} - Die Antwort der Mutation.
+     * @returns {Promise<MutationPayload>} - Die Antwort der Mutation.
      */
-    @Mutation(() => MutationResponse)
+    @Mutation('createEntity')
     @Public()
-    async executeMutation(@Args('input') input: MutationInput): Promise<MutationResponse> {
+    async executeMutation(@Args('input') input: MutationInput): Promise<MutationPayload> {
         const { entity, operation, data, filter } = input;
 
         try {

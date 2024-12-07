@@ -26,51 +26,11 @@ import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { type FilterInputDTO } from '../model/dto/filter.dto.js';
 import { SUPPORTED_ENTITIES, SupportedEntities } from '../model/entity/entities.entity.js';
-import { User } from '../model/entity/user.entity.js';
+import { Link, Links } from '../model/types/link.type.js';
+import { RolePayload } from '../model/types/role-payload.type.js';
 import { ReadService } from '../service/read.service.js';
 import { getBaseUri } from '../utils/uri-helper.js';
 
-/** href-Link für HATEOAS */
-export type Link = {
-    /** href-Link für HATEOAS-Links */
-    readonly href: string;
-};
-
-/** Links für HATEOAS */
-export type Links = {
-    /** Dynamische Links für Benutzer innerhalb jeder Rolle */
-    [roleName: string]: Record<string, Link> | Link | undefined;
-    /** self-Link */
-    readonly self: Link;
-    /** Optionaler Linke für list */
-    readonly list?: Link;
-    /** Optionaler Linke für add */
-    readonly add?: Link;
-    /** Optionaler Linke für update */
-    readonly update?: Link;
-    /** Optionaler Linke für remove */
-    readonly remove?: Link;
-};
-
-export type RolePayload = {
-    roles: RoleResult[];
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    _links?: Links;
-};
-
-/**
- * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
- */
-export type RoleResult = {
-    /**
-     * Dynamischer Rollenname (z.B. "Antragssteller").
-     */
-    roleName: string;
-    /**
-     * Benutzer, die dieser Rolle zugeordnet sind.
-     */
-    users: (User & { functionName: string })[];
-};
 /**
  * Controller für Leseoperationen.
  */
@@ -211,14 +171,12 @@ export class ReadController {
         description: 'Die Ziel-Entität, z. B. USERS, FUNCTIONS, PROCESSES.',
         example: 'USERS',
     })
-    async getData(
-        @Param('entity') collection: string,
-        @Query() filter: FilterInputDTO,
-    ): Promise<any[]> {
+    async getData(@Param('entity') collection: string, @Query() filter: FilterInputDTO) {
         this.validateEntity(collection);
         this.#logger.debug('getData: collection=%s, filter=%o', collection, filter);
 
-        return await this.#service.findData(collection, filter);
+        // return await this.#service.findData(collection, filter);
+        return [];
     }
 
     /**

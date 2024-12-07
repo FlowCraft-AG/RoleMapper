@@ -10,8 +10,8 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nes
 import { AuthGuard, Roles } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { MutationInput } from '../resolver/mutation.input.js';
-import { MutationResponse } from '../resolver/mutation.response.js';
+import { MutationInput } from '../model/dto/mutation.input.js';
+import { MutationPayload } from '../model/types/mutation.dto.js';
 import { ReadService } from '../service/read.service.js';
 import { WriteService } from '../service/write.service.js';
 
@@ -71,7 +71,7 @@ import { WriteService } from '../service/write.service.js';
  * const response = await writeController.executeData(input);
  *
  * @see {@link MutationInput}
- * @see {@link MutationResponse}
+ * @see {@link MutationPayload}
  */
 /**
  * @swagger
@@ -202,7 +202,7 @@ export class WriteController {
      * Führt eine Mutation basierend auf den Eingabeparametern aus.
      *
      * @param {MutationInput} input - Die Eingabeparameter für die Mutation.
-     * @returns {Promise<MutationResponse>} - Die Antwort der Mutation.
+     * @returns {Promise<MutationPayload>} - Die Antwort der Mutation.
      */
     @Post()
     @Roles({ roles: ['admin'] })
@@ -266,7 +266,7 @@ export class WriteController {
     @ApiResponse({
         status: 200,
         description: 'Erfolgreiche Mutation',
-        type: MutationResponse,
+        type: MutationPayload,
         examples: {
             create: {
                 summary: 'Erfolgreiches CREATE',
@@ -332,7 +332,7 @@ export class WriteController {
         status: 500,
         description: 'Interner Serverfehler',
     })
-    async executeData(@Body() input: MutationInput): Promise<MutationResponse> {
+    async executeData(@Body() input: MutationInput): Promise<MutationPayload> {
         this.#logger.debug('executeData: input=%o', input);
         const { entity, operation, data, filter } = input;
 

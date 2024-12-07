@@ -1,0 +1,309 @@
+type Query {
+  getProcessRoles(processId: ID!, userId: String!): RolePayload!
+  getData(entity: EntityType!, filters: FilterInput): [JSON!]!
+}
+
+type RolePayload {
+  roles: [RoleResult]
+}
+
+type RoleResult {
+  roleName: String! # Dynamischer Rollenname (z. B. "Antragssteller", "Rechnungsprüfung")
+  users: [User!]! # Benutzer, die dieser Rolle zugeordnet sind
+}
+
+# Mögliche Entitäten, auf die CRUD angewendet wird
+enum EntityType {
+  USERS
+  FUNCTIONS
+  PROCESSES
+  ROLES
+  ORG_UNITS
+}
+
+# Flexible Filterbedingungen
+input FilterInput {
+  field: FilterOptions         # Das zu filternde Feld
+  operator: Operator      # Vergleichsoperator (z. B. $eq, $in, $gte, etc.)
+  value: String            # Der Wert, mit dem verglichen wird
+}
+
+enum FilterOptions {
+  userId
+  userType
+  userRole
+  orgUnit
+  active
+  users
+  functionName
+  name
+  roleId
+  processId
+  roles
+  arentId
+  supervisor
+}
+
+enum Operator {
+  EQ
+  IN
+  GTE
+  LTE
+  LIKE
+}
+
+type Mutation {
+  # Authentifizierungsbezogene Mutationen
+  # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
+  token(username: String!, password: String!): TokenResult
+  refresh(refresh_token: String!): TokenResult
+
+  executeMutation(input: MutationInput!): MutationResponse!
+}
+
+type TokenResult {
+  access_token: String!
+  expires_in: Int!
+  refresh_token: String!
+  refresh_expires_in: Int!
+  id_token: String!
+  scope: String!
+}
+
+input MutationInput {
+  entity: EntityType! # Ziel-Entität (z. B. USERS, FUNCTIONS)
+  operation: OperationType! # Art der Mutation: CREATE, UPDATE, DELETE
+  data: DataInput # Daten für CREATE oder UPDATE
+  filter: FilterInput # Filter für UPDATE oder DELETE
+}
+
+enum OperationType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+input DataInput {
+  functionName: String
+  users: [String!]
+  orgUnit: String
+  userId: String
+  userType: String
+  userRole: String
+  active: String
+  name: String
+  roleId: String
+  processId: String
+  roles: String
+  arentId: String
+  supervisor: String
+}
+
+type MutationResponse {
+  success: Boolean! # Ob die Operation erfolgreich war
+  message: String # Optionaler Fehler oder Erfolgstext
+  result: JSON # Das Ergebnis der Mutation (z. B. das erstellte oder aktualisierte Objekt)
+}
+
+
+
+type DataPayload {
+  functionName: String
+  users: [String!]
+  orgUnit: String
+  name: String
+  parentId: ID
+  supervisor: String
+  roleId: String
+  query: [QueryStage!]
+  processId: String
+  roles: [ProcessRole!]
+  _id: ID
+  userId: String
+  userType: String
+  userRole: String
+  active: Boolean
+  student: Student
+  employee: Employee
+  validFrom: String
+  validUntil: String
+}
+
+type QueryStage {
+  # Die Struktur eines PipelineStage ist flexibel und hängt der query ab.
+  # Hier verwenden wir ein generisches JSON-Objekt.
+  key: String
+  value: String
+}
+
+type ProcessRole {
+  roleKey: String!
+  roleId: String!
+}
+
+type User {
+  _id: ID!
+  userId: String!
+  userType: String!
+  userRole: String!
+  orgUnit: String!
+  active: Boolean!
+  student: Student
+  employee: Employee
+  validFrom: String!
+  validUntil: String!
+  functionName: String,
+}
+
+type Student {
+  _id: ID!
+  courseOfStudy: String!
+  courseOfStudyUnique: String!
+  courseOfStudyShort: String!
+  courseOfStudyName: String!
+  level: String!
+  examRegulation: String!
+}
+
+type Employee {
+  costCenter: String!
+  department: String!
+}
+
+
+
+
+
+
+
+# Rückgabewert kann flexibel bleiben (JSON)
+scalar JSON
+
+type Function {
+  _id: ID!
+  functionName: String!
+  users: [String!]!
+  orgUnit: String!
+  type: String
+}
+
+type OrgUnit {
+  _id: ID!
+  name: String!
+  parentId: ID
+  supervisor: String
+}
+
+type Role {
+  _id: ID!
+  name: String!
+  roleId: String!
+  query: [QueryStage!]
+}
+
+type Process {
+  _id: ID!
+  name: String!
+  processId: String!
+  roles: [ProcessRole!]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+input CreateUserInput {
+  userId: String!
+  userType: UserType!
+  userRole: String!
+  orgUnit: String
+  active: Boolean = false
+  validFrom: String
+  validUntil: String
+}
+
+input UpdateUserInput {
+  userId: String
+  userType: UserType
+  userRole: String
+  orgUnit: String
+  active: Boolean
+  validFrom: String
+  validUntil: String
+}
+
+input CreateFunctionInput {
+  functionName: String!
+  users: [String!]!
+  orgUnit: String!
+}
+
+input UpdateFunctionInput {
+  functionName: String
+  users: [String!]
+  orgUnit: String
+}
+
+input CreateRoleInput {
+  name: String!
+  roleId: String!
+  query: [QueryStageInput!]
+}
+
+input UpdateRoleInput {
+  name: String
+  roleId: String
+  query: [QueryStageInput!]
+}
+
+input QueryStageInput {
+  key: String
+  value: String
+}
+
+input UpdateProcessInput {
+  name: String
+  processId: String
+  roles: [ProcessRoleInput!]
+}
+
+input ProcessRoleInput {
+  roleKey: String!
+  roleId: String!
+}
+
+input CreateOrgUnitInput {
+  name: String!
+  parentId: ID
+  supervisor: String
+}
+
+input UpdateOrgUnitInput {
+  name: String
+  parent_id: ID
+  supervisor: String
+}
+
+enum UserType {
+  employee
+  student
+}
+
+enum UserRole {
+  lecturer
+  professor
+  academicStaff
+  adminTechnicalStaff
+
+}

@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import axios from 'axios';
-import type { Function } from '../../src/role-mapper/model/entity/function.entity.js';
+import type { Mandates } from '../../src/role-mapper/model/entity/mandates.entity.js';
 import type { Process } from '../../src/role-mapper/model/entity/process.entity.js';
 import { ENDPOINTS, EXPECTED_RESULTS, PROCESS, TEST_EMPLOYEE_1 } from '../test-data.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
@@ -71,7 +71,7 @@ describe('RoleMapper API: get Data', () => {
 
     test('Alle Funktionen mit Benutzer userId', async () => {
         const user = TEST_EMPLOYEE_1;
-        const { status, headers, data }: AxiosResponse<Function[]> = await client.get(
+        const { status, headers, data }: AxiosResponse<Mandates[]> = await client.get(
             `${ENDPOINTS.FUNCTIONS}/data?field=users&operator=EQ&value=${user.userId}`,
         );
 

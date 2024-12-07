@@ -15,7 +15,6 @@ export class Role extends Document {
      */
     @Prop({ required: true })
     name!: string;
-
     /**
      * Die eindeutige Kennung für die Rolle.
      *
@@ -25,7 +24,6 @@ export class Role extends Document {
      */
     @Prop({ required: false })
     roleId?: string;
-
     /**
      * Die Abfrage-Pipeline-Stufen, die mit der Rolle verbunden sind.
      */

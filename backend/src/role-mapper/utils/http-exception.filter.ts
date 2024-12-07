@@ -3,7 +3,7 @@
  * @packageDocumentation
  */
 import { Catch, type ExceptionFilter, HttpException } from '@nestjs/common';
-import { BadUserInputError } from './errors.js';
+import { BadUserInputError } from '../error/errors.js';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {

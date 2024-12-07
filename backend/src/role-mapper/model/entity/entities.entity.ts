@@ -1,4 +1,4 @@
-import { Function, FUNCTION_SCHEMA } from './function.entity.js';
+import { MANDATE_SCHEMA, Mandates } from './mandates.entity.js';
 import { ORG_UNIT_SCHEMA, OrgUnit } from './org-unit.entity.js';
 import { Process, PROCESS_SCHEMA } from './process.entity.js';
 import { Role, ROLE_SCHEMA } from './roles.entity.js';
@@ -31,7 +31,7 @@ type EntitySchema = {
  */
 const entitySchemas: EntitySchema[] = [
     { name: User.name, schema: USER_SCHEMA },
-    { name: Function.name, schema: FUNCTION_SCHEMA },
+    { name: Mandates.name, schema: MANDATE_SCHEMA },
     { name: OrgUnit.name, schema: ORG_UNIT_SCHEMA },
     { name: Process.name, schema: PROCESS_SCHEMA },
     { name: Role.name, schema: ROLE_SCHEMA },
@@ -86,12 +86,13 @@ export const SUPPORTED_ENTITIES = [
  */
 export type SupportedEntities = (typeof SUPPORTED_ENTITIES)[number];
 
-export type Collections = User | Function | OrgUnit | Process | Role;
+export type Collections = User | Mandates | OrgUnit | Process | Role;
 export type CollectionSchema =
     | typeof USER_SCHEMA
-    | typeof FUNCTION_SCHEMA
+    | typeof MANDATE_SCHEMA
     | typeof ORG_UNIT_SCHEMA
     | typeof PROCESS_SCHEMA
     | typeof ROLE_SCHEMA;
 
-export type GetData = User[] | Function[] | OrgUnit[] | Process[] | Role[];
+export type GetData = User[] | Mandates[] | OrgUnit[] | Process[] | Role[];
+export type EntityCategory = 'USERS' | 'FUNCTIONS' | 'PROCESSES' | 'ROLES' | 'ORG_UNITS';
