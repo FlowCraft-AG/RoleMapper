@@ -1,8 +1,8 @@
-import { MANDATE_SCHEMA, Mandates } from './mandates.entity.js';
-import { ORG_UNIT_SCHEMA, OrgUnit } from './org-unit.entity.js';
-import { Process, PROCESS_SCHEMA } from './process.entity.js';
-import { Role, ROLE_SCHEMA } from './roles.entity.js';
-import { User, USER_SCHEMA } from './user.entity.js';
+import { MANDATE_SCHEMA, MandateDocument, Mandates } from './mandates.entity.js';
+import { ORG_UNIT_SCHEMA, OrgUnit, OrgUnitDocument } from './org-unit.entity.js';
+import { Process, PROCESS_SCHEMA, ProcessDocument } from './process.entity.js';
+import { Role, ROLE_SCHEMA, RoleDocument } from './roles.entity.js';
+import { User, USER_SCHEMA, UserDocument } from './user.entity.js';
 
 /**
  * Definiert eine Mongoose-Entität und deren Schema.
@@ -96,3 +96,9 @@ export type CollectionSchema =
 
 export type GetData = User[] | Mandates[] | OrgUnit[] | Process[] | Role[];
 export type EntityCategory = 'USERS' | 'FUNCTIONS' | 'PROCESSES' | 'ROLES' | 'ORG_UNITS';
+export type EntityDocument =
+    | UserDocument
+    | MandateDocument
+    | ProcessDocument
+    | RoleDocument
+    | OrgUnitDocument;

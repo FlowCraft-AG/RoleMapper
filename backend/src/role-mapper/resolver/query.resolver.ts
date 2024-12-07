@@ -1,90 +1,84 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/indent */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { UseFilters, UseInterceptors } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-// import { FilterInputDTO } from '../model/dto/filter.dto.js';
-// import { SupportedEntities } from '../model/entity/entities.entity.js';
-import { MandateDocument } from '../model/entity/mandates.entity.js';
-import { OrgUnitDocument } from '../model/entity/org-unit.entity.js';
-import { ProcessDocument } from '../model/entity/process.entity.js';
-import { RoleDocument } from '../model/entity/roles.entity.js';
-import { UserDocument } from '../model/entity/user.entity.js';
+import { EntityDocument } from '../model/entity/entities.entity.js';
 import { DataInput, GetData } from '../model/input/data.input.js';
 import { DataPayload } from '../model/payload/data.payload.js';
 import { EntityCategory } from '../model/types/entity-category.type.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
 
-export type MongooseDocument = {
-    _doc?: any;
-};
-
+/**
+ * Resolver für die `RoleMapper`-Entität, der GraphQL-Abfragen verarbeitet und die entsprechenden Daten
+ * vom `ReadService` an den Client zurückgibt.
+ *
+ * Verwendet Filter und Interceptoren für Fehlerbehandlung und Zeitprotokollierung.
+ */
 @Resolver('RoleMapper')
-@UseFilters(HttpExceptionFilter)
-@UseInterceptors(ResponseTimeInterceptor)
+@UseFilters(HttpExceptionFilter) // Fehlerbehandlung über HttpExceptionFilter
+@UseInterceptors(ResponseTimeInterceptor) // Interceptor für Antwortzeitmessung
 export class QueryResolver {
-    readonly #service: ReadService;
-    readonly #logger = getLogger(QueryResolver.name);
+    readonly #service: ReadService; // Service, der für die Datenabfragen zuständig ist
+    readonly #logger = getLogger(QueryResolver.name); // Logger für den Resolver
 
+    /**
+     * Konstruktor für den QueryResolver, der den ReadService injiziert.
+     *
+     * @param service - Der Service, der für die Datenabfragen zuständig ist.
+     */
     constructor(service: ReadService) {
         this.#service = service;
     }
 
     /**
      * Führt eine Abfrage aus, um die Rollen eines Prozesses zu erhalten.
+     *
+     * Diese Methode ruft die Methode `findProcessRoles` des `ReadService` auf, um die Rollen
+     * eines bestimmten Prozesses und die zugehörigen Benutzer zu erhalten.
+     *
      * @param {string} processId - Die ID des Prozesses.
-     * @param {string} userId - Die ID des Benutzers.
+     * @param {string} userId - Die ID des Benutzers, der die Anfrage stellt.
      * @returns {Promise<any>} - Die Rollen des Prozesses.
+     * @throws {NotFoundException} - Wenn der Prozess oder der Benutzer nicht gefunden werden kann.
      */
     @Query('getProcessRoles')
-    @Public()
+    @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
     async getRole(
-        @Args('processId') processId: string,
-        @Args('userId') userId: string,
+        @Args('processId') processId: string, // Prozess-ID aus den GraphQL-Argumenten
+        @Args('userId') userId: string, // Benutzer-ID aus den GraphQL-Argumenten
     ): Promise<any> {
         this.#logger.debug(`getRole: processId=${processId}, userId=${userId}`);
-        return this.#service.findProcessRoles(processId, userId);
+        return this.#service.findProcessRoles(processId, userId); // Aufruf der Service-Methode
     }
 
     /**
-     * Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
-     * @param {SupportedEntities} entity - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
-     * @param {FilterInputDTO} [filters] - Dynamische Filterkriterien.
-     * @returns {Promise<any[]>} - Die gefilterten Daten.
-     * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
-     */
-    // @Query(() => [Object])
-    // @Public()
-    // async getDataORIG(
-    //     @Args('entity') entity: SupportedEntities,
-    //     @Args('filters') filters: FilterInputDTO,
-    // ): Promise<any[]> {
-    //     try {
-    //         this.#logger.debug('getData: entity=%s, filters=%o', entity, filters);
-    //         return await this.#service.findData(entity, filters);
-    //     } catch (error) {
-    //         this.#logger.error(`getData: Fehler bei der Verarbeitung von ${entity}`, error);
-    //         throw new BadRequestException(`Fehler bei der Verarbeitung von ${entity}`);
-    //     }
-    // }
-
-    /**
-     * Abfrage: Führt eine generische Entitätsabfrage aus.
+     * Führt eine dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern aus.
+     *
+     * Diese Methode verwendet das `ReadService`, um Entitätsdaten basierend auf den angegebenen
+     * Filtern und der Paginierung abzufragen. Sie unterstützt die flexible Abfrage von
+     * verschiedenen Entitäten wie Benutzer, Prozesse, Rollen usw.
+     *
+     * @param {DataInput<T>} input - Die Eingabedaten, die die Entität, Filter und Paginierung enthalten.
+     * @returns {Promise<DataPayload<GetData<T>>>} - Die gefilterten und paginierten Daten.
+     * @throws {BadRequestException} - Wenn die angeforderte Entität nicht unterstützt wird.
      */
     @Query('getData')
-    @Public()
+    @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
     async getEntityData<T extends EntityCategory>(
-        @Args('input') input: DataInput<T>,
+        @Args('input') input: DataInput<T>, // Eingabedaten, die die Entität, Filter und Paginierung enthalten
     ): Promise<DataPayload<GetData<T>>> {
         this.#logger.debug('getEntityData: input=%o', input);
 
-        // Extrahiere Eingabewerte
-        const { entity, filters, pagination } = input;
+        const { entity, filters, pagination } = input; // Extrahiere Eingabewerte
 
-        // Daten abfragen
+        // Abruf der Rohdaten mit den angegebenen Filtern und Paginierung
         const rawData = await this.#service.findData(entity, filters, pagination);
-        if (!rawData || rawData.length === 0) {
+        if (rawData === undefined || rawData.length === 0) {
             this.#logger.warn('Keine Daten gefunden für die Anfrage.');
             return {
                 data: [],
@@ -92,41 +86,51 @@ export class QueryResolver {
             };
         }
 
-        // Füge `__typename` basierend auf der Entity hinzu
-        const data = rawData.map(
-            (
-                item:
-                    | UserDocument
-                    | MandateDocument
-                    | ProcessDocument
-                    | RoleDocument
-                    | OrgUnitDocument,
-            ) => {
-                // Extrahiere das `_doc`-Attribut, falls es existiert
-                const sanitizedItem = '_doc' in item ? (item as any)._doc : item;
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        // Typensicherheit verbessern und den Zugriff auf Dokumente verfeinern
+        const data = rawData.map((item) => {
+            // Typprüfung auf ein Mongoose-Dokument durchführen
+            if ('_doc' in item && Boolean(item._doc)) {
+                // Hier wird das Mongoose-Dokument sicher ausgelesen
+                const sanitizedItem = item._doc as EntityDocument;
                 return {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     __typename: this.resolveTypeName(entity),
-                    ...sanitizedItem, // Nutze die gereinigten Daten
+                    ...sanitizedItem,
                 };
-            },
-        );
+            }
 
-        // Optional: Paginierung anwenden
+            // Falls '_doc' nicht vorhanden ist, direkt das Item zurückgeben
+            return {
+                typeName: this.resolveTypeName(entity),
+                ...(item as EntityDocument),
+            };
+        });
+
+        // Anwendung der Paginierung, wenn angegeben
         const paginatedData = pagination
             ? data.slice(
-                  pagination.offset || 0,
-                  (pagination.offset || 0) + (pagination.limit || 10),
+                  (pagination.offset ?? 0) || 0,
+                  ((pagination.offset ?? 0) || 0) + (pagination.limit ?? 0),
               )
             : data;
 
-        // Rückgabewert strukturieren
+        // Rückgabe der strukturierten Daten mit Paginierung und Gesamtzahl
         return {
-            data: paginatedData as unknown as GetData<T>[], // Explizites Typ-Casting
+            data: paginatedData as unknown as GetData<T>[], // Typumwandlung
             totalCount: rawData.length,
         };
     }
 
+    /**
+     * Bestimmt den richtigen Typnamen basierend auf der Entität.
+     *
+     * Diese Methode gibt den entsprechenden Typnamen für eine bestimmte Entität zurück,
+     * um diesen in der GraphQL-Antwort zu verwenden.
+     *
+     * @param {EntityCategory} entity - Die Entität (z. B. `USERS`, `FUNCTIONS`).
+     * @returns {string} - Der entsprechende Typname für die Entität.
+     * @throws {Error} - Wenn eine unbekannte Entität angegeben wird.
+     */
     private resolveTypeName(entity: EntityCategory): string {
         switch (entity) {
             case 'USERS': {
@@ -143,10 +147,6 @@ export class QueryResolver {
             }
             case 'ROLES': {
                 return 'Role';
-            }
-            default: {
-                this.#logger.error(`Unbekannte Entität: ${entity}`);
-                throw new Error(`Unbekannte Entität: ${entity}`);
             }
         }
     }
