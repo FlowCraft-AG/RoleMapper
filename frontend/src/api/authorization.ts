@@ -1,4 +1,4 @@
-import { AuthToken } from '../lib/interfaces';
+import { AuthToken } from '../src/lib/interfaces';
 import { handleGraphQLError } from './graphqlError';
 import dotenv from 'dotenv';
 import { GraphQLClient } from 'graphql-request';
