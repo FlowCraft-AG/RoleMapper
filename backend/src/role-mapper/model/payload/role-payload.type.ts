@@ -1,5 +1,5 @@
-import { User } from '../entity/user.entity';
-import { Links } from './link.type';
+import type { User } from '../entity/user.entity.js';
+import type { Links } from '../types/link.type.js';
 
 export type RolePayload = {
     roles: RoleResult[];

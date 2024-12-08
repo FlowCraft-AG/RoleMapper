@@ -1,7 +1,9 @@
-import { type EntityCategory } from './entity-category.type';
-
+/**
+ * Mögliche Operatoren für Filterbedingungen.
+ */
 export type FilterOperator = 'EQ' | 'IN' | 'GTE' | 'LTE' | 'LIKE';
-export type AllowedFields =
+
+export type FilterFields =
     | 'userId'
     | 'userType'
     | 'userRole'
@@ -14,31 +16,10 @@ export type AllowedFields =
     | 'parentId'
     | 'supervisor';
 
-// Set von erlaubten Feldern
-export const ALLOWED_FIELDS = new Set<AllowedFields>([
-    'userId',
-    'userType',
-    'userRole',
-    'orgUnit',
-    'active',
-    'functionName',
-    'name',
-    'roleId',
-    'processId',
-    'parentId',
-    'supervisor',
-]);
-export const OPERATOR_KEYS = ['EQ', 'IN', 'GTE', 'LTE', 'LIKE'];
-export const OPERATOR_VALUES = ['$eq', '$in', '$gte', '$lte', '$regex'];
+type Userfilter = 'userId' | 'userType' | 'userRole' | 'orgUnit' | 'active';
+type Mandatefilter = 'functionName' | 'orgUnit' | 'users';
+type OrgUnitfilter = 'name' | 'parentId' | 'supervisor';
+type Processfilter = 'processId' | 'name' | 'roles';
+type Rolefilter = 'roleId' | 'name';
 
-export type FilterField<T extends EntityCategory> = T extends 'USERS'
-    ? 'userId' | 'userType' | 'userRole' | 'orgUnit' | 'active' | 'functionName'
-    : T extends 'FUNCTIONS'
-      ? 'functionName' | 'orgUnit'
-      : T extends 'ORG_UNITS'
-        ? 'name' | 'parentId' | 'supervisor'
-        : T extends 'PROCESSES'
-          ? 'processId' | 'name'
-          : T extends 'ROLES'
-            ? 'roleId' | 'name'
-            : never;
+export type FilterField = Userfilter | Mandatefilter | OrgUnitfilter | Processfilter | Rolefilter;

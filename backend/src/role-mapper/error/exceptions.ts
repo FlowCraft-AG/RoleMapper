@@ -10,8 +10,13 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  * Fehler bei der Verwendung eines ungültigen Operators in der Filter-Query.
  */
 export class InvalidOperatorException extends HttpException {
-    constructor(operator: string) {
-        super(`Ungültiger Operator: ${operator}`, HttpStatus.BAD_REQUEST);
+    constructor(operator: string | undefined) {
+        // eslint-disable-next-line @stylistic/operator-linebreak
+        const message =
+            operator !== undefined && operator !== null && operator !== ''
+                ? `Ungültiger Operator: ${operator}`
+                : 'Ein Operator ist erforderlich, wurde aber nicht angegeben.';
+        super(message, HttpStatus.BAD_REQUEST);
         this.name = 'InvalidOperatorException';
     }
 }

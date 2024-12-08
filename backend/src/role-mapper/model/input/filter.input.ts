@@ -1,9 +1,10 @@
-import { FilterOperator } from '../dto/filter.dto';
-import { EntityCategory } from '../entity/entities.entity';
-import { FilterField } from '../types/filter.type';
+import type { FilterField, FilterOperator } from '../types/filter.type.ts';
 
-export interface FilterCondition<T extends EntityCategory> {
-    field: FilterField<T>;
+export type FilterInput = {
+    field: FilterField;
     operator: FilterOperator;
     value: string;
-}
+    and?: FilterInput[];
+    or?: FilterInput[];
+    not?: FilterInput;
+};

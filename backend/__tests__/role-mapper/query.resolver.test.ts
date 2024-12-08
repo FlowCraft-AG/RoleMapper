@@ -7,7 +7,7 @@ import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { type GraphQLFormattedError } from 'graphql';
 import type { User } from '../../src/role-mapper/model/entity/user.entity.js';
-import { type RolePayload } from '../../src/role-mapper/model/types/role-payload.type.js';
+import { type RolePayload } from '../../src/role-mapper/model/payload/role-payload.type.js';
 import {
     ENDPOINTS,
     EXPECTED_RESULTS,
@@ -241,12 +241,12 @@ describe('get Process Roles GraphQL', () => {
         expect(user!.userId).toMatch(employee.userId);
     });
 
-    test('[GRAPHQL] Dynamische Abfrage für FUNCTIONS ohne Filter', async () => {
+    test('[GRAPHQL] Dynamische Abfrage für MANDATES ohne Filter', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
         {
-          getData(entity: ${ENDPOINTS.FUNCTIONS})
+          getData(entity: ${ENDPOINTS.MANDATES})
         }
         `,
         };

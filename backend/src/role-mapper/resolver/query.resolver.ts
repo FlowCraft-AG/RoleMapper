@@ -1,15 +1,11 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @stylistic/indent */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { UseFilters, UseInterceptors } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { EntityDocument } from '../model/entity/entities.entity.js';
-import { DataInput, GetData } from '../model/input/data.input.js';
-import { DataPayload } from '../model/payload/data.payload.js';
-import { EntityCategory } from '../model/types/entity-category.type.js';
+import { DataInput } from '../model/input/data.input.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
 
@@ -64,14 +60,14 @@ export class QueryResolver {
      * verschiedenen Entitäten wie Benutzer, Prozesse, Rollen usw.
      *
      * @param {DataInput<T>} input - Die Eingabedaten, die die Entität, Filter und Paginierung enthalten.
-     * @returns {Promise<DataPayload<GetData<T>>>} - Die gefilterten und paginierten Daten.
+     * @returns {Promise<DataPayload>} - Die gefilterten und paginierten Daten.
      * @throws {BadRequestException} - Wenn die angeforderte Entität nicht unterstützt wird.
      */
     @Query('getData')
     @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
-    async getEntityData<T extends EntityCategory>(
-        @Args('input') input: DataInput<T>, // Eingabedaten, die die Entität, Filter und Paginierung enthalten
-    ): Promise<DataPayload<GetData<T>>> {
+    async getEntityData(
+        @Args('input') input: DataInput, // Eingabedaten, die die Entität, Filter und Paginierung enthalten
+    ): Promise<any> {
         this.#logger.debug('getEntityData: input=%o', input);
 
         const { entity, filters, pagination } = input; // Extrahiere Eingabewerte
@@ -86,68 +82,20 @@ export class QueryResolver {
             };
         }
 
-        // Typensicherheit verbessern und den Zugriff auf Dokumente verfeinern
-        const data = rawData.map((item) => {
-            // Typprüfung auf ein Mongoose-Dokument durchführen
-            if ('_doc' in item && Boolean(item._doc)) {
-                // Hier wird das Mongoose-Dokument sicher ausgelesen
-                const sanitizedItem = item._doc as EntityDocument;
-                return {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    __typename: this.resolveTypeName(entity),
-                    ...sanitizedItem,
-                };
-            }
-
-            // Falls '_doc' nicht vorhanden ist, direkt das Item zurückgeben
-            return {
-                typeName: this.resolveTypeName(entity),
-                ...(item as EntityDocument),
-            };
-        });
-
         // Anwendung der Paginierung, wenn angegeben
         const paginatedData = pagination
-            ? data.slice(
+            ? rawData.slice(
                   (pagination.offset ?? 0) || 0,
                   ((pagination.offset ?? 0) || 0) + (pagination.limit ?? 0),
               )
-            : data;
+            : rawData;
+
+        this.#logger.debug('getEntityData: data=%o', paginatedData);
 
         // Rückgabe der strukturierten Daten mit Paginierung und Gesamtzahl
         return {
-            data: paginatedData as unknown as GetData<T>[], // Typumwandlung
+            data: paginatedData, // Typumwandlung
             totalCount: rawData.length,
         };
-    }
-
-    /**
-     * Bestimmt den richtigen Typnamen basierend auf der Entität.
-     *
-     * Diese Methode gibt den entsprechenden Typnamen für eine bestimmte Entität zurück,
-     * um diesen in der GraphQL-Antwort zu verwenden.
-     *
-     * @param {EntityCategory} entity - Die Entität (z. B. `USERS`, `FUNCTIONS`).
-     * @returns {string} - Der entsprechende Typname für die Entität.
-     * @throws {Error} - Wenn eine unbekannte Entität angegeben wird.
-     */
-    private resolveTypeName(entity: EntityCategory): string {
-        switch (entity) {
-            case 'USERS': {
-                return 'User';
-            }
-            case 'FUNCTIONS': {
-                return 'Function';
-            }
-            case 'PROCESSES': {
-                return 'Process';
-            }
-            case 'ORG_UNITS': {
-                return 'OrgUnit';
-            }
-            case 'ROLES': {
-                return 'Role';
-            }
-        }
     }
 }

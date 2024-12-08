@@ -25,4 +25,8 @@ export class MutationPayload {
      */
     @Field({ nullable: true })
     result?: any;
+
+    affectedCount?: number;
+
+    warnings?: string[];
 }

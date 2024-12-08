@@ -2,7 +2,12 @@
 type Query {
   """
   Dynamische Abfrage: Ruft Daten basierend auf der Zielentität und Filtern ab.
-  Unterstützt Pagination.
+  Unterstützt Pagination für eine effiziente Datenabfrage.
+
+  @args:
+    - input (DataInput!): Enthält die Entität, Filterbedingungen und Paginierungsparameter.
+  @returns:
+    - DataPayload!: Eine strukturierte Antwort mit den abgerufenen Daten und der Gesamtzahl der Treffer.
   """
   getData(input: DataInput!): DataPayload!
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
@@ -57,6 +62,9 @@ input FilterInput {
   Der Vergleichswert.
   """
   value: String!
+  and: [FilterInput]
+  or: [FilterInput]
+  not: FilterInput
 }
 
 # Rückgabewerte
@@ -332,7 +340,7 @@ Verfügbare Entitäten für dynamische Abfragen.
 """
 enum EntityType {
   USERS
-  FUNCTIONS
+  MANDATES
   PROCESSES
   ROLES
   ORG_UNITS
@@ -400,44 +408,105 @@ Input für das Erstellen einer neuen Entität.
 """
 input CreateEntityInput {
   """
-  Ziel-Entität, z. B. USERS, FUNCTIONS.
+  Ziel-Entität, z. B. USERS, MANDATES.
   """
   entity: EntityType!
   """
   Daten für die neue Entität.
   """
-  data: CreateDataInput!
+  userData: CreateUserInput
+  functionData: CreateFunctionInput
+  processData: CreateProcessInput
+  orgUnitData: CreateOrgUnitInput
+  roleData: CreateRoleInput
 }
 
-"""
-Datenstruktur für das Erstellen neuer Entitäten.
-"""
-input CreateDataInput {
-  # Gemeinsame Felder für alle Entitäten
-  name: String
-  userId: String
-  userType: String
-  userRole: String
+input CreateUserInput {
+  userId: String!
+  userType: String!
+  userRole: String!
   orgUnit: String
-  active: Boolean
-  processId: String
-  roleId: String
-  functionName: String
-  parentId: String
-  supervisor: String
-  # Spezifische Felder für Studenten und Mitarbeiter
+  active: Boolean = true
   student: CreateStudentInput
   employee: CreateEmployeeInput
-  users: [String!]
-  roles: String
 }
+
+input CreateStudentInput {
+  courseOfStudy: String!
+  courseOfStudyUnique: String!
+  level: String!
+  examRegulation: String!
+}
+
+input CreateEmployeeInput {
+  costCenter: String!
+  department: String!
+}
+
+input CreateFunctionInput {
+  functionName: String!
+  orgUnit: String!
+  type: String
+  users: [String!]!
+}
+
+input CreateProcessInput {
+  processId: String!
+  name: String!
+  roles: [ProcessRoleInput!]!
+}
+
+input ProcessRoleInput {
+  roleKey: String!
+  roleId: String!
+}
+
+input CreateOrgUnitInput {
+  name: String!
+  parentId: String
+  supervisor: String
+}
+
+input CreateRoleInput {
+  roleId: String!
+  name: String!
+  query: [QueryStageInput!]
+}
+
+input QueryStageInput {
+  key: String!
+  value: String!
+}
+
+# """
+# Datenstruktur für das Erstellen neuer Entitäten.
+# """
+# input CreateDataInput {
+#   # Gemeinsame Felder für alle Entitäten
+#   name: String
+#   userId: String
+#   userType: String
+#   userRole: String
+#   orgUnit: String
+#   active: Boolean
+#   processId: String
+#   roleId: String
+#   functionName: String
+#   parentId: String
+#   supervisor: String
+#   # Spezifische Felder für Studenten und Mitarbeiter
+#   student: CreateStudentInput
+#   employee: CreateEmployeeInput
+#   users: [String!]
+#   roles: String
+# }
 
 """
 Input für das Aktualisieren von Entitäten.
 """
 input UpdateEntityInput {
   """
-  Ziel-Entität, z. B. USERS, FUNCTIONS.
+  Ziel-Entität, z. B. USERS, MANDATES.
   """
   entity: EntityType!
   """
@@ -447,81 +516,94 @@ input UpdateEntityInput {
   """
   Neue Werte für die Entität.
   """
-  data: UpdateDataInput!
+  userData: UpdateUserInput
+  functionData: UpdateFunctionInput
+  processData: UpdateProcessInput
+  orgUnitData: UpdateOrgUnitInput
+  roleData: UpdateRoleInput
 }
 
-"""
-Datenstruktur für das Aktualisieren von Entitäten.
-"""
-input UpdateDataInput {
-  # Gemeinsame Felder für alle Entitäten
-  name: String
+input UpdateUserInput {
+  userId: String!
   userType: String
   userRole: String
   orgUnit: String
   active: Boolean
-  roleId: String
-  functionName: String
-  supervisor: String
-  # Spezifische Felder für Studenten und Mitarbeiter
+  validFrom: String
+  validUntil: String
   student: UpdateStudentInput
   employee: UpdateEmployeeInput
-  users: [String!]
-  roles: String
 }
+
+input UpdateStudentInput {
+  courseOfStudy: String
+  level: String
+  examRegulation: String
+}
+
+input UpdateEmployeeInput {
+  costCenter: String
+  department: String
+}
+
+input UpdateFunctionInput {
+  functionName: String!
+  orgUnit: String
+  type: String
+  users: [String!]
+}
+
+input UpdateProcessInput {
+  processId: String!
+  name: String
+  roles: [ProcessRoleInput]
+}
+
+input UpdateOrgUnitInput {
+  orgUnitId: String!
+  name: String
+  parentId: String
+  supervisor: String
+}
+
+input UpdateRoleInput {
+  roleId: String!
+  name: String
+  query: [QueryStageInput]
+}
+
+# """
+# Datenstruktur für das Aktualisieren von Entitäten.
+# """
+# input UpdateDataInput {
+#   # Gemeinsame Felder für alle Entitäten
+#   name: String
+#   userType: String
+#   userRole: String
+#   orgUnit: String
+#   active: Boolean
+#   roleId: String
+#   functionName: String
+#   supervisor: String
+#   # Spezifische Felder für Studenten und Mitarbeiter
+#   student: UpdateStudentInput
+#   employee: UpdateEmployeeInput
+#   users: [String!]
+#   roles: String
+# }
 
 """
 Input für das Löschen von Entitäten.
 """
 input DeleteEntityInput {
   """
-  Ziel-Entität, z. B. USERS, FUNCTIONS.
+  Ziel-Entität, z. B. USERS, MANDATES.
   """
   entity: EntityType!
   """
   Filterbedingungen, um die zu löschende Entität zu identifizieren.
   """
   filters: [FilterInput!]!
-}
-
-"""
-Details für das Erstellen eines Studenten.
-"""
-input CreateStudentInput {
-  courseOfStudy: String!
-  courseOfStudyUnique: String!
-  courseOfStudyShort: String!
-  courseOfStudyName: String!
-  level: String!
-  examRegulation: String!
-}
-
-"""
-Details für das Aktualisieren eines Studenten.
-"""
-input UpdateStudentInput {
-  courseOfStudy: String
-  courseOfStudyUnique: String
-  courseOfStudyShort: String
-  courseOfStudyName: String
-  level: String
-  examRegulation: String
-}
-
-"""
-Details für das Erstellen eines Mitarbeiters.
-"""
-input CreateEmployeeInput {
-  costCenter: String!
-  department: String!
-}
-
-"""
-Details für das Aktualisieren eines Mitarbeiters.
-"""
-input UpdateEmployeeInput {
-  costCenter: String
-  department: String
 }
 
 """
@@ -540,6 +622,8 @@ type MutationResponse {
   Das Ergebnis der Mutation, z. B. die erstellte oder aktualisierte Entität.
   """
   result: EntityResult
+  affectedCount: Int
+  warnings: [String]
 }
 
 type TokenResult {

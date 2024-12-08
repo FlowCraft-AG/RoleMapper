@@ -1,9 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-
-/**
- * Mögliche Operatoren für Filterbedingungen.
- */
-export type FilterOperator = 'EQ' | 'IN' | 'GTE' | 'LTE' | 'LIKE';
+import type { FilterOperator } from '../types/filter.type.js';
 
 /**
  * Definiert die Eingabeparameter für Filter in GraphQL-Abfragen.

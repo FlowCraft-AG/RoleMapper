@@ -13,7 +13,7 @@ dotenv.config();
 // Verwende die Umgebungsvariablen aus der .env-Datei
 export const ENDPOINTS = {
     USERS: `${SUPPORTED_ENTITIES[0]}`,
-    FUNCTIONS: `${SUPPORTED_ENTITIES[1]}`,
+    MANDATES: `${SUPPORTED_ENTITIES[1]}`,
     PROCESSES: `${SUPPORTED_ENTITIES[2]}`,
     ROLES: `${SUPPORTED_ENTITIES[3]}`,
     ORG_UNITS: `${SUPPORTED_ENTITIES[4]}`,

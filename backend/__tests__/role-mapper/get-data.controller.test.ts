@@ -72,7 +72,7 @@ describe('RoleMapper API: get Data', () => {
     test('Alle Funktionen mit Benutzer userId', async () => {
         const user = TEST_EMPLOYEE_1;
         const { status, headers, data }: AxiosResponse<Mandates[]> = await client.get(
-            `${ENDPOINTS.FUNCTIONS}/data?field=users&operator=EQ&value=${user.userId}`,
+            `${ENDPOINTS.MANDATES}/data?field=users&operator=EQ&value=${user.userId}`,
         );
 
         validateResponse(status, headers);

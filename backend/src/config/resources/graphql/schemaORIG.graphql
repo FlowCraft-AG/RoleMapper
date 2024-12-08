@@ -15,7 +15,7 @@ type RoleResult {
 # Mögliche Entitäten, auf die CRUD angewendet wird
 enum EntityType {
   USERS
-  FUNCTIONS
+  MANDATES
   PROCESSES
   ROLES
   ORG_UNITS
@@ -71,7 +71,7 @@ type TokenResult {
 }
 
 input MutationInput {
-  entity: EntityType! # Ziel-Entität (z. B. USERS, FUNCTIONS)
+  entity: EntityType! # Ziel-Entität (z. B. USERS, MANDATES)
   operation: OperationType! # Art der Mutation: CREATE, UPDATE, DELETE
   data: DataInput # Daten für CREATE oder UPDATE
   filter: FilterInput # Filter für UPDATE oder DELETE
