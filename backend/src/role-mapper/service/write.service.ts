@@ -7,7 +7,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
 import { InvalidFilterException, InvalidOperatorException } from '../error/exceptions.js';
-import { FilterInputDTO } from '../model/dto/filter.dto.js';
 import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
 import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
@@ -15,6 +14,7 @@ import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
 import { CreateDataInput } from '../model/input/create.input.js';
+import { FilterInput } from '../model/input/filter.input.js';
 import { UpdateDataInput } from '../model/input/update.input.js';
 import { FilterFields } from '../model/types/filter.type.js';
 import { operatorMap } from '../model/types/map.type.js';
@@ -66,7 +66,7 @@ export class WriteService {
      */
     async updateEntity(
         entity: EntityCategoryType,
-        filters: FilterInputDTO[],
+        filters: FilterInput[],
         data: UpdateDataInput | undefined,
     ) {
         this.#logger.debug('updateEntity: entity=%s, filters=%o, data=%o', entity, filters, data);
@@ -77,7 +77,9 @@ export class WriteService {
         return {
             success: result.modifiedCount > 0,
             message:
-                result.modifiedCount > 0 ? 'Update successful' : 'No documents matched the filter',
+                result.modifiedCount > 0
+                    ? 'Update operation successful.'
+                    : 'No documents matched the filter',
             modifiedCount: result.modifiedCount,
             upsertedId: result.upsertedId,
             upsertedCount: result.upsertedCount,
@@ -92,7 +94,7 @@ export class WriteService {
      * @returns {Promise<any>} - Das Ergebnis der Löschung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async deleteEntity(entity: EntityCategoryType, filters: FilterInputDTO[]) {
+    async deleteEntity(entity: EntityCategoryType, filters: FilterInput[]) {
         this.#logger.debug('deleteEntity: entity=%s, filters=%o', entity, filters);
         const model = this.#getModel(entity);
         const filterQuery = this.#buildFilterQuery(filters);
@@ -100,7 +102,9 @@ export class WriteService {
         return {
             success: result.deletedCount > 0,
             message:
-                result.deletedCount > 0 ? 'Deletion successful' : 'No documents matched the filter',
+                result.deletedCount > 0
+                    ? 'Delete operation successful.'
+                    : 'No documents matched the filter',
             deletedCount: result.deletedCount,
         };
     }
@@ -118,7 +122,7 @@ export class WriteService {
      * @param {FilterInputDTO | undefined} filters - Die Filterkriterien.
      * @returns {FilterQuery<any>} - Die erstellte Filterabfrage.
      */
-    #buildFilterQuery(filters?: FilterInputDTO[]): FilterQuery<any> {
+    #buildFilterQuery(filters?: FilterInput[]): FilterQuery<any> {
         if (!filters || filters.length === 0) {
             this.#logger.debug('buildFilterQuery: No filters provided');
             return {};
@@ -133,7 +137,7 @@ export class WriteService {
         return query;
     }
 
-    #processFilter(query: FilterQuery<any>, filter: FilterInputDTO) {
+    #processFilter(query: FilterQuery<any>, filter: FilterInput) {
         if (filter.and) {
             query.$and = filter.and.map((subFilter) => this.#buildFilterQuery([subFilter]));
         }
@@ -150,7 +154,7 @@ export class WriteService {
         }
     }
 
-    #addFieldFilter(query: FilterQuery<any>, filter: FilterInputDTO) {
+    #addFieldFilter(query: FilterQuery<any>, filter: FilterInput) {
         if (!filter.operator) {
             this.#logger.error('Invalid operator: %s', filter.operator);
             throw new InvalidOperatorException(filter.operator);
@@ -159,7 +163,7 @@ export class WriteService {
         query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
     }
 
-    #handleIncompleteFilter(filter: FilterInputDTO) {
+    #handleIncompleteFilter(filter: FilterInput) {
         this.#logger.error('Incomplete filter provided: %o', filter);
         throw new InvalidFilterException([
             (filter.field ?? '') ? '' : 'field',

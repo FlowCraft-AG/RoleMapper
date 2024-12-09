@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { FilterInput } from '../input/filter.input.js';
 import { DataInputDTO } from './data.dto.js';
-import { FilterInputDTO } from './filter.dto.js';
 
 /**
  * Definiert die Eingabeparameter für Mutationen in GraphQL.
@@ -32,6 +32,6 @@ export class MutationInput {
      * Die Filterkriterien für die Mutation (optional).
      * @type {FilterInput}
      */
-    @Field(() => FilterInputDTO, { nullable: true })
-    filter?: FilterInputDTO;
+    // @Field(() => FilterInput, { nullable: true })
+    filter?: FilterInput;
 }

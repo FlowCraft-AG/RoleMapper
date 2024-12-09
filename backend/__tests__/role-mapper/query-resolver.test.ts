@@ -1,4 +1,5 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { GraphQLRequest } from '@apollo/server';
@@ -61,8 +62,10 @@ describe('get Process Roles GraphQL', () => {
                     roles {
                         roleName
                         users {
-                            userId
                             functionName
+                            user {
+                                userId
+                            }
                         }
                     }
                 }
@@ -90,12 +93,12 @@ describe('get Process Roles GraphQL', () => {
         expect(roles).toHaveLength(2);
         expect(antragSteller?.roleName).toMatch(ROLES.ROLE_1);
         expect(antragSteller?.users.length).toBe(1);
-        expect(antragSteller?.users[0]?.userId).toMatch(employee.userId);
+        expect(antragSteller?.users[0]?.user?.userId).toMatch(employee.userId);
         expect(antragSteller?.users[0]?.functionName).toMatch(employee.functionName);
 
         expect(vorgesetzter?.roleName).toMatch(ROLES.ROLE_2);
         expect(vorgesetzter?.users.length).toBe(1);
-        expect(vorgesetzter?.users[0]?.userId).toMatch(employee.leiter);
+        expect(vorgesetzter?.users[0]?.user?.userId).toMatch(employee.leiter);
         expect(vorgesetzter?.users[0]?.functionName).toMatch(employee.functionNameLeiter);
     });
 
@@ -109,8 +112,10 @@ describe('get Process Roles GraphQL', () => {
                     roles {
                         roleName
                         users {
-                            userId
                             functionName
+                            user {
+                                userId
+                            }
                         }
                     }
                 }
@@ -141,15 +146,15 @@ describe('get Process Roles GraphQL', () => {
         expect(rechnungsPrüfer).toBeDefined();
         expect(rechnungsPrüfer?.roleName).toBe(ROLES.ROLE_3);
         expect(rechnungsPrüfer?.users.length).toBe(1);
-        expect(rechnungsPrüfer?.users[0]?.userId).toBe(employee.rechnungsPrüfer);
+        expect(rechnungsPrüfer?.users[0]?.user?.userId).toBe(employee.rechnungsPrüfer);
 
         expect(finanzAbteilung).toBeDefined();
         expect(finanzAbteilung?.roleName).toBe(ROLES.ROLE_4);
         expect(finanzAbteilung?.users.length).toBe(employee.finanzAbteilung.length);
-        expect(finanzAbteilung?.users[0]?.userId).toBe(employee.finanzAbteilung[0]);
-        expect(finanzAbteilung?.users[1]?.userId).toBe(employee.finanzAbteilung[1]);
-        expect(finanzAbteilung?.users[2]?.userId).toBe(employee.finanzAbteilung[2]);
-        expect(finanzAbteilung?.users[3]?.userId).toBe(employee.finanzAbteilung[3]);
+        expect(finanzAbteilung?.users[0]?.user?.userId).toBe(employee.finanzAbteilung[0]);
+        expect(finanzAbteilung?.users[1]?.user?.userId).toBe(employee.finanzAbteilung[1]);
+        expect(finanzAbteilung?.users[2]?.user?.userId).toBe(employee.finanzAbteilung[2]);
+        expect(finanzAbteilung?.users[3]?.user?.userId).toBe(employee.finanzAbteilung[3]);
 
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
@@ -167,8 +172,10 @@ describe('get Process Roles GraphQL', () => {
                     roles {
                         roleName
                         users {
-                            userId
                             functionName
+                            user {
+                                userId
+                            }
                         }
                     }
                 }
@@ -196,12 +203,12 @@ describe('get Process Roles GraphQL', () => {
         expect(roles).toHaveLength(2);
         expect(antragSteller?.roleName).toMatch(ROLES.ROLE_1);
         expect(antragSteller?.users.length).toBe(1);
-        expect(antragSteller?.users[0]?.userId).toMatch(employee.userId);
+        expect(antragSteller?.users[0]?.user?.userId).toMatch(employee.userId);
         expect(antragSteller?.users[0]?.functionName).toMatch(employee.functionName);
 
         expect(vorgesetzter?.roleName).toMatch(ROLES.ROLE_2);
         expect(vorgesetzter?.users.length).toBe(1);
-        expect(vorgesetzter?.users[0]?.userId).toMatch(employee.leiter);
+        expect(vorgesetzter?.users[0]?.user?.userId).toMatch(employee.leiter);
         expect(vorgesetzter?.users[0]?.functionName).toMatch(employee.functionNameLeiter);
     });
     // -----------------------------------------------------------------------------
@@ -210,64 +217,119 @@ describe('get Process Roles GraphQL', () => {
 
     test('[GRAPHQL] Dynamische Abfrage für USERS mit Filtern', async () => {
         const employee = TEST_EMPLOYEE_1;
-        // given
+
+        // GraphQL-Abfrage vorbereiten
         const body: GraphQLRequest = {
             query: `
-        {
-          getData(entity: ${ENDPOINTS.USERS}, filters: { field: userId, operator: EQ, value: "${employee.userId}" })
+        query GetData {
+            getData(
+                input: {
+                    entity: ${ENDPOINTS.USERS}
+                    filters: [{ field: userId, operator: EQ, value: "${employee.userId}" }]
+                    pagination: { limit: 3 }
+                }
+            ) {
+                totalCount
+                data {
+                    ... on User {
+                        userId
+                    }
+                }
+            }
         }
         `,
         };
 
-        // when
+        // Sende die Anfrage
         const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
             graphqlPath,
             body,
         );
 
-        // then
+        // Überprüfe den Status und Header
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
+
+        // Prüfe auf GraphQL-Fehler
         expect(data.errors).toBeUndefined();
+
+        // Überprüfe die Daten
         expect(data.data).toBeDefined();
 
         const { getData } = data.data!;
-        const user: User | undefined = (getData as User[])[0];
 
-        expect(getData).toBeInstanceOf(Array);
-        expect((getData as User[]).length).toBe(1);
-        expect((getData as User[])[0]).toHaveProperty('userId');
-        expect(user).toBeDefined();
-        expect(user!.userId).toMatch(employee.userId);
+        expect(getData).toBeDefined();
+        expect(getData.totalCount).toBe(1); // Es sollte genau ein Ergebnis geben
+        expect(getData.data).toBeInstanceOf(Array);
+
+        // Überprüfe die zurückgegebenen Benutzer
+        const users = getData.data as User[];
+
+        expect(users.length).toBe(1);
+
+        const user = users[0];
+
+        expect(user).toHaveProperty('userId');
+        expect(user?.userId).toBe(employee.userId);
     });
 
     test('[GRAPHQL] Dynamische Abfrage für MANDATES ohne Filter', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
-        {
-          getData(entity: ${ENDPOINTS.MANDATES})
+            query GetData {
+            getData(input: { entity: ${ENDPOINTS.MANDATES} }) {
+                totalCount
+                data {
+                    ... on Function {
+                        functionName
+                        users
+                        orgUnit
+                        type
+                    }
+                }
+            }
         }
         `,
         };
 
-        // when
+        // Sende die Anfrage
         const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
             graphqlPath,
             body,
         );
 
-        // then
+        // Überprüfe den Status und Header
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
+
+        // Prüfe auf GraphQL-Fehler
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 
         const { getData } = data.data!;
 
-        expect(getData).toBeInstanceOf(Array);
-        expect((getData as any[]).length).toBeGreaterThan(5);
-        expect((getData as { functionName: string }[])[0]).toHaveProperty('functionName');
+        // Überprüfe die Datenstruktur
+        expect(getData).toBeDefined();
+        expect(getData.totalCount).toBeGreaterThan(0); // Es sollte mindestens ein Ergebnis geben
+        expect(getData.data).toBeInstanceOf(Array);
+
+        // Überprüfe die Eigenschaften der ersten Funktion
+        const mandates = getData.data as {
+            functionName: string;
+            users: string[];
+            orgUnit: string;
+            type: string;
+        }[];
+
+        expect(mandates.length).toBeGreaterThan(5); // Sicherstellen, dass mehr als 5 Mandate zurückgegeben werden
+
+        for (const mandate of mandates) {
+            expect(mandate).toHaveProperty('functionName');
+            expect(mandate).toHaveProperty('users');
+            expect(mandate).toHaveProperty('orgUnit');
+            expect(mandate).toHaveProperty('type');
+        }
     });
 
     // -------------------------------------------------------------------------
@@ -355,13 +417,22 @@ describe('get Process Roles GraphQL', () => {
         expect(data.data).toBeUndefined();
     });
 
-    test('[GRAPHQL] getData without filters', async () => {
+    test('[GRAPHQL] getData without filters for ORG_UNITS', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
-    {
-        getData(entity: ${ENDPOINTS.ORG_UNITS})
-    }
+        query GetData {
+            getData(input: { entity: ${ENDPOINTS.ORG_UNITS} }) {
+                totalCount
+                data {
+                    ... on OrgUnit {
+                        name
+                        parentId
+                        supervisor
+                    }
+                }
+            }
+        }
         `,
         };
 
@@ -379,8 +450,24 @@ describe('get Process Roles GraphQL', () => {
 
         const { getData } = data.data!;
 
-        expect(getData).toBeInstanceOf(Array);
-        expect((getData as any[]).length).toBeGreaterThan(0);
-        expect((getData as { orgUnitName: string }[])[0]).toHaveProperty('name');
+        // Validating structure and content
+        expect(getData).toBeDefined();
+        expect(getData.totalCount).toBeGreaterThan(0); // Ensure there are results
+        expect(getData.data).toBeInstanceOf(Array);
+
+        const orgUnits = getData.data as {
+            name: string;
+            parentId: string | null;
+            supervisor: string | null;
+        }[];
+
+        // Validate that at least one OrgUnit is returned and has the expected structure
+        expect(orgUnits.length).toBeGreaterThan(0);
+
+        for (const orgUnit of orgUnits) {
+            expect(orgUnit).toHaveProperty('name');
+            expect(orgUnit).toHaveProperty('parentId');
+            expect(orgUnit).toHaveProperty('supervisor');
+        }
     });
 });

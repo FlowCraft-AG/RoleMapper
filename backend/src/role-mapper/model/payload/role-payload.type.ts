@@ -22,6 +22,7 @@ export type RoleResult = {
 };
 
 // Benutzer mit einer Funktion
-export type UserWithFunction = User & {
+export type UserWithFunction = {
     functionName: string; // Dynamischer Funktionsname
+    user: User; // Das User-Objekt ist hier verschachtelt
 };

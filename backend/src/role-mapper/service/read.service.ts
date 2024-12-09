@@ -1,17 +1,18 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/indent */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
 import { InvalidFilterException, InvalidOperatorException } from '../error/exceptions.js';
-import { FilterInputDTO } from '../model/dto/filter.dto.js';
 import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
 import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
+import { FilterInput } from '../model/input/filter.input.js';
 import { PaginationParameters } from '../model/input/pagination-parameters.js';
 import { RoleResult } from '../model/payload/role-payload.type.js';
 import { FilterFields } from '../model/types/filter.type.js';
@@ -135,18 +136,18 @@ export class ReadService {
      * Führt eine dynamische Filterung für eine angegebene Entität durch.
      *
      * @param {string} entity - Der Name der Ziel-Entität (z. B. `users`, `mandates`).
-     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterInput} filters - Die Filterbedingungen.
      * @param {PaginationParameters} pagination - Parameter für die Seitennummerierung.
      * @returns {Promise} Eine Liste der gefilterten Daten.
      * @throws {BadRequestException} Wenn die Entität nicht unterstützt wird.
      */
     async findData(
         entity: EntityCategoryType,
-        filters?: FilterInputDTO[],
+        filters?: FilterInput[],
         pagination?: PaginationParameters,
-    ): Promise<EntityType[]> {
+    ) {
         this.#logger.debug(
-            'findData2: entity=%s, filters=%o pagination=%o',
+            'findData: entity=%s, filters=%o pagination=%o',
             entity,
             filters,
             pagination,
@@ -161,7 +162,23 @@ export class ReadService {
         // Daten mit der generierten Query abrufen
         // eslint-disable-next-line unicorn/no-array-callback-reference
         const data = await model.find(filterQuery).exec();
-        return data.map((document: EntityType): EntityType => document.toObject() as EntityType);
+        const rawData = data.map(
+            (document: EntityType): EntityType => document.toObject() as EntityType,
+        );
+
+        // Anwendung der Paginierung, wenn angegeben
+        const paginatedData = pagination
+            ? rawData.slice(
+                  (pagination.offset ?? 0) || 0,
+                  ((pagination.offset ?? 0) || 0) + (pagination.limit ?? 0),
+              )
+            : rawData;
+        this.#logger.debug(
+            'findData: pagination limit=$s, offset=%s',
+            pagination?.limit,
+            pagination?.offset,
+        );
+        return paginatedData;
     }
 
     #getModel(entity: EntityCategoryType): Model<EntityType> {
@@ -179,12 +196,12 @@ export class ReadService {
     /**
      * Erstellt rekursiv eine MongoDB-Filter-Query basierend auf den angegebenen Bedingungen.
      *
-     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterInput} filters - Die Filterbedingungen.
      * @returns {FilterQuery<any>} Die generierte MongoDB-Query.
      * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
      * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
      */
-    #buildFilterQuery(filters?: FilterInputDTO[]): FilterQuery<any> {
+    #buildFilterQuery(filters?: FilterInput[]): FilterQuery<any> {
         if (this.#isEmptyFilter(filters)) {
             this.#logger.debug('buildFilterQuery: keine Filterbedingungen angegeben');
             return {};
@@ -208,20 +225,20 @@ export class ReadService {
     /**
      * Überprüft, ob der Filter leer ist.
      *
-     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterInput} filters - Die Filterbedingungen.
      * @returns {boolean} `true`, wenn der Filter leer ist, andernfalls `false`.
      */
-    #isEmptyFilter(filters?: FilterInputDTO[]): boolean {
+    #isEmptyFilter(filters?: FilterInput[]): boolean {
         return !filters || filters.length === 0;
     }
 
     /**
      * Verarbeitet logische Operatoren (`and`, `or`, `not`) im Filter.
      *
-     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterInput} filters - Die Filterbedingungen.
      * @param {FilterQuery<any>} query - Die MongoDB-Query.
      */
-    #processLogicalOperators(filters: FilterInputDTO[], query: FilterQuery<any>): void {
+    #processLogicalOperators(filters: FilterInput[], query: FilterQuery<any>): void {
         for (const filter of filters) {
             if (filter.and) {
                 query.$and = filter.and.map((subFilter) => this.#buildFilterQuery([subFilter]));
@@ -238,20 +255,20 @@ export class ReadService {
     /**
      * Überprüft, ob mindestens ein Feld im Filter gesetzt ist.
      *
-     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterInput} filters - Die Filterbedingungen.
      * @returns {boolean} `true`, wenn mindestens ein Feld gesetzt ist, andernfalls `false`.
      */
-    #isAnyFieldSet(filters: FilterInputDTO[]): boolean {
+    #isAnyFieldSet(filters: FilterInput[]): boolean {
         return filters.some((filter) => filter.field !== null && filter.operator && filter.value);
     }
 
     /**
      * Validiert die Felder im Filter.
      *
-     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterInput} filters - Die Filterbedingungen.
      * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
      */
-    #validateFilterFields(filters: FilterInputDTO[]): void {
+    #validateFilterFields(filters: FilterInput[]): void {
         for (const filter of filters) {
             const missingFields: string[] = [];
             if (filter.field === null) missingFields.push('Feld');
@@ -267,11 +284,11 @@ export class ReadService {
     /**
      * Erstellt eine MongoDB-Query für ein einzelnes Feld.
      *
-     * @param {FilterInputDTO} filters - Die Filterbedingungen.
+     * @param {FilterInput} filters - Die Filterbedingungen.
      * @param {FilterQuery<any>} query - Die MongoDB-Query.
      * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
      */
-    #buildFieldQuery(filters: FilterInputDTO[], query: FilterQuery<any>): void {
+    #buildFieldQuery(filters: FilterInput[], query: FilterQuery<any>): void {
         for (const filter of filters) {
             // Validierung von Operator und Feld
             if (!filter.operator || filter.field === null) {
