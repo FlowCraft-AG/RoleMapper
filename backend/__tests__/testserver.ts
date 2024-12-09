@@ -50,7 +50,7 @@ const getFreePort = async (startPort: number): Promise<number> => {
                 resolve(startPort);
             });
         });
-        server.on('error', () => resolve(startPort + 1));
+        server.on('error', () => resolve(getFreePort(startPort + 1)));
     });
 };
 
