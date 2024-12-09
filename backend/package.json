@@ -93,7 +93,7 @@
     "@types/js-yaml": "4.0.9",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^20.3.1",
-    "@types/nodemailer": "6.4.16",
+    "@types/nodemailer": "6.4.17",
     "@types/nodemailer-direct-transport": "1.0.35",
     "@types/nodemailer-smtp-transport": "2.7.8",
     "@types/supertest": "^6.0.0",
