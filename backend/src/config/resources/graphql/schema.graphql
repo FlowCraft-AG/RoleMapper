@@ -1,166 +1,354 @@
+# Hauptabfragen
 type Query {
+  """
+  Dynamische Abfrage: Ruft Daten basierend auf der Zielentität und Filtern ab.
+  Unterstützt Pagination für eine effiziente Datenabfrage.
+
+  @args:
+    - input (DataInput!): Enthält die Entität, Filterbedingungen und Paginierungsparameter.
+  @returns:
+    - DataPayload!: Eine strukturierte Antwort mit den abgerufenen Daten und der Gesamtzahl der Treffer.
+  """
+  getData(input: DataInput!): DataPayload!
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
-  getData(entity: EntityType!, filters: FilterInput): [JSON!]!
 }
 
-type DataPayload {
-  functionName: String
-  users: [String!]
-  orgUnit: String
-  name: String
-  parentId: ID
-  supervisor: String
-  roleId: String
-  query: [QueryStage!]
-  processId: String
-  roles: [ProcessRole!]
-  _id: ID
-  userId: String
-  userType: String
-  userRole: String
-  active: Boolean
-  student: Student
-  employee: Employee
-  validFrom: String
-  validUntil: String
+# Abfrageparameter
+"""
+Input-Parameter für generische Abfragen.
+"""
+input DataInput {
+  """
+  Ziel-Entität für die Abfrage, z. B. USERS oder ROLES.
+  """
+  entity: EntityType!
+  """
+  Filterbedingungen, um die Abfrage zu präzisieren.
+  """
+  filters: [FilterInput!]
+  """
+  Pagination-Parameter zur Steuerung der Ergebnisse.
+  """
+  pagination: PaginationInput
 }
 
-type QueryStage {
-  # Die Struktur eines PipelineStage ist flexibel und hängt der query ab.
-  # Hier verwenden wir ein generisches JSON-Objekt.
-  key: String
-  value: String
+"""
+Pagination-Parameter für die Steuerung von Ergebnisgrößen.
+"""
+input PaginationInput {
+  """
+  Anzahl der zurückzugebenden Ergebnisse (Standard: 10).
+  """
+  limit: Int = 10
+  """
+  Startpunkt der Ergebnisse (Standard: 0).
+  """
+  offset: Int = 0
 }
 
-type ProcessRole {
-  roleKey: String!
-  roleId: String!
+"""
+Filterbedingungen für Abfragen.
+"""
+input FilterInput {
+  """
+  Das zu filternde Feld, z. B. userId oder orgUnit.
+  """
+  field: FilterOptions!
+  """
+  Der Vergleichsoperator, z. B. EQ oder IN.
+  """
+  operator: Operator!
+  """
+  Der Vergleichswert.
+  """
+  value: String!
+  and: [FilterInput]
+  or: [FilterInput]
+  not: FilterInput
 }
 
-type User {
-  _id: ID!
-  userId: String!
-  userType: String!
-  userRole: String!
-  orgUnit: String!
-  active: Boolean!
-  student: Student
-  employee: Employee
-  validFrom: String!
-  validUntil: String!
-  functionName: String,
-}
-
-type Student {
-  _id: ID!
-  courseOfStudy: String!
-  courseOfStudyUnique: String!
-  courseOfStudyShort: String!
-  courseOfStudyName: String!
-  level: String!
-  examRegulation: String!
-}
-
-type Employee {
-  costCenter: String!
-  department: String!
-}
-
-type TokenResult {
-  access_token: String!
-  expires_in: Int!
-  refresh_token: String!
-  refresh_expires_in: Int!
-  id_token: String!
-  scope: String!
-}
-
+# Rückgabewerte
 type RolePayload {
   roles: [RoleResult]
 }
 
 type RoleResult {
   roleName: String! # Dynamischer Rollenname (z. B. "Antragssteller", "Rechnungsprüfung")
-  users: [User!]! # Benutzer, die dieser Rolle zugeordnet sind
+  users: [UserFunctionResult] # Benutzer, die dieser Rolle zugeordnet sind
 }
 
-
-type Mutation {
-
-  # Authentifizierungsbezogene Mutationen
-  # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
-  token(username: String!, password: String!): TokenResult
-  refresh(refresh_token: String!): TokenResult
-
-  executeMutation(input: MutationInput!): MutationResponse!
+"""
+Ergebnisstruktur für spezialisierte Benutzerabfragen.
+"""
+type UserResult {
+  """
+  Liste der Benutzer, die den Filterbedingungen entsprechen.
+  """
+  users: [User!]!
+  """
+  Gesamte Anzahl der Treffer.
+  """
+  totalCount: Int!
 }
 
-enum OperationType {
-  CREATE
-  UPDATE
-  DELETE
+"""
+Ergebnisstruktur für generische Abfragen.
+"""
+type DataPayload {
+  """
+  Liste der Ergebnisse basierend auf der Ziel-Entität.
+  """
+  data: [EntityResult!]!
+  """
+  Gesamte Anzahl der Treffer.
+  """
+  totalCount: Int!
 }
 
-input MutationInput {
-  entity: EntityType!      # Ziel-Entität (z. B. USERS, FUNCTIONS)
-  operation: OperationType! # Art der Mutation: CREATE, UPDATE, DELETE
-  data: DataInput      # Daten für CREATE oder UPDATE
-  filter: FilterInput  # Filter für UPDATE oder DELETE
-}
+"""
+Ergebnisstruktur für generische Entitätsabfragen.
+"""
+union EntityResult = User | Function | Process | OrgUnit | Role
 
-input DataInput {
+type UserFunctionResult {
+  user: User
   functionName: String
-  users: [String!]
-  orgUnit: String
+}
+
+# Benutzerentitäten
+"""
+Repräsentiert einen Benutzer in der Organisation.
+"""
+type User {
+  """
+  Eindeutige ID des Benutzers.
+  """
+  _id: ID
+  """
+  Benutzer-ID, z. B. Matrikelnummer oder Personalnummer.
+  """
   userId: String
+  """
+  Typ des Benutzers, z. B. 'student' oder 'employee'.
+  """
   userType: String
+  """
+  Rolle des Benutzers, z. B. 'admin' oder 'viewer'.
+  """
   userRole: String
-  active: String
-  name: String
-  roleId: String
-  processId: String
-  roles: String
-  arentId: String
+  """
+  Organisationseinheit des Benutzers.
+  """
+  orgUnit: String
+  """
+  Gibt an, ob der Benutzer aktiv ist.
+  """
+  active: Boolean
+  """
+  Details zum Studenten (optional).
+  """
+  student: Student
+  """
+  Details zum Mitarbeiter (optional).
+  """
+  employee: Employee
+  """
+  Gültigkeitsdatum von.
+  """
+  validFrom: String
+  """
+  Gültigkeitsdatum bis.
+  """
+  validUntil: String
+}
+
+"""
+Details eines Benutzers, falls dieser ein Student ist.
+"""
+type Student {
+  """
+  Eindeutige ID des Studenten.
+  """
+  _id: ID!
+  """
+  Studiengang des Studenten.
+  """
+  courseOfStudy: String!
+  """
+  Einzigartiger Studiengangscode.
+  """
+  courseOfStudyUnique: String!
+  """
+  Kurzbezeichnung des Studiengangs.
+  """
+  courseOfStudyShort: String!
+  """
+  Vollständiger Name des Studiengangs.
+  """
+  courseOfStudyName: String!
+  """
+  Studienniveau, z. B. Bachelor oder Master.
+  """
+  level: String!
+  """
+  Prüfungsordnung, die für den Studenten gilt.
+  """
+  examRegulation: String!
+}
+
+"""
+Details eines Benutzers, falls dieser ein Mitarbeiter ist.
+"""
+type Employee {
+  """
+  Kostenstelle des Mitarbeiters.
+  """
+  costCenter: String!
+  """
+  Abteilung, in der der Mitarbeiter tätig ist.
+  """
+  department: String!
+}
+
+# Organisationseinheiten
+"""
+Repräsentiert eine Organisationseinheit, z. B. Fakultäten oder Abteilungen.
+"""
+type OrgUnit {
+  """
+  Eindeutige ID der Organisationseinheit.
+  """
+  _id: ID!
+  """
+  Name der Organisationseinheit.
+  """
+  name: String!
+  """
+  ID der übergeordneten Organisationseinheit (optional).
+  """
+  parentId: ID
+  """
+  Verantwortlicher der Organisationseinheit.
+  """
   supervisor: String
 }
-type MutationResponse {
-  success: Boolean! # Ob die Operation erfolgreich war
-  message: String   # Optionaler Fehler oder Erfolgstext
-  result: JSON      # Das Ergebnis der Mutation (z. B. das erstellte oder aktualisierte Objekt)
+
+# Funktionen
+"""
+Repräsentiert eine Funktion innerhalb der Organisation, z. B. 'Professor'.
+"""
+type Function {
+  """
+  Eindeutige ID der Funktion.
+  """
+  _id: ID!
+  """
+  Name der Funktion.
+  """
+  functionName: String!
+  """
+  Liste der Benutzer, die dieser Funktion zugeordnet sind.
+  """
+  users: [String!]!
+  """
+  Organisationseinheit, der die Funktion zugeordnet ist.
+  """
+  orgUnit: String!
+  """
+  Typ der Funktion, z. B. 'academic' oder 'administrative'.
+  """
+  type: String
 }
 
-enum FilterOptions {
-  userId
-  userType
-  userRole
-  orgUnit
-  active
-  users
-  functionName
-  name
-  roleId
-  processId
-  roles
-  arentId
-  supervisor
+# Prozesse und Rollen
+"""
+Repräsentiert einen Prozess, z. B. 'Dienstreiseantrag'.
+"""
+type Process {
+  """
+  Eindeutige ID des Prozesses.
+  """
+  _id: ID!
+  """
+  Name des Prozesses.
+  """
+  name: String!
+  """
+  Eindeutige Prozess-ID.
+  """
+  processId: String!
+  """
+  Liste der Rollen, die mit dem Prozess verknüpft sind.
+  """
+  roles: [ProcessRole!]!
 }
 
-# Mögliche Entitäten, auf die CRUD angewendet wird
+"""
+Definiert eine Rolle innerhalb eines Prozesses.
+"""
+type ProcessRole {
+  """
+  Eindeutiger Schlüssel der Rolle.
+  """
+  roleKey: String!
+  """
+  Eindeutige ID der Rolle.
+  """
+  roleId: String!
+}
+
+# Rollen mit dynamischen Abfragen
+"""
+Definiert eine Rolle in der Organisation mit Abfragebedingungen.
+"""
+type Role {
+  """
+  Eindeutige ID der Rolle.
+  """
+  _id: ID!
+  """
+  Name der Rolle.
+  """
+  name: String!
+  """
+  Eindeutige ID der Rolle.
+  """
+  roleId: String!
+  """
+  Dynamische Abfragebedingungen für die Rolle.
+  """
+  query: [QueryStage!]!
+}
+
+"""
+Dynamische Abfragebedingungen für Rollen.
+"""
+type QueryStage {
+  """
+  Feldname der Abfragebedingung.
+  """
+  key: String!
+  """
+  Vergleichswert der Abfragebedingung.
+  """
+  value: String!
+}
+
+# Enums für Konsistenz
+"""
+Verfügbare Entitäten für dynamische Abfragen.
+"""
 enum EntityType {
   USERS
-  FUNCTIONS
+  MANDATES
   PROCESSES
   ROLES
   ORG_UNITS
 }
 
-# Flexible Filterbedingungen
-input FilterInput {
-  field: FilterOptions         # Das zu filternde Feld
-  operator: Operator      # Vergleichsoperator (z. B. $eq, $in, $gte, etc.)
-  value: JSON            # Der Wert, mit dem verglichen wird
-}
-
+"""
+Mögliche Vergleichsoperatoren für Filterbedingungen.
+"""
 enum Operator {
   EQ
   IN
@@ -169,79 +357,103 @@ enum Operator {
   LIKE
 }
 
-# Rückgabewert kann flexibel bleiben (JSON)
-scalar JSON
+"""
+Filterbare Felder für dynamische Abfragen.
+"""
+enum FilterOptions {
+  userId
+  userType
+  userRole
+  orgUnit
+  active
+  functionName
+  name
+  roleId
+  processId
+  parentId
+  supervisor
+  users
+  roles
+}
 
+type Mutation {
+  """
+  Erstellt eine neue Entität, z. B. einen Benutzer, eine Funktion oder eine Organisationseinheit.
+  """
+  createEntity(input: CreateEntityInput!): MutationResponse!
 
+  """
+  Aktualisiert eine vorhandene Entität basierend auf Filtern und übergebenen Daten.
+  """
+  updateEntity(input: UpdateEntityInput!): MutationResponse!
 
+  """
+  Löscht eine oder mehrere Entitäten basierend auf Filterbedingungen.
+  """
+  deleteEntity(input: DeleteEntityInput!): MutationResponse!
 
+  """
+  Authentifiziert einen Benutzer und gibt ein Token zurück.
+  """
+  authenticate(username: String!, password: String!): TokenResult!
 
+  """
+  Erneuert ein abgelaufenes Token basierend auf einem gültigen Refresh-Token.
+  """
+  refreshToken(refreshToken: String!): TokenResult!
+}
 
-
-
-
-
-
-
-
-
-
-
-
+"""
+Input für das Erstellen einer neuen Entität.
+"""
+input CreateEntityInput {
+  """
+  Ziel-Entität, z. B. USERS, MANDATES.
+  """
+  entity: EntityType!
+  """
+  Daten für die neue Entität.
+  """
+  userData: CreateUserInput
+  functionData: CreateFunctionInput
+  processData: CreateProcessInput
+  orgUnitData: CreateOrgUnitInput
+  roleData: CreateRoleInput
+}
 
 input CreateUserInput {
   userId: String!
-  userType: UserType!
+  userType: String!
   userRole: String!
   orgUnit: String
-  active: Boolean = false
-  validFrom: String
-  validUntil: String
+  active: Boolean = true
+  student: CreateStudentInput
+  employee: CreateEmployeeInput
 }
 
-input UpdateUserInput {
-  userId: String
-  userType: UserType
-  userRole: String
-  orgUnit: String
-  active: Boolean
-  validFrom: String
-  validUntil: String
+input CreateStudentInput {
+  courseOfStudy: String!
+  courseOfStudyUnique: String!
+  level: String!
+  examRegulation: String!
+}
+
+input CreateEmployeeInput {
+  costCenter: String!
+  department: String!
 }
 
 input CreateFunctionInput {
   functionName: String!
-  users: [String!]!
   orgUnit: String!
+  type: String
+  users: [String!]!
 }
 
-input UpdateFunctionInput {
-  functionName: String
-  users: [String!]
-  orgUnit: String
-}
-
-input CreateRoleInput {
+input CreateProcessInput {
+  processId: String!
   name: String!
-  roleId: String!
-  query: [QueryStageInput!]
-}
-
-input UpdateRoleInput {
-  name: String
-  roleId: String
-  query: [QueryStageInput!]
-}
-
-input QueryStageInput {
-  key: String
-  value: String
-}
-
-input UpdateProcessInput {
-  name: String
-  processId: String
-  roles: [ProcessRoleInput!]
+  roles: [ProcessRoleInput!]!
 }
 
 input ProcessRoleInput {
@@ -251,25 +463,174 @@ input ProcessRoleInput {
 
 input CreateOrgUnitInput {
   name: String!
-  parentId: ID
+  parentId: String
   supervisor: String
+}
+
+input CreateRoleInput {
+  roleId: String!
+  name: String!
+  query: [QueryStageInput!]
+}
+
+input QueryStageInput {
+  key: String!
+  value: String!
+}
+
+# """
+# Datenstruktur für das Erstellen neuer Entitäten.
+# """
+# input CreateDataInput {
+#   # Gemeinsame Felder für alle Entitäten
+#   name: String
+#   userId: String
+#   userType: String
+#   userRole: String
+#   orgUnit: String
+#   active: Boolean
+#   processId: String
+#   roleId: String
+#   functionName: String
+#   parentId: String
+#   supervisor: String
+#   # Spezifische Felder für Studenten und Mitarbeiter
+#   student: CreateStudentInput
+#   employee: CreateEmployeeInput
+#   users: [String!]
+#   roles: String
+# }
+
+"""
+Input für das Aktualisieren von Entitäten.
+"""
+input UpdateEntityInput {
+  """
+  Ziel-Entität, z. B. USERS, MANDATES.
+  """
+  entity: EntityType!
+  """
+  Filterbedingungen, um die zu aktualisierende Entität zu finden.
+  """
+  filters: [FilterInput!]!
+  """
+  Neue Werte für die Entität.
+  """
+  userData: UpdateUserInput
+  functionData: UpdateFunctionInput
+  processData: UpdateProcessInput
+  orgUnitData: UpdateOrgUnitInput
+  roleData: UpdateRoleInput
+}
+
+input UpdateUserInput {
+  userId: String!
+  userType: String
+  userRole: String
+  orgUnit: String
+  active: Boolean
+  validFrom: String
+  validUntil: String
+  student: UpdateStudentInput
+  employee: UpdateEmployeeInput
+}
+
+input UpdateStudentInput {
+  courseOfStudy: String
+  level: String
+  examRegulation: String
+}
+
+input UpdateEmployeeInput {
+  costCenter: String
+  department: String
+}
+
+input UpdateFunctionInput {
+  functionName: String!
+  orgUnit: String
+  type: String
+  users: [String!]
+}
+
+input UpdateProcessInput {
+  processId: String!
+  name: String
+  roles: [ProcessRoleInput]
 }
 
 input UpdateOrgUnitInput {
+  orgUnitId: String!
   name: String
-  parent_id: ID
+  parentId: String
   supervisor: String
 }
 
-enum UserType {
-  employee
-  student
+input UpdateRoleInput {
+  roleId: String!
+  name: String
+  query: [QueryStageInput]
 }
 
-enum UserRole {
-  lecturer
-  professor
-  academicStaff
-  adminTechnicalStaff
+# """
+# Datenstruktur für das Aktualisieren von Entitäten.
+# """
+# input UpdateDataInput {
+#   # Gemeinsame Felder für alle Entitäten
+#   name: String
+#   userType: String
+#   userRole: String
+#   orgUnit: String
+#   active: Boolean
+#   roleId: String
+#   functionName: String
+#   supervisor: String
+#   # Spezifische Felder für Studenten und Mitarbeiter
+#   student: UpdateStudentInput
+#   employee: UpdateEmployeeInput
+#   users: [String!]
+#   roles: String
+# }
 
+"""
+Input für das Löschen von Entitäten.
+"""
+input DeleteEntityInput {
+  """
+  Ziel-Entität, z. B. USERS, MANDATES.
+  """
+  entity: EntityType!
+  """
+  Filterbedingungen, um die zu löschende Entität zu identifizieren.
+  """
+  filters: [FilterInput!]!
+}
+
+"""
+Generisches Ergebnis für Mutations.
+"""
+type MutationResponse {
+  """
+  Gibt an, ob die Operation erfolgreich war.
+  """
+  success: Boolean!
+  """
+  Zusätzliche Informationen oder Fehlermeldungen.
+  """
+  message: String
+  """
+  Das Ergebnis der Mutation, z. B. die erstellte oder aktualisierte Entität.
+  """
+  result: EntityResult
+  affectedCount: Int
+  warnings: [String]
+}
+
+type TokenResult {
+  access_token: String!
+  expires_in: Int!
+  refresh_token: String!
+  refresh_expires_in: Int!
+  id_token: String!
+  scope: String!
 }

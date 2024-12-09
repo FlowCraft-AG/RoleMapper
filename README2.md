@@ -176,3 +176,13 @@ Wir freuen uns über Beiträge zur Weiterentwicklung von RoleMapper. Bitte halte
 - [Support](mailto:support@flowcraft-ag.de)
 
 ---
+
+
+
+src/
+└── model/
+    ├── types/        # Allgemeine Typdefinitionen (z. B. Enums oder string union types)
+    ├── inputs/       # Eingabeobjekte für GraphQL oder REST (z. B. Filter, Pagination, etc.)
+    ├── dtos/         # Datenobjekte für die Kommunikation zwischen Schichten
+    ├── entity/       # Definitionen der Entitäten (Datenbank- oder API-Entitäten)
+    ├── payload/      # Rückgabe-Objekte und Payloads (z. B. Ergebnisse von Queries oder Mutationen)

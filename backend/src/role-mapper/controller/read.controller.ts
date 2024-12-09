@@ -1,4 +1,4 @@
-// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable security/detect-object-injection */
 import {
     BadRequestException,
@@ -24,53 +24,17 @@ import { Public } from 'nest-keycloak-connect';
 import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { type FilterInputDTO } from '../model/dto/filter.dto.js';
-import { SUPPORTED_ENTITIES, SupportedEntities } from '../model/entity/entities.entity.js';
-import { User } from '../model/entity/user.entity.js';
+import { EntityCategoryType } from '../model/entity/entities.entity.js';
+import { FilterInput } from '../model/input/filter.input.js';
+import { DataPayload, DataResult } from '../model/payload/data.payload.js';
+import { RolePayload } from '../model/payload/role-payload.type.js';
+import { FilterField, FilterOperator } from '../model/types/filter.type.js';
+import { Link, Links } from '../model/types/link.type.js';
 import { ReadService } from '../service/read.service.js';
 import { getBaseUri } from '../utils/uri-helper.js';
 
-/** href-Link für HATEOAS */
-export type Link = {
-    /** href-Link für HATEOAS-Links */
-    readonly href: string;
-};
+const DEFAULT_LIMIT = 10;
 
-/** Links für HATEOAS */
-export type Links = {
-    /** Dynamische Links für Benutzer innerhalb jeder Rolle */
-    [roleName: string]: Record<string, Link> | Link | undefined;
-    /** self-Link */
-    readonly self: Link;
-    /** Optionaler Linke für list */
-    readonly list?: Link;
-    /** Optionaler Linke für add */
-    readonly add?: Link;
-    /** Optionaler Linke für update */
-    readonly update?: Link;
-    /** Optionaler Linke für remove */
-    readonly remove?: Link;
-};
-
-export type RolePayload = {
-    roles: RoleResult[];
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    _links?: Links;
-};
-
-/**
- * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
- */
-export type RoleResult = {
-    /**
-     * Dynamischer Rollenname (z.B. "Antragssteller").
-     */
-    roleName: string;
-    /**
-     * Benutzer, die dieser Rolle zugeordnet sind.
-     */
-    users: (User & { functionName: string })[];
-};
 /**
  * Controller für Leseoperationen.
  */
@@ -90,7 +54,7 @@ export type RoleResult = {
  *
  * @method getData
  * @description Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
- * @param {string} collection - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
+ * @param {string} collection - Die Ziel-Entität (z. B. USERS, MANDATES).
  * @param {FilterInputDTO} filter - Die Filterbedingungen.
  * @returns {Promise<any[]>} - Die gefilterten Daten.
  * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
@@ -116,7 +80,6 @@ export type RoleResult = {
 export class ReadController {
     readonly #logger = getLogger(ReadService.name);
     readonly #service: ReadService;
-
     constructor(readService: ReadService) {
         this.#service = readService;
     }
@@ -168,14 +131,17 @@ export class ReadController {
         const baseUri = getBaseUri(request);
         this.#logger.debug('getProcessRoles: processId=%s, userId=%s', processId, userId);
 
+        // Abrufen der Rollen
         const rolePayload: RolePayload = await this.#service.findProcessRoles(processId, userId);
+
+        // HATEOAS-Links hinzufügen
         rolePayload._links = this.#createHateoasLinks(baseUri, rolePayload, processId, userId);
         return rolePayload;
     }
 
     /**
      * Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
-     * @param {string} collection - Die Ziel-Entität (z. B. USERS, FUNCTIONS).
+     * @param {string} entityType - Die Ziel-Entität (z. B. USERS, MANDATES).
      * @param {FilterInputDTO} filter - Die Filterbedingungen.
      * @returns {Promise<any[]>} - Die gefilterten Daten.
      * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
@@ -208,30 +174,70 @@ export class ReadController {
     @ApiParam({
         name: 'collection',
         required: true,
-        description: 'Die Ziel-Entität, z. B. USERS, FUNCTIONS, PROCESSES.',
+        description: 'Die Ziel-Entität, z. B. USERS, MANDATES, PROCESSES.',
         example: 'USERS',
     })
     async getData(
-        @Param('entity') collection: string,
-        @Query() filter: FilterInputDTO,
-    ): Promise<any[]> {
-        this.validateEntity(collection);
-        this.#logger.debug('getData: collection=%s, filter=%o', collection, filter);
+        @Req() request: Request,
+        @Param('entity') entityType: EntityCategoryType,
+        @Query('field') field?: FilterField,
+        @Query('operator') operator?: FilterOperator,
+        @Query('value') value?: string,
+        @Query('limit') limit = DEFAULT_LIMIT, // Standardwert für limit
+        @Query('offset') offset = 0, // Standardwert für offset
+    ): Promise<DataPayload> {
+        const baseUri = getBaseUri(request);
+        this.#logger.debug('getData: baseUri=%s', baseUri);
+        this.#logger.debug(
+            'getEntityData: entity=%s, field=%s, operator=%s, value=%s, limit=%s, offset=%s',
+            entityType,
+            field,
+            operator,
+            value,
+            limit,
+            offset,
+        );
 
-        return await this.#service.findData(collection, filter);
-    }
-
-    /**
-     * Validiert, ob die angegebene Entität unterstützt wird.
-     * @param {string} collection - Die zu validierende Entität.
-     * @throws {BadRequestException} - Wenn die Entität nicht unterstützt wird.
-     */
-    private validateEntity(collection: string): void {
-        if (!SUPPORTED_ENTITIES.includes(collection as SupportedEntities)) {
-            throw new BadRequestException(
-                `Nicht unterstützte Entität: ${collection}. Unterstützte Entitäten sind: ${SUPPORTED_ENTITIES.join(', ')}`,
-            );
+        if (!entityType) {
+            throw new BadRequestException('Entity parameter is required.');
         }
+
+        // Erstellen von Filtern, wenn field, operator und value angegeben sind
+        // Filter erstellen, falls notwendig
+        // eslint-disable-next-line @stylistic/operator-linebreak
+        const filters: FilterInput[] =
+            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+            field && operator && value ? [{ field, operator, value }] : [];
+
+        const pagination = { limit, offset };
+
+        // Abrufen der Daten
+        const rawData = await this.#service.findData(entityType, filters, pagination);
+
+        // Prüfen, ob Daten vorhanden sind
+        if (rawData === undefined || rawData.length === 0) {
+            this.#logger.warn('Keine Daten gefunden für die Anfrage.');
+            return { datas: [], totalCount: 0 };
+        }
+
+        // Erstellen von Self-Links für jedes Objekt
+        // Strukturierte Ergebnisse mit Self-Links erstellen
+        const dataWithLinks: DataResult[] = rawData.map((item) => ({
+            data: item,
+            _links: {
+                self: {
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    href: `${baseUri}?field=_id&operator=EQ&value=${item._id}`,
+                } as Link,
+            },
+        }));
+
+        this.#logger.debug('getData: data=%o, totalCount=%s', dataWithLinks, rawData.length);
+
+        return {
+            datas: dataWithLinks,
+            totalCount: rawData.length,
+        };
     }
 
     /**
@@ -249,6 +255,12 @@ export class ReadController {
         processId: string,
         userId: string,
     ): Links {
+        this.#logger.debug(
+            '#createHateoasLinks: baseUri=%s, processId=%s, userId=%s',
+            baseUri,
+            processId,
+            userId,
+        );
         const links: Links = {
             self: {
                 href: `${baseUri}/process-roles?processId=${processId}&userId=${userId}`,
@@ -257,29 +269,26 @@ export class ReadController {
 
         // Iteriere über alle Rollen im Payload
         for (const role of rolePayload.roles) {
-            const roleLinkName = role.roleName.toLowerCase();
-            this.#logger.debug('roleLinkName=%s', roleLinkName);
-
+            const roleLinkName = role.roleName;
+            this.#logger.debug('#createHateoasLinks: roleLinkName=%s', roleLinkName);
             // Erstelle den Link für die gesamte Rolle
             if (!links[roleLinkName]) {
                 links[roleLinkName] = {};
             }
-            this.#logger.debug('roleLinkName=%s', roleLinkName);
 
             // Iteriere über alle Benutzer in der Rolle
             for (const user of role.users) {
-                const userLinkName = user.userId; // Verwende die userId als Schlüssel
-                this.#logger.debug('userLinkName=%s', userLinkName);
-
+                this.#logger.debug('#createHateoasLinks: user=%o', user);
+                const userLinkName = user.user?.userId; // Verwende die userId als Schlüssel
+                this.#logger.debug('#createHateoasLinks: userLinkName=%s', userLinkName);
                 // Füge den Link für den Benutzer hinzu
                 if (!(links[roleLinkName] as Record<string, Link>)[userLinkName]) {
                     (links[roleLinkName] as Record<string, Link>)[userLinkName] = {
-                        href: `${baseUri}/USERS/data?field=userId&operator=EQ&value=${user.userId}`,
+                        href: `${baseUri}/USERS/data?field=userId&operator=EQ&value=${user.user?.userId}`,
                     };
                 }
             }
         }
-
         return links;
     }
 }

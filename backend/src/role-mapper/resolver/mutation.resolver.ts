@@ -1,49 +1,131 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable security/detect-object-injection */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
+import { getLogger } from '../../logger/logger.js';
+import { CreateEntityInput } from '../model/dto/create.dto.js';
+import { DeleteEntityInput } from '../model/dto/delete.dto.js';
+import { UpdateEntityInput } from '../model/dto/update.dto.js';
+import { CreateDataInput } from '../model/input/create.input.js';
+import { UpdateDataInput } from '../model/input/update.input.js';
+import { MutationPayload } from '../model/payload/mutation.payload.js';
 import { WriteService } from '../service/write.service.js';
-import { MutationInput } from './mutation.input.js';
-import { MutationResponse } from './mutation.response.js';
 
 @Resolver()
 @Injectable()
 export class MutationResolver {
-    constructor(private readonly service: WriteService) {}
+    readonly #logger = getLogger(MutationResolver.name);
+    readonly #service: WriteService;
+    constructor(service: WriteService) {
+        this.#service = service;
+    }
 
     /**
      * Führt eine Mutation basierend auf den Eingabeparametern aus.
      * @param {MutationInput} input - Die Eingabeparameter für die Mutation.
-     * @returns {Promise<MutationResponse>} - Die Antwort der Mutation.
+     * @returns {Promise<MutationPayload>} - Die Antwort der Mutation.
      */
-    @Mutation(() => MutationResponse)
+    /**
+     * Erstellt eine neue Entität in der Datenbank.
+     */
+    @Mutation('createEntity')
     @Public()
-    async executeMutation(@Args('input') input: MutationInput): Promise<MutationResponse> {
-        const { entity, operation, data, filter } = input;
+    async createEntity(@Args('input') input: CreateEntityInput): Promise<MutationPayload> {
+        this.#logger.debug('createEntity: input=%o', input);
+        const { entity, userData, functionData, processData, orgUnitData, roleData } = input;
 
         try {
-            let result;
+            // Map zur Zuordnung von Entitäten zu den jeweiligen Daten
+            const entityDataMap: Record<string, CreateDataInput | undefined> = {
+                USERS: userData,
+                MANDATES: functionData,
+                PROCESSES: processData,
+                ORG_UNITS: orgUnitData,
+                ROLES: roleData,
+            };
 
-            switch (operation) {
-                case 'CREATE': {
-                    result = await this.service.createEntity(entity, data);
-                    break;
-                }
+            const data = entityDataMap[entity];
 
-                case 'UPDATE': {
-                    result = await this.service.updateEntity(entity, filter, data);
-                    break;
-                }
+            // Validierung der Eingabe
+            if (!entity) throw new Error('Entity type must be provided');
+            if (!data) throw new Error(`Missing data for entity type: ${entity}`);
 
-                case 'DELETE': {
-                    result = await this.service.deleteEntity(entity, filter);
-                    break;
-                }
-            }
+            // Erstellung der Entität basierend auf der dynamischen Zuordnung
+            const result = await this.#service.createEntity(entity, data);
 
+            // Rückgabe des Ergebnisses
             return {
                 success: true,
-                message: `${operation} operation successful.`,
+                message: `Create operation successful.`,
                 result,
+            };
+        } catch (error) {
+            this.#logger.error('createEntity: Error occurred: %o', error);
+            return {
+                success: false,
+                message: (error as Error).message,
+                result: undefined,
+            };
+        }
+    }
+
+    /**
+     * Aktualisiert eine bestehende Entität in der Datenbank.
+     */
+    @Public()
+    @Mutation('updateEntity')
+    async updateEntity(@Args('input') input: UpdateEntityInput): Promise<MutationPayload> {
+        this.#logger.debug('updateEntity: input=%o', input);
+        // eslint-disable-next-line @stylistic/operator-linebreak
+        const { entity, filters, userData, functionData, processData, orgUnitData, roleData } =
+            input;
+        try {
+            // Map zur Zuordnung von Entitäten zu den jeweiligen Daten
+            const entityDataMap: Record<string, UpdateDataInput | undefined> = {
+                USERS: userData,
+                MANDATES: functionData,
+                PROCESSES: processData,
+                ORG_UNITS: orgUnitData,
+                ROLES: roleData,
+            };
+
+            const data = entityDataMap[entity];
+
+            // Validierung der Eingabe
+            if (!entity) throw new Error('Entity type must be provided');
+            if (!data) throw new Error(`Missing data for entity type: ${entity}`);
+            const result = await this.#service.updateEntity(entity, filters, data);
+            return {
+                success: result.success,
+                message: result.message,
+                affectedCount: result.modifiedCount,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: (error as Error).message,
+                result: undefined,
+            };
+        }
+    }
+
+    /**
+     * Löscht eine bestehende Entität aus der Datenbank.
+     */
+    @Public()
+    @Mutation('deleteEntity')
+    async deleteEntity(@Args('input') input: DeleteEntityInput): Promise<MutationPayload> {
+        this.#logger.debug('deleteEntity: input=%o', input);
+        const { entity, filters } = input;
+
+        try {
+            const result = await this.#service.deleteEntity(entity, filters);
+            return {
+                success: result.success,
+                message: result.message,
+                affectedCount: result.deletedCount,
             };
         } catch (error) {
             return {

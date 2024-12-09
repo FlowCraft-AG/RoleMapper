@@ -3,7 +3,10 @@
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import type { RolePayload, RoleResult } from '../../src/role-mapper/controller/read.controller.js';
+import type {
+    RolePayload,
+    RoleResult,
+} from '../../src/role-mapper/model/payload/role-payload.type.js';
 import {
     EXPECTED_RESULTS,
     INVALID_TEST_DATA,
@@ -60,13 +63,13 @@ describe('get Process Roles REST', () => {
         expect(user).toBeDefined();
         expect(user?.roleName).toBe(ROLES.ROLE_1);
         expect(user?.users.length).toBe(1);
-        expect(user?.users[0]?.userId).toBe(employee.userId);
+        expect(user?.users[0]?.user?.userId).toBe(employee.userId);
         expect(user?.users[0]?.functionName).toBe(employee.functionName);
 
         expect(leiter).toBeDefined();
         expect(leiter?.roleName).toBe(ROLES.ROLE_2);
         expect(leiter?.users.length).toBe(1);
-        expect(leiter?.users[0]?.userId).toBe(employee.leiter);
+        expect(leiter?.users[0]?.user?.userId).toBe(employee.leiter);
         expect(leiter?.users[0]?.functionName).toBe(employee.functionNameLeiter);
     });
 
@@ -90,13 +93,13 @@ describe('get Process Roles REST', () => {
         expect(user).toBeDefined();
         expect(user?.roleName).toBe(ROLES.ROLE_1);
         expect(user?.users.length).toBe(1);
-        expect(user?.users[0]?.userId).toBe(employee.userId);
+        expect(user?.users[0]?.user?.userId).toBe(employee.userId);
         expect(user?.users[0]?.functionName).toBe(employee.functionName);
 
         expect(leiter).toBeDefined();
         expect(leiter?.roleName).toBe(ROLES.ROLE_2);
         expect(leiter?.users.length).toBe(1);
-        expect(leiter?.users[0]?.userId).toBe(employee.leiter);
+        expect(leiter?.users[0]?.user?.userId).toBe(employee.leiter);
         expect(leiter?.users[0]?.functionName).toBe(employee.functionNameLeiter);
     });
 
@@ -121,15 +124,15 @@ describe('get Process Roles REST', () => {
         expect(rechnungsPrüfer).toBeDefined();
         expect(rechnungsPrüfer?.roleName).toBe(ROLES.ROLE_3);
         expect(rechnungsPrüfer?.users.length).toBe(1);
-        expect(rechnungsPrüfer?.users[0]?.userId).toBe(employee.rechnungsPrüfer);
+        expect(rechnungsPrüfer?.users[0]?.user?.userId).toBe(employee.rechnungsPrüfer);
 
         expect(finanzAbteilung).toBeDefined();
         expect(finanzAbteilung?.roleName).toBe(ROLES.ROLE_4);
         expect(finanzAbteilung?.users.length).toBe(employee.finanzAbteilung.length);
-        expect(finanzAbteilung?.users[0]?.userId).toBe(employee.finanzAbteilung[0]);
-        expect(finanzAbteilung?.users[1]?.userId).toBe(employee.finanzAbteilung[1]);
-        expect(finanzAbteilung?.users[2]?.userId).toBe(employee.finanzAbteilung[2]);
-        expect(finanzAbteilung?.users[3]?.userId).toBe(employee.finanzAbteilung[3]);
+        expect(finanzAbteilung?.users[0]?.user?.userId).toBe(employee.finanzAbteilung[0]);
+        expect(finanzAbteilung?.users[1]?.user?.userId).toBe(employee.finanzAbteilung[1]);
+        expect(finanzAbteilung?.users[2]?.user?.userId).toBe(employee.finanzAbteilung[2]);
+        expect(finanzAbteilung?.users[3]?.user?.userId).toBe(employee.finanzAbteilung[3]);
     });
 
     // -------------------------------------------------------------------------
