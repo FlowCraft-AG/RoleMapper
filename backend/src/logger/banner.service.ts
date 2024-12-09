@@ -21,11 +21,12 @@ export class BannerService implements OnApplicationBootstrap {
      * Beim Bootstrap der Anwendung Informationen und ein Banner ausgeben.
      */
     async onApplicationBootstrap() {
+        // Sicherstellen, dass nodeConfig nicht null ist
         const { host, nodeEnv, port, databaseName } = nodeConfig;
 
         try {
             // Banner generieren und mit Farben ausgeben
-            const banner = (await figletAsync('RoleMapper')) as string;
+            const banner = (await figletAsync('RoleMapper'))!;
             this.#logger.info(chalk.blueBright(`\n${banner}`)); // Banner in Blau
         } catch (error) {
             this.#logger.error(chalk.red('Fehler beim Generieren des Banners mit figlet:'), error);
@@ -35,7 +36,7 @@ export class BannerService implements OnApplicationBootstrap {
         this.#logger.info(chalk.green('=== Anwendungsinformationen ==='));
         this.#logger.info(chalk.cyan('Anwendungsname: ') + chalk.yellow('RoleMapper'));
         this.#logger.info(chalk.cyan('Node.js-Version: ') + chalk.yellow(process.version));
-        this.#logger.info(chalk.cyan('Umgebung: ') + chalk.yellow(nodeEnv));
+        this.#logger.info(chalk.cyan('Umgebung: ') + chalk.yellow(nodeEnv!)); // non-null assertion
         this.#logger.info(chalk.cyan('Host: ') + chalk.yellow(host));
         this.#logger.info(chalk.cyan('Port: ') + chalk.yellow(port.toString()));
         this.#logger.info(chalk.cyan('Datenbank: ') + chalk.yellow(databaseName));
