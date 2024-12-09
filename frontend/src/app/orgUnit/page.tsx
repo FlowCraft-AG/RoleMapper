@@ -1,8 +1,7 @@
-import BookList from "./OrgList";
 import Navigation from "@/src/components/Navigation";
 
 
-export default function HomePage() {
+export default function OrgPage() {
   return (
     <div>
       <header>
