@@ -2,368 +2,205 @@ import {
     BadRequestException,
     Body,
     Controller,
+    Delete,
+    Param,
     Post,
-    UseGuards,
+    Put,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard, Roles } from 'nest-keycloak-connect';
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiOperation,
+    ApiParam,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
+import { Public } from 'nest-keycloak-connect';
+import { paths } from '../../config/paths.js';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { MutationInput } from '../resolver/mutation.input.js';
-import { MutationResponse } from '../resolver/mutation.response.js';
-import { ReadService } from '../service/read.service.js';
+import { UpdateEntityInput } from '../model/dto/update.dto.js';
+import { EntityCategoryType } from '../model/entity/entities.entity.js';
+import { CreateDataInput } from '../model/input/create.input.js';
+import { FilterInput } from '../model/input/filter.input.js';
+import { UpdateDataInput } from '../model/input/update.input.js';
+import { MutationPayload } from '../model/payload/mutation.payload.js';
 import { WriteService } from '../service/write.service.js';
 
-/**
- * Controller für Schreiboperationen (CREATE, UPDATE, DELETE) auf Entitäten.
- *
- * @class
- * @classdesc Diese Klasse stellt Endpunkte für die Ausführung von Mutationen bereit.
- *
- * @example
- * // Beispiel für eine CREATE Operation
- * const input = {
- *   entity: 'FUNCTIONS',
- *   operation: 'CREATE',
- *   data: {
- *     functionName: 'Macher',
- *     users: 'gyca1011',
- *     orgUnit: 'Stundent',
- *   },
- * };
- * const response = await writeController.executeData(input);
- *
- * @example
- * // Beispiel für eine UPDATE Operation
- * const input = {
- *   entity: 'FUNCTIONS',
- *   operation: 'UPDATE',
- *   data: {
- *     functionName: 'IT Macher',
- *     users: ['gyca1011', 'kwin0101'],
- *     orgUnit: 'Stundent X',
- *   },
- *   filter: {
- *     field: 'functionName',
- *     operator: 'EQ',
- *     value: 'Macher',
- *   },
- * };
- * const response = await writeController.executeData(input);
- *
- * @example
- * // Beispiel für eine DELETE Operation
- * const input = {
- *   entity: 'FUNCTIONS',
- *   operation: 'DELETE',
- *   data: {
- *     functionName: 'Macher',
- *     users: 'gyca1011',
- *     orgUnit: 'Stundent',
- *   },
- *   filter: {
- *     field: 'functionName',
- *     operator: 'EQ',
- *     value: 'IT Macher',
- *   },
- * };
- * const response = await writeController.executeData(input);
- *
- * @see {@link MutationInput}
- * @see {@link MutationResponse}
- */
-/**
- * @swagger
- * tags:
- *   - name: Write
- *     description: Endpoints for performing mutations (CREATE, UPDATE, DELETE)
- *
- * @swagger
- * /:
- *   post:
- *     summary: Führt eine Mutation aus (CREATE, UPDATE, DELETE)
- *     description: Führt eine Mutation für eine angegebene Entität aus. Unterstützte Operationen sind: CREATE, UPDATE, DELETE.
- *     tags: [Write]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       description: Eingabeparameter für die Mutation
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/MutationInput'
- *           examples:
- *             create:
- *               summary: CREATE Operation
- *               value:
- *                 entity: 'FUNCTIONS'
- *                 operation: 'CREATE'
- *                 data:
- *                   functionName: 'Macher'
- *                   users: 'gyca1011'
- *                   orgUnit: 'Stundent'
- *             update:
- *               summary: UPDATE Operation
- *               value:
- *                 entity: 'FUNCTIONS'
- *                 operation: 'UPDATE'
- *                 data:
- *                   functionName: 'IT Macher'
- *                   users: ['gyca1011', 'kwin0101']
- *                   orgUnit: 'Stundent X'
- *                 filter:
- *                   field: 'functionName'
- *                   operator: 'EQ'
- *                   value: 'Macher'
- *             delete:
- *               summary: DELETE Operation
- *               value:
- *                 entity: 'FUNCTIONS'
- *                 operation: 'DELETE'
- *                 data:
- *                   functionName: 'Macher'
- *                   users: 'gyca1011'
- *                   orgUnit: 'Stundent'
- *                 filter:
- *                   field: 'functionName'
- *                   operator: 'EQ'
- *                   value: 'IT Macher'
- *     responses:
- *       200:
- *         description: Erfolgreiche Mutation
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/MutationResponse'
- *             examples:
- *               create:
- *                 summary: Erfolgreiches CREATE
- *                 value:
- *                   success: true
- *                   message: 'CREATE Operation erfolgreich.'
- *                   result:
- *                     functionName: 'Macher'
- *                     users: ['gyca1011']
- *                     orgUnit: 'Stundent'
- *                     _id: '674b7fc8a348e76ef9eeb159'
- *                     __v: 0
- *               update:
- *                 summary: Erfolgreiches UPDATE
- *                 value:
- *                   success: true
- *                   message: 'UPDATE Operation erfolgreich.'
- *                   result:
- *                     acknowledged: true
- *                     modifiedCount: 1
- *                     upsertedId: null
- *                     upsertedCount: 0
- *                     matchedCount: 1
- *               delete:
- *                 summary: Erfolgreiches DELETE
- *                 value:
- *                   success: true
- *                   message: 'DELETE Operation erfolgreich.'
- *                   result:
- *                     acknowledged: true
- *                     deletedCount: 1
- *       400:
- *         description: Ungültige Eingabeparameter
- *         content:
- *           application/json:
- *             examples:
- *               error:
- *                 summary: Ungültige Operation
- *                 value:
- *                   success: false
- *                   message: 'Nicht unterstützte Operation: INVALID_OPERATION'
- *                   result: null
- *       401:
- *         description: Nicht autorisiert
- *       500:
- *         description: Interner Serverfehler
- */
-@ApiTags('Write')
-@Controller()
-@UseInterceptors(ResponseTimeInterceptor)
+@ApiTags('Role Mapper Write-API')
+@Controller(paths.roleMapper)
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
+@UseInterceptors(ResponseTimeInterceptor)
 export class WriteController {
-    readonly #logger = getLogger(ReadService.name);
-
+    readonly #logger = getLogger(WriteController.name);
     readonly #service: WriteService;
-
     constructor(writeService: WriteService) {
         this.#service = writeService;
     }
 
     /**
-     * Führt eine Mutation basierend auf den Eingabeparametern aus.
-     *
-     * @param {MutationInput} input - Die Eingabeparameter für die Mutation.
-     * @returns {Promise<MutationResponse>} - Die Antwort der Mutation.
+     * Erstellen einer neuen Entität.
+     * @param entityType Die Zielentität (z.B. USERS, ROLES).
+     * @param body Die zu erstellenden Daten.
+     * @returns Erfolgs- oder Fehlermeldung.
      */
-    @Post()
-    @Roles({ roles: ['admin'] })
+    @Post(':entity')
     @ApiOperation({
-        summary: 'Führt eine Mutation aus (CREATE, UPDATE, DELETE)',
-        description:
-            'Führt eine Mutation für eine angegebene Entität aus. Unterstützte Operationen sind: CREATE, UPDATE, DELETE.',
+        summary: 'Erstellt eine neue Entität.',
+        description: 'Erstellt eine neue Entität in der angegebenen Collection.',
+    })
+    @ApiParam({
+        name: 'entity',
+        required: true,
+        description: 'Die Ziel-Entität, z.B. USERS, MANDATES, PROCESSES.',
+        example: 'USERS',
     })
     @ApiBody({
-        description: 'Eingabeparameter für die Mutation',
-        type: MutationInput,
-        examples: {
-            create: {
-                summary: 'CREATE Operation',
-                value: {
-                    entity: 'FUNCTIONS',
-                    operation: 'CREATE',
-                    data: {
-                        functionName: 'Macher',
-                        users: 'gyca1011',
-                        orgUnit: 'Stundent',
-                    },
-                },
-            },
-            update: {
-                summary: 'UPDATE Operation',
-                value: {
-                    entity: 'FUNCTIONS',
-                    operation: 'UPDATE',
-                    data: {
-                        functionName: 'IT Macher',
-                        users: ['gyca1011', 'kwin0101'],
-                        orgUnit: 'Stundent X',
-                    },
-                    filter: {
-                        field: 'functionName',
-                        operator: 'EQ',
-                        value: 'Macher',
-                    },
-                },
-            },
-            delete: {
-                summary: 'DELETE Operation',
-                value: {
-                    entity: 'FUNCTIONS',
-                    operation: 'DELETE',
-                    data: {
-                        functionName: 'Macher',
-                        users: 'gyca1011',
-                        orgUnit: 'Stundent',
-                    },
-                    filter: {
-                        field: 'functionName',
-                        operator: 'EQ',
-                        value: 'IT Macher',
-                    },
-                },
-            },
-        },
+        description: 'Daten für die neue Entität.',
     })
     @ApiResponse({
-        status: 200,
-        description: 'Erfolgreiche Mutation',
-        type: MutationResponse,
-        examples: {
-            create: {
-                summary: 'Erfolgreiches CREATE',
-                value: {
-                    success: true,
-                    message: 'CREATE Operation erfolgreich.',
-                    result: {
-                        functionName: 'Macher',
-                        users: ['gyca1011'],
-                        orgUnit: 'Stundent',
-                        _id: '674b7fc8a348e76ef9eeb159',
-                        // eslint-disable-next-line @typescript-eslint/naming-convention
-                        __v: 0,
-                    },
-                },
-            },
-            update: {
-                summary: 'Erfolgreiches UPDATE',
-                value: {
-                    success: true,
-                    message: 'UPDATE Operation erfolgreich.',
-                    result: {
-                        acknowledged: true,
-                        modifiedCount: 1,
-                        upsertedId: undefined,
-                        upsertedCount: 0,
-                        matchedCount: 1,
-                    },
-                },
-            },
-            delete: {
-                summary: 'Erfolgreiches DELETE',
-                value: {
-                    success: true,
-                    message: 'DELETE Operation erfolgreich.',
-                    result: {
-                        acknowledged: true,
-                        deletedCount: 1,
-                    },
-                },
-            },
-        },
+        status: 201,
+        description: 'Die Entität wurde erfolgreich erstellt.',
     })
     @ApiResponse({
         status: 400,
-        description: 'Ungültige Eingabeparameter',
-        examples: {
-            error: {
-                summary: 'Ungültige Operation',
-                value: {
-                    success: false,
-                    message: 'Nicht unterstützte Operation: INVALID_OPERATION',
-                    result: undefined,
-                },
-            },
-        },
+        description: 'Ungültige Parameter oder Eingabedaten.',
     })
-    @ApiResponse({
-        status: 401,
-        description: 'Nicht autorisiert',
-    })
-    @ApiResponse({
-        status: 500,
-        description: 'Interner Serverfehler',
-    })
-    async executeData(@Body() input: MutationInput): Promise<MutationResponse> {
-        this.#logger.debug('executeData: input=%o', input);
-        const { entity, operation, data, filter } = input;
-
+    @Public()
+    async createEntity(
+        @Param('entity') entityType: EntityCategoryType,
+        @Body() body: CreateDataInput,
+    ): Promise<MutationPayload> {
+        if (!entityType || body === undefined) {
+            throw new BadRequestException('Entity type and data are required.');
+        }
         try {
-            let result;
+            // Erstellung der Entität basierend auf der dynamischen Zuordnung
+            const result = await this.#service.createEntity(entityType, body);
 
-            switch (operation) {
-                case 'CREATE': {
-                    result = await this.#service.createEntity(entity, data);
-                    break;
-                }
-
-                case 'UPDATE': {
-                    result = await this.#service.updateEntity(entity, filter, data);
-                    break;
-                }
-
-                case 'DELETE': {
-                    result = await this.#service.deleteEntity(entity, filter);
-                    break;
-                }
-            }
-
+            // Rückgabe des Ergebnisses
             return {
                 success: true,
-                message: `${operation} Operation erfolgreich.`,
+                message: `Create operation successful.`,
                 result,
             };
         } catch (error) {
-            this.#logger.error('executeData: Fehler bei der Ausführung der Operation: %o', error);
-            throw new BadRequestException((error as Error).message);
+            this.#logger.error('createEntity: Error occurred: %o', error);
+            return {
+                success: false,
+                message: (error as Error).message,
+                result: undefined,
+            };
+        }
+    }
+
+    /**
+     * Aktualisieren einer bestehenden Entität.
+     * @param entityType Die Zielentität.
+     * @param body Die zu aktualisierenden Daten.
+     * @returns Erfolgs- oder Fehlermeldung.
+     */
+    @Put(':entity')
+    @Public()
+    @ApiOperation({
+        summary: 'Aktualisiert eine bestehende Entität.',
+        description: 'Aktualisiert eine bestehende Entität in der angegebenen Collection.',
+    })
+    @ApiParam({
+        name: 'entity',
+        required: true,
+        description: 'Die Ziel-Entität, z.B. USERS, MANDATES.',
+        example: 'USERS',
+    })
+    @ApiBody({
+        description: 'Daten für die Aktualisierung.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Die Entität wurde erfolgreich aktualisiert.',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'Ungültige Parameter oder Eingabedaten.',
+    })
+    async updateEntity(
+        @Param('entity') entityType: EntityCategoryType,
+        @Body() body: UpdateEntityInput,
+    ): Promise<MutationPayload> {
+        this.#logger.debug('updateEntity: input=%o', { entityType, body });
+        if (!entityType || body === undefined) {
+            throw new BadRequestException('Entity type and update data are required.');
+        }
+        try {
+            const filters: FilterInput[] = body.filters;
+            const data: UpdateDataInput | undefined = body.data;
+            this.#logger.debug('updateEntity: filters=%o, data=%o', filters, data);
+            const result = await this.#service.updateEntity(entityType, filters, data);
+            return {
+                success: result.success,
+                message: result.message,
+                affectedCount: result.modifiedCount,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: (error as Error).message,
+                result: undefined,
+            };
+        }
+    }
+
+    /**
+     * Löschen einer Entität.
+     * @param entityType Die Zielentität.
+     * @param body Die Filterkriterien für das Löschen.
+     * @returns Erfolgs- oder Fehlermeldung.
+     */
+    @Delete(':entity')
+    @Public()
+    @ApiOperation({
+        summary: 'Löscht eine Entität.',
+        description: 'Löscht eine Entität basierend auf den angegebenen Kriterien.',
+    })
+    @ApiParam({
+        name: 'entity',
+        required: true,
+        description: 'Die Ziel-Entität, z.B. USERS, ROLES.',
+        example: 'USERS',
+    })
+    @ApiBody({
+        description: 'Filterkriterien für das Löschen.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Die Entität wurde erfolgreich gelöscht.',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'Ungültige Parameter oder Filterkriterien.',
+    })
+    async deleteEntity(
+        @Param('entity') entityType: EntityCategoryType,
+        @Body() body: FilterInput[],
+    ): Promise<MutationPayload> {
+        this.#logger.debug('deleteEntity: input=%o', { entityType, body });
+        if (!entityType || body === undefined) {
+            throw new BadRequestException('Entity type and delete criteria are required.');
+        }
+        try {
+            const result = await this.#service.deleteEntity(entityType, body);
+            return {
+                success: result.success,
+                message: result.message,
+                affectedCount: result.deletedCount,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: (error as Error).message,
+                result: undefined,
+            };
         }
     }
 }
