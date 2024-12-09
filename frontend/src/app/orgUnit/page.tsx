@@ -1,11 +1,16 @@
 import BookList from "./OrgList";
+import Navigation from "@/src/components/Navigation";
 
 
 export default function HomePage() {
   return (
-    <main>
-      <h1>Welcome to the Book Library</h1>
-      <BookList />
-    </main>
+    <div>
+      <header>
+        <Navigation />
+      </header>
+      <main>
+        <h3>Organisationseinheiten der Hochschule Karlsruhe</h3>
+      </main>
+    </div>
   );
 }
