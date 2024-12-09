@@ -11,7 +11,7 @@ interface OrgUnit {
 
 const GET_ORG_UNITS = gql`
   query GetOrgUnits {
-    getData(entity: ORG_UNITS) 
+    getData(entity: ORG_UNITS)
   }
 `;
 
