@@ -1,15 +1,15 @@
-import { Function, FUNCTION_SCHEMA } from './function.entity.js';
-import { ORG_UNIT_SCHEMA, OrgUnit } from './org-unit.entity.js';
-import { Process, PROCESS_SCHEMA } from './process.entity.js';
-import { Role, ROLE_SCHEMA } from './roles.entity.js';
-import { User, USER_SCHEMA } from './user.entity.js';
+import { MANDATE_SCHEMA, type MandateDocument, Mandates } from './mandates.entity.js';
+import { ORG_UNIT_SCHEMA, OrgUnit, type OrgUnitDocument } from './org-unit.entity.js';
+import { Process, PROCESS_SCHEMA, type ProcessDocument } from './process.entity.js';
+import { Role, ROLE_SCHEMA, type RoleDocument } from './roles.entity.js';
+import { User, USER_SCHEMA, type UserDocument } from './user.entity.js';
 
 /**
  * Definiert eine Mongoose-Entität und deren Schema.
  */
 type EntitySchema = {
     name: string;
-    schema: CollectionSchema;
+    schema: EntitySchemaType;
 };
 
 /**
@@ -31,7 +31,7 @@ type EntitySchema = {
  */
 const entitySchemas: EntitySchema[] = [
     { name: User.name, schema: USER_SCHEMA },
-    { name: Function.name, schema: FUNCTION_SCHEMA },
+    { name: Mandates.name, schema: MANDATE_SCHEMA },
     { name: OrgUnit.name, schema: ORG_UNIT_SCHEMA },
     { name: Process.name, schema: PROCESS_SCHEMA },
     { name: Role.name, schema: ROLE_SCHEMA },
@@ -45,53 +45,18 @@ export const entities = entitySchemas.map(({ name, schema }) => ({
     schema,
 }));
 
-/**
- * Eine Liste der unterstützten Entitäten für dynamische Abfragen.
- * Diese Entitäten werden für Validierungszwecke und Typensicherheit verwendet.
- *
- * - `USERS`: Repräsentiert Benutzerinformationen.
- * - `FUNCTIONS`: Repräsentiert Funktionen innerhalb der Organisation.
- * - `PROCESSES`: Repräsentiert Prozesse, die dynamisch abgefragt werden können.
- * - `ROLES`: Repräsentiert Rollen, die bestimmten Prozessen zugeordnet sind.
- * - `ORG_UNITS`: Repräsentiert organisatorische Einheiten.
- *
- * **Wartungshinweis:**
- * - Neue Entitäten können einfach zu diesem Array hinzugefügt werden.
- * - Der Typ `SupportedEntities` wird automatisch synchronisiert, um die neuen Werte zu berücksichtigen.
- */
-export const SUPPORTED_ENTITIES = [
-    'USERS',
-    'FUNCTIONS',
-    'PROCESSES',
-    'ROLES',
-    'ORG_UNITS',
-] as const;
-
-/**
- * Typdefinition für unterstützte Entitäten.
- * Dieser Typ wird dynamisch aus der Liste `SUPPORTED_ENTITIES` generiert.
- *
- * **Vorteile:**
- * - Bietet strikte Typprüfung für dynamische Abfragen.
- * - Stellt sicher, dass nur gültige Entitäten verwendet werden können.
- *
- * **Beispiel:**
- * ```typescript
- * function validateEntity(entity: SupportedEntities) {
- *
- * }
- * validateEntity('USERS'); // ✅ Gültig
- * validateEntity('INVALID'); // ❌ Fehler bei der Kompilierung
- * ```
- */
-export type SupportedEntities = (typeof SUPPORTED_ENTITIES)[number];
-
-export type Collections = User | Function | OrgUnit | Process | Role;
-export type CollectionSchema =
+export type EntityType = User | Mandates | OrgUnit | Process | Role;
+export type EntitySchemaType =
     | typeof USER_SCHEMA
-    | typeof FUNCTION_SCHEMA
+    | typeof MANDATE_SCHEMA
     | typeof ORG_UNIT_SCHEMA
     | typeof PROCESS_SCHEMA
     | typeof ROLE_SCHEMA;
 
-export type GetData = User[] | Function[] | OrgUnit[] | Process[] | Role[];
+export type EntityCategoryType = 'USERS' | 'MANDATES' | 'PROCESSES' | 'ROLES' | 'ORG_UNITS';
+export type EntityDocument =
+    | UserDocument
+    | MandateDocument
+    | ProcessDocument
+    | RoleDocument
+    | OrgUnitDocument;

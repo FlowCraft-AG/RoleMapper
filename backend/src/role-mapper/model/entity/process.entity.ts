@@ -5,9 +5,11 @@ import { Document } from 'mongoose';
  * Definiert das Schema für die Role-Entität innerhalb eines Prozesses.
  */
 class Role {
+    /** Schlüssel der Rolle (z. B. "Reviewer"). */
     @Prop({ required: true })
     roleKey!: string;
 
+    /** Eindeutige ID der Rolle. */
     @Prop({ required: true })
     roleId!: string;
 }
@@ -24,6 +26,7 @@ class Role {
 export class Process extends Document {
     /**
      * Der Name des Prozesses.
+     * (z. B. "Reisegenehmigung")
      *
      * @type {string}
      * @required
@@ -42,6 +45,7 @@ export class Process extends Document {
 
     /**
      * Die Rollen, die dem Prozess zugeordnet sind.
+     * Liste der Rollen, die dem Prozess zugeordnet sind.
      *
      * @type {Role[]}
      * @required

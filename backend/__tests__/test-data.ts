@@ -1,7 +1,6 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as dotenv from 'dotenv';
-import { SUPPORTED_ENTITIES } from '../src/role-mapper/model/entity/entities.entity.js';
 
 // Lade die Umgebungsvariablen aus der .env-Datei
 dotenv.config();
@@ -12,11 +11,11 @@ dotenv.config();
 
 // Verwende die Umgebungsvariablen aus der .env-Datei
 export const ENDPOINTS = {
-    USERS: `${SUPPORTED_ENTITIES[0]}`,
-    FUNCTIONS: `${SUPPORTED_ENTITIES[1]}`,
-    PROCESSES: `${SUPPORTED_ENTITIES[2]}`,
-    ROLES: `${SUPPORTED_ENTITIES[3]}`,
-    ORG_UNITS: `${SUPPORTED_ENTITIES[4]}`,
+    USERS: `USERS`,
+    MANDATES: `MANDATES`,
+    PROCESSES: `PROCESSES`,
+    ROLES: `ROLES`,
+    ORG_UNITS: `ORG_UNITS`,
 };
 
 const USER_DATA = {
@@ -39,6 +38,10 @@ const USER_DATA = {
     FUNCTION_4: process.env.FUNCTION_4 ?? 'N/A',
 };
 
+export const TEST_DATA = {
+    PAGINATION_LIMIT: Number.parseInt(process.env.PAGINATION_LIMIT ?? '10', 10),
+};
+
 export const INVALID_TEST_DATA = {
     USER: process.env.INVALID_USER,
     PROCESS: process.env.INVALID_PROCESS,
@@ -46,6 +49,7 @@ export const INVALID_TEST_DATA = {
 
 export const EXPECTED_RESULTS = {
     USERS_COUNT: Number.parseInt(process.env.USERS_COUNT ?? '0', 10),
+    USERS_COUNT_PAGE: Number.parseInt(process.env.USERS_COUNT_PAGE ?? '10', 10),
     FUNCTIONS_COUNT: Number.parseInt(process.env.FUNCTIONS_COUNT ?? '0', 10),
     PROCESSES_COUNT: Number.parseInt(process.env.PROCESSES_COUNT ?? '0', 10),
     ROLES_COUNT: Number.parseInt(process.env.ROLES_COUNT ?? '0', 10),
@@ -89,4 +93,22 @@ export const TEST_EMPLOYEE_2 = {
     functionName: USER_DATA.FUNCTION_3,
     leiter: USER_DATA.LEITER_2,
     functionNameLeiter: USER_DATA.FUNCTION_4,
+};
+
+// -----------------------------------------------------------------------------
+// Zusätzliche Testdaten für Schreib Operationen
+// -----------------------------------------------------------------------------
+
+export const TEST_MANDATES = {
+    create: {
+        functionName: 'name',
+        orgUnit: 'orgUnit',
+        type: 'asd',
+        users: ['gyca1011'],
+    },
+    update: {
+        filters: [{ field: 'functionName', operator: 'EQ', value: 'name' }],
+        data: { functionName: 'name2' },
+    },
+    delete: [{ field: 'functionName', operator: 'EQ', value: 'name2' }],
 };
