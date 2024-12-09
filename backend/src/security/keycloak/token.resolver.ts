@@ -3,7 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { BadUserInputError } from '../../role-mapper/resolver/errors.js';
+import { BadUserInputError } from '../../role-mapper/error/errors.js';
 import { KeycloakService } from './keycloak.service.js';
 
 /** Typdefinition für Token-Daten bei GraphQL */
@@ -31,7 +31,7 @@ export class TokenResolver {
         this.#keycloakService = keycloakService;
     }
 
-    @Mutation()
+    @Mutation('authenticate')
     @Public()
     async token(@Args() { username, password }: TokenInput) {
         this.#logger.debug('token: username=%s', username);
@@ -48,7 +48,7 @@ export class TokenResolver {
         return result;
     }
 
-    @Mutation()
+    @Mutation('refreshToken')
     @Public()
     async refresh(@Args() input: RefreshInput) {
         this.#logger.debug('refresh: input=%o', input);
