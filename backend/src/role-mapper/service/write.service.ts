@@ -1,46 +1,40 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
-/* eslint-disable @stylistic/operator-linebreak */
+/* eslint-disable security/detect-object-injection */
+
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-    FilterQuery,
-    Model,
-    UpdateQuery,
-    UpdateWithAggregationPipeline,
-    UpdateWriteOpResult,
-} from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
-import { DataInputDTO } from '../model/dto/data.dto.js';
-import { FilterInputDTO } from '../model/dto/filter.dto.js';
-import {
-    Collections,
-    SUPPORTED_ENTITIES,
-    SupportedEntities,
-} from '../model/entity/entities.entity.js';
-import { FunctionDocument } from '../model/entity/function.entity.js';
+import { InvalidFilterException, InvalidOperatorException } from '../error/exceptions.js';
+import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
+import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
-import { MutationResponse } from '../resolver/mutation.response.js';
+import { CreateDataInput } from '../model/input/create.input.js';
+import { FilterInput } from '../model/input/filter.input.js';
+import { UpdateDataInput } from '../model/input/update.input.js';
+import { FilterFields } from '../model/types/filter.type.js';
+import { operatorMap } from '../model/types/map.type.js';
 
 @Injectable()
 export class WriteService {
     readonly #logger = getLogger(WriteService.name);
 
-    readonly #modelMap: Record<string, Model<Collections>>;
+    readonly #modelMap: Record<string, Model<EntityType>>;
 
     constructor(
         @InjectModel(User.name) userModel: Model<UserDocument>,
         @InjectModel(Process.name) processModel: Model<ProcessDocument>,
-        @InjectModel(Function.name) functionModel: Model<FunctionDocument>,
+        @InjectModel(Mandates.name) functionModel: Model<MandateDocument>,
         @InjectModel(OrgUnit.name) orgUnitModel: Model<OrgUnitDocument>,
         @InjectModel(Role.name) roleModel: Model<RoleDocument>,
     ) {
         this.#modelMap = {
             USERS: userModel,
-            FUNCTIONS: functionModel,
+            MANDATES: functionModel,
             PROCESSES: processModel,
             ROLES: roleModel,
             ORG_UNITS: orgUnitModel,
@@ -51,24 +45,15 @@ export class WriteService {
      * Erstellt eine neue Entität.
      * @param {string} entity - Der Name der Entität.
      * @param {DataInputDTO} data - Die Daten für die neue Entität.
-     * @returns {Promise<Collections>} - Die erstellte Entität.
+     * @returns {Promise<EntityType>} - Die erstellte Entität.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async createEntity(entity: string, data: DataInputDTO | undefined): Promise<Collections> {
+
+    async createEntity(entity: EntityCategoryType, data: CreateDataInput | undefined) {
         this.#logger.debug('createEntity: entity=%s, data=%o', entity, data);
-
-        if (!SUPPORTED_ENTITIES.includes(entity as SupportedEntities)) {
-            throw new Error(`Invalid entity: ${entity}`);
-        }
-
-        const model: Model<Collections> = this.#modelMap[
-            entity as SupportedEntities
-        ] as Model<Collections> & { __v: number };
-        if (model === undefined) {
-            throw new Error(`Entity model not found for: ${entity}`);
-        }
-
-        return model.create(data);
+        const model = this.#getModel(entity);
+        const result = await model.create(data);
+        return result.toObject();
     }
 
     /**
@@ -80,16 +65,26 @@ export class WriteService {
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
     async updateEntity(
-        entity: string,
-        filter: FilterInputDTO | undefined,
-        data: UpdateWithAggregationPipeline | UpdateQuery<any> | undefined,
-    ): Promise<UpdateWriteOpResult> {
-        this.#logger.debug('updateEntity: entity=%s, filter=%o, data=%o', entity, filter, data);
-        const model = this.#modelMap[entity as SupportedEntities];
-        if (!model) throw new Error(`Unknown entity: ${entity}`);
-
-        const filterQuery = this.buildFilterQuery(filter);
-        return model.updateMany(filterQuery, data).exec();
+        entity: EntityCategoryType,
+        filters: FilterInput[],
+        data: UpdateDataInput | undefined,
+    ) {
+        this.#logger.debug('updateEntity: entity=%s, filters=%o, data=%o', entity, filters, data);
+        const model = this.#getModel(entity);
+        const filterQuery = this.#buildFilterQuery(filters);
+        const result = await model.updateMany(filterQuery, data).exec();
+        this.#logger.debug('updateEntity: result=%o', result);
+        return {
+            success: result.modifiedCount > 0,
+            message:
+                result.modifiedCount > 0
+                    ? 'Update operation successful.'
+                    : 'No documents matched the filter',
+            modifiedCount: result.modifiedCount,
+            upsertedId: result.upsertedId,
+            upsertedCount: result.upsertedCount,
+            matchedCount: result.matchedCount,
+        };
     }
 
     /**
@@ -99,21 +94,27 @@ export class WriteService {
      * @returns {Promise<any>} - Das Ergebnis der Löschung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async deleteEntity(
-        entity: string,
-        filter: FilterInputDTO | undefined,
-    ): Promise<MutationResponse> {
-        this.#logger.debug('deleteEntity: entity=%s, filter=%o', entity, filter);
-        const model = this.#modelMap[entity as SupportedEntities];
-        if (!model) throw new Error(`Unknown entity: ${entity}`);
-
-        const filterQuery = this.buildFilterQuery(filter);
+    async deleteEntity(entity: EntityCategoryType, filters: FilterInput[]) {
+        this.#logger.debug('deleteEntity: entity=%s, filters=%o', entity, filters);
+        const model = this.#getModel(entity);
+        const filterQuery = this.#buildFilterQuery(filters);
         const result = await model.deleteMany(filterQuery).exec();
         return {
             success: result.deletedCount > 0,
             message:
-                result.deletedCount > 0 ? 'Deletion successful' : 'No documents matched the filter',
+                result.deletedCount > 0
+                    ? 'Delete operation successful.'
+                    : 'No documents matched the filter',
+            deletedCount: result.deletedCount,
         };
+    }
+
+    #getModel(entity: EntityCategoryType): Model<EntityType> {
+        const model = this.#modelMap[entity];
+        if (!model) {
+            throw new BadRequestException(`Unknown entity: ${entity}`);
+        }
+        return model;
     }
 
     /**
@@ -121,42 +122,53 @@ export class WriteService {
      * @param {FilterInputDTO | undefined} filters - Die Filterkriterien.
      * @returns {FilterQuery<any>} - Die erstellte Filterabfrage.
      */
-    private buildFilterQuery(filters?: FilterInputDTO): FilterQuery<any> {
-        if (!filters) return {};
+    #buildFilterQuery(filters?: FilterInput[]): FilterQuery<any> {
+        if (!filters || filters.length === 0) {
+            this.#logger.debug('buildFilterQuery: No filters provided');
+            return {};
+        }
 
         const query: FilterQuery<any> = {};
 
-        const OPERATOR_MAP: Record<string, string> = {
-            EQ: '$eq',
-            In: '$in',
-            GTE: '$gte',
-        };
-
-        if (filters.and) {
-            query.$and = filters.and.map((subFilter) => this.buildFilterQuery(subFilter));
-        }
-        if (filters.or) {
-            query.$or = filters.or.map((subFilter) => this.buildFilterQuery(subFilter));
-        }
-        if (filters.not) {
-            query.$not = this.buildFilterQuery(filters.not);
-        }
-        if (filters.field! && filters.operator !== undefined && filters.value !== undefined) {
-            const mongoOperator = OPERATOR_MAP[filters.operator];
-            if (!mongoOperator!) {
-                throw new Error(`Invalid operator: ${filters.operator}`);
-            }
-            query[filters.field] = { [mongoOperator]: filters.value };
-        } else if (
-            filters.field! ||
-            filters.operator !== undefined ||
-            filters.value !== undefined
-        ) {
-            throw new Error(
-                `Invalid filter: field, operator, and value must all be defined for a single filter.`,
-            );
+        for (const filter of filters) {
+            this.#processFilter(query, filter);
         }
 
         return query;
+    }
+
+    #processFilter(query: FilterQuery<any>, filter: FilterInput) {
+        if (filter.and) {
+            query.$and = filter.and.map((subFilter) => this.#buildFilterQuery([subFilter]));
+        }
+        if (filter.or) {
+            query.$or = filter.or.map((subFilter) => this.#buildFilterQuery([subFilter]));
+        }
+        if (filter.not) {
+            query.$not = this.#buildFilterQuery([filter.not]);
+        }
+        if ((filter.field ?? '') && filter.operator && filter.value !== undefined) {
+            this.#addFieldFilter(query, filter);
+        } else if ((filter.field ?? '') || filter.operator || filter.value !== undefined) {
+            this.#handleIncompleteFilter(filter);
+        }
+    }
+
+    #addFieldFilter(query: FilterQuery<any>, filter: FilterInput) {
+        if (!filter.operator) {
+            this.#logger.error('Invalid operator: %s', filter.operator);
+            throw new InvalidOperatorException(filter.operator);
+        }
+        const mongoOperator = operatorMap[filter.operator];
+        query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
+    }
+
+    #handleIncompleteFilter(filter: FilterInput) {
+        this.#logger.error('Incomplete filter provided: %o', filter);
+        throw new InvalidFilterException([
+            (filter.field ?? '') ? '' : 'field',
+            filter.operator ? '' : 'operator',
+            filter.value === undefined ? 'value' : '',
+        ]);
     }
 }

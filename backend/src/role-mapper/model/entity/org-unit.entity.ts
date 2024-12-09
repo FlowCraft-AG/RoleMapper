@@ -4,6 +4,7 @@ import { Document, Types } from 'mongoose';
 /**
  * Definiert das Schema für die OrgUnit-Entität.
  */
+
 /**
  * Repräsentiert eine Organisationseinheit innerhalb des Systems.
  *
