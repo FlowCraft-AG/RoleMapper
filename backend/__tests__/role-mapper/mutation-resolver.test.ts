@@ -7,7 +7,7 @@ import type { GraphQLRequest } from '@apollo/server';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import { ENDPOINTS, TEST_MANDATES } from '../test-data.js';
+import { ENDPOINTS, TEST_MANDATES2 } from '../test-data.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 import type { GraphQLResponseBody } from './query-resolver.test.js';
 
@@ -40,7 +40,7 @@ describe('MutationResolver', () => {
     });
 
     test('[GRAPHQL] createEntity for MANDATES', async () => {
-        const createInput = TEST_MANDATES.create;
+        const createInput = TEST_MANDATES2.create;
 
         const body: GraphQLRequest = {
             query: `
@@ -103,7 +103,7 @@ describe('MutationResolver', () => {
     });
 
     test('[GRAPHQL] updateEntity for MANDATES', async () => {
-        const updateInput = TEST_MANDATES.update;
+        const updateInput = TEST_MANDATES2.update;
         const body: GraphQLRequest = {
             query: `
                 mutation UpdateEntity {
@@ -147,7 +147,7 @@ describe('MutationResolver', () => {
     });
 
     test('[GRAPHQL] deleteEntity for MANDATES', async () => {
-        const deleteInput = TEST_MANDATES.delete;
+        const deleteInput = TEST_MANDATES2.delete;
         const body: GraphQLRequest = {
             query: `
             mutation DeleteEntity {
