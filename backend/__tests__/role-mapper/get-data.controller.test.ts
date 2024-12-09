@@ -171,8 +171,6 @@ describe('RoleMapper API: get Data', () => {
                 expect(typeof entity.processId).toBe('string');
                 expect(entity).toHaveProperty('name');
                 expect(typeof entity.name).toBe('string');
-            } else {
-                throw new Error('Erwarteter Prozess, aber anderer Typ gefunden.');
             }
         }
     });
@@ -217,6 +215,8 @@ describe('RoleMapper API: get Data', () => {
             if (isRole(role)) {
                 expect(role.roleId).toBeDefined();
                 expect(role.name).toBeDefined();
+            } else {
+                throw new Error('Erwartete Rolle, aber anderer Typ gefunden.');
             }
         }
     });
