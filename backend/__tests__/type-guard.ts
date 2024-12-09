@@ -1,9 +1,10 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable @stylistic/operator-linebreak */
 import type { EntityType } from '../src/role-mapper/model/entity/entities.entity.js';
 import type { Mandates } from '../src/role-mapper/model/entity/mandates.entity.js';
-import { OrgUnit } from '../src/role-mapper/model/entity/org-unit.entity.js';
+import type { OrgUnit } from '../src/role-mapper/model/entity/org-unit.entity.js';
 import type { Process } from '../src/role-mapper/model/entity/process.entity.js';
-import { Role } from '../src/role-mapper/model/entity/roles.entity.js';
+import type { Role } from '../src/role-mapper/model/entity/roles.entity.js';
 import type { User } from '../src/role-mapper/model/entity/user.entity.js';
 
 export function isUser(entity: EntityType): entity is User {

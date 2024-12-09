@@ -1,6 +1,6 @@
-import { EntityCategoryType } from '../entity/entities.entity';
+import type { EntityCategoryType } from '../entity/entities.entity.js';
 
-export interface EntityCreationInput {
+export type EntityCreationInput = {
     entity: EntityCategoryType;
     data: Record<string, any>; // Dynamischer Typ für flexible Eingabe
-}
+};
