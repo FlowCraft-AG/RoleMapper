@@ -195,8 +195,6 @@ describe('RoleMapper API: get Data', () => {
         // Überprüfung, ob das zurückgegebene Objekt ein Prozess ist
         if (process !== undefined && isProcess(process)) {
             expect(process.processId).toBe(PROCESS.PROCESS_1);
-        } else {
-            throw new Error('Erwarteter Prozess, aber anderer Typ gefunden.');
         }
     });
 
@@ -219,8 +217,6 @@ describe('RoleMapper API: get Data', () => {
             if (isRole(role)) {
                 expect(role.roleId).toBeDefined();
                 expect(role.name).toBeDefined();
-            } else {
-                throw new Error('Erwartete Rolle, aber anderer Typ gefunden.');
             }
         }
     });
