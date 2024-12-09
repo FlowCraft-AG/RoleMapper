@@ -112,3 +112,17 @@ export const TEST_MANDATES = {
     },
     delete: [{ field: 'functionName', operator: 'EQ', value: 'name2' }],
 };
+
+export const TEST_MANDATES2 = {
+    create: {
+        functionName: 'Student',
+        orgUnit: 'orgUnit',
+        type: 'asd',
+        users: ['gyca1011'],
+    },
+    update: {
+        filters: [{ field: 'functionName', operator: 'EQ', value: 'Student' }],
+        data: { functionName: 'IWI-Student' },
+    },
+    delete: [{ field: 'functionName', operator: 'EQ', value: 'IWI-Student' }],
+};
