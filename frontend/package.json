@@ -35,7 +35,7 @@
     "graphql-request": "^7.1.2",
     "jsonwebtoken": "^9.0.2",
     "next": "15.0.4",
-    "next-auth": "^4.24.10",
+    "next-auth": "^4.24.11",
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0",
     "react": "^19.0.0",
