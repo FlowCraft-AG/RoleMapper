@@ -1,0 +1,41 @@
+include:
+  - path: ./keycloak/compose.yml
+
+services:
+  app:
+    # image: calebscript/role-mapper:2024.12.1
+    image: flowcraft/role-mapper:2024.12.1
+    ports:
+      - published: 3000
+        target: 3000
+    volumes:
+      - type: bind
+        source: app.yml
+        target: /opt/app/dist/config/resources/app.yml
+        read_only: true
+      - type: bind
+        source: ../../../backend/log
+        target: /opt/app/log
+        read_only: false
+      - type: bind
+        source: ../../../volumes/keys/certificate.crt
+        target: /opt/volumes/keys/certificate.crt
+        read_only: true
+      - type: bind
+        source: ../../../volumes/keys/key.pem
+        target: /opt/volumes/keys/key.pem
+        read_only: true
+    depends_on:
+      keycloak:
+        condition: service_started
+    env_file: .env
+    hostname: rolemapper
+    container_name: backend
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
