@@ -186,3 +186,61 @@ src/
     ├── dtos/         # Datenobjekte für die Kommunikation zwischen Schichten
     ├── entity/       # Definitionen der Entitäten (Datenbank- oder API-Entitäten)
     ├── payload/      # Rückgabe-Objekte und Payloads (z. B. Ergebnisse von Queries oder Mutationen)
+
+
+################################################################################################################
+MONGODB_URI=mongodb+srv://awp:fN7HPdrwr0TzHzKU@hka-test0.re2qw.mongodb.net/
+
+MONGODB_DATABASE=OrgPermissions
+
+TEST_MONGODB_URI=mongodb+srv://calebscript:zQy5Liiub3DeaDje@hka-cluster.q49rh.mongodb.net/?retryWrites=true&w=majority&appName=hka-cluster
+TEST_MONGODB_DATABASE=OrgPermissions2
+
+NVD_API_KEY = a295fa19-a51b-42e5-96ba-4aecffa6e2ea
+SNYK_TOKEM = 9f39f32f-aec6-4fb0-80d1-dfa1c6653a80
+KEYCLOAK_CLIENT_SECRET = zomzt73VuP6LTUpPpZf5pghlv8exNCtB
+
+# NODE_ENV = development
+NODE_ENV = testp
+
+
+# Umgebungsvariablen für Testdaten
+USER_1=rost0001
+LEITER_1=scgu0003
+FUNCTION_1=Mitarbeiter Rechenzentrum
+FUNCTION_2=Leitung Rechenzentrum
+
+USER_2=muud0001
+LEITER_2=nefr0002
+FUNCTION_3=Professor
+FUNCTION_4=Dekan IWI
+
+PROCESS_1=DA0001
+PROCESS_2=RA0001
+
+ROLE_NAME_1=Antragssteller
+ROLE_NAME_2=Vorgesetzter
+ROLE_NAME_3=Rechnungsprüfung
+ROLE_NAME_4=Finanzabteilung
+
+PRUEFER=kodo0001
+
+FINANZ_ABTEILUNG_1=scdo0001
+FINANZ_ABTEILUNG_2=kodo0001
+FINANZ_ABTEILUNG_3=dita0001
+FINANZ_ABTEILUNG_4=bola0001
+
+
+# Invalid Testdaten
+INVALID_USER_ID=invalid_user_id
+INVALID_EMPLOYEE_ID=invalid_employee_id
+INVALID_PROCESS_ID=invalid_process_id
+
+# Erwartete Ergebnisse
+USERS_COUNT=390
+FUNCTIONS_COUNT=11
+PROCESSES_COUNT=2
+ROLES_COUNT=2
+ROLE_COUNT=4
+ORG_UNITS_COUNT=10
+################################################################################################################
