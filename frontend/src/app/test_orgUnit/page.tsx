@@ -66,7 +66,7 @@ export default function OrgUnitsPage() {
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-4">Organisationseinheiten</h1>
+      <h1 className="mb-4">Organisationseinheiten - Test</h1>
       <ul className="list-group">{renderTree(null)}</ul>
     </div>
   );

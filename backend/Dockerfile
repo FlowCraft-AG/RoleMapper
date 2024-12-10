@@ -7,8 +7,8 @@ ARG SONAR_TOKEN
 ARG SNYK_TOKEN
 
 # "Build Argument"; alternativ: ENV = Umgebungsvariable im gebauten Image
-ARG NODE_VERSION=23.0.0
-
+ARG NODE_VERSION=23
+# ARG NODE_VERSION=22.9.0
 # ---------------------------------------------------------------------------------------
 # S t a g e   d i s t
 # ---------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 set -eux
 # ci (= clean install) mit package-lock.json
 # --omit=dev: ohne devDependencies
-npm ci --no-audit --no-fund --omit=dev --omit=peer
+npm ci --no-audit --no-fund --omit=peer
 EOF
 
 # ------------------------------------------------------------------------------

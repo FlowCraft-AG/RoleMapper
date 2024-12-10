@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  keycloak:
+    # image: quay.io/keycloak/keycloak:22.0.1
+    image: keycloak/keycloak:latest
+    container_name: keycloak
+    ports:
+      - published: 8880
+        target: 8080
+      - published: 8843
+        target: 8443
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: p
+    volumes:
+      - type: bind
+        source: ./realm-config.json
+        target: /opt/keycloak/data/import/realm-config.json
+      - type: bind
+        source: ../../../volumes/keys/keycloak.p12
+        target: /opt/keycloak/conf/keycloak.p12
+        read_only: true
+    entrypoint:
+      - '/opt/keycloak/bin/kc.sh'
+      - 'start-dev'
+      - '--https-key-store-file=/opt/keycloak/conf/keycloak.p12'
+      - '--https-key-store-password=changeit'
+      - '--import-realm'
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '2.0'
+          memory: 2G
