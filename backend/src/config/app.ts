@@ -4,7 +4,7 @@ import path from 'node:path';
 
 export const BASEDIR = existsSync('src') ? 'src' : 'dist';
 export const RESOURCES_DIR = path.resolve(BASEDIR, 'config', 'resources');
-export const VOLUMES_DIR = path.resolve(BASEDIR, '..', '..', 'volumes');
+export const VOLUMES_DIR = path.resolve(BASEDIR, '..', '..', '.volumes');
 
 const configFile = path.resolve(RESOURCES_DIR, 'app.yml');
 export const config = load(
