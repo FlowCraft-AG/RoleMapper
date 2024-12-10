@@ -1,9 +1,10 @@
 # **RoleMapper** by FlowCraft AG
 
 ![Auto Assign](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/auto-assign.yml/badge.svg)
-![Proof HTML](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/proof-html.yml/badge.svg)
+![Proof HTML](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/proof-html.yml)
 
 ## 📖 Inhaltsverzeichnis
+
 1. [Übersicht](#-übersicht)
 2. [Funktionen](#-funktionen)
 3. [Technologie-Stack](#-technologie-stack)
@@ -15,6 +16,8 @@
 9. [Contribution Guidelines](#-contribution-guidelines)
 10. [Lizenz](#-lizenz)
 11. [Kontakt](#-kontakt)
+12. [Dokumentation](#-dokumentation)
+13. [Team](#-team)
 
 ---
 
@@ -52,17 +55,60 @@
 ## 📂 Projektstruktur
 
 ```
-rolemapper/
-├── backend/           # NestJS Backend
-│   ├── src/           # Quellcode des Backends
-│   ├── test/          # Tests für das Backend
-│   └── package.json   # Abhängigkeiten des Backends
-├── frontend/          # Next.js Frontend
-│   ├── pages/         # Next.js-Seiten
-│   ├── components/    # Wiederverwendbare UI-Komponenten
-│   └── package.json   # Abhängigkeiten des Frontends
-├── shared/            # Geteilter Code (z. B. Typen oder Utils)
-└── docker-compose.yml # Docker-Setup für lokale Entwicklung
+.
+├── backend               # Backend-Code (NestJS)
+│   ├── test              # Tests für das Backend
+│   ├── log               # Log-Dateien des Backends
+│   └── src               # Quellcode des Backends
+│       ├── config        # Konfigurationsdateien
+│       ├── logger        # Logging-Funktionalität
+│       ├── role-mapper   # Hauptlogik für das Rollen-Mapping
+│       │   ├── controller  # API-Endpunkte
+│       │   ├── error       # Fehlerbehandlung
+│       │   ├── model       # Datenmodelle
+│       │   │   ├── dto       # Data Transfer Objects
+│       │   │   ├── entity    # Datenbank-Entitäten
+│       │   │   ├── enum      # Enumerationen
+│       │   │   ├── input     # GraphQL-Inputs
+│       │   │   ├── payload   # Antwort-Payloads
+│       │   │   └── types     # Allgemeine Typdefinitionen
+│       │   ├── resolver    # GraphQL-Resolver
+│       │   ├── service     # Geschäftliche Logik
+│       │   └── utils       # Hilfsfunktionen
+│       └── security       # Sicherheitsrelevanter Code
+│           ├── http        # HTTP-Sicherheitskonfiguration
+│           └── keycloak    # Keycloak-Integration
+├── docs                  # Dokumentation
+│   ├── backend           # Backend-Dokumentation
+│   └── frontend          # Frontend-Dokumentation
+├── .extras               # Zusätzliche Konfigurationsdateien
+│   ├── camunda           # BPMN- und DMN-Dateien für Camunda
+│   ├── compose           # Docker-Compose-Konfigurationen
+│   │   ├── backend
+│   │   ├── frontend
+│   │   ├── sonarqube
+│   │   ├── zebee
+│   │   └── zipkin
+│   ├── doc               # Zusätzliche Dokumentationen
+│   ├── postman           # Postman-Sammlungen
+│   └── volumes           # Persistente Daten
+│       └── keys          # Zertifikate und Schlüssel
+│           └── keycloak.p12
+├── frontend              # Frontend-Code (Next.js)
+│   ├── public            # Statische Dateien
+│   └── src               # Quellcode des Frontends
+│       ├── app           # App-Routing
+│       ├── components    # Wiederverwendbare UI-Komponenten
+│       ├── graphql       # GraphQL-Anfragen und Mutationen
+│       │   ├── mutations   # Mutationen
+│       │   └── queries     # Abfragen
+│       ├── lib           # Hilfsfunktionen
+│       ├── styles        # Stile und CSS-Dateien
+│       ├── types         # Typdefinitionen
+│       └── utils         # Hilfsfunktionen
+└── .volumes              # Persistente Daten
+    ├── keycloak          # Keycloak-Daten
+    └── keys              # Zertifikate für TLS
 ```
 
 ---
@@ -70,71 +116,87 @@ rolemapper/
 ## 📥 Installation
 
 ### Voraussetzungen
-- **Node.js:** Version 18 oder höher
-- **Docker:** Für die lokale Entwicklung mit `docker-compose`
-- **MongoDB:** Zugang zu einer MongoDB-Instanz (z. B. MongoDB Atlas)
+
+#### Docker Desktop installieren
+- **Windows/Mac:**
+  Lade [Docker Desktop](https://www.docker.com/products/docker-desktop) herunter und installiere es.
+- **Linux:**
+  Installiere Docker mit:
+  ```
+  sudo apt-get update
+  sudo apt-get install docker-ce docker-ce-cli containerd.io
+  ```
 
 ### Installationsanleitung
 
 1. **Repository klonen:**
-   ```bash
+   ```
    git clone https://github.com/flowcraft-ag/rolemapper.git
    cd rolemapper
    ```
 
 2. **Abhängigkeiten installieren:**
    - **Backend:**
-     ```bash
+     ```
      cd backend
      npm install
      ```
    - **Frontend:**
-     ```bash
+     ```
      cd ../frontend
      npm install
      ```
 
-3. **Umgebungsvariablen konfigurieren:**
-   Erstelle eine `.env`-Datei für Backend und Frontend. Beispiel für das Backend:
-   ```
-   MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
-   ```
-
-4. **Anwendung starten:**
-   - Mit Docker:
-     ```bash
-     docker-compose up
+3. **Schlüssel und Zertifikate erstellen:**
+   - **Mac/Linux:**
      ```
-   - Ohne Docker:
-     - **Backend starten:**
-       ```bash
-       cd backend
-       npm run start:dev
-       ```
-     - **Frontend starten:**
-       ```bash
-       cd ../frontend
-       npm run dev
-       ```
-
----
-
-## ⚙️ Konfiguration
-
-1. **Backend:**
-   - Bearbeite die Datei `.env` im `backend`-Verzeichnis, um die MongoDB-URI und andere Variablen festzulegen.
-
-2. **Frontend:**
-   - Bearbeite die Datei `.env.local` im `frontend`-Verzeichnis, um die API-URL des Backends anzugeben:
+     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout .volumes/keys/key.pem -out .volumes/keys/certificate.crt
      ```
-     NEXT_PUBLIC_API_URL=http://localhost:4000/api
+   - **Windows (PowerShell):**
+     ```
+     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout .volumes/keys/key.pem -out .volumes/keys/certificate.crt
+     ```
+
+   Lege die erstellten Dateien in den Ordner `.volumes/keys`.
+
+4. **Umgebungsvariablen konfigurieren:**
+   - **Backend (.env):**
+     ```
+     MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
+     MONGODB_DATABASE=<database>
+     ```
+   - **Frontend (.env.local):**
+     ```
+     KEYCLOAK_CLIENT_ID=<keycloak-client-id>
+     KEYCLOAK_CLIENT_SECRET=<keycloak-client-secret>
+     KEYCLOAK_ISSUER=<issuer-url>
+     NEXTAUTH_URL=http://localhost:4000
+     NEXTAUTH_SECRET=<next-auth-secret>
+     NEXT_PUBLIC_BACKEND_SERVER_URL=https://localhost:3000
+     ```
+
+5. **Server starten:**
+   - **Nur Backend starten:**
+     ```
+     cd .extras/compose/backend
+     docker compose up -d
+     ```
+   - **Nur Frontend starten:**
+     ```
+     cd .extras/compose/frontend
+     docker compose up -d
+     ```
+   - **Gesamte Anwendung starten:**
+     ```
+     cd .extras/compose
+     docker compose up -d
      ```
 
 ---
 
 ## 🚀 Nutzung
 
-1. Öffne das Frontend unter `http://localhost:3000`.
+1. Öffne das Frontend unter `http://localhost:4000`.
 2. Melde dich mit einem in Keycloak definierten Benutzer an.
 3. Beginne mit der Verwaltung von Rollen und Berechtigungen.
 
@@ -143,16 +205,28 @@ rolemapper/
 ## 🛠 Entwicklung
 
 - **Backend testen:**
-  ```bash
-  cd backend
-  npm test
-  ```
+  - **Normale Tests:**
+    ```
+    cd backend
+    npm t
+    ```
+  - **Tests mit Coverage:**
+    ```
+    npm run test:istanbul
+    ```
 - **Frontend testen:**
-  ```bash
-  cd frontend
-  npm test
   ```
-- **Geteilter Code:** Teile Typen und Hilfsfunktionen im Ordner `shared/`.
+  cd frontend
+  npm t
+  ```
+- **Code analysieren (ESLint):**
+  ```
+  npm run eslint
+  ```
+- **Code formatieren (Prettier):**
+  ```
+  npm run prettier
+  ```
 
 ---
 
@@ -174,9 +248,23 @@ rolemapper/
 ## 📞 Kontakt
 
 - **FlowCraft AG**
-- [Website](https://www.flowcraft-ag.de)
-- [Support](mailto:support@flowcraft-ag.de)
+- [Website](https://www.flowCraft.de)
+- [Support](mailto:support@flowCraft.de)
 
-## Dokumentation
+---
 
-[Github Pages](https://FlowCraft-AG.github.io/RoleMapper/ )
+## 📚 Dokumentation
+
+📖 [GitHub Pages](https://FlowCraft-AG.github.io/RoleMapper/)
+
+---
+
+## 👩‍💻 Team
+
+Dieses Projekt wurde von den folgenden Personen entwickelt:
+
+- **Caleb** - [caleb@flowCraft.de](mailto:caleb@flowCraft.de)
+- **Melina** - [melina@flowCraft.de](mailto:melina@flowCraft.de)
+- **An** - [an@flowCraft.de](mailto:an@flowCraft.de)
+- **Oliver** - [oliver@flowCraft.de](mailto:oliver@flowCraft.de)
+- **David** - [david@flowCraft.de](mailto:david@flowCraft.de)
