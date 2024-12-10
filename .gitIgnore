@@ -80,7 +80,7 @@ yarn-error.log*
 /workspace.xml
 /httpRequests/
 /dataSources/
-/dataSources.local.xmlcd ..
+/dataSources.local.xml
 
 # Yarn & npm
 /.pnp
@@ -209,3 +209,4 @@ snyk-*.log
 
 # Volumes
 volumes/**
+.volumes/**
