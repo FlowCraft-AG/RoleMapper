@@ -1,7 +1,7 @@
-import process from 'node:process';
 import dotenv from 'dotenv';
+import process from 'node:process';
 
-dotenv.config()
+dotenv.config();
 
 const {
     NODE_ENV,
