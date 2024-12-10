@@ -52,11 +52,11 @@ spring.log
 **/test-output/
 
 # Sensitive files
-*.key
-*.pem
-*.p12
-*.crt
-*.env*
+# *.key
+# *.pem
+# *.p12
+# *.crt
+# *.env*
 
 # Node.js
 **/node_modules/
@@ -138,8 +138,8 @@ kubeconfig
 kubeconfig_ORIGINAL
 
 # compose
-.extras/compose/backend/postgres/.env
-.extras/compose/backend/keycloak/.env
+# .extras/compose/backend/postgres/.env
+# .extras/compose/backend/keycloak/.env
 
 # action-runner
 .github/actions-runner/
@@ -190,7 +190,7 @@ snyk-*.log
 # IDEs and editors
 .idea
 *.iml
-/.env
+# /.env
 .project
 .classpath
 .c9/
