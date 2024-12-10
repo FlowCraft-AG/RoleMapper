@@ -248,8 +248,8 @@
 ## 📞 Kontakt
 
 - **FlowCraft AG**
-- [Website](https://www.flowcraft-ag.de)
-- [Support](mailto:support@flowcraft-ag.de)
+- [Website](https://www.flowCraft.de)
+- [Support](mailto:support@flowCraft.de)
 
 ---
 
@@ -263,8 +263,8 @@
 
 Dieses Projekt wurde von den folgenden Personen entwickelt:
 
-- **Caleb** - [caleb@flowcraft-ag.de](mailto:caleb@flowcraft-ag.de)
-- **Melina** - [melina@flowcraft-ag.de](mailto:melina@flowcraft-ag.de)
-- **An** - [an@flowcraft-ag.de](mailto:an@flowcraft-ag.de)
-- **Oliver** - [oliver@flowcraft-ag.de](mailto:oliver@flowcraft-ag.de)
-- **Meron** - [meron@flowcraft-ag.de](mailto:meron@flowcraft-ag.de)
+- **Caleb** - [caleb@flowCraft.de](mailto:caleb@flowCraft.de)
+- **Melina** - [melina@flowCraft.de](mailto:melina@flowCraft.de)
+- **An** - [an@flowCraft.de](mailto:an@flowCraft.de)
+- **Oliver** - [oliver@flowCraft.de](mailto:oliver@flowCraft.de)
+- **David** - [david@flowCraft.de](mailto:david@flowCraft.de)
