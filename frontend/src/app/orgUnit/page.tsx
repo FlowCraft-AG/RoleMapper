@@ -1,6 +1,3 @@
-import Navigation from "@/src/components/Navigation";
-
-
 export default function OrgPage() {
   return (
     <div>
