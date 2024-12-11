@@ -18,12 +18,12 @@
   },
   "homepage": "https://www.flowcraft-ag.de/products/rolemapper",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -p 4000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "check": "npm-check",
-    "dev:tls": "node server.js"
+    "dev:tls": "node server.js --turbopack"
   },
   "dependencies": {
     "@apollo/client": "^3.12.2",
