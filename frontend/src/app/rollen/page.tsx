@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react';
 import { useLazyQuery } from '@apollo/client';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import { GET_ROLES } from '../../graphql/queries/get-rollen';
 import client from '../../lib/apolloClient';
-import { useRouter } from 'next/navigation';
 
 // Definiere Typen für die Antwortdaten
 interface User {
@@ -40,7 +40,10 @@ export default function RolesPage() {
   const router = useRouter();
 
   // Initialisiere useLazyQuery für die Anfrage, die nur bei Button-Klick ausgeführt wird
-  const [getRoles, { loading, error, data }] = useLazyQuery<GetProcessRolesData, GetProcessRolesVariables>(GET_ROLES, {
+  const [getRoles, { loading, error, data }] = useLazyQuery<
+    GetProcessRolesData,
+    GetProcessRolesVariables
+  >(GET_ROLES, {
     client,
   });
 
@@ -61,7 +64,9 @@ export default function RolesPage() {
       // Anfrage nur bei validen Eingaben ausführen
       getRoles({ variables: { processId, userId } });
     } else {
-      alert('Bitte geben Sie sowohl eine Process ID als auch eine User ID ein.');
+      alert(
+        'Bitte geben Sie sowohl eine Process ID als auch eine User ID ein.',
+      );
     }
   };
 
@@ -75,7 +80,7 @@ export default function RolesPage() {
         <h2 className="text-danger">Fehler: {error.message}</h2>
         <button
           className="btn btn-danger mt-3"
-          onClick={() => router.back()}  // Mit `router.back()` geht es zurück zur vorherigen Seite
+          onClick={() => router.back()} // Mit `router.back()` geht es zurück zur vorherigen Seite
         >
           Zurück
         </button>
@@ -85,8 +90,13 @@ export default function RolesPage() {
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100">
-      <form className="p-4 w-50 bg-white border border-primary rounded shadow-lg" onSubmit={handleSubmit}>
-        <h1 className="display-6 mb-4 text-dark text-center">Rollen abfragen</h1>
+      <form
+        className="p-4 w-50 bg-white border border-primary rounded shadow-lg"
+        onSubmit={handleSubmit}
+      >
+        <h1 className="display-6 mb-4 text-dark text-center">
+          Rollen abfragen
+        </h1>
         <div className="form-floating mb-3 text-dark">
           <input
             type="text"
@@ -121,7 +131,9 @@ export default function RolesPage() {
         {data?.getProcessRoles.roles && (
           <div className="mt-4">
             {data.getProcessRoles.roles.length === 0 ? (
-              <p className="text-center">Keine Rollen für die angegebene Process ID und User ID gefunden.</p>
+              <p className="text-center">
+                Keine Rollen für die angegebene Process ID und User ID gefunden.
+              </p>
             ) : (
               data.getProcessRoles.roles.map((role, index) => (
                 <div key={index} className="card mb-3">
@@ -130,12 +142,17 @@ export default function RolesPage() {
                   </div>
                   <div className="card-body">
                     {role.users.length === 0 ? (
-                      <p className="text-center">Keine Benutzer für diese Rolle gefunden.</p>
+                      <p className="text-center">
+                        Keine Benutzer für diese Rolle gefunden.
+                      </p>
                     ) : (
                       <ul className="list-group">
                         {role.users.map((user, userIndex) => (
                           <li key={userIndex} className="list-group-item">
-                            <strong>{user.functionName}</strong>: <span className="text-muted">{user.user.userId}</span>
+                            <strong>{user.functionName}</strong>:{' '}
+                            <span className="text-muted">
+                              {user.user.userId}
+                            </span>
                           </li>
                         ))}
                       </ul>

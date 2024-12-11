@@ -1,5 +1,4 @@
-import { UserDetailsProps } from "../../types/user.type";
-
+import { UserDetailsProps } from '../../types/user.type';
 
 export const UserDetails = ({ user }: UserDetailsProps) => {
   return (
@@ -24,10 +23,12 @@ export const UserDetails = ({ user }: UserDetailsProps) => {
         <strong>Aktiv:</strong> {user.active ? 'Ja' : 'Nein'}
       </div>
       <div className="mb-3">
-        <strong>Gültig von:</strong> {new Date(Number(user.validFrom)).toLocaleString()}
+        <strong>Gültig von:</strong>{' '}
+        {new Date(Number(user.validFrom)).toLocaleString()}
       </div>
       <div className="mb-3">
-        <strong>Gültig bis:</strong> {new Date(Number(user.validUntil)).toLocaleString()}
+        <strong>Gültig bis:</strong>{' '}
+        {new Date(Number(user.validUntil)).toLocaleString()}
       </div>
 
       {user.userType === 'student' && user.student && (

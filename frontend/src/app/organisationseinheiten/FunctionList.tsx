@@ -1,7 +1,5 @@
 import { FunctionListProps } from '../../types/function.type';
 
-
-
 export const FunctionList = ({
   functions,
   toggleCircle,

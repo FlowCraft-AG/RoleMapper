@@ -2,11 +2,11 @@
 
 import { useQuery } from '@apollo/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
+import { JSX, useState } from 'react';
 import { FUNCTIONS } from '../../graphql/queries/get-functions'; // Deine aktualisierte Funktionen-Query
+import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
 import { USERS } from '../../graphql/queries/get-users'; // Neue Abfrage, um Benutzer zu erhalten
 import client from '../../lib/apolloClient';
-import { JSX, useState } from 'react';
 
 type OrgUnit = {
   _id: string;
@@ -48,11 +48,25 @@ type User = {
 };
 
 export default function OrgUnitsPage() {
-  const { loading: loadingOrgUnits, error: errorOrgUnits, data: dataOrgUnits } = useQuery<{ getData: { data: OrgUnit[] } }>(ORG_UNITS, { client });
-  const { loading: loadingFunctions, error: errorFunctions, data: dataFunctions } = useQuery<{ getData: { data: Function[] } }>(FUNCTIONS, { client });
-  const { loading: loadingUsers, error: errorUsers, data: dataUsers } = useQuery<{ getData: { data: User[] } }>(USERS, { client });
+  const {
+    loading: loadingOrgUnits,
+    error: errorOrgUnits,
+    data: dataOrgUnits,
+  } = useQuery<{ getData: { data: OrgUnit[] } }>(ORG_UNITS, { client });
+  const {
+    loading: loadingFunctions,
+    error: errorFunctions,
+    data: dataFunctions,
+  } = useQuery<{ getData: { data: Function[] } }>(FUNCTIONS, { client });
+  const {
+    loading: loadingUsers,
+    error: errorUsers,
+    data: dataUsers,
+  } = useQuery<{ getData: { data: User[] } }>(USERS, { client });
 
-  const [expandedOrgUnits, setExpandedOrgUnits] = useState<Record<string, boolean>>({}); // Zustand für jede OrgUnit
+  const [expandedOrgUnits, setExpandedOrgUnits] = useState<
+    Record<string, boolean>
+  >({}); // Zustand für jede OrgUnit
   const [selectedFunction, setSelectedFunction] = useState<string | null>(null); // Die ID der ausgewählten Funktion
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Die ID des ausgewählten Benutzers
   const [filledCircles, setFilledCircles] = useState<Set<string>>(new Set()); // Set für die gefüllten Kreise
@@ -84,16 +98,25 @@ export default function OrgUnitsPage() {
   // Funktion zum Auswählen eines Benutzers
   const selectUser = (userId: string) => {
     // Wenn ein Benutzer angeklickt wird, wähle ihn aus und entferne die Auswahl der Funktion
-    setSelectedUser((prevUser) => (prevUser && prevUser.userId === userId ? null : users.find((u) => u.userId === userId) || null));
+    setSelectedUser((prevUser) =>
+      prevUser && prevUser.userId === userId
+        ? null
+        : users.find((u) => u.userId === userId) || null,
+    );
     // Beim Klicken auf einen Benutzer nicht die Funktion entfernen
   };
 
-  if (loadingOrgUnits || loadingFunctions || loadingUsers) return <div className="alert alert-info">Lade Daten...</div>;
+  if (loadingOrgUnits || loadingFunctions || loadingUsers)
+    return <div className="alert alert-info">Lade Daten...</div>;
   if (errorOrgUnits || errorFunctions || errorUsers) {
     console.error(errorOrgUnits || errorFunctions || errorUsers);
     return (
       <div className="alert alert-danger">
-        Fehler: {errorOrgUnits?.message || errorFunctions?.message || errorUsers?.message}. Bitte versuche es erneut!
+        Fehler:{' '}
+        {errorOrgUnits?.message ||
+          errorFunctions?.message ||
+          errorUsers?.message}
+        . Bitte versuche es erneut!
       </div>
     );
   }
@@ -103,11 +126,14 @@ export default function OrgUnitsPage() {
   const users = dataUsers?.getData?.data || [];
 
   // Funktionen nach Organisationseinheit gruppieren
-  const functionsByOrgUnit = functions.reduce((acc, func) => {
-    if (!acc[func.orgUnit]) acc[func.orgUnit] = [];
-    acc[func.orgUnit].push(func);
-    return acc;
-  }, {} as Record<string, Function[]>);
+  const functionsByOrgUnit = functions.reduce(
+    (acc, func) => {
+      if (!acc[func.orgUnit]) acc[func.orgUnit] = [];
+      acc[func.orgUnit].push(func);
+      return acc;
+    },
+    {} as Record<string, Function[]>,
+  );
 
   // Rekursive Funktion zur Darstellung der Hierarchie
   const renderTree = (parentId: string | null): JSX.Element[] => {
@@ -123,7 +149,8 @@ export default function OrgUnitsPage() {
                 className="btn btn-link p-0 me-2"
                 onClick={() => toggleExpandOrgUnit(unit._id)} // Knoten öffnen/schließen
               >
-                {expandedOrgUnits[unit._id] ? '▼' : '▶'} {/* Dreieck für OrgUnits */}
+                {expandedOrgUnits[unit._id] ? '▼' : '▶'}{' '}
+                {/* Dreieck für OrgUnits */}
               </button>
               <strong>{unit.name}</strong>
               {/* Funktionen der OrgUnit */}
@@ -138,7 +165,8 @@ export default function OrgUnitsPage() {
                     >
                       <div
                         className={`circle-icon me-2 ${filledCircles.has(func._id) ? 'bg-primary' : 'border'}`}
-                      ></div> {/* Leerer Kreis, der beim Klicken gefüllt wird */}
+                      ></div>{' '}
+                      {/* Leerer Kreis, der beim Klicken gefüllt wird */}
                       <span>{func.functionName}</span>
                     </li>
                   ))}
@@ -208,10 +236,12 @@ export default function OrgUnitsPage() {
                 <strong>Aktiv:</strong> {selectedUser.active ? 'Ja' : 'Nein'}
               </div>
               <div className="mb-3">
-                <strong>Gültig von:</strong> {new Date(Number(selectedUser.validFrom)).toLocaleString()}
+                <strong>Gültig von:</strong>{' '}
+                {new Date(Number(selectedUser.validFrom)).toLocaleString()}
               </div>
               <div className="mb-3">
-                <strong>Gültig bis:</strong> {new Date(Number(selectedUser.validUntil)).toLocaleString()}
+                <strong>Gültig bis:</strong>{' '}
+                {new Date(Number(selectedUser.validUntil)).toLocaleString()}
               </div>
 
               {/* Zusätzliche Details basierend auf dem userType */}
@@ -219,31 +249,37 @@ export default function OrgUnitsPage() {
                 <>
                   <h5>Studierendendetails</h5>
                   <div className="mb-3">
-                    <strong>Kursname:</strong> {selectedUser.student.courseOfStudyName}
+                    <strong>Kursname:</strong>{' '}
+                    {selectedUser.student.courseOfStudyName}
                   </div>
                   <div className="mb-3">
-                    <strong>Studiengang:</strong> {selectedUser.student.courseOfStudy}
+                    <strong>Studiengang:</strong>{' '}
+                    {selectedUser.student.courseOfStudy}
                   </div>
                   <div className="mb-3">
                     <strong>Level:</strong> {selectedUser.student.level}
                   </div>
                   <div className="mb-3">
-                    <strong>Prüfungsordnung:</strong> {selectedUser.student.examRegulation}
+                    <strong>Prüfungsordnung:</strong>{' '}
+                    {selectedUser.student.examRegulation}
                   </div>
                 </>
               )}
 
-              {selectedUser.userType === 'employee' && selectedUser.employee && (
-                <>
-                  <h5>Angestelltendetails</h5>
-                  <div className="mb-3">
-                    <strong>Kostenstelle:</strong> {selectedUser.employee.costCenter}
-                  </div>
-                  <div className="mb-3">
-                    <strong>Abteilung:</strong> {selectedUser.employee.department}
-                  </div>
-                </>
-              )}
+              {selectedUser.userType === 'employee' &&
+                selectedUser.employee && (
+                  <>
+                    <h5>Angestelltendetails</h5>
+                    <div className="mb-3">
+                      <strong>Kostenstelle:</strong>{' '}
+                      {selectedUser.employee.costCenter}
+                    </div>
+                    <div className="mb-3">
+                      <strong>Abteilung:</strong>{' '}
+                      {selectedUser.employee.department}
+                    </div>
+                  </>
+                )}
             </div>
           </div>
         )}

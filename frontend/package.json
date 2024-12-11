@@ -23,7 +23,8 @@
     "start": "next start",
     "lint": "next lint",
     "check": "npm-check",
-    "dev:tls": "node server.js --turbopack"
+    "dev:tls": "node server.js --turbopack",
+    "prettier": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\""
   },
   "dependencies": {
     "@apollo/client": "^3.12.2",
@@ -49,6 +50,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9.15.0",
     "eslint-config-next": "15.0.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "prettier": "^3.0.0",
+    "prettier-plugin-organize-imports": "4.1.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-config-prettier": "^9.0.0"
   }
 }
