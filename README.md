@@ -8,6 +8,14 @@
 
 ![Build Status](https://img.shields.io/github/actions/workflow/status/FlowCraft-AG/RoleMapper/ci-cd-backend.yml)
 ![Coverage](https://img.shields.io/codecov/c/github/FlowCraft-AG/RoleMapper)
+![Dependencies](https://img.shields.io/librariesio/github/FlowCraft-AG/RoleMapper)
+
+![Last Commit](https://img.shields.io/github/last-commit/FlowCraft-AG/RoleMapper)
+![Issues](https://img.shields.io/github/issues/FlowCraft-AG/RoleMapper)
+![Pull Requests](https://img.shields.io/github/issues-pr/FlowCraft-AG/RoleMapper)
+![Activity](https://img.shields.io/github/commit-activity/m/FlowCraft-AG/RoleMapper)
+![Code Size](https://img.shields.io/github/languages/code-size/FlowCraft-AG/RoleMapper)
+![Primary Language](https://img.shields.io/github/languages/top/FlowCraft-AG/RoleMapper)
 
 ## 📖 Inhaltsverzeichnis
 
