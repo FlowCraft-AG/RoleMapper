@@ -1,7 +1,4 @@
-type UserListProps = {
-  users: string[];
-  selectUser: (userId: string) => void;
-};
+import { UserListProps } from "../../types/user.type";
 
 export const UserList = ({ users, selectUser }: UserListProps) => {
   return (

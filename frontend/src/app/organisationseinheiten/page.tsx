@@ -10,6 +10,9 @@ import { OrgUnitList } from './OrgUnitList'; // Import der OrgUnitList-Komponent
 import { UserList } from './UserList'; // Import der UserList-Komponente
 import { UserDetails } from './UserDetails'; // Import der UserDetails-Komponente
 import { useState } from 'react';
+import { OrgUnit } from '../../types/orgUnit.type';
+import { User } from '../../types/user.type';
+import { Function } from '../../types/function.type';
 
 export default function OrgUnitsPage() {
   const { loading: loadingOrgUnits, error: errorOrgUnits, data: dataOrgUnits } = useQuery<{ getData: { data: OrgUnit[] } }>(ORG_UNITS, { client });

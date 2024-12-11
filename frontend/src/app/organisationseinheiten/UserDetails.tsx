@@ -1,30 +1,5 @@
-type User = {
-  _id: string;
-  userId: string;
-  userType: string;
-  userRole: string;
-  orgUnit: string;
-  active: boolean;
-  validFrom: string;
-  validUntil: string;
-  employee?: {
-    costCenter: string;
-    department: string;
-  };
-  student?: {
-    _id: string;
-    courseOfStudy: string;
-    courseOfStudyUnique: string;
-    courseOfStudyShort: string;
-    courseOfStudyName: string;
-    level: string;
-    examRegulation: string;
-  };
-};
+import { UserDetailsProps } from "../../types/user.type";
 
-type UserDetailsProps = {
-  user: User;
-};
 
 export const UserDetails = ({ user }: UserDetailsProps) => {
   return (

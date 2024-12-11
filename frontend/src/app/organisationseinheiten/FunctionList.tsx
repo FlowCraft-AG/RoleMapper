@@ -1,14 +1,6 @@
-type Function = {
-  _id: string;
-  functionName: string;
-  users: string[];
-};
+import { FunctionListProps } from '../../types/function.type';
 
-type FunctionListProps = {
-  functions: Function[];
-  toggleCircle: (functionId: string) => void;
-  filledCircles: Set<string>;
-};
+
 
 export const FunctionList = ({
   functions,

@@ -1,25 +1,6 @@
+import { JSX } from 'react';
 import { FunctionList } from './FunctionList';
-
-type OrgUnit = {
-  _id: string;
-  name: string;
-  parentId: string | null;
-};
-
-type Function = {
-  _id: string;
-  functionName: string;
-  users: string[];
-};
-
-type OrgUnitListProps = {
-  orgUnits: OrgUnit[];
-  functionsByOrgUnit: Record<string, Function[]>;
-  expandedOrgUnits: Record<string, boolean>;
-  toggleExpandOrgUnit: (id: string) => void;
-  toggleCircle: (functionId: string) => void;
-  filledCircles: Set<string>;
-};
+import { OrgUnitListProps } from '../../types/orgUnit.type';
 
 export const OrgUnitList = ({
   orgUnits,
