@@ -42,3 +42,13 @@ a {
     color-scheme: dark;
   }
 }
+
+.circle-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: transparent;
+  /* Standardmäßig leer */
+  border: 2px solid #007bff;
+  /* Rand, wenn leer */
+}
