@@ -84,11 +84,8 @@
 ├── .extras               # Zusätzliche Konfigurationsdateien
 │   ├── camunda           # BPMN- und DMN-Dateien für Camunda
 │   ├── compose           # Docker-Compose-Konfigurationen
-│   │   ├── backend
-│   │   ├── frontend
-│   │   ├── sonarqube
-│   │   ├── zebee
-│   │   └── zipkin
+│   │   ├── backend       # Docker-Compose.yaml für das Backend
+│   │   └── frontend      # Docker-compose für das Frontend
 │   ├── doc               # Zusätzliche Dokumentationen
 │   ├── postman           # Postman-Sammlungen
 │   └── volumes           # Persistente Daten
