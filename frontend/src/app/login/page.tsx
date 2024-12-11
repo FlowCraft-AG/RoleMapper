@@ -1,23 +1,23 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter(); // useRouter-Hook verwenden
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
-    if (!username || !password) {
-      setErrorMessage('Bitte füllen Sie alle Felder aus.');
-      return;
+    if (username === 'user' && password === 'p') {
+      router.push('/orgUnit');
+    } else {
+      setErrorMessage('Ungültiger Benutzername oder Passwort.');
     }
-
-    console.log('Username:', username, 'Password:', password);
-    alert('Erfolgreich eingeloggt');
   };
 
   return (
@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
               Benutzername
             </label>
             <input
-              type="username"
+              type="text"
               className="form-control"
               id="username"
               value={username}
