@@ -172,7 +172,7 @@
      KEYCLOAK_ISSUER=<issuer-url>
      NEXTAUTH_URL=http://localhost:4000
      NEXTAUTH_SECRET=<next-auth-secret>
-     NEXT_PUBLIC_BACKEND_SERVER_URL=<https://localhost:3000>
+     NEXT_PUBLIC_BACKEND_SERVER_URL=https://localhost:3000
      ```
 
 5. **Server starten:**
