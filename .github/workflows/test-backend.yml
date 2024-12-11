@@ -1,4 +1,4 @@
-name: Test Pipeline
+name: Test - Backend
 
 on:
   pull_request:
@@ -95,6 +95,13 @@ jobs:
 
     - name: Run Coverage Tests with Istanbul
       run: npm run test:istanbul
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./backend/coverage
+
 
     - name: Upload Jest Test Coverage
       uses: actions/upload-artifact@v4
