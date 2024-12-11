@@ -10,14 +10,13 @@
 3. [Technologie-Stack](#-technologie-stack)
 4. [Projektstruktur](#-projektstruktur)
 5. [Installation](#-installation)
-6. [Konfiguration](#-konfiguration)
-7. [Nutzung](#-nutzung)
-8. [Entwicklung](#-entwicklung)
-9. [Contribution Guidelines](#-contribution-guidelines)
-10. [Lizenz](#-lizenz)
-11. [Kontakt](#-kontakt)
-12. [Dokumentation](#-dokumentation)
-13. [Team](#-team)
+6. [Nutzung](#-nutzung)
+7. [Entwicklung](#-entwicklung)
+8. [Contribution Guidelines](#-contribution-guidelines)
+9. [Lizenz](#-lizenz)
+10. [Kontakt](#-kontakt)
+11. [Dokumentation](#-dokumentation)
+12. [Team](#-team)
 
 ---
 
@@ -27,7 +26,7 @@
 
 ---
 
-## ⚙️ Funktionen
+## 🔧 Funktionen
 
 - **Dynamisches Rollen-Mapping:** Automatische Zuweisung basierend auf Benutzerfunktionen und Workflows.
 - **Zentrales Rechte-Management:** Effiziente Verwaltung von Berechtigungen.
@@ -39,6 +38,7 @@
 ## 🛠 Technologie-Stack
 
 ### Backend
+
 - **Framework:** NestJS
 - **Programmiersprache:** TypeScript
 - **Datenbank:** MongoDB
@@ -46,6 +46,7 @@
 - **Workflow-Engine:** Camunda BPM
 
 ### Frontend
+
 - **Framework:** Next.js
 - **Programmiersprache:** TypeScript
 - **CSS-Framework:** Bootstrap 5
@@ -54,7 +55,7 @@
 
 ## 📂 Projektstruktur
 
-```
+ ```plaintext
 .
 ├── backend               # Backend-Code (NestJS)
 │   ├── test              # Tests für das Backend
@@ -115,11 +116,13 @@
 ### Voraussetzungen
 
 #### Docker Desktop installieren
+
 - **Windows/Mac:**
   Lade [Docker Desktop](https://www.docker.com/products/docker-desktop) herunter und installiere es.
 - **Linux:**
   Installiere Docker mit:
-  ```
+
+  ```bash
   sudo apt-get update
   sudo apt-get install docker-ce docker-ce-cli containerd.io
   ```
@@ -127,43 +130,65 @@
 ### Installationsanleitung
 
 1. **Repository klonen:**
-   ```
+
+   ```bash
    git clone https://github.com/flowcraft-ag/rolemapper.git
    cd rolemapper
    ```
 
 2. **Abhängigkeiten installieren:**
    - **Backend:**
-     ```
+
+     ```bash
      cd backend
      npm install
      ```
+
    - **Frontend:**
-     ```
+
+     ```bash
      cd ../frontend
      npm install
      ```
 
 3. **Schlüssel und Zertifikate erstellen:**
-   - **Mac/Linux:**
-     ```
-     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout .volumes/keys/key.pem -out .volumes/keys/certificate.crt
-     ```
-   - **Windows (PowerShell):**
-     ```
-     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout .volumes/keys/key.pem -out .volumes/keys/certificate.crt
-     ```
 
-   Lege die erstellten Dateien in den Ordner `.volumes/keys`.
+   1. **Erstelle den Ordner `.volumes/keys` (falls nicht vorhanden):**
+
+      ```bash
+      mkdir -p .volumes/keys
+      ```
+
+   2. **TLS-Schlüssel und -Zertifikate erstellen:**
+      - **Mac/Linux:**
+
+        ```bash
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout .volumes/keys/key.pem -out .volumes/keys/certificate.crt
+        ```
+
+      - **Windows (PowerShell):**
+
+        ```powershell
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout .volumes/keys/key.pem -out .volumes/keys/certificate.crt
+        ```
+
+   3. **Konvertiere `.crt` und `.pem` in `.p12` für Keycloak:**
+
+      ```bash
+      openssl pkcs12 -export -in .volumes/keys/certificate.crt -inkey .volumes/keys/key.pem -out .volumes/keys/keycloak.p12 -name keycloak -passout pass:changeit
+      ```
 
 4. **Umgebungsvariablen konfigurieren:**
    - **Backend (.env):**
-     ```
+
+     ```bash
      MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/<database>?retryWrites=true&w=majority
      MONGODB_DATABASE=<database>
      ```
+
    - **Frontend (.env.local):**
-     ```
+
+     ```bash
      KEYCLOAK_CLIENT_ID=<keycloak-client-id>
      KEYCLOAK_CLIENT_SECRET=<keycloak-client-secret>
      KEYCLOAK_ISSUER=<issuer-url>
@@ -174,17 +199,22 @@
 
 5. **Server starten:**
    - **Nur Backend starten:**
-     ```
+
+     ```bash
      cd .extras/compose/backend
      docker compose up -d
      ```
+
    - **Nur Frontend starten:**
-     ```
+
+     ```bash
      cd .extras/compose/frontend
      docker compose up -d
      ```
+
    - **Gesamte Anwendung starten:**
-     ```
+
+     ```bash
      cd .extras/compose
      docker compose up -d
      ```
@@ -203,25 +233,34 @@
 
 - **Backend testen:**
   - **Normale Tests:**
-    ```
+
+    ```bash
     cd backend
     npm t
     ```
+
   - **Tests mit Coverage:**
-    ```
+
+    ```bash
     npm run test:istanbul
     ```
+
 - **Frontend testen:**
-  ```
+
+  ```bash
   cd frontend
   npm t
   ```
+
 - **Code analysieren (ESLint):**
-  ```
+
+  ```bash
   npm run eslint
   ```
+
 - **Code formatieren (Prettier):**
-  ```
+
+  ```bash
   npm run prettier
   ```
 
