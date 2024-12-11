@@ -25,7 +25,6 @@ release.properties
 **/.vscode/
 
 # Logs
-**/logs/
 *.log
 *.gz
 *.out
@@ -153,8 +152,6 @@ src/config/resources/tls/key.pem
 sonar-project.properties
 
 # Logs
-log
-logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
