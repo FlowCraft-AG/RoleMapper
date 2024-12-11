@@ -50,9 +50,10 @@ export default function OrgUnitsPage() {
             <button
               className="btn btn-link p-0 me-2"
               onClick={() => toggleExpand(unit._id)} // Knoten öffnen/schließen 
-           > 
-              {expanded[unit._id] ? '▼' : '▶'} {/* Pfeil-Symbol hier */} 
+            > 
+              {expanded[unit._id] ? '<chevron-down' : 'chevron-right'} {/* Pfeil-Symbol hier */} 
             </button>
+
             <strong>{unit.name}</strong>
             {/* {unit.supervisor && <span> - Supervisor: {unit.supervisor}</span>} */}
           </div>
