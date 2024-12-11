@@ -105,7 +105,7 @@ export default function ActiveDirectoryPage() {
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
-      <Sidebar />
+      {/*<Sidebar />*/}
       <div style={{ flex: 1, display: 'flex' }}>
         <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
           <TreeView data={data} />
