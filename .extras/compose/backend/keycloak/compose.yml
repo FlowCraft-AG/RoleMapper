@@ -18,7 +18,7 @@ services:
         source: ./realm-config.json
         target: /opt/keycloak/data/import/realm-config.json
       - type: bind
-        source: ../../../../volumes/keys/keycloak.p12
+        source: ../../../../.volumes/keys/keycloak.p12
         target: /opt/keycloak/conf/keycloak.p12
         read_only: true
     entrypoint:
