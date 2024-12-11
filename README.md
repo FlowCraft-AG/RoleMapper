@@ -1,7 +1,13 @@
 # **RoleMapper** by FlowCraft AG
 
 ![Auto Assign](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/auto-assign.yml/badge.svg)
-![Proof HTML](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/proof-html.yml)
+![Proof HTML](https://github.com/FlowCraft-AG/RoleMapper/actions/workflows/proof-html.yml/badge.svg)
+
+![Backend Test](https://github.com/FlowCraft-AG/RoleMapper/actions/workflows/test-backend.yml/badge.svg)
+![security-backend](https://github.com/FlowCraft-AG/demo-repository/actions/workflows/security-backend.yml/badge.svg)
+
+![Build Status](https://img.shields.io/github/actions/workflow/status/FlowCraft-AG/RoleMapper/ci-cd-backend.yml)
+![Coverage](https://img.shields.io/codecov/c/github/FlowCraft-AG/RoleMapper)
 
 ## 📖 Inhaltsverzeichnis
 
