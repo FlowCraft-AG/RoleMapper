@@ -13,6 +13,7 @@ type OrgUnit = {
   supervisor: string | null;
 };
 
+
 export default function OrgUnitsPage() {
   const { loading, error, data } = useQuery<{ getData: { data: OrgUnit[] } }>(ORG_UNITS, { client });
 
@@ -53,7 +54,7 @@ export default function OrgUnitsPage() {
               {expanded[unit._id] ? '▼' : '▶'} {/* Pfeil-Symbol */}
             </button>
             <strong>{unit.name}</strong>
-            {unit.supervisor && <span> - Supervisor: {unit.supervisor}</span>}
+            {/* {unit.supervisor && <span> - Supervisor: {unit.supervisor}</span>} */}
           </div>
           {expanded[unit._id] && ( // Untergeordnete Elemente anzeigen, wenn geöffnet
             <ul className="list-group list-group-flush ms-4">
@@ -67,7 +68,7 @@ export default function OrgUnitsPage() {
   return (
     <div className="container mt-4">
       <h1 className="mb-4">Organisationseinheiten - Test</h1>
-      <ul className="list-group">{renderTree(null)}</ul>
+      <ul className="list-group w-25">{renderTree(null)}</ul>
     </div>
   );
 }
