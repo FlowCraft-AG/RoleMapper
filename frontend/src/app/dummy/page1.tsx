@@ -1,6 +1,6 @@
-import React from 'react';
+import DetailsPanel from './DetailsPanel';
+import Sidebar from './Sidebar';
 import TreeView from './TreeView';
-/*import DetailsPanel from './DetailsPanel';*/
 
 export default function ActiveDirectoryPage() {
   const data = [
@@ -15,7 +15,12 @@ export default function ActiveDirectoryPage() {
             {
               id: '3',
               name: 'Rektorin',
-              children: [{ id: '1', name: 'bero0002' }],
+              children: [
+                {
+                  id: '1',
+                  name: 'bero0002',
+                },
+              ],
             },
             {
               id: '4',
@@ -39,7 +44,10 @@ export default function ActiveDirectoryPage() {
                       id: '19',
                       name: 'Dekanat',
                       children: [
-                        { id: '21', name: 'Dekan' },
+                        {
+                          id: '21',
+                          name: 'Dekan',
+                        },
                         { id: '22', name: 'VizeDekan' },
                         { id: '23', name: 'Prodekan' },
                       ],
@@ -72,39 +80,34 @@ export default function ActiveDirectoryPage() {
     },
   ];
 
-  // Data for ID and Name
-  const ids = ['nefr0001', 'niol1013', 'nera0001'];
-  const name = 'Nees, Franz';
-
-  // Placeholder data for DetailsPanel
-  const detailsPlaceholder = {};
+  const details = {
+    _id: '673ed989e1746bf8e6aa19e4',
+    userId: 'gyca1011',
+    userType: 'student',
+    userRole: '-',
+    orgUnit: 'IWI',
+    active: true,
+    validFrom: '2024-01-04T00:21:03.176+00:00',
+    validUntil: '2100-12-31T00:00:00.000+00:00',
+    student: {
+      _id: '65c501afa3cc6ccbde337542',
+      courseOfStudy: 'WIB',
+      courseOfStudyUnique: '58|WIB|-|-|H|6|-|S|V|1|',
+      courseOfStudyName: 'Wirtschaftsinformatik',
+      level: 'Bachelor',
+      examRegulation: '6',
+      courseOfStudyShort: 'WIIB',
+    },
+  };
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
+      <Sidebar />
       <div style={{ flex: 1, display: 'flex' }}>
-        {/* TreeView Section */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
           <TreeView data={data} />
         </div>
-        {/* DetailsPanel */}
-        <div style={{ flex: 2, padding: '1rem' }}>
-          {/*<DetailsPanel title="Benutzerinformationen" details={detailsPlaceholder} />*/}
-          {/* IDs and Names Section */}
-          <div className="mt-4">
-            <div className="row mb-3">
-              <div className="col-3 fw-bold">ID</div>
-              <div className="col-3 fw-bold">Name</div>
-              <div className="col-3 fw-bold">Description</div>
-            </div>
-            {ids.map((id, index) => (
-              <div key={index} className="row mb-2">
-                <div className="col-3">{id}</div>
-                <div className="col-3">{name}</div>
-                <div className="col-3">Description Placeholder</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <DetailsPanel title="Benutzerinformationen" details={details} />
       </div>
     </div>
   );

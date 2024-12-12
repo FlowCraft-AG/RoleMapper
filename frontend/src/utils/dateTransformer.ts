@@ -1,5 +1,4 @@
-import { getLogger } from "./logger";
-
+import { getLogger } from './logger';
 
 export async function transformDate(
   dateString: Date | undefined | string | number,
@@ -65,7 +64,11 @@ export const formatDateToLocal = ({
   locale = 'en-US', // Default-Wert direkt im Parameter
 }: Props): string => {
   const logger = getLogger(formatDateToLocal.name);
-  logger.debug('Signature: %o', { date: date, locale: locale, dateStr: dateStr });
+  logger.debug('Signature: %o', {
+    date: date,
+    locale: locale,
+    dateStr: dateStr,
+  });
 
   const options: Intl.DateTimeFormatOptions = {
     day: 'numeric',
@@ -95,7 +98,6 @@ export const formatDateToLocal = ({
         logger.warn('Invalid dateStr value provided: %o', dateStr);
       }
     }
-
   } catch (error) {
     logger.error('Error formatting date: %o', error);
     return 'Invalid date';
@@ -104,6 +106,3 @@ export const formatDateToLocal = ({
   // Fallback falls kein gültiges Datum übergeben wird
   return 'Invalid date';
 };
-
-
-
