@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import React from 'react';
 import Navigation from '../components/Navigation';
 import BootstrapClient from '../utils/BootstrapClient';
 import './globals.css';
