@@ -142,6 +142,7 @@ export class MutationResolver {
         this.#logger.debug('addUserToRole: functionId=%s, userId=%s', functionId, userId);
         try {
             const updatedFunction = await this.#service.addUserToFunction(functionId, userId);
+            this.#logger.debug('Updated Role:', updatedFunction);
             return updatedFunction;
         } catch (error) {
             throw new Error((error as Error).message);
@@ -150,7 +151,10 @@ export class MutationResolver {
 
     @Public()
     @Mutation('removeUserFromFunction')
-    async removeUserFromRole(@Args('functionName') functionId: string, @Args('userId') userId: string) {
+    async removeUserFromRole(
+        @Args('functionName') functionId: string,
+        @Args('userId') userId: string,
+    ) {
         this.#logger.debug('removeUserFromRole: functionId=%s, userId=%s', functionId, userId);
         try {
             const updatedFunction = await this.#service.removeUserFromFunction(functionId, userId);
@@ -160,8 +164,5 @@ export class MutationResolver {
             this.#logger.error('Error:', (error as Error).message);
             throw new Error((error as Error).message);
         }
-
     }
-
-
 }
