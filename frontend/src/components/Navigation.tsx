@@ -7,19 +7,30 @@ export default function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'space-between', 
-      padding: '10px', 
-      background: '#333', 
-      color: '#fff' 
-    }}>
-      <div style={{ display: 'flex', gap: '15px' }}>
-        <Link href="/" style={{ color: pathname === '/' ? 'gray' : '#fff' }}>Home</Link>
-        <Link href="/orgUnit" style={{ color: pathname === '/orgUnit' ? 'gray' : '#fff' }}>Organisationseinheiten</Link>
+    <nav
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '10px',
+        background: '#333',
+        color: '#fff',
+      }}
+    >
+      <div>
+        {pathname === '/orgUnit' && (
+          <Link href="/orgUnit" style={{ color: pathname === '/orgUnit' ? 'gray' : '#fff' }}>
+            Organisationseinheiten
+          </Link>
+        )}
       </div>
-      <Link href="/login" style={{ color: pathname === '/login' ? 'gray' : '#fff' }}>Login</Link>
+      <div>
+        {pathname === '/login' && (
+          <Link href="/login" style={{ color: pathname === '/login' ? 'gray' : '#fff' }}>
+            Login
+          </Link>
+        )}
+      </div>
     </nav>
   );
 }
