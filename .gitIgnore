@@ -25,7 +25,6 @@ release.properties
 **/.vscode/
 
 # Logs
-**/logs/
 *.log
 *.gz
 *.out
@@ -52,10 +51,10 @@ spring.log
 **/test-output/
 
 # Sensitive files
-*.key
-*.pem
-*.p12
-*.crt
+# *.key
+# *.pem
+# *.p12
+# *.crt
 *.env*
 
 # Node.js
@@ -153,8 +152,6 @@ src/config/resources/tls/key.pem
 sonar-project.properties
 
 # Logs
-log
-logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -209,3 +206,4 @@ snyk-*.log
 
 # Volumes
 volumes/**
+.volumes/keycloak
