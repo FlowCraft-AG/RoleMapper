@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import { OrgUnitListProps } from '../../types/orgUnit.type';
+import { OrgUnitListProps } from '../../../types/orgUnit.type';
 import { FunctionList } from './FunctionList';
 
 export const OrgUnitList = ({

@@ -401,6 +401,16 @@ type Mutation {
   Erneuert ein abgelaufenes Token basierend auf einem gültigen Refresh-Token.
   """
   refreshToken(refreshToken: String!): TokenResult!
+
+  """
+  Fügt einen Benutzer zu einer Funktion hinzu.
+  """
+  addUserToFunction(functionName: String!, userId: String!): Function
+
+  """
+  Entfernt einen Benutzer aus einer Funktion.
+  """
+  removeUserFromFunction(functionName: String!, userId: String!): Function
 }
 
 """
@@ -480,26 +490,7 @@ input QueryStageInput {
 
 # """
 # Datenstruktur für das Erstellen neuer Entitäten.
-# """
-# input CreateDataInput {
-#   # Gemeinsame Felder für alle Entitäten
-#   name: String
-#   userId: String
-#   userType: String
-#   userRole: String
-#   orgUnit: String
-#   active: Boolean
-#   processId: String
-#   roleId: String
-#   functionName: String
-#   parentId: String
-#   supervisor: String
-#   # Spezifische Felder für Studenten und Mitarbeiter
-#   student: CreateStudentInput
-#   employee: CreateEmployeeInput
-#   users: [String!]
-#   roles: String
-# }
+
 
 """
 Input für das Aktualisieren von Entitäten.
@@ -572,25 +563,7 @@ input UpdateRoleInput {
   query: [QueryStageInput]
 }
 
-# """
-# Datenstruktur für das Aktualisieren von Entitäten.
-# """
-# input UpdateDataInput {
-#   # Gemeinsame Felder für alle Entitäten
-#   name: String
-#   userType: String
-#   userRole: String
-#   orgUnit: String
-#   active: Boolean
-#   roleId: String
-#   functionName: String
-#   supervisor: String
-#   # Spezifische Felder für Studenten und Mitarbeiter
-#   student: UpdateStudentInput
-#   employee: UpdateEmployeeInput
-#   users: [String!]
-#   roles: String
-# }
+
 
 """
 Input für das Löschen von Entitäten.

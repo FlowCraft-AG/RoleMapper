@@ -171,4 +171,58 @@ export class WriteService {
             filter.value === undefined ? 'value' : '',
         ]);
     }
+
+    async addUserToFunction(functionName: string, userId: string) {
+        this.#logger.debug('addUserToFunction: functionName=%s, userId=%s', functionName, userId);
+
+        // Funktion basierend auf functionName finden
+        const mandate = await this.#modelMap.MANDATES?.findOne({ functionName }).exec();
+
+        if (!mandate) {
+            throw new Error(`Function mit dem Namen "${functionName}" nicht gefunden.`);
+        }
+
+        // Benutzer hinzufügen, wenn die Funktion existiert
+        const updatedRole = await this.#modelMap.MANDATES!.findByIdAndUpdate(
+            mandate._id, // Hier den _id-Wert verwenden
+            { $addToSet: { users: userId } }, // Verhindert Duplikate
+            { new: true } // Gibt das aktualisierte Dokument zurück
+        ).exec();
+
+        if (!updatedRole) {
+            throw new Error(`Fehler beim Aktualisieren der Funktion "${functionName}".`);
+        }
+
+        this.#logger.debug('User erfolgreich hinzugefügt: %o', updatedRole);
+
+        return updatedRole;
+    }
+
+    async removeUserFromFunction(functionName: string, userId: string) {
+    this.#logger.debug('removeUserFromFunction: functionName=%s, userId=%s', functionName, userId);
+
+    // Funktion basierend auf functionName finden
+    const mandate = await this.#modelMap.MANDATES?.findOne({ functionName }).exec();
+
+    if (!mandate) {
+        throw new Error(`Function mit dem Namen "${functionName}" nicht gefunden.`);
+    }
+
+    // Benutzer entfernen
+    const updatedRole = await this.#modelMap.MANDATES!.findByIdAndUpdate(
+        mandate._id, // Hier den _id-Wert verwenden
+        { $pull: { users: userId } }, // Benutzer aus dem Array entfernen
+        { new: true } // Gibt das aktualisierte Dokument zurück
+    ).exec();
+
+    if (!updatedRole) {
+        throw new Error(`Fehler beim Aktualisieren der Funktion "${functionName}".`);
+    }
+
+    this.#logger.debug('User erfolgreich entfernt: %o', updatedRole);
+
+    return updatedRole;
+}
+
+
 }

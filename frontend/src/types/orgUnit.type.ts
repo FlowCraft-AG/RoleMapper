@@ -12,6 +12,6 @@ export type OrgUnitListProps = {
   functionsByOrgUnit: Record<string, Function[]>;
   expandedOrgUnits: Record<string, boolean>;
   toggleExpandOrgUnit: (id: string) => void;
-  toggleCircle: (functionId: string) => void;
+  toggleCircle: (mandate: Function) => void;
   filledCircles: Set<string>;
 };

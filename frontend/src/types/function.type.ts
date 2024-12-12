@@ -7,6 +7,6 @@ export type Function = {
 
 export type FunctionListProps = {
   functions: Function[];
-  toggleCircle: (functionId: string) => void;
+  toggleCircle: (mandate: Function) => void;
   filledCircles: Set<string>;
 };

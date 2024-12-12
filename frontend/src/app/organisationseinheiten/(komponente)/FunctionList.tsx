@@ -1,4 +1,4 @@
-import { FunctionListProps } from '../../types/function.type';
+import { FunctionListProps } from '../../../types/function.type';
 
 export const FunctionList = ({
   functions,
@@ -11,7 +11,7 @@ export const FunctionList = ({
         <li
           key={func._id}
           className="list-group-item d-flex align-items-center"
-          onClick={() => toggleCircle(func._id)} // Funktion klicken
+          onClick={() => toggleCircle(func)} // Funktion klicken
           style={{ cursor: 'pointer' }}
         >
           <div

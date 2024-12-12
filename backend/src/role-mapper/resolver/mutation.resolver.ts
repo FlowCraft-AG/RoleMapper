@@ -135,4 +135,33 @@ export class MutationResolver {
             };
         }
     }
+
+    @Public()
+    @Mutation('addUserToFunction')
+    async addUserToRole(@Args('functionName') functionId: string, @Args('userId') userId: string) {
+        this.#logger.debug('addUserToRole: functionId=%s, userId=%s', functionId, userId);
+        try {
+            const updatedFunction = await this.#service.addUserToFunction(functionId, userId);
+            return updatedFunction;
+        } catch (error) {
+            throw new Error((error as Error).message);
+        }
+    }
+
+    @Public()
+    @Mutation('removeUserFromFunction')
+    async removeUserFromRole(@Args('functionName') functionId: string, @Args('userId') userId: string) {
+        this.#logger.debug('removeUserFromRole: functionId=%s, userId=%s', functionId, userId);
+        try {
+            const updatedFunction = await this.#service.removeUserFromFunction(functionId, userId);
+            this.#logger.debug('Updated Role:', updatedFunction);
+            return updatedFunction;
+        } catch (error) {
+            this.#logger.error('Error:', (error as Error).message);
+            throw new Error((error as Error).message);
+        }
+
+    }
+
+
 }
