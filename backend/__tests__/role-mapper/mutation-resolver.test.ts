@@ -1,6 +1,5 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
@@ -80,6 +79,7 @@ describe('MutationResolver', () => {
         const { status, headers, data } = await sendGraphQLRequest(client, query);
 
         validateHeader(headers);
+
         expect(status).toBe(HttpStatus.OK);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
@@ -124,6 +124,7 @@ describe('MutationResolver', () => {
         const { status, headers, data } = await sendGraphQLRequest(client, query);
 
         validateHeader(headers);
+
         expect(status).toBe(HttpStatus.OK);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
@@ -159,6 +160,7 @@ describe('MutationResolver', () => {
         const { status, headers, data } = await sendGraphQLRequest(client, query);
 
         validateHeader(headers);
+
         expect(status).toBe(HttpStatus.OK);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
@@ -187,6 +189,7 @@ describe('MutationResolver', () => {
         const { status, headers, data } = await sendGraphQLRequest(client, query);
 
         validateHeader(headers);
+
         expect(status).toBe(HttpStatus.OK);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
@@ -215,6 +218,7 @@ describe('MutationResolver', () => {
         const { status, headers, data } = await sendGraphQLRequest(client, query);
 
         validateHeader(headers);
+
         expect(status).toBe(HttpStatus.OK);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
