@@ -1,4 +1,4 @@
-export interface QueryParameter{
+export interface QueryParameter {
   key: string;
   value: string;
 }
@@ -6,7 +6,7 @@ export interface QueryParameter{
 export interface LoginData {
   username: string;
   password: string;
-};
+}
 
 export type AuthToken = {
   accessToken: string;
@@ -16,4 +16,3 @@ export type AuthToken = {
   idToken: string;
   username: string;
 };
-

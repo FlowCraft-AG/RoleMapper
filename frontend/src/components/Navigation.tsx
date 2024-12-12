@@ -17,20 +17,37 @@ export default function Navigation() {
         color: '#fff',
       }}
     >
-      <div>
-        {pathname === '/orgUnit' && (
-          <Link href="/orgUnit" style={{ color: pathname === '/orgUnit' ? 'gray' : '#fff' }}>
-            Organisationseinheiten
-          </Link>
-        )}
+        <Link
+          href="/dummy"
+          style={{ color: pathname === '/orgUnit' ? 'gray' : '#fff' }}
+        >
+          Organisationseinheiten_test
+        </Link>
+        <Link
+          href="/organisationseinheiten"
+          style={{
+            marginRight: '15px',
+            color: pathname === '/organisationseinheiten' ? 'gray' : '#fff',
+          }}
+        >
+          Organisationseinheiten
+        </Link>
+        <Link
+          href="/rollen"
+          style={{
+            marginRight: '15px',
+            color: pathname === '/rollen' ? 'gray' : '#fff',
+          }}
+        >
+          Ermittle Rollen
+        </Link>
       </div>
-      <div>
-        {pathname === '/login' && (
-          <Link href="/login" style={{ color: pathname === '/login' ? 'gray' : '#fff' }}>
-            Login
-          </Link>
-        )}
-      </div>
+      <Link
+        href="/login"
+        style={{ color: pathname === '/login' ? 'gray' : '#fff' }}
+      >
+        Login
+      </Link>
     </nav>
   );
 }
