@@ -126,3 +126,8 @@ export const TEST_MANDATES2 = {
     },
     delete: [{ field: 'functionName', operator: 'EQ', value: 'IWI-Student' }],
 };
+
+export const TEST_MANDATES3 = {
+    functionName: 'Dekan IWI',
+    userId: 'gyca1011',
+};
