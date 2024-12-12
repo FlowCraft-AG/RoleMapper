@@ -17,10 +17,6 @@ export default function Navigation() {
         color: '#fff',
       }}
     >
-      <div style={{ display: 'flex', gap: '15px' }}>
-        <Link href="/" style={{ color: pathname === '/' ? 'gray' : '#fff' }}>
-          Home
-        </Link>
         <Link
           href="/dummy"
           style={{ color: pathname === '/orgUnit' ? 'gray' : '#fff' }}
