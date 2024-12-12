@@ -289,12 +289,6 @@
 
 ---
 
-## 📜 Lizenz
-
-**RoleMapper** steht unter der [MIT-Lizenz](LICENSE).
-
----
-
 ## 📞 Kontakt
 
 - **FlowCraft AG**

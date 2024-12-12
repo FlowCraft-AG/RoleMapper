@@ -22,10 +22,10 @@ export default function Navigation() {
           Home
         </Link>
         <Link
-          href="/dummy"
-          style={{ color: pathname === '/orgUnit' ? 'gray' : '#fff' }}
+          href="/dummy2"
+          style={{ color: pathname === '/dummy2' ? 'gray' : '#fff' }}
         >
-          Organisationseinheiten_test
+          dummy 2
         </Link>
         <Link
           href="/organisationseinheiten"
