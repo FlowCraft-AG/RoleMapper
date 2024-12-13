@@ -111,5 +111,5 @@ export const shutdownServer = async (): Promise<void> => {
 export const httpsAgent = new Agent({
     requestCert: true,
     rejectUnauthorized: false,
-    ca: httpsOptions.cert as Buffer,
+    ca: httpsOptions.cert!,
 });

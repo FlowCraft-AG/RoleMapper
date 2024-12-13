@@ -20,7 +20,7 @@ const tokenValidation =
     (keycloak?.tokenValidation as TokenValidation | undefined) ??
     (TokenValidation.ONLINE as TokenValidation);
 
-const { KEYCLOAK_CLIENT_SECRET, NODE_ENV } = environment;
+const { KEYCLOAK_CLIENT_SECRET } = environment;
 
 export const keycloakConnectOptions: KeycloakConnectConfig = {
     authServerUrl,
@@ -31,12 +31,6 @@ export const keycloakConnectOptions: KeycloakConnectConfig = {
     policyEnforcement: PolicyEnforcementMode.PERMISSIVE,
     tokenValidation,
 };
-if (NODE_ENV === 'development') {
-    console.debug('keycloakConnectOptions = %o', keycloakConnectOptions);
-} else {
-    const { ...keycloakConnectOptionsLog } = keycloakConnectOptions;
-    console.debug('keycloakConnectOptions = %o', keycloakConnectOptionsLog);
-}
 
 export const paths = {
     accessToken: `realms/${realm}/protocol/openid-connect/token`,
@@ -48,5 +42,5 @@ export const paths = {
 export const httpsAgent = new Agent({
     requestCert: true,
     rejectUnauthorized: false,
-    ca: httpsOptions.cert as Buffer,
+    ca: httpsOptions.cert!,
 });

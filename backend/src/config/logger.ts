@@ -29,7 +29,7 @@ if (environment.LOG_LEVEL !== undefined) {
 }
 export const logLevel = logLevelTemporary;
 
-console.debug(`logger config: logLevel=${logLevel}, logFile=${logFile}, pretty=${pretty}`);
+// console.debug(`logger config: logLevel=${logLevel}, logFile=${logFile}, pretty=${pretty}`);
 
 const fileOptions = {
     level: logLevel,
