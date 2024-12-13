@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';

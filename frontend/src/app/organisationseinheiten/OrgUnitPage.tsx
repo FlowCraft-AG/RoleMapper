@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@apollo/client';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { useState } from 'react';
 import { FUNCTIONS } from '../../graphql/queries/get-functions';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
