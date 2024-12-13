@@ -3,7 +3,7 @@ import path from 'node:path';
 import { BASEDIR } from './app.js';
 
 const schemaGraphQL = path.join(BASEDIR, 'config', 'resources', 'graphql', 'schema.graphql');
-console.debug('schemaGraphQL = %s', schemaGraphQL);
+// console.debug('schemaGraphQL = %s', schemaGraphQL);
 
 /**
  * Das Konfigurationsobjekt für GraphQL (siehe src\app.module.ts).

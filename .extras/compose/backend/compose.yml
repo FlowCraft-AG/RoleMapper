@@ -3,8 +3,7 @@ include:
 
 services:
   app:
-    # image: calebscript/role-mapper:2024.12.1
-    image: flowcraft/role-mapper:2024.12.1
+    image: calebscript/role-mapper:2024.12.1
     ports:
       - published: 3000
         target: 3000

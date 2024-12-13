@@ -133,7 +133,7 @@ export class WriteController {
             throw new BadRequestException('Entity type and update data are required.');
         }
         try {
-            const filters: FilterInput[] = body.filters;
+            const filters: FilterInput = body.filter;
             const data: UpdateDataInput | undefined = body.data;
             this.#logger.debug('updateEntity: filters=%o, data=%o', filters, data);
             const result = await this.#service.updateEntity(entityType, filters, data);
@@ -182,7 +182,7 @@ export class WriteController {
     })
     async deleteEntity(
         @Param('entity') entityType: EntityCategoryType,
-        @Body() body: FilterInput[],
+        @Body() body: FilterInput,
     ): Promise<MutationPayload> {
         this.#logger.debug('deleteEntity: input=%o', { entityType, body });
         if (!entityType || body === undefined) {

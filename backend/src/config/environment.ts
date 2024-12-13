@@ -30,4 +30,4 @@ export const environment = {
 } as const;
 /* eslint-enable @typescript-eslint/naming-convention */
 
-console.debug('NODE_ENV = %s', NODE_ENV);
+// console.debug('NODE_ENV = %s', NODE_ENV);

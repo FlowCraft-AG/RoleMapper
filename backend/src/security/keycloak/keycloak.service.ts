@@ -41,7 +41,7 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
             baseURL: authServerUrl!,
             // ggf. httpsAgent fuer HTTPS bei selbst-signiertem Zertifikat
         });
-        this.#logger.debug('keycloakClient=%o', this.#keycloakClient.defaults);
+        // this.#logger.debug('keycloakClient=%o', this.#keycloakClient.defaults);
     }
 
     createKeycloakConnectOptions(): KeycloakConnectOptions {

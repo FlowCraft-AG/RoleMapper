@@ -11,7 +11,7 @@ import type {
 
 export type UpdateEntityInput = {
     entity: EntityCategoryType;
-    filters: FilterInput[];
+    filter: FilterInput;
     // für REST
     data: UpdateDataInput;
 

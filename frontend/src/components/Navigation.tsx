@@ -7,9 +7,53 @@ export default function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav style={{ padding: '10px', background: '#333', color: '#fff' }}>
-      <Link href="/" style={{ marginRight: '15px', color: pathname === '/' ? 'gray' : '#fff' }}>Home</Link>
-      <Link href="/test_orgUnit" style={{ marginRight: '15px', color: pathname === '/test_orgUnit' ? 'gray' : '#fff' }}>Organisationseinheiten</Link>
+    <nav
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '10px',
+        background: '#333',
+        color: '#fff',
+      }}
+    >
+      <div>
+        <Link
+          href="/dummy"
+          style={{
+            color: pathname === '/dummy' ? 'gray' : '#fff',
+            marginRight: '15px',
+          }}
+        >
+          dummy
+        </Link>
+        <Link
+          href="/organisationseinheiten"
+          style={{
+            color: pathname === '/organisationseinheiten' ? 'gray' : '#fff',
+            marginRight: '15px',
+          }}
+        >
+          Organisationseinheiten
+        </Link>
+        <Link
+          href="/rollen"
+          style={{
+            color: pathname === '/rollen' ? 'gray' : '#fff',
+            marginRight: '15px',
+          }}
+        >
+          Ermittle Rollen
+        </Link>
+      </div>
+      <div>
+        <Link
+          href="/login"
+          style={{ color: pathname === '/login' ? 'gray' : '#fff' }}
+        >
+          Login
+        </Link>
+      </div>
     </nav>
   );
 }

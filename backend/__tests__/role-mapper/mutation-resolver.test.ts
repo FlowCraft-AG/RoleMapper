@@ -1,28 +1,37 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import type { GraphQLRequest } from '@apollo/server';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import { ENDPOINTS, TEST_MANDATES2 } from '../test-data.js';
+import axios, { type AxiosInstance } from 'axios';
+import { ENDPOINTS, TEST_MANDATES2, TEST_MANDATES3 } from '../test-data.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 import type { GraphQLResponseBody } from './query-resolver.test.js';
 
 /**
  * Prüft, ob die Antwort korrekt ist und der Content-Type JSON ist.
- * @param status - HTTP-Statuscode
  * @param headers - HTTP-Header
  */
 const validateHeader = (headers: any) => {
     expect(headers['content-type']).toMatch(/json/iu);
 };
 
+/**
+ * Sendet eine GraphQL-Anfrage und gibt die Antwort zurück.
+ * @param client - Axios-Instance
+ * @param query - GraphQL-Query
+ */
+const sendGraphQLRequest = async (client: AxiosInstance, query: string) => {
+    try {
+        return await client.post<GraphQLResponseBody>('graphql', { query });
+    } catch (error) {
+        throw new Error(`GraphQL request failed: ${(error as Error).message}`);
+    }
+};
+
 describe('MutationResolver', () => {
     let client: AxiosInstance;
-    const graphqlPath = 'graphql';
 
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
@@ -41,9 +50,7 @@ describe('MutationResolver', () => {
 
     test('[GRAPHQL] createEntity for MANDATES', async () => {
         const createInput = TEST_MANDATES2.create;
-
-        const body: GraphQLRequest = {
-            query: `
+        const query = `
             mutation CreateEntity {
                 createEntity(input: {
                     entity: ${ENDPOINTS.MANDATES},
@@ -67,75 +74,57 @@ describe('MutationResolver', () => {
                     }
                 }
             }
-        `,
-        };
+        `;
 
-        // GraphQL Anfrage
-        const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
-            graphqlPath,
-            body,
-        );
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
 
-        // Header validieren
         validateHeader(headers);
 
-        // Status prüfen
         expect(status).toBe(HttpStatus.OK);
-
-        // Sicherstellen, dass keine GraphQL-Fehler vorhanden sind
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 
-        // Ergebnis prüfen
         const { createEntity } = data.data!;
 
         expect(createEntity.success).toBe(true);
         expect(createEntity.message).toBe('Create operation successful.');
 
-        // Spezifische Felder prüfen
         const result = createEntity.result;
 
         expect(result).toBeDefined();
         expect(result.functionName).toBe(createInput.functionName);
         expect(result.orgUnit).toBe(createInput.orgUnit);
-        // expect(result.type).toBe(createInput.type);
         expect(result.users).toEqual(createInput.users);
     });
 
     test('[GRAPHQL] updateEntity for MANDATES', async () => {
         const updateInput = TEST_MANDATES2.update;
-        const body: GraphQLRequest = {
-            query: `
-                mutation UpdateEntity {
-                    updateEntity(input: {
-                        entity: ${ENDPOINTS.MANDATES},
-                        filters: [
+        const query = `
+            mutation UpdateEntity {
+                updateEntity(input: {
+                    entity: ${ENDPOINTS.MANDATES},
+                    filter:
                         {
-                            field: ${updateInput.filters[0]!.field},
-                            operator: ${updateInput.filters[0]!.operator},
-                            value: "${updateInput.filters[0]!.value}"
-                        }
-                    ],
-
-                        functionData: {
+                            field: ${updateInput.filter.field},
+                            operator: ${updateInput.filter.operator},
+                            value: "${updateInput.filter.value}"
+                        },
+                    functionData: {
                         functionName: "${updateInput.data.functionName}"
                     }
-                    }) {
-                        success
-                        message
-                        affectedCount
-                    }
+                }) {
+                    success
+                    message
+                    affectedCount
                 }
-            `,
-        };
+            }
+        `;
 
-        const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
-            graphqlPath,
-            body,
-        );
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
 
         expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 
@@ -148,36 +137,30 @@ describe('MutationResolver', () => {
 
     test('[GRAPHQL] deleteEntity for MANDATES', async () => {
         const deleteInput = TEST_MANDATES2.delete;
-        const body: GraphQLRequest = {
-            query: `
+        const query = `
             mutation DeleteEntity {
                 deleteEntity(input: {
                     entity: ${ENDPOINTS.MANDATES},
-                    filters: [
+                    filter:
                         {
-                            field: ${deleteInput[0]!.field},
-                            operator: ${deleteInput[0]!.operator},
-                            value: "${deleteInput[0]!.value}"
+                            field: ${deleteInput.field},
+                            operator: ${deleteInput.operator},
+                            value: "${deleteInput.value}"
                         }
-                    ]
+
                 }) {
                     success
                     message
                     affectedCount
                 }
             }
-        `,
-        };
+        `;
 
-        const { status, headers, data }: AxiosResponse<GraphQLResponseBody> = await client.post(
-            graphqlPath,
-            body,
-        );
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
 
-        // Assertions
+        validateHeader(headers);
+
         expect(status).toBe(HttpStatus.OK);
-
-        expect(headers['content-type']).toMatch(/json/iu);
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 
@@ -186,5 +169,63 @@ describe('MutationResolver', () => {
         expect(deleteEntity.success).toBe(true);
         expect(deleteEntity.message).toBe('Delete operation successful.');
         expect(deleteEntity.affectedCount).toBeGreaterThan(0);
+    });
+
+    test('[GRAPHQL] add to Function', async () => {
+        const mandate = TEST_MANDATES3;
+        const query = `
+            mutation AddUserToFunction {
+                addUserToFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
+                    _id
+                    functionName
+                    users
+                    orgUnit
+                    type
+                }
+            }
+        `;
+
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
+
+        expect(status).toBe(HttpStatus.OK);
+        expect(data.errors).toBeUndefined();
+        expect(data.data).toBeDefined();
+
+        const { addUserToFunction } = data.data!;
+
+        expect(addUserToFunction).toBeDefined();
+        expect(addUserToFunction.functionName).toBe(mandate.functionName);
+        expect(addUserToFunction.users).toContain(mandate.userId);
+    });
+
+    test('[GRAPHQL] remove from Function', async () => {
+        const mandate = TEST_MANDATES3;
+        const query = `
+            mutation RemoveUserFromFunction {
+                removeUserFromFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
+                    _id
+                    functionName
+                    users
+                    orgUnit
+                    type
+                }
+            }
+        `;
+
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
+
+        expect(status).toBe(HttpStatus.OK);
+        expect(data.errors).toBeUndefined();
+        expect(data.data).toBeDefined();
+
+        const { removeUserFromFunction } = data.data!;
+
+        expect(removeUserFromFunction).toBeDefined();
+        expect(removeUserFromFunction.functionName).toBe(mandate.functionName);
+        expect(removeUserFromFunction.users).not.toContain(mandate.userId);
     });
 });

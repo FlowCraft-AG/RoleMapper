@@ -25,7 +25,7 @@ input DataInput {
   """
   Filterbedingungen, um die Abfrage zu präzisieren.
   """
-  filters: [FilterInput!]
+  filter: FilterInput
   """
   Pagination-Parameter zur Steuerung der Ergebnisse.
   """
@@ -53,18 +53,18 @@ input FilterInput {
   """
   Das zu filternde Feld, z. B. userId oder orgUnit.
   """
-  field: FilterOptions!
+  field: FilterOptions
   """
   Der Vergleichsoperator, z. B. EQ oder IN.
   """
-  operator: Operator!
+  operator: Operator
   """
   Der Vergleichswert.
   """
-  value: String!
-  and: [FilterInput]
-  or: [FilterInput]
-  not: FilterInput
+  value: String
+  AND: [FilterInput]
+  OR: [FilterInput]
+  NOR: [FilterInput]
 }
 
 # Rückgabewerte
@@ -231,6 +231,9 @@ type OrgUnit {
   Verantwortlicher der Organisationseinheit.
   """
   supervisor: String
+  alias: String
+  kostenstelleNr: String
+  type: String
 }
 
 # Funktionen
@@ -401,6 +404,16 @@ type Mutation {
   Erneuert ein abgelaufenes Token basierend auf einem gültigen Refresh-Token.
   """
   refreshToken(refreshToken: String!): TokenResult!
+
+  """
+  Fügt einen Benutzer zu einer Funktion hinzu.
+  """
+  addUserToFunction(functionName: String!, userId: String!): Function
+
+  """
+  Entfernt einen Benutzer aus einer Funktion.
+  """
+  removeUserFromFunction(functionName: String!, userId: String!): Function
 }
 
 """
@@ -480,26 +493,7 @@ input QueryStageInput {
 
 # """
 # Datenstruktur für das Erstellen neuer Entitäten.
-# """
-# input CreateDataInput {
-#   # Gemeinsame Felder für alle Entitäten
-#   name: String
-#   userId: String
-#   userType: String
-#   userRole: String
-#   orgUnit: String
-#   active: Boolean
-#   processId: String
-#   roleId: String
-#   functionName: String
-#   parentId: String
-#   supervisor: String
-#   # Spezifische Felder für Studenten und Mitarbeiter
-#   student: CreateStudentInput
-#   employee: CreateEmployeeInput
-#   users: [String!]
-#   roles: String
-# }
+
 
 """
 Input für das Aktualisieren von Entitäten.
@@ -512,7 +506,7 @@ input UpdateEntityInput {
   """
   Filterbedingungen, um die zu aktualisierende Entität zu finden.
   """
-  filters: [FilterInput!]!
+  filter: FilterInput
   """
   Neue Werte für die Entität.
   """
@@ -572,25 +566,7 @@ input UpdateRoleInput {
   query: [QueryStageInput]
 }
 
-# """
-# Datenstruktur für das Aktualisieren von Entitäten.
-# """
-# input UpdateDataInput {
-#   # Gemeinsame Felder für alle Entitäten
-#   name: String
-#   userType: String
-#   userRole: String
-#   orgUnit: String
-#   active: Boolean
-#   roleId: String
-#   functionName: String
-#   supervisor: String
-#   # Spezifische Felder für Studenten und Mitarbeiter
-#   student: UpdateStudentInput
-#   employee: UpdateEmployeeInput
-#   users: [String!]
-#   roles: String
-# }
+
 
 """
 Input für das Löschen von Entitäten.
@@ -603,7 +579,7 @@ input DeleteEntityInput {
   """
   Filterbedingungen, um die zu löschende Entität zu identifizieren.
   """
-  filters: [FilterInput!]!
+  filter: FilterInput
 }
 
 """

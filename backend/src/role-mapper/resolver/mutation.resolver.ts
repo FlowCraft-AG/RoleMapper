@@ -79,7 +79,7 @@ export class MutationResolver {
     async updateEntity(@Args('input') input: UpdateEntityInput): Promise<MutationPayload> {
         this.#logger.debug('updateEntity: input=%o', input);
         // eslint-disable-next-line @stylistic/operator-linebreak
-        const { entity, filters, userData, functionData, processData, orgUnitData, roleData } =
+        const { entity, filter, userData, functionData, processData, orgUnitData, roleData } =
             input;
         try {
             // Map zur Zuordnung von Entitäten zu den jeweiligen Daten
@@ -96,7 +96,7 @@ export class MutationResolver {
             // Validierung der Eingabe
             if (!entity) throw new Error('Entity type must be provided');
             if (!data) throw new Error(`Missing data for entity type: ${entity}`);
-            const result = await this.#service.updateEntity(entity, filters, data);
+            const result = await this.#service.updateEntity(entity, filter, data);
             return {
                 success: result.success,
                 message: result.message,
@@ -118,10 +118,10 @@ export class MutationResolver {
     @Mutation('deleteEntity')
     async deleteEntity(@Args('input') input: DeleteEntityInput): Promise<MutationPayload> {
         this.#logger.debug('deleteEntity: input=%o', input);
-        const { entity, filters } = input;
+        const { entity, filter } = input;
 
         try {
-            const result = await this.#service.deleteEntity(entity, filters);
+            const result = await this.#service.deleteEntity(entity, filter);
             return {
                 success: result.success,
                 message: result.message,
@@ -133,6 +133,36 @@ export class MutationResolver {
                 message: (error as Error).message,
                 result: undefined,
             };
+        }
+    }
+
+    @Public()
+    @Mutation('addUserToFunction')
+    async addUserToRole(@Args('functionName') functionId: string, @Args('userId') userId: string) {
+        this.#logger.debug('addUserToRole: functionId=%s, userId=%s', functionId, userId);
+        try {
+            const updatedFunction = await this.#service.addUserToFunction(functionId, userId);
+            this.#logger.debug('Updated Role:', updatedFunction);
+            return updatedFunction;
+        } catch (error) {
+            throw new Error((error as Error).message);
+        }
+    }
+
+    @Public()
+    @Mutation('removeUserFromFunction')
+    async removeUserFromRole(
+        @Args('functionName') functionId: string,
+        @Args('userId') userId: string,
+    ) {
+        this.#logger.debug('removeUserFromRole: functionId=%s, userId=%s', functionId, userId);
+        try {
+            const updatedFunction = await this.#service.removeUserFromFunction(functionId, userId);
+            this.#logger.debug('Updated Role:', updatedFunction);
+            return updatedFunction;
+        } catch (error) {
+            this.#logger.error('Error:', (error as Error).message);
+            throw new Error((error as Error).message);
         }
     }
 }

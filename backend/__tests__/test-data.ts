@@ -107,10 +107,10 @@ export const TEST_MANDATES = {
         users: ['gyca1011'],
     },
     update: {
-        filters: [{ field: 'functionName', operator: 'EQ', value: 'name' }],
+        filter: { field: 'functionName', operator: 'EQ', value: 'name' },
         data: { functionName: 'name2' },
     },
-    delete: [{ field: 'functionName', operator: 'EQ', value: 'name2' }],
+    delete: { field: 'functionName', operator: 'EQ', value: 'name2' },
 };
 
 export const TEST_MANDATES2 = {
@@ -121,8 +121,13 @@ export const TEST_MANDATES2 = {
         users: ['gyca1011'],
     },
     update: {
-        filters: [{ field: 'functionName', operator: 'EQ', value: 'Student' }],
+        filter: { field: 'functionName', operator: 'EQ', value: 'Student' },
         data: { functionName: 'IWI-Student' },
     },
-    delete: [{ field: 'functionName', operator: 'EQ', value: 'IWI-Student' }],
+    delete: { field: 'functionName', operator: 'EQ', value: 'IWI-Student' },
+};
+
+export const TEST_MANDATES3 = {
+    functionName: 'Dekan',
+    userId: 'gyca1011',
 };

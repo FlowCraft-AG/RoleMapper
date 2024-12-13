@@ -25,7 +25,6 @@ release.properties
 **/.vscode/
 
 # Logs
-**/logs/
 *.log
 *.gz
 *.out
@@ -56,7 +55,7 @@ spring.log
 # *.pem
 # *.p12
 # *.crt
-# *.env*
+*.env*
 
 # Node.js
 **/node_modules/
@@ -138,8 +137,8 @@ kubeconfig
 kubeconfig_ORIGINAL
 
 # compose
-# .extras/compose/backend/postgres/.env
-# .extras/compose/backend/keycloak/.env
+.extras/compose/backend/postgres/.env
+.extras/compose/backend/keycloak/.env
 
 # action-runner
 .github/actions-runner/
@@ -153,8 +152,6 @@ src/config/resources/tls/key.pem
 sonar-project.properties
 
 # Logs
-log
-logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -190,7 +187,7 @@ snyk-*.log
 # IDEs and editors
 .idea
 *.iml
-# /.env
+/.env
 .project
 .classpath
 .c9/
@@ -209,3 +206,4 @@ snyk-*.log
 
 # Volumes
 volumes/**
+.volumes/keycloak

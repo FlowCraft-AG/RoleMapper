@@ -18,17 +18,26 @@
   },
   "homepage": "https://www.flowcraft-ag.de/products/rolemapper",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -p 4000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "check": "npm-check",
-    "dev:tls": "node server.js"
+    "dev:tls": "node server.js --turbopack",
+    "prettier": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\""
   },
   "dependencies": {
     "@apollo/client": "^3.12.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.1",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@heroicons/react": "^2.2.0",
-    "bootstrap": "^5.3.3",
+    "@mui/icons-material": "^6.2.0",
+    "@mui/lab": "^6.0.0-beta.19",
+    "@mui/material": "^6.2.0",
+    "@mui/x-tree-view": "^7.23.2",
     "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
     "graphql": "^16.9.0",
@@ -49,6 +58,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9.15.0",
     "eslint-config-next": "15.0.4",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-organize-imports": "4.1.0",
     "typescript": "^5"
   }
 }

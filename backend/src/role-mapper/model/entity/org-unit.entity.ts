@@ -36,6 +36,10 @@ export class OrgUnit extends Document {
      */
     @Prop({ required: false })
     supervisor?: string;
+
+    alias?: string;
+    kostenstelleNr?: string;
+    type?: string;
 }
 
 export type OrgUnitDocument = OrgUnit & Document;

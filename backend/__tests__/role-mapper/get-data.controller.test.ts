@@ -100,7 +100,7 @@ describe('RoleMapper API: get Data', () => {
         expect(data.totalCount).toBeGreaterThan(0);
     });
 
-    test('einen Benutzer mit userId', async () => {
+    test('[REST] Einen Benutzer mit userId', async () => {
         const user = TEST_EMPLOYEE_1;
         const query = `${ENDPOINTS.USERS}/data?field=userId&operator=EQ&value=${user.userId}`;
 
@@ -124,7 +124,7 @@ describe('RoleMapper API: get Data', () => {
         }
     });
 
-    test('Alle Funktionen mit Benutzer userId', async () => {
+    test('[REST] Alle Funktionen mit Benutzer userId', async () => {
         const user = TEST_EMPLOYEE_1;
         const query = `${ENDPOINTS.MANDATES}/data?field=users&operator=EQ&value=${user.userId}`;
 
@@ -149,7 +149,7 @@ describe('RoleMapper API: get Data', () => {
         }
     });
 
-    test('Alle Prozesse', async () => {
+    test('[REST] Alle Prozesse', async () => {
         const query = `${ENDPOINTS.PROCESSES}/data`;
         const { status, headers, data }: AxiosResponse<DataPayload> = await client.get(query);
 
@@ -175,7 +175,7 @@ describe('RoleMapper API: get Data', () => {
         }
     });
 
-    test('Prozess mit ProzessId', async () => {
+    test('[REST] Prozess mit ProzessId', async () => {
         const query = `${ENDPOINTS.PROCESSES}/data?field=processId&operator=EQ&value=${PROCESS.PROCESS_1}`;
 
         const { status, headers, data }: AxiosResponse<DataPayload> = await client.get(query);
@@ -196,7 +196,7 @@ describe('RoleMapper API: get Data', () => {
         }
     });
 
-    test('Alle Rollen', async () => {
+    test('[REST] Alle Rollen', async () => {
         const query = `${ENDPOINTS.ROLES}/data`;
         const { status, headers, data }: AxiosResponse<DataPayload> = await client.get(query);
 
@@ -221,7 +221,7 @@ describe('RoleMapper API: get Data', () => {
         }
     });
 
-    test('Alle OrgUnits', async () => {
+    test('[REST] Alle OrgUnits', async () => {
         const query = `${ENDPOINTS.ORG_UNITS}/data`;
         const { status, headers, data }: AxiosResponse<DataPayload> = await client.get(query);
 
