@@ -1,9 +1,10 @@
-import 'bootstrap/dist/css/bootstrap.css';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import React from 'react';
 import Navigation from '../components/Navigation';
-import BootstrapClient from '../utils/BootstrapClient';
+import theme from '../theme';
 import './globals.css';
 
 const geistSans = localFont({
@@ -30,9 +31,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Navigation />
-        <BootstrapClient />
-        {children}
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Navigation />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
