@@ -3,5 +3,5 @@ import type { FilterInput } from '../input/filter.input.js';
 
 export type DeleteEntityInput = {
     entity: EntityCategoryType;
-    filters: FilterInput[];
+    filter: FilterInput;
 };

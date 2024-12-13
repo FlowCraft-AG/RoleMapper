@@ -1,18 +1,11 @@
 import { Injectable, type OnApplicationBootstrap } from '@nestjs/common';
+import cFonts from 'cfonts';
 import chalk from 'chalk';
-import figlet from 'figlet';
 import { release, type, userInfo } from 'node:os';
 import process from 'node:process';
-import { promisify } from 'node:util';
 import { nodeConfig } from '../config/node.js';
 import { getLogger } from './logger.js';
 
-// figlet wird in eine Promise-Variante umgewandelt
-const figletAsync = promisify(figlet);
-
-/**
- * Beim Start ein Banner ausgeben durch `onApplicationBootstrap()`.
- */
 @Injectable()
 export class BannerService implements OnApplicationBootstrap {
     readonly #logger = getLogger(BannerService.name);
@@ -20,23 +13,21 @@ export class BannerService implements OnApplicationBootstrap {
     /**
      * Beim Bootstrap der Anwendung Informationen und ein Banner ausgeben.
      */
-    async onApplicationBootstrap() {
-        // Sicherstellen, dass nodeConfig nicht null ist
-        const { host, nodeEnv, port, databaseName } = nodeConfig;
+    onApplicationBootstrap() {
+        const { host, nodeEnv, port, databaseName, httpsOptions } = nodeConfig;
 
-        try {
-            // Banner generieren und mit Farben ausgeben
-            const banner = (await figletAsync('RoleMapper'))!;
-            this.#logger.info(chalk.blueBright(`\n${banner}`)); // Banner in Blau
-        } catch (error) {
-            this.#logger.error(chalk.red('Fehler beim Generieren des Banners mit figlet:'), error);
-        }
+        // Überprüfen, ob HTTPS oder HTTP verwendet wird
+        const protocol = httpsOptions === undefined ? 'http' : 'https';
+
+        // Banner generieren und ausgeben
+        this.#generateBanner();
 
         // Umgebungsinformationen mit Farben ausgeben
         this.#logger.info(chalk.green('=== Anwendungsinformationen ==='));
         this.#logger.info(chalk.cyan('Anwendungsname: ') + chalk.yellow('RoleMapper'));
         this.#logger.info(chalk.cyan('Node.js-Version: ') + chalk.yellow(process.version));
-        this.#logger.info(chalk.cyan('Umgebung: ') + chalk.yellow(nodeEnv!)); // non-null assertion
+        this.#logger.info(chalk.cyan('Umgebung: ') + chalk.yellow(nodeEnv!));
+        this.#logger.info(chalk.cyan('Protokol: ') + chalk.yellow(protocol.toString()));
         this.#logger.info(chalk.cyan('Host: ') + chalk.yellow(host));
         this.#logger.info(chalk.cyan('Port: ') + chalk.yellow(port.toString()));
         this.#logger.info(chalk.cyan('Datenbank: ') + chalk.yellow(databaseName));
@@ -46,5 +37,19 @@ export class BannerService implements OnApplicationBootstrap {
         this.#logger.info(chalk.cyan('Benutzer: ') + chalk.yellow(userInfo().username));
         this.#logger.info(chalk.cyan('Swagger UI: ') + chalk.yellowBright('/swagger'));
         this.#logger.info(chalk.green('==============================='));
+    }
+
+    /**
+     * Banner generieren und ausgeben.
+     */
+    #generateBanner() {
+        cFonts.say('RoleMapper', {
+            font: 'block',
+            align: 'left',
+            gradient: ['white', 'black'],
+            background: 'transparent',
+            letterSpacing: 1,
+            lineHeight: 1,
+        });
     }
 }

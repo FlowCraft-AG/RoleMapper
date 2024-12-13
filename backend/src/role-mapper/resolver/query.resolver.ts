@@ -70,10 +70,10 @@ export class QueryResolver {
     ): Promise<any> {
         this.#logger.debug('getEntityData: input=%o', input);
 
-        const { entity, filters, pagination } = input; // Extrahiere Eingabewerte
+        const { entity, filter, pagination } = input; // Extrahiere Eingabewerte
 
         // Abruf der Rohdaten mit den angegebenen Filtern und Paginierung
-        const rawData = await this.#service.findData(entity, filters, pagination);
+        const rawData = await this.#service.findData(entity, filter, pagination);
         if (rawData === undefined || rawData.length === 0) {
             this.#logger.warn('Keine Daten gefunden für die Anfrage.');
             return {

@@ -1,0 +1,163 @@
+= Anpassungsmöglichkeiten mit cFonts
+
+== Übersicht
+Die `cFonts`-Bibliothek bietet zahlreiche Anpassungsmöglichkeiten, um beeindruckende Banner für Anwendungen zu erstellen. Diese Anleitung beschreibt die verfügbaren Optionen und ihre möglichen Werte.
+
+== Optionen
+
+=== Schriftarten (font)
+Mit der `font`-Option kannst du die Schriftart für das Banner auswählen.
+
+Mögliche Werte:
+- `block` (Standard)
+- `console`
+- `simple`
+- `simpleBlock`
+- `3d`
+- `simple3d`
+- `chrome`
+- `huge`
+- `tiny`
+- `grid`
+- `pallet`
+- `shade`
+- `slick`
+- `box`
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper', {
+    font: '3d',
+});
+----
+
+=== Text-Ausrichtung (align)
+Die `align`-Option definiert die Ausrichtung des Texts.
+
+Mögliche Werte:
+- `left` (links)
+- `center` (zentriert)
+- `right` (rechts)
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper', {
+    align: 'center',
+});
+----
+
+=== Farben (colors)
+Die `colors`-Option erlaubt die Anpassung der Textfarbe. Es können Farbnamen oder Hex-Codes verwendet werden.
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper', {
+    colors: ['green', '#FF5733'],
+});
+----
+
+=== Farbverläufe (gradient)
+Mit der `gradient`-Option kannst du sanfte Übergänge zwischen zwei oder mehr Farben erstellen.
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper', {
+    gradient: ['cyan', 'magenta', 'yellow'],
+});
+----
+
+=== Hintergrundfarbe (background)
+Mit der `background`-Option kannst du eine feste Hintergrundfarbe oder `transparent` verwenden.
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper', {
+    background: 'black',
+});
+----
+
+=== Buchstabenabstand (letterSpacing)
+Die `letterSpacing`-Option erlaubt es, den Abstand zwischen den Buchstaben zu verändern.
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper', {
+    letterSpacing: 2,
+});
+----
+
+=== Zeilenhöhe (lineHeight)
+Die `lineHeight`-Option definiert den Abstand zwischen den Zeilen.
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper', {
+    lineHeight: 2,
+});
+----
+
+=== Mehrzeilige Banner
+Für mehrzeilige Banner kannst du `\n` im Text verwenden.
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper\nVersion 1.0', {
+    font: 'slick',
+    align: 'center',
+    gradient: ['blue', 'white'],
+});
+----
+
+=== Dynamischer Inhalt
+Die Bannertexte können dynamisch erstellt werden, z. B. basierend auf Variablen.
+
+.Beispiel:
+[source,typescript]
+----
+const appName = 'RoleMapper';
+const version = '1.0';
+cFonts.say(`${appName}\nVersion ${version}`, {
+    font: 'huge',
+    align: 'center',
+    gradient: ['cyan', 'magenta'],
+});
+----
+
+== Beispiel für ein vollständiges Banner
+Hier ist ein Beispiel, das mehrere Optionen kombiniert:
+
+.Beispiel:
+[source,typescript]
+----
+cFonts.say('RoleMapper\nDein Tool für Rollen', {
+    font: 'chrome',
+    align: 'center',
+    colors: ['cyan', 'white'],
+    gradient: ['red', 'blue'],
+    letterSpacing: 2,
+    lineHeight: 2,
+    background: 'transparent',
+});
+----
+
+== Zusammenfassung
+|===
+| Option           | Beschreibung                              | Beispielwerte
+| `font`           | Schriftart                               | `block`, `3d`, `tiny`
+| `align`          | Textausrichtung                          | `left`, `center`, `right`
+| `colors`         | Textfarbe                                | `cyan`, `#FF5733`, `green`
+| `gradient`       | Farbverlauf                              | `['red', 'blue']`
+| `background`     | Hintergrundfarbe                         | `transparent`, `black`, `yellow`
+| `letterSpacing`  | Abstand zwischen Buchstaben              | `1`, `2`
+| `lineHeight`     | Abstand zwischen Zeilen                  | `1`, `2`
+|===
+
+Mit diesen Optionen kannst du beeindruckende und vollständig anpassbare Banner für deine Anwendung erstellen.
