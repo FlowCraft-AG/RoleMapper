@@ -10,6 +10,9 @@ export const ORG_UNITS = gql`
           name
           parentId
           supervisor
+          alias
+          kostenstelleNr
+          type
         }
       }
     }

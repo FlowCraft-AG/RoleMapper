@@ -231,6 +231,9 @@ type OrgUnit {
   Verantwortlicher der Organisationseinheit.
   """
   supervisor: String
+  alias: String
+  kostenstelleNr: String
+  type: String
 }
 
 # Funktionen

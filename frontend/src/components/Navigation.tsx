@@ -19,13 +19,13 @@ export default function Navigation() {
     >
       <div>
         <Link
-          href="/dummy2"
+          href="/dummy"
           style={{
-            color: pathname === '/dummy2' ? 'gray' : '#fff',
+            color: pathname === '/dummy' ? 'gray' : '#fff',
             marginRight: '15px',
           }}
         >
-          dummy 2
+          dummy
         </Link>
         <Link
           href="/organisationseinheiten"

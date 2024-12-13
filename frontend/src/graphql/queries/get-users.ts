@@ -32,3 +32,46 @@ export const USERS = gql`
     }
   }
 `;
+
+export const MITGLIEDER = gql`
+  query GetData($alias: String, $kostenstelleNr: String) {
+    getData(
+      input: {
+        entity: USERS
+        filter: {
+          OR: [
+            { field: orgUnit, operator: EQ, value: $alias }
+            { field: orgUnit, operator: EQ, value: $kostenstelleNr }
+          ]
+        }
+      }
+    ) {
+      totalCount
+      data {
+        ... on User {
+          _id
+          userId
+          userType
+          userRole
+          orgUnit
+          active
+          validFrom
+          validUntil
+          employee {
+            costCenter
+            department
+          }
+          student {
+            _id
+            courseOfStudy
+            courseOfStudyUnique
+            courseOfStudyShort
+            courseOfStudyName
+            level
+            examRegulation
+          }
+        }
+      }
+    }
+  }
+`;
