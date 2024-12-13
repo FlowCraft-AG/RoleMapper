@@ -4,6 +4,6 @@ import type { PaginationParameters } from './pagination-parameters.ts';
 
 export type DataInput = {
     entity: EntityCategoryType;
-    filters?: FilterInput[];
+    filter?: FilterInput;
     pagination?: PaginationParameters;
 };

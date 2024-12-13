@@ -159,7 +159,7 @@ export class ReadController {
             example: [
                 {
                     _id: '6740a584f3e876cdd20d8654',
-                    functionName: 'Dekan IWI',
+                    functionName: 'Dekan',
                     type: 'dekan',
                     orgUnit: '6745da29a586857aa17d76d0',
                     users: ['nefr0002'],
@@ -205,14 +205,14 @@ export class ReadController {
         // Erstellen von Filtern, wenn field, operator und value angegeben sind
         // Filter erstellen, falls notwendig
         // eslint-disable-next-line @stylistic/operator-linebreak
-        const filters: FilterInput[] =
+        const filter: FilterInput | undefined =
             // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-            field && operator && value ? [{ field, operator, value }] : [];
+            field && operator && value ? { field, operator, value } : undefined;
 
         const pagination = { limit, offset };
 
         // Abrufen der Daten
-        const rawData = await this.#service.findData(entityType, filters, pagination);
+        const rawData = await this.#service.findData(entityType, filter, pagination);
 
         // Prüfen, ob Daten vorhanden sind
         if (rawData === undefined || rawData.length === 0) {

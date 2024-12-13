@@ -5,9 +5,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
-import { InvalidFilterException, InvalidOperatorException } from '../error/exceptions.js';
 import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
 import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
@@ -17,13 +16,12 @@ import { User, UserDocument } from '../model/entity/user.entity.js';
 import { CreateDataInput } from '../model/input/create.input.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { UpdateDataInput } from '../model/input/update.input.js';
-import { FilterFields } from '../model/types/filter.type.js';
-import { operatorMap } from '../model/types/map.type.js';
+import { ReadService } from './read.service.js';
 
 @Injectable()
 export class WriteService {
     readonly #logger = getLogger(WriteService.name);
-
+    readonly #readService: ReadService;
     readonly #modelMap: Record<string, Model<EntityType>>;
 
     constructor(
@@ -32,6 +30,7 @@ export class WriteService {
         @InjectModel(Mandates.name) functionModel: Model<MandateDocument>,
         @InjectModel(OrgUnit.name) orgUnitModel: Model<OrgUnitDocument>,
         @InjectModel(Role.name) roleModel: Model<RoleDocument>,
+        readService: ReadService,
     ) {
         this.#modelMap = {
             USERS: userModel,
@@ -40,6 +39,7 @@ export class WriteService {
             ROLES: roleModel,
             ORG_UNITS: orgUnitModel,
         };
+        this.#readService = readService;
     }
 
     /**
@@ -67,12 +67,12 @@ export class WriteService {
      */
     async updateEntity(
         entity: EntityCategoryType,
-        filters: FilterInput[],
+        filters: FilterInput,
         data: UpdateDataInput | undefined,
     ) {
         this.#logger.debug('updateEntity: entity=%s, filters=%o, data=%o', entity, filters, data);
         const model = this.#getModel(entity);
-        const filterQuery = this.#buildFilterQuery(filters);
+        const filterQuery = this.#readService.buildFilterQuery(filters);
         const result = await model.updateMany(filterQuery, data).exec();
         this.#logger.debug('updateEntity: result=%o', result);
         return {
@@ -95,10 +95,10 @@ export class WriteService {
      * @returns {Promise<any>} - Das Ergebnis der Löschung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async deleteEntity(entity: EntityCategoryType, filters: FilterInput[]) {
+    async deleteEntity(entity: EntityCategoryType, filters: FilterInput) {
         this.#logger.debug('deleteEntity: entity=%s, filters=%o', entity, filters);
         const model = this.#getModel(entity);
-        const filterQuery = this.#buildFilterQuery(filters);
+        const filterQuery = this.#readService.buildFilterQuery(filters);
         const result = await model.deleteMany(filterQuery).exec();
         return {
             success: result.deletedCount > 0,
@@ -183,53 +183,53 @@ export class WriteService {
      * @param {FilterInputDTO | undefined} filters - Die Filterkriterien.
      * @returns {FilterQuery<any>} - Die erstellte Filterabfrage.
      */
-    #buildFilterQuery(filters?: FilterInput[]): FilterQuery<any> {
-        if (!filters || filters.length === 0) {
-            this.#logger.debug('buildFilterQuery: No filters provided');
-            return {};
-        }
+    // #buildFilterQuery(filters?: FilterInput[]): FilterQuery<any> {
+    //     if (!filters || filters.length === 0) {
+    //         this.#logger.debug('buildFilterQuery: No filters provided');
+    //         return {};
+    //     }
 
-        const query: FilterQuery<any> = {};
+    //     const query: FilterQuery<any> = {};
 
-        for (const filter of filters) {
-            this.#processFilter(query, filter);
-        }
+    //     for (const filter of filters) {
+    //         this.#processFilter(query, filter);
+    //     }
 
-        return query;
-    }
+    //     return query;
+    // }
 
-    #processFilter(query: FilterQuery<any>, filter: FilterInput) {
-        if (filter.and) {
-            query.$and = filter.and.map((subFilter) => this.#buildFilterQuery([subFilter]));
-        }
-        if (filter.or) {
-            query.$or = filter.or.map((subFilter) => this.#buildFilterQuery([subFilter]));
-        }
-        if (filter.not) {
-            query.$not = this.#buildFilterQuery([filter.not]);
-        }
-        if ((filter.field ?? '') && filter.operator && filter.value !== undefined) {
-            this.#addFieldFilter(query, filter);
-        } else if ((filter.field ?? '') || filter.operator || filter.value !== undefined) {
-            this.#handleIncompleteFilter(filter);
-        }
-    }
+    // #processFilter(query: FilterQuery<any>, filter: FilterInput) {
+    //     if (filter.and) {
+    //         query.$and = filter.and.map((subFilter) => this.#buildFilterQuery([subFilter]));
+    //     }
+    //     if (filter.or) {
+    //         query.$or = filter.or.map((subFilter) => this.#buildFilterQuery([subFilter]));
+    //     }
+    //     if (filter.not) {
+    //         query.$not = this.#buildFilterQuery([filter.not]);
+    //     }
+    //     if ((filter.field ?? '') && filter.operator && filter.value !== undefined) {
+    //         this.#addFieldFilter(query, filter);
+    //     } else if ((filter.field ?? '') || filter.operator || filter.value !== undefined) {
+    //         this.#handleIncompleteFilter(filter);
+    //     }
+    // }
 
-    #addFieldFilter(query: FilterQuery<any>, filter: FilterInput) {
-        if (!filter.operator) {
-            this.#logger.error('Invalid operator: %s', filter.operator);
-            throw new InvalidOperatorException(filter.operator);
-        }
-        const mongoOperator = operatorMap[filter.operator];
-        query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
-    }
+    // #addFieldFilter(query: FilterQuery<any>, filter: FilterInput) {
+    //     if (!filter.operator) {
+    //         this.#logger.error('Invalid operator: %s', filter.operator);
+    //         throw new InvalidOperatorException(filter.operator);
+    //     }
+    //     const mongoOperator = operatorMap[filter.operator];
+    //     query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
+    // }
 
-    #handleIncompleteFilter(filter: FilterInput) {
-        this.#logger.error('Incomplete filter provided: %o', filter);
-        throw new InvalidFilterException([
-            (filter.field ?? '') ? '' : 'field',
-            filter.operator ? '' : 'operator',
-            filter.value === undefined ? 'value' : '',
-        ]);
-    }
+    // #handleIncompleteFilter(filter: FilterInput) {
+    //     this.#logger.error('Incomplete filter provided: %o', filter);
+    //     throw new InvalidFilterException([
+    //         (filter.field ?? '') ? '' : 'field',
+    //         filter.operator ? '' : 'operator',
+    //         filter.value === undefined ? 'value' : '',
+    //     ]);
+    // }
 }

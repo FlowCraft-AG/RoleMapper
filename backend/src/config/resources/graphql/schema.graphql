@@ -25,7 +25,7 @@ input DataInput {
   """
   Filterbedingungen, um die Abfrage zu präzisieren.
   """
-  filters: [FilterInput!]
+  filter: FilterInput
   """
   Pagination-Parameter zur Steuerung der Ergebnisse.
   """
@@ -53,18 +53,18 @@ input FilterInput {
   """
   Das zu filternde Feld, z. B. userId oder orgUnit.
   """
-  field: FilterOptions!
+  field: FilterOptions
   """
   Der Vergleichsoperator, z. B. EQ oder IN.
   """
-  operator: Operator!
+  operator: Operator
   """
   Der Vergleichswert.
   """
-  value: String!
-  and: [FilterInput]
-  or: [FilterInput]
-  not: FilterInput
+  value: String
+  AND: [FilterInput]
+  OR: [FilterInput]
+  NOR: [FilterInput]
 }
 
 # Rückgabewerte
@@ -503,7 +503,7 @@ input UpdateEntityInput {
   """
   Filterbedingungen, um die zu aktualisierende Entität zu finden.
   """
-  filters: [FilterInput!]!
+  filter: FilterInput
   """
   Neue Werte für die Entität.
   """
@@ -576,7 +576,7 @@ input DeleteEntityInput {
   """
   Filterbedingungen, um die zu löschende Entität zu identifizieren.
   """
-  filters: [FilterInput!]!
+  filter: FilterInput
 }
 
 """

@@ -5,7 +5,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
-import { InvalidFilterException, InvalidOperatorException } from '../error/exceptions.js';
+import { InvalidOperatorException } from '../error/exceptions.js';
 import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
 import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
@@ -136,20 +136,20 @@ export class ReadService {
      * Führt eine dynamische Filterung für eine angegebene Entität durch.
      *
      * @param {string} entity - Der Name der Ziel-Entität (z. B. `users`, `mandates`).
-     * @param {FilterInput} filters - Die Filterbedingungen.
+     * @param {FilterInput} filter - Die Filterbedingungen.
      * @param {PaginationParameters} pagination - Parameter für die Seitennummerierung.
      * @returns {Promise} Eine Liste der gefilterten Daten.
      * @throws {BadRequestException} Wenn die Entität nicht unterstützt wird.
      */
     async findData(
         entity: EntityCategoryType,
-        filters?: FilterInput[],
+        filter?: FilterInput,
         pagination?: PaginationParameters,
     ) {
         this.#logger.debug(
-            'findData: entity=%s, filters=%o pagination=%o',
+            'findData: entity=%s, filter=%o pagination=%o',
             entity,
-            filters,
+            filter,
             pagination,
         );
 
@@ -157,14 +157,17 @@ export class ReadService {
         const model = this.#getModel(entity);
 
         // Erstellen der Filter-Query basierend auf den Eingabeparametern
-        const filterQuery = this.#buildFilterQuery(filters);
+        const filterQuery = this.buildFilterQuery(filter);
+        this.#logger.debug('findData: filterQuery=%o', filterQuery);
 
         // Daten mit der generierten Query abrufen
         // eslint-disable-next-line unicorn/no-array-callback-reference
         const data = await model.find(filterQuery).exec();
+        this.#logger.debug('findData: data=%o', data);
         const rawData = data.map(
             (document: EntityType): EntityType => document.toObject() as EntityType,
         );
+        this.#logger.debug('findData: rawData=%o', rawData);
 
         // Anwendung der Paginierung, wenn angegeben
         const paginatedData = pagination
@@ -181,6 +184,35 @@ export class ReadService {
         return paginatedData;
     }
 
+    /**
+     * Erstellt rekursiv eine MongoDB-Filter-Query basierend auf den angegebenen Bedingungen.
+     *
+     * @param {FilterInput} filter - Die Filterbedingungen.
+     * @returns {FilterQuery<any>} Die generierte MongoDB-Query.
+     * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
+     * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
+     */
+    buildFilterQuery(filter?: FilterInput): FilterQuery<any> {
+        if (this.#isEmptyFilter(filter)) {
+            this.#logger.debug('buildFilterQuery: keine Filterbedingungen angegeben');
+            return {};
+        }
+
+        const query: FilterQuery<any> = {};
+
+        // Verarbeitung der logischen Operatoren (AND, OR, NOT)
+        if (filter) {
+            this.#processLogicalOperators(filter, query);
+        }
+
+        // Verarbeitung der Felder, falls gesetzt
+        if (filter && this.#isAnyFieldSet(filter)) {
+            // this.#validateFilterFields(filter);
+            this.#buildFieldQuery(filter, query);
+        }
+        return query;
+    }
+
     #getModel(entity: EntityCategoryType): Model<EntityType> {
         // eslint-disable-next-line security/detect-object-injection
         const model = this.#modelMap[entity];
@@ -194,116 +226,81 @@ export class ReadService {
     }
 
     /**
-     * Erstellt rekursiv eine MongoDB-Filter-Query basierend auf den angegebenen Bedingungen.
-     *
-     * @param {FilterInput} filters - Die Filterbedingungen.
-     * @returns {FilterQuery<any>} Die generierte MongoDB-Query.
-     * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
-     * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
-     */
-    #buildFilterQuery(filters?: FilterInput[]): FilterQuery<any> {
-        if (this.#isEmptyFilter(filters)) {
-            this.#logger.debug('buildFilterQuery: keine Filterbedingungen angegeben');
-            return {};
-        }
-
-        const query: FilterQuery<any> = {};
-
-        // Verarbeitung der logischen Operatoren (AND, OR, NOT)
-        if (filters) {
-            this.#processLogicalOperators(filters, query);
-        }
-
-        // Verarbeitung der Felder, falls gesetzt
-        if (filters && this.#isAnyFieldSet(filters)) {
-            this.#validateFilterFields(filters);
-            this.#buildFieldQuery(filters, query);
-        }
-        return query;
-    }
-
-    /**
      * Überprüft, ob der Filter leer ist.
      *
-     * @param {FilterInput} filters - Die Filterbedingungen.
+     * @param {FilterInput} filter - Die Filterbedingungen.
      * @returns {boolean} `true`, wenn der Filter leer ist, andernfalls `false`.
      */
-    #isEmptyFilter(filters?: FilterInput[]): boolean {
-        return !filters || filters.length === 0;
+    #isEmptyFilter(filter?: FilterInput): boolean {
+        return !filter || filter === undefined;
     }
 
     /**
      * Verarbeitet logische Operatoren (`and`, `or`, `not`) im Filter.
      *
-     * @param {FilterInput} filters - Die Filterbedingungen.
+     * @param {FilterInput} filter - Die Filterbedingungen.
      * @param {FilterQuery<any>} query - Die MongoDB-Query.
      */
-    #processLogicalOperators(filters: FilterInput[], query: FilterQuery<any>): void {
-        for (const filter of filters) {
-            if (filter.and) {
-                query.$and = filter.and.map((subFilter) => this.#buildFilterQuery([subFilter]));
-            }
-            if (filter.or) {
-                query.$or = filter.or.map((subFilter) => this.#buildFilterQuery([subFilter]));
-            }
-            if (filter.not) {
-                query.$not = this.#buildFilterQuery([filter.not]);
-            }
+    #processLogicalOperators(filter: FilterInput, query: FilterQuery<any>): void {
+        if (filter.AND) {
+            query.$and = filter.AND.map((subFilter) => this.buildFilterQuery(subFilter));
+        }
+        if (filter.OR) {
+            query.$or = filter.OR.map((subFilter) => this.buildFilterQuery(subFilter));
+        }
+        if (filter.NOR) {
+            query.$nor = filter.NOR.map((subFilter) => this.buildFilterQuery(subFilter));
         }
     }
 
     /**
      * Überprüft, ob mindestens ein Feld im Filter gesetzt ist.
      *
-     * @param {FilterInput} filters - Die Filterbedingungen.
+     * @param {FilterInput} filter - Die Filterbedingungen.
      * @returns {boolean} `true`, wenn mindestens ein Feld gesetzt ist, andernfalls `false`.
      */
-    #isAnyFieldSet(filters: FilterInput[]): boolean {
-        return filters.some((filter) => filter.field !== null && filter.operator && filter.value);
+    #isAnyFieldSet(filter: FilterInput): boolean {
+        return !!filter.field && !!filter.operator && filter.value !== undefined;
     }
 
     /**
      * Validiert die Felder im Filter.
      *
-     * @param {FilterInput} filters - Die Filterbedingungen.
+     * @param {FilterInput} filter - Die Filterbedingungen.
      * @throws {InvalidFilterException} Wenn ein unvollständiger Filter angegeben wird.
      */
-    #validateFilterFields(filters: FilterInput[]): void {
-        for (const filter of filters) {
-            const missingFields: string[] = [];
-            if (filter.field === null) missingFields.push('Feld');
-            if (!filter.operator) missingFields.push('Operator');
-            if (filter.value === undefined || filter.value === null) missingFields.push('Wert');
+    // #validateFilterFields(filter: FilterInput): void {
+    //     const missingFields: string[] = [];
+    //     if (filter.field === null) missingFields.push('Feld');
+    //     if (!filter.operator) missingFields.push('Operator');
+    //     if (filter.value === undefined || filter.value === null) missingFields.push('Wert');
 
-            if (missingFields.length > 0) {
-                throw new InvalidFilterException(missingFields);
-            }
-        }
-    }
+    //     if (missingFields.length > 0) {
+    //         throw new InvalidFilterException(missingFields);
+    //     }
+    // }
 
     /**
      * Erstellt eine MongoDB-Query für ein einzelnes Feld.
      *
-     * @param {FilterInput} filters - Die Filterbedingungen.
+     * @param {FilterInput} filter - Die Filterbedingungen.
      * @param {FilterQuery<any>} query - Die MongoDB-Query.
      * @throws {InvalidOperatorException} Wenn ein ungültiger Operator angegeben wird.
      */
-    #buildFieldQuery(filters: FilterInput[], query: FilterQuery<any>): void {
-        for (const filter of filters) {
-            // Validierung von Operator und Feld
-            if (!filter.operator || filter.field === null) {
-                throw new Error(
-                    `Ungültiger Filter: operator oder field fehlt (${JSON.stringify(filter)})`,
-                );
-            }
-
-            // Zuordnung des MongoDB-Operators und Hinzufügen des Filters zur Query
-            const mongoOperator = operatorMap[filter.operator];
-            if (!mongoOperator) {
-                throw new InvalidOperatorException(filter.operator);
-            }
-
-            query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
+    #buildFieldQuery(filter: FilterInput, query: FilterQuery<any>): void {
+        // Validierung von Operator und Feld
+        if (!filter.operator || filter.field === null) {
+            throw new Error(
+                `Ungültiger Filter: operator oder field fehlt (${JSON.stringify(filter)})`,
+            );
         }
+
+        // Zuordnung des MongoDB-Operators und Hinzufügen des Filters zur Query
+        const mongoOperator = operatorMap[filter.operator];
+        if (!mongoOperator) {
+            throw new InvalidOperatorException(filter.operator);
+        }
+
+        query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
     }
 }
