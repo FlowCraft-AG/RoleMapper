@@ -103,13 +103,12 @@ describe('MutationResolver', () => {
             mutation UpdateEntity {
                 updateEntity(input: {
                     entity: ${ENDPOINTS.MANDATES},
-                    filters: [
+                    filter:
                         {
-                            field: ${updateInput.filters[0]!.field},
-                            operator: ${updateInput.filters[0]!.operator},
-                            value: "${updateInput.filters[0]!.value}"
-                        }
-                    ],
+                            field: ${updateInput.filter.field},
+                            operator: ${updateInput.filter.operator},
+                            value: "${updateInput.filter.value}"
+                        },
                     functionData: {
                         functionName: "${updateInput.data.functionName}"
                     }
@@ -142,13 +141,13 @@ describe('MutationResolver', () => {
             mutation DeleteEntity {
                 deleteEntity(input: {
                     entity: ${ENDPOINTS.MANDATES},
-                    filters: [
+                    filter:
                         {
-                            field: ${deleteInput[0]!.field},
-                            operator: ${deleteInput[0]!.operator},
-                            value: "${deleteInput[0]!.value}"
+                            field: ${deleteInput.field},
+                            operator: ${deleteInput.operator},
+                            value: "${deleteInput.value}"
                         }
-                    ]
+
                 }) {
                     success
                     message

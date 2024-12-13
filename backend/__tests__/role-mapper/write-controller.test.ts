@@ -103,7 +103,7 @@ describe('WriteController REST Tests', () => {
 
     // test('Fehler bei Aktualisierung: Ungültiger Filter', async () => {
     //     const invalidUpdate: UpdateEntityInput = {
-    //         filters: [],
+    //         filter: [],
     //         data: { userRole: 'admin' },
     //     };
 

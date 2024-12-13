@@ -225,7 +225,7 @@ describe('get Process Roles GraphQL', () => {
             getData(
                 input: {
                     entity: ${ENDPOINTS.USERS}
-                    filters: [{ field: userId, operator: EQ, value: "${employee.userId}" }]
+                    filter: { field: userId, operator: EQ, value: "${employee.userId}" }
                     pagination: { limit: 3 }
                 }
             ) {
@@ -394,12 +394,12 @@ describe('get Process Roles GraphQL', () => {
         expect(data.data).toBeUndefined();
     });
 
-    test('[GRAPHQL] getData with invalid filters', async () => {
+    test('[GRAPHQL] getData with invalid filter', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
     {
-        getData(entity: ${ENDPOINTS.USERS}, filters: { field: "invalidField", operator: EQ, value: "invalidValue" })
+        getData(entity: ${ENDPOINTS.USERS}, filter: { field: "invalidField", operator: EQ, value: "invalidValue" })
     }
         `,
         };
@@ -417,7 +417,7 @@ describe('get Process Roles GraphQL', () => {
         expect(data.data).toBeUndefined();
     });
 
-    test('[GRAPHQL] getData without filters for ORG_UNITS', async () => {
+    test('[GRAPHQL] getData without filter for ORG_UNITS', async () => {
         // given
         const body: GraphQLRequest = {
             query: `

@@ -1,23 +1,26 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Delete, Visibility } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Tooltip from '@mui/material/Tooltip';
-import React, { useState } from 'react';
-import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
+import Modal from '@mui/material/Modal';
+import TextField from '@mui/material/TextField';
+import { useState } from 'react';
 import { FUNCTIONS } from '../../graphql/queries/get-functions';
 import client from '../../lib/apolloClient';
+import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
+import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
+import ListItemButton from '@mui/material/ListItemButton';
 import theme from '../../theme';
 import { getListItemStyles } from '../../utils/styles';
-import { Button, Modal, TextField } from '@mui/material';
-import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
+
 
 export type Function = {
   _id: string;
@@ -28,19 +31,15 @@ export type Function = {
 
 interface UsersColumnProps {
   selectedFunctionId: string;
-  onSelectUser: (userId: string) => void;
 }
 
-export default function UsersColumn({
-  selectedFunctionId,
-  onSelectUser,
-}: UsersColumnProps) {
-    const { loading, error, data, refetch } = useQuery(FUNCTIONS, { client });
-    const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
+export default function UsersColumn({ selectedFunctionId }: UsersColumnProps) {
+  const [open, setOpen] = useState(false);
+  const [newUserId, setNewUserId] = useState('');
+  const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
-    const [selectedIndex, setSelectedIndex] = React.useState<string | null>(null);
-    const [open, setOpen] = useState(false);
-    const [newUserId, setNewUserId] = useState('');
+
+  const { loading, error, data, refetch } = useQuery(FUNCTIONS, { client });
 
   if (loading)
     return (
@@ -61,36 +60,29 @@ export default function UsersColumn({
     (func: Function) => func._id === selectedFunctionId,
   );
 
-  if (!selectedFunction || selectedFunction.users.length === 0)
+  if (!selectedFunction)
     return (
       <Box sx={{ p: 2 }}>
         <Alert severity="info">Keine Benutzer verfügbar.</Alert>
       </Box>
     );
 
-  const handleViewUser = (userId: string) => {
-    setSelectedIndex(userId);
-    if (onSelectUser) {
-      onSelectUser(userId);
+  const handleAddUser = async () => {
+    if (!newUserId.trim()) return;
+    try {
+      await addUserToFunction({
+        variables: {
+          functionName: selectedFunction.functionName,
+          userId: newUserId,
+        },
+      });
+      refetch(); // Aktualisiere die Daten nach der Mutation
+      setNewUserId('');
+      setOpen(false);
+    } catch (err) {
+      console.error('Fehler beim Hinzufügen des Benutzers:', err);
     }
   };
-
-    const handleAddUser = async () => {
-      if (!newUserId.trim()) return;
-      try {
-        await addUserToFunction({
-          variables: {
-            functionName: selectedFunction.functionName,
-            userId: newUserId,
-          },
-        });
-        refetch(); // Aktualisiere die Daten nach der Mutation
-        setNewUserId('');
-        setOpen(false);
-      } catch (err) {
-        console.error('Fehler beim Hinzufügen des Benutzers:', err);
-      }
-    };
 
   const handleRemoveUser = async (userId: string) => {
     try {
@@ -100,7 +92,7 @@ export default function UsersColumn({
           userId,
         },
       });
-      refetch(); // Aktualisiere die Benutzerliste
+      refetch(); // Aktualisiere die Daten nach der Mutation
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);
     }
@@ -115,42 +107,27 @@ export default function UsersColumn({
         sx={{ marginBottom: 2 }}
       >
         Benutzer hinzufügen
-          </Button>
+      </Button>
 
       <List>
         {selectedFunction.users.map((userId) => (
           <ListItem
             key={userId}
-            selected={selectedIndex === userId}
-            sx={getListItemStyles(theme, selectedIndex === userId)}
-            disablePadding
             secondaryAction={
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Tooltip title="Details anzeigen">
-                  <IconButton
-                    edge="end"
-                    color="primary"
-                    onClick={() => handleViewUser(userId)}
-                  >
-                    <Visibility />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Benutzer entfernen">
-                  <IconButton
-                    edge="end"
-                    color="error"
-                    onClick={() => handleRemoveUser(userId)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
-              </Box>
+              <IconButton
+                edge="end"
+                color="error"
+                onClick={() => handleRemoveUser(userId)}
+              >
+                <DeleteIcon />
+              </IconButton>
             }
           >
             <ListItemText primary={userId} />
           </ListItem>
         ))}
       </List>
+
       {/* Modal für Benutzer hinzufügen */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
