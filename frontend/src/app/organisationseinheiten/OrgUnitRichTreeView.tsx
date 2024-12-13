@@ -1,29 +1,26 @@
 'use client';
 
-import { useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { FUNCTIONS } from '../../graphql/queries/get-functions';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
+import { MITGLIEDER } from '../../graphql/queries/get-users';
 import client from '../../lib/apolloClient';
-
-export type OrgUnit = {
-  _id: string;
-  name: string;
-  parentId: string | null;
-  supervisor: string | null;
-};
-
-export type Function = {
-  _id: string;
-  functionName: string;
-  users: string[];
-  orgUnit: string;
-};
+import { Function } from '../../types/function.type';
+import { OrgUnit } from '../../types/orgUnit.type';
+import { User } from './UserInfoColumn';
 
 interface OrgUnitRichTreeViewProps {
-  onSelect: (id: string | null, hasFunctions: boolean) => void;
+  onSelect: (
+    id: string,
+    hasFunctions: boolean,
+    mitglieder: User[],
+    totalMitglieder: number,
+    name: string,
+    type: string,
+  ) => void;
 }
 
 export default function OrgUnitRichTreeView({
@@ -40,6 +37,10 @@ export default function OrgUnitRichTreeView({
     error: errorFunctions,
     data: dataFunctions,
   } = useQuery(FUNCTIONS, { client });
+
+  const [fetchMitglieder, { data: dataMitglieder }] = useLazyQuery(MITGLIEDER, {
+    client,
+  });
 
   if (loadingOrgUnits || loadingFunctions)
     return <div>Lade Organisationseinheiten...</div>;
@@ -71,11 +72,36 @@ export default function OrgUnitRichTreeView({
     null,
   );
 
-  const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
+  const handleItemClick = async (event: React.MouseEvent, nodeId: string) => {
+    const orgUnit = dataOrgUnits.getData.data.find(
+      (unit: OrgUnit) => unit._id === nodeId,
+    );
+
     const hasFunctions = dataFunctions.getData.data.some(
       (func: Function) => func.orgUnit === nodeId,
     );
-    onSelect(nodeId, hasFunctions);
+
+    let mitglieder = [];
+    let totalMitglieder = 0;
+
+    if (orgUnit?.alias || orgUnit?.kostenstelleNr) {
+      const { data } = await fetchMitglieder({
+        variables: {
+          alias: orgUnit.alias || null,
+          kostenstelleNr: orgUnit.kostenstelleNr || null,
+        },
+      });
+      mitglieder = data?.getData.data;
+      totalMitglieder = data?.getData.totalCount;
+    }
+    onSelect(
+      nodeId,
+      hasFunctions,
+      mitglieder,
+      totalMitglieder,
+      orgUnit?.name,
+      orgUnit?.type,
+    );
   };
 
   return (

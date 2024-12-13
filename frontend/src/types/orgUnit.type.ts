@@ -5,6 +5,9 @@ export type OrgUnit = {
   name: string;
   parentId: string | null;
   supervisor: string | null;
+  alias: string | null;
+  kostenstelleNr: string | null;
+  type: string | null;
 };
 
 export type OrgUnitListProps = {
