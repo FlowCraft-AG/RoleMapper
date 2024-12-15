@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import theme from '../theme';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -13,7 +14,7 @@ export default function Navigation() {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '10px',
-        background: '#333',
+        background: `${theme.palette.custom?.selected}`,
         color: '#fff',
       }}
     >
@@ -21,7 +22,10 @@ export default function Navigation() {
         <Link
           href="/dummy"
           style={{
-            color: pathname === '/dummy' ? 'gray' : '#fff',
+            color:
+              pathname === '/dummy'
+                ? `${theme.palette.text?.primary}`
+                : `${theme.palette.text?.secondary}`,
             marginRight: '15px',
           }}
         >
@@ -30,7 +34,10 @@ export default function Navigation() {
         <Link
           href="/organisationseinheiten"
           style={{
-            color: pathname === '/organisationseinheiten' ? 'gray' : '#fff',
+            color:
+              pathname === '/organisationseinheiten'
+                ? `${theme.palette.text?.primary}`
+                : `${theme.palette.text?.secondary}`,
             marginRight: '15px',
           }}
         >
@@ -39,7 +46,10 @@ export default function Navigation() {
         <Link
           href="/rollen"
           style={{
-            color: pathname === '/rollen' ? 'gray' : '#fff',
+            color:
+              pathname === '/rollen'
+                ? `${theme.palette.text?.primary}`
+                : `${theme.palette.text?.secondary}`,
             marginRight: '15px',
           }}
         >
@@ -49,7 +59,12 @@ export default function Navigation() {
       <div>
         <Link
           href="/login"
-          style={{ color: pathname === '/login' ? 'gray' : '#fff' }}
+          style={{
+            color:
+              pathname === '/login'
+                ? `${theme.palette.text?.primary}`
+                : `${theme.palette.text?.secondary}`,
+          }}
         >
           Login
         </Link>

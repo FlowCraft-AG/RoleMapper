@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const CREATE_FUNCTIONS = gql`
+export const UPDATE_FUNCTIONS = gql`
   mutation CreateEntity(
     $functionName: String!
     $orgUnit: String!
