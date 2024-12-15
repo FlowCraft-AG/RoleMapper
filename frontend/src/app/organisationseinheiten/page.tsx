@@ -70,12 +70,6 @@ export default function OrganigrammPage() {
       );
     }
 
-    console.log(
-      'orgUnitDTO=',
-      orgUnitDTO,
-      'selectedRootOrgUnit=',
-      selectedRootOrgUnit,
-    );
     if (
       selectedFunctionId !== 'mitglieder' ||
       !isChild(orgUnitDTO, selectedRootOrgUnit)

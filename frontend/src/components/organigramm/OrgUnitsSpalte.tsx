@@ -112,18 +112,17 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       );
     };
 
-      if (siblingExpanded) {
-        // Schließe den ersten gefundenen Geschwisterknoten und seine Kinder
-          const siblingToClose = foundSiblingIds[0];
-          const descendantIds = siblingToClose
-            ? getAllDescendantIds(siblingToClose)
-              : [];
-          const newNodeIds = nodeIds.filter(
-            (id) => id !== siblingToClose && !descendantIds.includes(id),
-          );
-        // const newNodeIds = nodeIds.filter((id) => id !== foundSiblingIds[0]);
-        setExpanded(newNodeIds);
-      } else {
+    if (siblingExpanded) {
+      // Schließe den ersten gefundenen Geschwisterknoten und seine Kinder
+      const siblingToClose = foundSiblingIds[0];
+      const descendantIds = siblingToClose
+        ? getAllDescendantIds(siblingToClose)
+        : [];
+      const newNodeIds = nodeIds.filter(
+        (id) => id !== siblingToClose && !descendantIds.includes(id),
+      );
+      setExpanded(newNodeIds);
+    } else {
       setExpanded(nodeIds);
     }
   };

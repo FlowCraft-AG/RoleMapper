@@ -232,17 +232,20 @@ export default function FunctionsSpalte({
           <TextField
             fullWidth
             label="Funktionsname"
+            placeholder="z.B. Studentische Hilfskraft"
             value={newFunctionData.functionName}
             onChange={(e) => handleInputChange('functionName', e.target.value)}
           />
           <TextField
             fullWidth
+            placeholder="z.B. Fakultaet"
             label="Typ"
             value={newFunctionData.type}
             onChange={(e) => handleInputChange('type', e.target.value)}
           />
           <TextField
             fullWidth
+            placeholder="z.B. gyca1011,lufr1012"
             label="Benutzer (Kommagetrennt)"
             value={newFunctionData.users.join(', ')}
             onChange={(e) =>
