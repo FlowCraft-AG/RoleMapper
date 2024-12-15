@@ -14,24 +14,29 @@ import Tooltip from '@mui/material/Tooltip';
 import React, { useState } from 'react';
 import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
 import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
-import { FUNCTIONS } from '../../graphql/queries/get-functions';
+import { USERS_BY_FUNCTION } from '../../graphql/queries/get-functions';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
-import { Function, FunctionInfo } from '../../types/function.type';
+import { FunctionInfo } from '../../types/function.type';
 import { getListItemStyles } from '../../utils/styles';
 
 interface UsersColumnProps {
   selectedFunctionId: string;
   selectedMitglieder: FunctionInfo | undefined;
   onSelectUser: (userId: string) => void;
+  onRemove: (userId: string, functionId: string) => void;
 }
 
-export default function UsersColumn({
+export default function UsersSpalte({
   selectedFunctionId,
   selectedMitglieder,
   onSelectUser,
+  onRemove,
 }: UsersColumnProps) {
-  const { loading, error, data, refetch } = useQuery(FUNCTIONS, { client });
+  const { loading, error, data, refetch } = useQuery(USERS_BY_FUNCTION, {
+    client,
+    variables: { functionId: selectedFunctionId },
+  });
   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
   const [selectedIndex, setSelectedIndex] = React.useState<string | undefined>(
@@ -60,24 +65,8 @@ export default function UsersColumn({
     selectedFunction = selectedMitglieder;
   } else {
     // Funktion suchen
-    selectedFunction = data?.getData?.data?.find(
-      (func: Function) => func._id === selectedFunctionId,
-    );
+    selectedFunction = data?.getData?.data?.[0];
   }
-
-  if (!selectedFunction || selectedFunction.users.length === 0)
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="info">Keine Benutzer verfügbar.</Alert>
-      </Box>
-    );
-
-  const handleViewUser = (userId: string) => {
-    setSelectedIndex(userId);
-    if (onSelectUser) {
-      onSelectUser(userId);
-    }
-  };
 
   const handleAddUser = async () => {
     if (!newUserId.trim()) return;
@@ -95,6 +84,75 @@ export default function UsersColumn({
       console.error('Fehler beim Hinzufügen des Benutzers:', err);
     }
   };
+  if (!selectedFunction || selectedFunction.users.length === 0)
+    return (
+      <Box sx={{ p: 2 }}>
+        <Box
+          sx={{
+            position: 'sticky',
+            top: 50, // Überschrift bleibt oben
+            backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
+            zIndex: 1,
+            padding: 1,
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpen(true)}
+            sx={{ marginBottom: 2 }}
+          >
+            Benutzer hinzufügen
+          </Button>
+        </Box>
+
+        <Alert severity="info">Keine Benutzer verfügbar.</Alert>
+        {/* Modal für Benutzer hinzufügen */}
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 300,
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
+            <TextField
+              fullWidth
+              label="Benutzer-ID"
+              value={newUserId}
+              onChange={(e) => setNewUserId(e.target.value)}
+            />
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddUser}
+              >
+                Hinzufügen
+              </Button>
+              <Button variant="outlined" onClick={() => setOpen(false)}>
+                Abbrechen
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+      </Box>
+    );
+
+  const handleViewUser = (userId: string) => {
+    setSelectedIndex(userId);
+    if (onSelectUser) {
+      onSelectUser(userId);
+    }
+  };
 
   const handleRemoveUser = async (userId: string) => {
     try {
@@ -105,6 +163,7 @@ export default function UsersColumn({
         },
       });
       refetch(); // Aktualisiere die Benutzerliste
+      onRemove(userId, '');
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);
     }
@@ -135,7 +194,6 @@ export default function UsersColumn({
         {selectedFunction.users.map((userId: string) => (
           <ListItem
             key={userId}
-            selected={selectedIndex === userId}
             sx={getListItemStyles(theme, selectedIndex === userId)}
             disablePadding
             secondaryAction={

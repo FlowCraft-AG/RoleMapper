@@ -9,7 +9,7 @@ interface UserInfoColumnProps {
   userId: string; // Der ausgewählte Benutzer
 }
 
-export default function UserInfoColumn({ userId }: UserInfoColumnProps) {
+export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
   const { loading, error, data } = useQuery(USER_DETAILS, {
     variables: { userId },
     client,

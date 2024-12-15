@@ -101,6 +101,17 @@ export default function OrganigrammPage() {
     setSelectedUserId(userId);
   };
 
+  const handleRemove = (userId: string, functionId: string) => {
+    if (userId === selectedUserId) {
+      setSelectedUserId(undefined);
+    }
+    if (functionId === selectedFunctionId) {
+      setSelectedFunctionId(undefined);
+      setSelectedFunction(undefined);
+      setSelectedUserId(undefined);
+    }
+  };
+
   const mitglied = (orgUnitId: string | undefined, users: string[]) => {
     return {
       _id: 'mitglieder',
@@ -143,6 +154,7 @@ export default function OrganigrammPage() {
             onSelect={handleFunctionSelect}
             rootOrgUnit={selectedRootOrgUnit}
             handleMitgliederClick={handleMitgliederClick}
+            onRemove={handleRemove}
           />
         </Box>
       )}
@@ -179,6 +191,7 @@ export default function OrganigrammPage() {
               selectedFunctionId={selectedFunctionId}
               selectedMitglieder={selectedFunction}
               onSelectUser={handleUserSelect}
+              onRemove={handleRemove}
             />
           }
         </Box>

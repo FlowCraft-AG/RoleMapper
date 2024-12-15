@@ -32,6 +32,7 @@ interface FunctionsColumnProps {
   functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
   onSelect: (functionInfo: FunctionInfo) => void;
   handleMitgliederClick: () => void;
+  onRemove: (userId: string, functionId: string) => void;
 }
 
 export default function FunctionsSpalte({
@@ -39,6 +40,7 @@ export default function FunctionsSpalte({
   rootOrgUnit,
   onSelect,
   handleMitgliederClick,
+  onRemove,
 }: FunctionsColumnProps) {
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
@@ -98,6 +100,7 @@ export default function FunctionsSpalte({
   };
 
   const handleAddFunction = async () => {
+    console.log('orgUnit', orgUnit);
     try {
       await addUserToFunction({
         variables: {
@@ -119,14 +122,15 @@ export default function FunctionsSpalte({
     }
   };
 
-  const handleRemoveFunction = async (functionName: string) => {
+  const handleRemoveFunction = async (func: Function) => {
     try {
       await removeUserFromFunction({
         variables: {
-          functionName,
+          functionName: func.functionName,
         },
       });
       refetch();
+      onRemove('', func._id);
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);
     }
@@ -199,7 +203,7 @@ export default function FunctionsSpalte({
                   <IconButton
                     edge="end"
                     color="error"
-                    onClick={() => handleRemoveFunction(func.functionName)}
+                    onClick={() => handleRemoveFunction(func)}
                   >
                     <Delete />
                   </IconButton>
