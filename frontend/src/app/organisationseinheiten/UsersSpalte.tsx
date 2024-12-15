@@ -17,30 +17,30 @@ import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
 import { FUNCTIONS } from '../../graphql/queries/get-functions';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
+import { Function, FunctionInfo } from '../../types/function.type';
 import { getListItemStyles } from '../../utils/styles';
-
-export type Function = {
-  _id: string;
-  functionName: string;
-  users: string[];
-  orgUnit: string;
-};
 
 interface UsersColumnProps {
   selectedFunctionId: string;
+  selectedMitglieder: FunctionInfo | undefined;
   onSelectUser: (userId: string) => void;
 }
 
 export default function UsersColumn({
   selectedFunctionId,
+  selectedMitglieder,
   onSelectUser,
 }: UsersColumnProps) {
   const { loading, error, data, refetch } = useQuery(FUNCTIONS, { client });
   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
-  const [selectedIndex, setSelectedIndex] = React.useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = React.useState<string | undefined>(
+    undefined,
+  );
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
+
+  let selectedFunction;
 
   if (loading)
     return (
@@ -56,10 +56,14 @@ export default function UsersColumn({
       </Box>
     );
 
-  // Funktion suchen
-  const selectedFunction: Function | undefined = data?.getData?.data?.find(
-    (func: Function) => func._id === selectedFunctionId,
-  );
+  if (selectedFunctionId === 'mitglieder') {
+    selectedFunction = selectedMitglieder;
+  } else {
+    // Funktion suchen
+    selectedFunction = data?.getData?.data?.find(
+      (func: Function) => func._id === selectedFunctionId,
+    );
+  }
 
   if (!selectedFunction || selectedFunction.users.length === 0)
     return (
@@ -108,17 +112,27 @@ export default function UsersColumn({
 
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpen(true)}
-        sx={{ marginBottom: 2 }}
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 50, // Überschrift bleibt oben
+          backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
+          zIndex: 1,
+          padding: 1,
+        }}
       >
-        Benutzer hinzufügen
-      </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpen(true)}
+          sx={{ marginBottom: 2 }}
+        >
+          Benutzer hinzufügen
+        </Button>
+      </Box>
 
       <List>
-        {selectedFunction.users.map((userId) => (
+        {selectedFunction.users.map((userId: string) => (
           <ListItem
             key={userId}
             selected={selectedIndex === userId}

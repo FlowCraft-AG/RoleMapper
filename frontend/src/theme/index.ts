@@ -6,8 +6,8 @@ const theme = createTheme({
   palette: {
     divider: '#ff0000', // Eigene Divider-Farbe
     text: {
-      primary: '#000', // Hauptschriftfarbe
-      secondary: '#ff0000', // Sekundäre Schriftfarbe
+      primary: '#000', // Primärfarbe
+      secondary: '#fff', // Sekundärfarbe
     },
     custom: {
       selected: '#ff0000', // Schriftfarbe für ausgewählte Elemente
