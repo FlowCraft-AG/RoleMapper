@@ -36,6 +36,7 @@ export default function UsersSpalte({
   const { loading, error, data, refetch } = useQuery(USERS_BY_FUNCTION, {
     client,
     variables: { functionId: selectedFunctionId },
+    skip: selectedFunctionId === 'mitglieder', // Query wird übersprungen
   });
   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
