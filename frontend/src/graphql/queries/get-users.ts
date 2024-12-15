@@ -33,6 +33,43 @@ export const USERS = gql`
   }
 `;
 
+export const USER_DETAILS = gql`
+  query GetData($userId: String) {
+    getData(
+      input: {
+        entity: USERS
+        filter: { field: userId, operator: EQ, value: $userId }
+      }
+    ) {
+      data {
+        ... on User {
+          _id
+          userId
+          userType
+          userRole
+          orgUnit
+          active
+          validFrom
+          validUntil
+          employee {
+            costCenter
+            department
+          }
+          student {
+            _id
+            courseOfStudy
+            courseOfStudyUnique
+            courseOfStudyShort
+            courseOfStudyName
+            level
+            examRegulation
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const MITGLIEDER = gql`
   query GetData($alias: String, $kostenstelleNr: String) {
     getData(

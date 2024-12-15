@@ -10,6 +10,17 @@ export type OrgUnit = {
   type: string | null;
 };
 
+export type OrgUnitDTO = {
+  id: string;
+  name?: string;
+  parentId?: string | null;
+  supervisor?: string | null;
+  alias?: string | null;
+  kostenstelleNr?: string | null;
+  type?: string | null;
+  hasMitglieder?: boolean;
+};
+
 export type OrgUnitListProps = {
   orgUnits: OrgUnit[];
   functionsByOrgUnit: Record<string, Function[]>;
