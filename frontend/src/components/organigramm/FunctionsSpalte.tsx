@@ -170,7 +170,11 @@ export default function FunctionsSpalte({
             )}
           >
             <ListItemText
-              primary={`Mitglieder der ${rootOrgUnit.type} ${rootOrgUnit.name}`}
+              primary={
+                rootOrgUnit.name === 'Rektorat'
+                  ? `Mitglieder im ${rootOrgUnit.name}`
+                  : `Mitglieder der${rootOrgUnit.type ? ` ${rootOrgUnit.type}` : ''} ${rootOrgUnit.name}`
+              }
             />
           </ListItemButton>
         </List>

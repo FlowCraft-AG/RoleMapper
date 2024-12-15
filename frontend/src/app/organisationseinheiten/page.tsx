@@ -3,15 +3,15 @@
 import { useLazyQuery } from '@apollo/client';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
+import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
+import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
+import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
+import UsersSpalte from '../../components/organigramm/UsersSpalte';
 import { MITGLIEDER } from '../../graphql/queries/get-users';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
-import FunctionsSpalte from './FunctionsSpalte';
-import OrgUnitsSpalte from './OrgUnitsSpalte';
-import UserInfoSpalte from './UserInfoSpalte';
-import UsersSpalte from './UsersSpalte';
 
 export default function OrganigrammPage() {
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<
@@ -30,9 +30,6 @@ export default function OrganigrammPage() {
     undefined,
   );
   const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
-    undefined,
-  );
 
   const [fetchMitglieder] = useLazyQuery(MITGLIEDER, {
     client,
@@ -73,16 +70,25 @@ export default function OrganigrammPage() {
       );
     }
 
-    console.log('[OrganigrammPage] selectedFunctionId:', selectedFunctionId);
+    console.log(
+      'orgUnitDTO=',
+      orgUnitDTO,
+      'selectedRootOrgUnit=',
+      selectedRootOrgUnit,
+    );
     if (
       selectedFunctionId !== 'mitglieder' ||
       !isChild(orgUnitDTO, selectedRootOrgUnit)
     ) {
       setSelectedFunctionId(undefined); // Reset selection
       setSelectedUserId(undefined); // Reset selection
+      if (
+        orgUnitDTO.type === undefined &&
+        !isChild(orgUnitDTO, selectedRootOrgUnit)
+      ) {
+        setSelectedOrgUnit(undefined);
+      }
     }
-
-    console.log('[OrganigrammPage] selectedOrgUnit:', selectedOrgUnit?.name);
   };
 
   const handleFunctionSelect = (functionInfo: FunctionInfo) => {
