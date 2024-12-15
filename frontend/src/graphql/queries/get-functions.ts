@@ -16,3 +16,41 @@ export const FUNCTIONS = gql`
     }
   }
 `;
+
+export const USERS_BY_FUNCTION = gql`
+  query GetData($functionId: String) {
+    getData(
+      input: {
+        entity: MANDATES
+        filter: { field: _id, operator: EQ, value: $functionId }
+      }
+    ) {
+      data {
+        ... on Function {
+          users
+        }
+      }
+    }
+  }
+`;
+
+export const FUNCTIONS_BY_ORG_UNIT = gql`
+  query GetData($functionId: String) {
+    getData(
+      input: {
+        entity: MANDATES
+        filter: { field: orgUnit, operator: EQ, value: $functionId }
+      }
+    ) {
+      data {
+        ... on Function {
+          _id
+          functionName
+          users
+          orgUnit
+          type
+        }
+      }
+    }
+  }
+`;

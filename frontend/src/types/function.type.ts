@@ -5,6 +5,12 @@ export type Function = {
   orgUnit: string;
 };
 
+export type FunctionInfo = {
+  _id: string;
+  functionName: string;
+  users: string[];
+};
+
 export type FunctionListProps = {
   functions: Function[];
   toggleCircle: (mandate: Function) => void;

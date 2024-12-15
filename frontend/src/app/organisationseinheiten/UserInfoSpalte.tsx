@@ -1,45 +1,19 @@
 'use client';
 
 import { useQuery } from '@apollo/client';
-import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
-import { USERS } from '../../graphql/queries/get-users';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import { USER_DETAILS } from '../../graphql/queries/get-users';
 import client from '../../lib/apolloClient';
 
-export type User = {
-  _id: string;
-  userId: string;
-  userType: string;
-  userRole: string;
-  orgUnit: string;
-  active: boolean;
-  validFrom: string;
-  validUntil: string;
-  employee?: {
-    costCenter: string;
-    department: string;
-  };
-  student?: {
-    _id: string;
-    courseOfStudy: string;
-    courseOfStudyUnique: string;
-    courseOfStudyShort: string;
-    courseOfStudyName: string;
-    level: string;
-    examRegulation: string;
-  };
-};
-
 interface UserInfoColumnProps {
-  selectedUserId: string;
+  userId: string; // Der ausgewählte Benutzer
 }
 
-export default function UserInfoColumn({
-  selectedUserId,
-}: UserInfoColumnProps) {
-  const { loading, error, data } = useQuery(USERS, { client });
+export default function UserInfoColumn({ userId }: UserInfoColumnProps) {
+  const { loading, error, data } = useQuery(USER_DETAILS, {
+    variables: { userId },
+    client,
+  });
 
   if (loading)
     return (
@@ -55,17 +29,7 @@ export default function UserInfoColumn({
       </Box>
     );
 
-  // Benutzer suchen
-  const selectedUser: User | undefined = data?.getData?.data?.find(
-    (user: User) => user.userId === selectedUserId,
-  );
-
-  if (!selectedUser)
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="info">Benutzerinformationen nicht verfügbar.</Alert>
-      </Box>
-    );
+  const selectedUser = data?.getData.data[0];
 
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
