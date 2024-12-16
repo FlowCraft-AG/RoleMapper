@@ -28,6 +28,7 @@ export const USERS_BY_FUNCTION = gql`
       data {
         ... on Function {
           users
+          functionName
         }
       }
     }

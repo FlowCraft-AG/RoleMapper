@@ -36,16 +36,16 @@
 
 ## 🔍 Übersicht
 
-**RoleMapper** ist ein innovatives System von FlowCraft AG, das dynamisches Mapping von Rollen und Berechtigungen in Unternehmen ermöglicht. Mit einer modernen Benutzeroberfläche und einem skalierbaren Backend hilft es, Rechte effizient zu verwalten und Prozesse zu optimieren.
+**RoleMapper** ist ein leistungsstarkes System von FlowCraft AG, das dynamisches Mapping von Rollen und Berechtigungen in Unternehmen ermöglicht. Es bietet eine moderne Benutzeroberfläche sowie ein skalierbares Backend, das effiziente Rechteverwaltung und Prozessoptimierung unterstützt.
 
 ---
 
 ## 🔧 Funktionen
 
-- **Dynamisches Rollen-Mapping:** Automatische Zuweisung basierend auf Benutzerfunktionen und Workflows.
-- **Zentrales Rechte-Management:** Effiziente Verwaltung von Berechtigungen.
-- **Workflow-Integration:** Unterstützt Genehmigungs- und Automatisierungsprozesse durch Camunda BPM.
-- **Responsives UI:** Moderne Benutzeroberfläche mit Next.js und Bootstrap.
+- **Dynamisches Rollen-Mapping:** Rollen werden basierend auf Benutzerfunktionen und organisatorischen Strukturen dynamisch zugewiesen.
+- **Zentrales Rechte-Management:** Intuitive Verwaltung von Berechtigungen.
+- **Workflow-Integration:** Unterstützung von Genehmigungs- und Automatisierungsprozessen mithilfe von Camunda BPM.
+- **Responsives UI:** Eine moderne, reaktionsschnelle Benutzeroberfläche mit Next.js und MUI (Material-UI).
 
 ---
 
@@ -63,7 +63,7 @@
 
 - **Framework:** Next.js
 - **Programmiersprache:** TypeScript
-- **CSS-Framework:** Bootstrap 5
+- **UI-Bibliothek:** MUI (Material-UI)
 
 ---
 

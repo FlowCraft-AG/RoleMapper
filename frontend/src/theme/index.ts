@@ -6,11 +6,17 @@ const theme = createTheme({
   palette: {
     divider: '#ff0000', // Eigene Divider-Farbe
     text: {
-      primary: '#000', // Primärfarbe
-      secondary: '#fff', // Sekundärfarbe
+      primary: '#333333',
+      secondary: '#666666',
     },
     custom: {
-      selected: '#ff0000', // Schriftfarbe für ausgewählte Elemente
+      navbar: {
+        primary: '#000', // Schwarz
+        secondary: '#fff', // weiss  // Schriftfarbe für ausgewählte Elemente
+      },
+      selected: '#ff0000',
+      primary: '#000', // Schwarz
+      secondary: '#ff0000', // weiss  // Schriftfarbe für ausgewählte Elemente
     },
   },
 });
@@ -18,12 +24,24 @@ const theme = createTheme({
 declare module '@mui/material/styles' {
   interface Palette {
     custom?: {
+      navbar: {
+        primary: string;
+        secondary: string;
+      };
       selected: string;
+      primary: string;
+      secondary: string;
     };
   }
   interface PaletteOptions {
     custom?: {
+      navbar: {
+        primary: string;
+        secondary: string;
+      };
       selected: string;
+      primary: string;
+      secondary: string;
     };
   }
 }

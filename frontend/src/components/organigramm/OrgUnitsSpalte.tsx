@@ -7,9 +7,9 @@ import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { useState } from 'react';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
 import client from '../../lib/apolloClient';
+import theme from '../../theme';
 import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
-import theme from '../../theme';
 
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnitDTO) => void;
@@ -27,7 +27,7 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
 
   // Prüfe, ob die Organisationseinheit ein Root-Knoten ist (z. B. IWI, EI, WW)
   const isRootOrgUnit = (orgUnit: OrgUnit) =>
-    orgUnit?.alias && orgUnit?.kostenstelleNr;
+    orgUnit?.alias || orgUnit?.kostenstelleNr;
   const orgUnitList: OrgUnit[] = data.getData.data;
   const treeData = buildTree(orgUnitList, null);
 
@@ -45,8 +45,8 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       }));
   }
 
-    const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
-      const selectedOrgUnit = orgUnitList.find((unit) => unit._id === nodeId);
+  const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
+    const selectedOrgUnit = orgUnitList.find((unit) => unit._id === nodeId);
 
     if (selectedOrgUnit) {
       if (isRootOrgUnit(selectedOrgUnit)) {
@@ -67,17 +67,17 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
     }
   };
 
-    const getParentNodes = (nodeId: string): string[] => {
-      const parents: string[] = [];
-      let current = orgUnitList.find((unit) => unit._id === nodeId);
+  const getParentNodes = (nodeId: string): string[] => {
+    const parents: string[] = [];
+    let current = orgUnitList.find((unit) => unit._id === nodeId);
 
-      while (current && current.parentId) {
-        parents.push(current.parentId);
-        current = orgUnitList.find((unit) => unit._id === current?.parentId);
-      }
+    while (current && current.parentId) {
+      parents.push(current.parentId);
+      current = orgUnitList.find((unit) => unit._id === current?.parentId);
+    }
 
-      return parents;
-    };
+    return parents;
+  };
 
   const handleNodeToggle = async (
     _event: React.SyntheticEvent,
@@ -103,8 +103,24 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       .filter((sibling) => nodeIds.includes(sibling._id))
       .map((sibling) => sibling._id);
 
+    // Funktion, um alle Kindknoten eines Knotens zu finden
+    const getAllDescendantIds = (parentId: string): string[] => {
+      const children = orgUnitList.filter((unit) => unit.parentId === parentId);
+      const childIds = children.map((child) => child._id);
+      return childIds.concat(
+        childIds.flatMap((childId) => getAllDescendantIds(childId)),
+      );
+    };
+
     if (siblingExpanded) {
-      const newNodeIds = nodeIds.filter((id) => id !== foundSiblingIds[0]);
+      // Schließe den ersten gefundenen Geschwisterknoten und seine Kinder
+      const siblingToClose = foundSiblingIds[0];
+      const descendantIds = siblingToClose
+        ? getAllDescendantIds(siblingToClose)
+        : [];
+      const newNodeIds = nodeIds.filter(
+        (id) => id !== siblingToClose && !descendantIds.includes(id),
+      );
       setExpanded(newNodeIds);
     } else {
       setExpanded(nodeIds);

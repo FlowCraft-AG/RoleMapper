@@ -32,6 +32,7 @@ interface FunctionsColumnProps {
   functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
   onSelect: (functionInfo: FunctionInfo) => void;
   handleMitgliederClick: () => void;
+  onRemove: (userId: string, functionId: string) => void;
 }
 
 export default function FunctionsSpalte({
@@ -39,6 +40,7 @@ export default function FunctionsSpalte({
   rootOrgUnit,
   onSelect,
   handleMitgliederClick,
+  onRemove,
 }: FunctionsColumnProps) {
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
@@ -98,6 +100,7 @@ export default function FunctionsSpalte({
   };
 
   const handleAddFunction = async () => {
+    console.log('orgUnit', orgUnit);
     try {
       await addUserToFunction({
         variables: {
@@ -119,14 +122,15 @@ export default function FunctionsSpalte({
     }
   };
 
-  const handleRemoveFunction = async (functionName: string) => {
+  const handleRemoveFunction = async (func: Function) => {
     try {
       await removeUserFromFunction({
         variables: {
-          functionName,
+          functionName: func.functionName,
         },
       });
       refetch();
+      onRemove('', func._id);
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);
     }
@@ -170,7 +174,11 @@ export default function FunctionsSpalte({
             )}
           >
             <ListItemText
-              primary={`Mitglieder der ${rootOrgUnit.type} ${rootOrgUnit.name}`}
+              primary={
+                rootOrgUnit.name === 'Rektorat'
+                  ? `Mitglieder im ${rootOrgUnit.name}`
+                  : `Mitglieder der${rootOrgUnit.type ? ` ${rootOrgUnit.type}` : ''} ${rootOrgUnit.name}`
+              }
             />
           </ListItemButton>
         </List>
@@ -195,7 +203,7 @@ export default function FunctionsSpalte({
                   <IconButton
                     edge="end"
                     color="error"
-                    onClick={() => handleRemoveFunction(func.functionName)}
+                    onClick={() => handleRemoveFunction(func)}
                   >
                     <Delete />
                   </IconButton>
@@ -228,17 +236,20 @@ export default function FunctionsSpalte({
           <TextField
             fullWidth
             label="Funktionsname"
+            placeholder="z.B. Studentische Hilfskraft"
             value={newFunctionData.functionName}
             onChange={(e) => handleInputChange('functionName', e.target.value)}
           />
           <TextField
             fullWidth
+            placeholder="z.B. Fakultaet"
             label="Typ"
             value={newFunctionData.type}
             onChange={(e) => handleInputChange('type', e.target.value)}
           />
           <TextField
             fullWidth
+            placeholder="z.B. gyca1011,lufr1012"
             label="Benutzer (Kommagetrennt)"
             value={newFunctionData.users.join(', ')}
             onChange={(e) =>

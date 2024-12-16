@@ -24,8 +24,8 @@ export default function Navigation() {
           style={{
             color:
               pathname === '/dummy'
-                ? `${theme.palette.text?.primary}`
-                : `${theme.palette.text?.secondary}`,
+                ? `${theme.palette.custom?.navbar.primary}`
+                : `${theme.palette.custom?.navbar.secondary}`,
             marginRight: '15px',
           }}
         >
@@ -36,8 +36,8 @@ export default function Navigation() {
           style={{
             color:
               pathname === '/organisationseinheiten'
-                ? `${theme.palette.text?.primary}`
-                : `${theme.palette.text?.secondary}`,
+                ? `${theme.palette.custom?.navbar.primary}`
+                : `${theme.palette.custom?.navbar.secondary}`,
             marginRight: '15px',
           }}
         >
@@ -48,8 +48,8 @@ export default function Navigation() {
           style={{
             color:
               pathname === '/rollen'
-                ? `${theme.palette.text?.primary}`
-                : `${theme.palette.text?.secondary}`,
+                ? `${theme.palette.custom?.navbar.primary}`
+                : `${theme.palette.custom?.navbar.secondary}`,
             marginRight: '15px',
           }}
         >
@@ -62,8 +62,8 @@ export default function Navigation() {
           style={{
             color:
               pathname === '/login'
-                ? `${theme.palette.text?.primary}`
-                : `${theme.palette.text?.secondary}`,
+                ? `${theme.palette.custom?.navbar.primary}`
+                : `${theme.palette.custom?.navbar.secondary}`,
           }}
         >
           Login
