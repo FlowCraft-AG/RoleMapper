@@ -88,7 +88,7 @@ export default function UsersSpalte({
   };
   if (!selectedFunction || selectedFunction.users.length === 0)
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
         <Box
           sx={{
             position: 'sticky',

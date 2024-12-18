@@ -126,7 +126,7 @@ export default function OrganigrammPage() {
       {/* Erste Spalte: Organisationseinheiten */}
       <Box
         sx={{
-          minWidth: 250,
+          minWidth: 350,
           borderRight: `1px solid ${theme.palette.divider}`,
           paddingRight: 2,
           marginRight: 2,
@@ -152,7 +152,7 @@ export default function OrganigrammPage() {
       {selectedOrgUnit && (
         <Box
           sx={{
-            minWidth: 250,
+            minWidth: 450,
             borderRight: `1px solid ${theme.palette.divider}`,
             paddingRight: 2,
             marginRight: 2,
@@ -183,11 +183,10 @@ export default function OrganigrammPage() {
       {selectedFunctionId && (
         <Box
           sx={{
-            minWidth: 250,
+            minWidth: 350,
             borderRight: `1px solid ${theme.palette.divider}`,
             paddingRight: 2,
             marginRight: 2,
-            paddingTop: 0,
             maxHeight: 'calc(100vh - 64px)',
             overflow: 'auto',
             position: 'sticky',
