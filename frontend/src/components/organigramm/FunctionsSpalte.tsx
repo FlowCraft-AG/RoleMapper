@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 import { CREATE_FUNCTIONS } from '../../graphql/mutations/create-function';
 import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
@@ -149,7 +150,7 @@ export default function FunctionsSpalte({
           top: 50, // Überschrift bleibt oben
           backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
           zIndex: 1,
-          padding: 1,
+          padding: 1
         }}
       >
         <Button
@@ -157,6 +158,7 @@ export default function FunctionsSpalte({
           color="primary"
           onClick={() => setOpen(true)}
           sx={{ marginBottom: 2 }}
+          startIcon={<Add />}
         >
           Funktion hinzufügen
         </Button>
@@ -177,7 +179,7 @@ export default function FunctionsSpalte({
               primary={
                 rootOrgUnit.name === 'Rektorat'
                   ? `Mitglieder im ${rootOrgUnit.name}`
-                  : `Mitglieder der${rootOrgUnit.type ? ` ${rootOrgUnit.type}` : ''} ${rootOrgUnit.name}`
+                  : `Alle Benutzer der${rootOrgUnit.type ? ` ${rootOrgUnit.type}` : ''} ${rootOrgUnit.name}`
               }
             />
           </ListItemButton>
@@ -215,7 +217,7 @@ export default function FunctionsSpalte({
           </ListItem>
         ))}
       </List>
-      {/* Modal für Benutzer hinzufügen */}
+      {/* Modal für Funktionen hinzufügen */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{

@@ -5,6 +5,7 @@ import { Delete, Visibility } from '@mui/icons-material';
 import { Button, Modal, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import { Add } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -102,6 +103,7 @@ export default function UsersSpalte({
             color="primary"
             onClick={() => setOpen(true)}
             sx={{ marginBottom: 2 }}
+            startIcon={<Add />}
           >
             Benutzer hinzufügen
           </Button>
