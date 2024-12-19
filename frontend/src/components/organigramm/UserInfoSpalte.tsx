@@ -32,10 +32,7 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
   const selectedUser = data?.getData.data[0];
 
   return (
-    <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Benutzerinformationen
-      </Typography>
+    <Box sx={{ minHeight: 352, minWidth: 250, p: 2, paddingTop: 8 }}>
       <Typography>
         <strong>UserID:</strong> {selectedUser.userId}
       </Typography>
