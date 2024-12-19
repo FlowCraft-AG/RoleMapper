@@ -188,6 +188,7 @@ export default function UsersSpalte({
           color="primary"
           onClick={() => setOpen(true)}
           sx={{ marginBottom: 2 }}
+          startIcon={<Add />}
         >
           Benutzer hinzufügen
         </Button>
