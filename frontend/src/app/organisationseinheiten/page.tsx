@@ -63,8 +63,8 @@ export default function OrganigrammPage() {
   const handleOrgUnitSelect = async (orgUnitDTO: OrgUnitDTO) => {
     setSelectedOrgUnit(orgUnitDTO);
     setSelectedFunctionId(undefined); // Reset selection
-      setSelectedUserId(undefined); // Reset selection
-      setSelectedRootOrgUnit(undefined);
+    setSelectedUserId(undefined); // Reset selection
+    setSelectedRootOrgUnit(undefined);
 
     if (orgUnitDTO.alias || orgUnitDTO.kostenstelleNr) {
       orgUnitDTO.hasMitglieder = true;
@@ -73,8 +73,6 @@ export default function OrganigrammPage() {
         await getMitgliederIds(orgUnitDTO.alias!, orgUnitDTO.kostenstelleNr!),
       );
     }
-
-
   };
 
   const handleFunctionSelect = (functionInfo: FunctionInfo) => {
@@ -200,7 +198,7 @@ export default function OrganigrammPage() {
                 textAlign: 'center',
                 fontWeight: 'bold',
                 marginBottom: 2,
-                paddingTop: 1
+                paddingTop: 1,
               }}
             >
               Benutzer
@@ -218,19 +216,20 @@ export default function OrganigrammPage() {
       )}
       {/* Vierte Spalte: Benutzerinformationen */}
       {selectedUserId && (
-        <Box 
+        <Box
           sx={{
-           minWidth: 250,
-           paddingTop: 2,
-          }}>
+            minWidth: 250,
+            paddingTop: 2,
+          }}
+        >
           <Typography
-              variant="h6"
-              sx={{
-                textAlign: 'center',
-                fontWeight: 'bold',
-                marginBottom: 2,
-              }}
-            >
+            variant="h6"
+            sx={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+              marginBottom: 2,
+            }}
+          >
             Benutzerinformationen
           </Typography>
           <UserInfoSpalte userId={selectedUserId} />

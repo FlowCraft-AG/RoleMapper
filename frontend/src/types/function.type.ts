@@ -3,6 +3,7 @@ export type Function = {
   functionName: string;
   users: string[];
   orgUnit: string;
+  isSingleUser: boolean;
 };
 
 export type FunctionInfo = {

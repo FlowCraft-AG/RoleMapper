@@ -1,24 +1,24 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Delete, Visibility } from '@mui/icons-material';
-import { Button, Modal, TextField } from '@mui/material';
+import { Add, Delete, Visibility } from '@mui/icons-material';
+import { Autocomplete, Button, Modal, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import { Add } from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
 import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
 import { USERS_BY_FUNCTION } from '../../graphql/queries/get-functions';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
+import { getLogger } from '../../utils/logger';
 import { getListItemStyles } from '../../utils/styles';
 
 interface UsersColumnProps {
@@ -34,6 +34,7 @@ export default function UsersSpalte({
   onSelectUser,
   onRemove,
 }: UsersColumnProps) {
+  const logger = getLogger(UsersSpalte.name);
   const { loading, error, data, refetch } = useQuery(USERS_BY_FUNCTION, {
     client,
     variables: { functionId: selectedFunctionId },
@@ -41,11 +42,12 @@ export default function UsersSpalte({
   });
   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
-  const [selectedIndex, setSelectedIndex] = React.useState<string | undefined>(
+  const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
+  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   let selectedFunction;
 
@@ -70,8 +72,28 @@ export default function UsersSpalte({
     selectedFunction = data?.getData?.data?.[0];
   }
 
+  const validateInput = () => {
+    const newErrors: { [key: string]: string | null } = {};
+    const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
+
+    if (!newUserId.trim()) {
+      newErrors.userId = 'Der UserId darf nicht leer sein.';
+    }
+
+    // Validierung für `users`
+    if (!userIdRegex.test(newUserId)) {
+      newErrors.userId =
+        'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleAddUser = async () => {
-    if (!newUserId.trim()) return;
+    if (!validateInput()) {
+      return;
+    }
     try {
       await addUserToFunction({
         variables: {
@@ -83,7 +105,12 @@ export default function UsersSpalte({
       setNewUserId('');
       setOpen(false);
     } catch (err) {
-      console.error('Fehler beim Hinzufügen des Benutzers:', err);
+      logger.error('Fehler beim Hinzufügen des Benutzers:', err);
+
+      const newErrors: { [key: string]: string | null } = {};
+      newErrors.userId = (err as any).message;
+      setErrors(newErrors);
+      setNewUserId('');
     }
   };
   if (!selectedFunction || selectedFunction.users.length === 0)
@@ -172,6 +199,15 @@ export default function UsersSpalte({
     }
   };
 
+  const options = [
+    'gycm1011',
+    'lufr1012',
+    'gyca1013',
+    'lufr1014',
+    'gyca1015',
+    'lufr1016',
+  ];
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
       <Box
@@ -244,11 +280,33 @@ export default function UsersSpalte({
         >
           <TextField
             fullWidth
+            error={!!errors.userId}
+            helperText={errors.userId}
             label="Benutzer-ID"
             value={newUserId}
             onChange={(e) => setNewUserId(e.target.value)}
           />
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+
+          <Autocomplete
+            options={options}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Datalist example"
+                placeholder="Type to search..."
+              />
+            )}
+            freeSolo // Erlaubt benutzerdefinierte Eingaben
+          />
+
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              mt: 2,
+              gap: 2,
+            }}
+          >
             <Button variant="contained" color="primary" onClick={handleAddUser}>
               Hinzufügen
             </Button>

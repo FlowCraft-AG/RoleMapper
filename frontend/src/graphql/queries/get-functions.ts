@@ -28,6 +28,7 @@ export const USERS_BY_FUNCTION = gql`
         ... on Function {
           users
           functionName
+          isSingleUser
         }
       }
     }
@@ -48,6 +49,7 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
           functionName
           users
           orgUnit
+          isSingleUser
         }
       }
     }

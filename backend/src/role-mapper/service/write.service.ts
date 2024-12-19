@@ -125,7 +125,9 @@ export class WriteService {
         if ((mandate as MandateDocument).isSingleUser) {
             // Einzelbenutzer-Mandant: Ersetze den Benutzer
             this.#logger.debug('Einzelbenutzer-Mandant erkannt. Ersetze den Benutzer.');
-            throw new Error('Einzelbenutzer-Funktion erkannt!');
+            throw new Error(
+                'Einzelbenutzer-Funktion erkannt! Diese Funktion kann nur einem User zugewiesen werden.',
+            );
             // updatedMandate = await this.#modelMap
             //     .MANDATES!.findByIdAndUpdate(
             //         mandate._id, // ID des Mandanten

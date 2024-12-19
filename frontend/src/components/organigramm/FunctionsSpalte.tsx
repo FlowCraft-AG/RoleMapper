@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Delete, Visibility } from '@mui/icons-material';
+import { Add, Delete, Visibility } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
@@ -16,7 +16,6 @@ import {
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 import { CREATE_FUNCTIONS } from '../../graphql/mutations/create-function';
 import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
@@ -53,7 +52,7 @@ export default function FunctionsSpalte({
     functionName: '',
     users: [] as string[],
   });
-    const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   const { data, loading, error, refetch } = useQuery(FUNCTIONS_BY_ORG_UNIT, {
     client,
@@ -85,33 +84,29 @@ export default function FunctionsSpalte({
       </Box>
     );
 
-    const validateInput = () => {
-      const newErrors: { [key: string]: string | null } = {};
-      const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
-      const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
+  const validateInput = () => {
+    const newErrors: { [key: string]: string | null } = {};
+    const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
+    const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 
-      if (!newFunctionData.functionName.trim()) {
-        newErrors.functionName = 'Der Funktionsname darf nicht leer sein.';
-      }
+    if (!newFunctionData.functionName.trim()) {
+      newErrors.functionName = 'Der Funktionsname darf nicht leer sein.';
+    }
 
-      if (!functionNameRegex.test(newFunctionData.functionName)) {
-        newErrors.functionName =
-          'Der Funktionsname darf nur Buchstaben enthalten.';
-      }
+    if (!functionNameRegex.test(newFunctionData.functionName)) {
+      newErrors.functionName =
+        'Der Funktionsname darf nur Buchstaben enthalten.';
+    }
 
-      // Validierung für `users`
-      if (
-        newFunctionData.users.some((user) => !userIdRegex.test(user)) ||
-        newFunctionData.users.length > 0
-      ) {
-        newErrors.users =
-          'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
-      }
+    // Validierung für `users`
+    if (newFunctionData.users.some((user) => !userIdRegex.test(user))) {
+      newErrors.users =
+        'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
+    }
 
-      setErrors(newErrors);
-      return Object.keys(newErrors).length === 0;
-    };
-
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (field: string, value: string | string[]) => {
     setNewFunctionData((prev) => ({ ...prev, [field]: value }));
@@ -128,11 +123,10 @@ export default function FunctionsSpalte({
     }
   };
 
-
-    const handleAddFunction = async () => {
-      if (!validateInput()) {
-        return;
-      }
+  const handleAddFunction = async () => {
+    if (!validateInput()) {
+      return;
+    }
 
     console.log('orgUnit', orgUnit);
     try {
@@ -181,7 +175,7 @@ export default function FunctionsSpalte({
           top: 50, // Überschrift bleibt oben
           backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
           zIndex: 1,
-          padding: 1
+          padding: 1,
         }}
       >
         <Button
