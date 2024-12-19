@@ -5,7 +5,14 @@
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance } from 'axios';
-import { ENDPOINTS, TEST_MANDATES2, TEST_MANDATES3 } from '../test-data.js';
+import {
+    ENDPOINTS,
+    TEST_MANDATES2,
+    TEST_MANDATES3,
+    TEST_MANDATES_DUPLICATE,
+    TEST_MANDATES_SINGLE_USER_FUNCTION,
+    TEST_MANDATES_SINGLE_USER_FUNCTION_2,
+} from '../test-data.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 import type { GraphQLResponseBody } from './query-resolver.test.js';
 
@@ -29,6 +36,8 @@ const sendGraphQLRequest = async (client: AxiosInstance, query: string) => {
         throw new Error(`GraphQL request failed: ${(error as Error).message}`);
     }
 };
+
+const UNKNOWN_ERROR_MESSAGE = 'Unknown error';
 
 describe('MutationResolver', () => {
     let client: AxiosInstance;
@@ -95,6 +104,92 @@ describe('MutationResolver', () => {
         expect(result.functionName).toBe(createInput.functionName);
         expect(result.orgUnit).toBe(createInput.orgUnit);
         expect(result.users).toEqual(createInput.users);
+    });
+
+    test('[GRAPHQL] create duplicate Entity for MANDATES', async () => {
+        const createInput = TEST_MANDATES_DUPLICATE.create;
+        const query = `
+            mutation CreateEntity {
+                createEntity(input: {
+                    entity: ${ENDPOINTS.MANDATES},
+                    functionData: {
+                        functionName: "${createInput.functionName}",
+                        orgUnit: "${createInput.orgUnit}",
+                        type: "${createInput.type}",
+                        users: ${JSON.stringify(createInput.users)}
+                    }
+                }) {
+                    success
+                    message
+                    result {
+                        ... on Function {
+                            _id
+                            functionName
+                            orgUnit
+                            type
+                            users
+                        }
+                    }
+                }
+            }
+        `;
+
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
+
+        expect(status).toBe(HttpStatus.OK);
+        expect(data.errors).toBeDefined();
+        expect(data.data).toBeNull();
+
+        const message = data.errors ? data.errors[0].message : UNKNOWN_ERROR_MESSAGE;
+
+        expect(message).toMatch(
+            'Eine Funktion mit diesem Namen existiert bereits (case-insensitive).',
+        );
+    });
+
+    test('[GRAPHQL] create duplicate Entity for MANDATES (case-insensitive)', async () => {
+        const createInput = TEST_MANDATES_DUPLICATE.create2;
+        const query = `
+            mutation CreateEntity {
+                createEntity(input: {
+                    entity: ${ENDPOINTS.MANDATES},
+                    functionData: {
+                        functionName: "${createInput.functionName}",
+                        orgUnit: "${createInput.orgUnit}",
+                        type: "${createInput.type}",
+                        users: ${JSON.stringify(createInput.users)}
+                    }
+                }) {
+                    success
+                    message
+                    result {
+                        ... on Function {
+                            _id
+                            functionName
+                            orgUnit
+                            type
+                            users
+                        }
+                    }
+                }
+            }
+        `;
+
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
+
+        expect(status).toBe(HttpStatus.OK);
+        expect(data.errors).toBeDefined();
+        expect(data.data).toBeNull();
+
+        const message = data.errors ? data.errors[0].message : 'Unknown error';
+
+        expect(message).toMatch(
+            'Eine Funktion mit diesem Namen existiert bereits (case-insensitive).',
+        );
     });
 
     test('[GRAPHQL] updateEntity for MANDATES', async () => {
@@ -227,5 +322,93 @@ describe('MutationResolver', () => {
         expect(removeUserFromFunction).toBeDefined();
         expect(removeUserFromFunction.functionName).toBe(mandate.functionName);
         expect(removeUserFromFunction.users).not.toContain(mandate.userId);
+    });
+
+    test('[GRAPHQL] add duplicate to Function ', async () => {
+        const mandate = TEST_MANDATES_DUPLICATE;
+        const query = `
+            mutation AddUserToFunction {
+                addUserToFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
+                    _id
+                    functionName
+                    users
+                    orgUnit
+                    type
+                }
+            }
+        `;
+
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
+
+        expect(status).toBe(HttpStatus.OK);
+        expect(data.errors).toBeUndefined();
+        expect(data.data).toBeDefined();
+
+        const { addUserToFunction } = data.data!;
+
+        expect(addUserToFunction).toBeDefined();
+        expect(addUserToFunction.functionName).toBe(mandate.functionName);
+        expect(addUserToFunction.users).toContain(mandate.userId);
+    });
+
+    test('[GRAPHQL] add to Single User Function ', async () => {
+        const mandate = TEST_MANDATES_SINGLE_USER_FUNCTION;
+        const query = `
+            mutation AddUserToFunction {
+                addUserToFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
+                    _id
+                    functionName
+                    users
+                    orgUnit
+                    type
+                }
+            }
+        `;
+
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
+
+        expect(status).toBe(HttpStatus.OK);
+        expect(data.errors).toBeDefined();
+        expect(data.data).toBeDefined();
+
+        const message = data.errors ? data.errors[0].message : UNKNOWN_ERROR_MESSAGE;
+
+        expect(data.data?.addUserToFunction).toBeNull();
+        expect(message).toMatch('Einzelbenutzer-Funktion erkannt!');
+    });
+
+    test('[GRAPHQL] remove SingleUser from Function', async () => {
+        const mandate = TEST_MANDATES_SINGLE_USER_FUNCTION_2;
+        const query = `
+            mutation RemoveUserFromFunction {
+                removeUserFromFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
+                    _id
+                    functionName
+                    users
+                    orgUnit
+                    type
+                }
+            }
+        `;
+
+        const { status, headers, data } = await sendGraphQLRequest(client, query);
+
+        validateHeader(headers);
+
+        expect(status).toBe(HttpStatus.OK);
+        expect(data.errors).toBeDefined();
+        expect(data.data).toBeDefined();
+
+        const message = data.errors ? data.errors[0].message : UNKNOWN_ERROR_MESSAGE;
+
+        expect(data.data?.removeUserFromFunction).toBeNull();
+        expect(message).toMatch(
+            // eslint-disable-next-line no-useless-escape
+            `Der Benutzer \"${mandate.userId}\" kann nicht entfernt werden, da der Mandant nur einen Benutzer erlaubt. Bitte geben Sie einen neuen Benutzer an.`,
+        );
     });
 });

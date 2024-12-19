@@ -261,6 +261,10 @@ type Function {
   Typ der Funktion, z. B. 'academic' oder 'administrative'.
   """
   type: String
+  """
+  Gibt an, ob die Funktion nur von einem Benutzer besetzt werden kann.
+  """
+  isSingleUser: Boolean
 }
 
 # Prozesse und Rollen
@@ -379,6 +383,8 @@ enum FilterOptions {
   users
   roles
   type
+  courseOfStudy
+  level
 }
 
 type Mutation {

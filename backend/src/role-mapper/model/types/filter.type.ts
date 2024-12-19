@@ -14,10 +14,20 @@ export type FilterFields =
     | 'roleId'
     | 'processId'
     | 'parentId'
+    | 'courseOfStudy'
+    | 'level'
+    | 'isSingleUser'
     | 'supervisor';
 
-type Userfilter = 'userId' | 'userType' | 'userRole' | 'orgUnit' | 'active';
-type Mandatefilter = 'functionName' | 'orgUnit' | 'users';
+type Userfilter =
+    | 'userId'
+    | 'userType'
+    | 'userRole'
+    | 'orgUnit'
+    | 'active'
+    | 'courseOfStudy'
+    | 'level';
+type Mandatefilter = 'functionName' | 'orgUnit' | 'users' | 'isSingleUser';
 type OrgUnitfilter = 'name' | 'parentId' | 'supervisor';
 type Processfilter = 'processId' | 'name' | 'roles';
 type Rolefilter = 'roleId' | 'name';
