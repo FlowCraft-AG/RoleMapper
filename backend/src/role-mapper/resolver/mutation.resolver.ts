@@ -65,10 +65,12 @@ export class MutationResolver {
         } catch (error) {
             this.#logger.error('createEntity: Error occurred: %o', error);
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if ((error as any).name === 'ValidationError') {
                 throw new BadRequestException((error as Error).message); // Gibt die Validierungsfehlermeldung zurück
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (error instanceof Error && (error as any).code === DUPLICATE_KEY_ERROR_CODE) {
                 throw new ConflictException(
                     `Die Funktion ${functionData?.functionName} existiert bereits.`,
