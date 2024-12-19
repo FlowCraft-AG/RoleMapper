@@ -15,7 +15,7 @@ import { User, UserDocument } from '../model/entity/user.entity.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { PaginationParameters } from '../model/input/pagination-parameters.js';
 import { RoleResult } from '../model/payload/role-payload.type.js';
-import { FilterFields } from '../model/types/filter.type.js';
+import { FilterField, FilterFields } from '../model/types/filter.type.js';
 import { operatorMap } from '../model/types/map.type.js';
 
 /**
@@ -200,6 +200,11 @@ export class ReadService {
 
         const query: FilterQuery<any> = {};
 
+        // Mappe spezielle Felder (z. B. courseOfStudy, level)
+        if (filter?.field !== undefined) {
+            filter.field = this.#mapSpecialFields(filter.field) as FilterField;
+        }
+
         // Verarbeitung der logischen Operatoren (AND, OR, NOT)
         if (filter) {
             this.#processLogicalOperators(filter, query);
@@ -210,7 +215,24 @@ export class ReadService {
             // this.#validateFilterFields(filter);
             this.#buildFieldQuery(filter, query);
         }
+
         return query;
+    }
+
+    /**
+     * Mappt spezielle Felder (z. B. courseOfStudy -> student.courseOfStudy).
+     *
+     * @param field - Das ursprüngliche Feld.
+     * @returns Das gemappte Feld (falls ein Mapping existiert), sonst das Original.
+     */
+    #mapSpecialFields(field: string): string {
+        const fieldMap: Record<string, string> = {
+            courseOfStudy: 'student.courseOfStudy',
+            level: 'student.level',
+        };
+
+        // eslint-disable-next-line security/detect-object-injection
+        return fieldMap[field] ?? field;
     }
 
     #getModel(entity: EntityCategoryType): Model<EntityType> {

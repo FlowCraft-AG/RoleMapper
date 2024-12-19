@@ -62,6 +62,10 @@ export default function OrganigrammPage() {
 
   const handleOrgUnitSelect = async (orgUnitDTO: OrgUnitDTO) => {
     setSelectedOrgUnit(orgUnitDTO);
+    setSelectedFunctionId(undefined); // Reset selection
+      setSelectedUserId(undefined); // Reset selection
+      setSelectedRootOrgUnit(undefined);
+
     if (orgUnitDTO.alias || orgUnitDTO.kostenstelleNr) {
       orgUnitDTO.hasMitglieder = true;
       setSelectedRootOrgUnit(orgUnitDTO);
@@ -70,19 +74,7 @@ export default function OrganigrammPage() {
       );
     }
 
-    if (
-      selectedFunctionId !== 'mitglieder' ||
-      !isChild(orgUnitDTO, selectedRootOrgUnit)
-    ) {
-      setSelectedFunctionId(undefined); // Reset selection
-      setSelectedUserId(undefined); // Reset selection
-      if (
-        orgUnitDTO.type === undefined &&
-        !isChild(orgUnitDTO, selectedRootOrgUnit)
-      ) {
-        setSelectedOrgUnit(undefined);
-      }
-    }
+
   };
 
   const handleFunctionSelect = (functionInfo: FunctionInfo) => {
@@ -152,7 +144,7 @@ export default function OrganigrammPage() {
       {selectedOrgUnit && (
         <Box
           sx={{
-            minWidth: 450,
+            minWidth: 350,
             borderRight: `1px solid ${theme.palette.divider}`,
             paddingRight: 2,
             marginRight: 2,
