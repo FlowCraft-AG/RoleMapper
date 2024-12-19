@@ -126,13 +126,23 @@ export default function OrganigrammPage() {
       {/* Erste Spalte: Organisationseinheiten */}
       <Box
         sx={{
-          minWidth: 250,
+          minWidth: 350,
           borderRight: `1px solid ${theme.palette.divider}`,
           paddingRight: 2,
           marginRight: 2,
+          paddingTop: 2,
         }}
       >
-        <Typography variant="h6">Organisationseinheiten</Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+            marginBottom: 2,
+          }}
+        >
+          Organisationseinheiten
+        </Typography>
         <OrgUnitsSpalte
           onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
         />
@@ -142,13 +152,23 @@ export default function OrganigrammPage() {
       {selectedOrgUnit && (
         <Box
           sx={{
-            minWidth: 250,
+            minWidth: 450,
             borderRight: `1px solid ${theme.palette.divider}`,
             paddingRight: 2,
             marginRight: 2,
+            paddingTop: 2,
           }}
         >
-          <Typography variant="h6">Funktionen</Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+              marginBottom: 2,
+            }}
+          >
+            Funktionen
+          </Typography>
           <FunctionsSpalte
             orgUnit={selectedOrgUnit}
             onSelect={handleFunctionSelect}
@@ -163,7 +183,7 @@ export default function OrganigrammPage() {
       {selectedFunctionId && (
         <Box
           sx={{
-            minWidth: 250,
+            minWidth: 350,
             borderRight: `1px solid ${theme.palette.divider}`,
             paddingRight: 2,
             marginRight: 2,
@@ -182,7 +202,15 @@ export default function OrganigrammPage() {
               padding: 1,
             }}
           >
-            <Typography variant="h6" gutterBottom>
+            <Typography
+              variant="h6"
+              sx={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                marginBottom: 2,
+                paddingTop: 1
+              }}
+            >
               Benutzer
             </Typography>
           </Box>
@@ -198,8 +226,19 @@ export default function OrganigrammPage() {
       )}
       {/* Vierte Spalte: Benutzerinformationen */}
       {selectedUserId && (
-        <Box sx={{ minWidth: 250 }}>
-          <Typography variant="h6" gutterBottom>
+        <Box 
+          sx={{
+           minWidth: 250,
+           paddingTop: 2,
+          }}>
+          <Typography
+              variant="h6"
+              sx={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                marginBottom: 2,
+              }}
+            >
             Benutzerinformationen
           </Typography>
           <UserInfoSpalte userId={selectedUserId} />
