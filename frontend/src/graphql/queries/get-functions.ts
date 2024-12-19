@@ -10,7 +10,6 @@ export const FUNCTIONS = gql`
           functionName
           users
           orgUnit
-          type
         }
       }
     }
@@ -49,7 +48,6 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
           functionName
           users
           orgUnit
-          type
         }
       }
     }

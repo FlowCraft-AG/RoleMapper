@@ -51,9 +51,9 @@ export default function FunctionsSpalte({
   const [open, setOpen] = useState(false);
   const [newFunctionData, setNewFunctionData] = useState({
     functionName: '',
-    type: '',
     users: [] as string[],
   });
+    const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   const { data, loading, error, refetch } = useQuery(FUNCTIONS_BY_ORG_UNIT, {
     client,
@@ -85,6 +85,34 @@ export default function FunctionsSpalte({
       </Box>
     );
 
+    const validateInput = () => {
+      const newErrors: { [key: string]: string | null } = {};
+      const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
+      const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
+
+      if (!newFunctionData.functionName.trim()) {
+        newErrors.functionName = 'Der Funktionsname darf nicht leer sein.';
+      }
+
+      if (!functionNameRegex.test(newFunctionData.functionName)) {
+        newErrors.functionName =
+          'Der Funktionsname darf nur Buchstaben enthalten.';
+      }
+
+      // Validierung für `users`
+      if (
+        newFunctionData.users.some((user) => !userIdRegex.test(user)) ||
+        newFunctionData.users.length > 0
+      ) {
+        newErrors.users =
+          'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
+      }
+
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    };
+
+
   const handleInputChange = (field: string, value: string | string[]) => {
     setNewFunctionData((prev) => ({ ...prev, [field]: value }));
   };
@@ -100,21 +128,24 @@ export default function FunctionsSpalte({
     }
   };
 
-  const handleAddFunction = async () => {
+
+    const handleAddFunction = async () => {
+      if (!validateInput()) {
+        return;
+      }
+
     console.log('orgUnit', orgUnit);
     try {
       await addUserToFunction({
         variables: {
           functionName: newFunctionData.functionName,
           orgUnit: orgUnit.id,
-          type: newFunctionData.type,
           users: newFunctionData.users,
         },
       });
       refetch(); // Aktualisiere die Daten nach der Mutation
       setNewFunctionData({
         functionName: '',
-        type: '',
         users: [],
       });
       setOpen(false);
@@ -237,6 +268,8 @@ export default function FunctionsSpalte({
         >
           <TextField
             fullWidth
+            error={!!errors.functionName}
+            helperText={errors.functionName}
             label="Funktionsname"
             placeholder="z.B. Studentische Hilfskraft"
             value={newFunctionData.functionName}
@@ -244,13 +277,8 @@ export default function FunctionsSpalte({
           />
           <TextField
             fullWidth
-            placeholder="z.B. Fakultaet"
-            label="Typ"
-            value={newFunctionData.type}
-            onChange={(e) => handleInputChange('type', e.target.value)}
-          />
-          <TextField
-            fullWidth
+            error={!!errors.users}
+            helperText={errors.users}
             placeholder="z.B. gyca1011,lufr1012"
             label="Benutzer (Kommagetrennt)"
             value={newFunctionData.users.join(', ')}

@@ -3,7 +3,7 @@
 /* eslint-disable security/detect-object-injection */
 
 /* eslint-disable @typescript-eslint/naming-convention */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
@@ -117,57 +117,127 @@ export class WriteService {
         const mandate = await this.#modelMap.MANDATES?.findOne({ functionName }).exec();
 
         if (!mandate) {
-            throw new Error(`Function mit dem Namen "${functionName}" nicht gefunden.`);
+            throw new NotFoundException(`Funktion mit dem Namen "${functionName}" nicht gefunden.`);
         }
 
-        // Benutzer hinzufügen, wenn die Funktion existiert
-        const updatedRole = await this.#modelMap
-            .MANDATES!.findByIdAndUpdate(
-                mandate._id, // Hier den _id-Wert verwenden
-                { $addToSet: { users: userId } }, // Verhindert Duplikate
-                { new: true }, // Gibt das aktualisierte Dokument zurück
-            )
-            .exec();
+        let updatedMandate;
 
-        if (!updatedRole) {
+        if ((mandate as MandateDocument).isSingleUser) {
+            // Einzelbenutzer-Mandant: Ersetze den Benutzer
+            this.#logger.debug('Einzelbenutzer-Mandant erkannt. Ersetze den Benutzer.');
+            throw new Error('Einzelbenutzer-Funktion erkannt!');
+            // updatedMandate = await this.#modelMap
+            //     .MANDATES!.findByIdAndUpdate(
+            //         mandate._id, // ID des Mandanten
+            //         { $set: { users: [userId] } }, // Ersetze den gesamten Benutzer-Array
+            //         { new: true }, // Gibt das aktualisierte Dokument zurück
+            //     )
+            //     .exec();
+        } else {
+            // Mehrbenutzer-Mandant: Füge Benutzer hinzu, falls noch nicht vorhanden
+            this.#logger.debug('Mehrbenutzer-Mandant erkannt. Füge Benutzer hinzu.');
+            updatedMandate = await this.#modelMap
+                .MANDATES!.findByIdAndUpdate(
+                    mandate._id,
+                    { $addToSet: { users: userId } }, // Verhindert Duplikate
+                    { new: true }, // Gibt das aktualisierte Dokument zurück
+                )
+                .exec();
+        }
+
+        if (!updatedMandate) {
             throw new Error(`Fehler beim Aktualisieren der Funktion "${functionName}".`);
         }
 
-        this.#logger.debug('User erfolgreich hinzugefügt: %o', updatedRole);
+        this.#logger.debug(
+            'Benutzer erfolgreich aktualisiert: mandate=%s, updatedUsers=%o',
+            functionName,
+            (updatedMandate as MandateDocument).users,
+        );
 
-        return updatedRole;
+        return updatedMandate;
     }
 
-    async removeUserFromFunction(functionName: string, userId: string) {
+    async removeUserFromFunction(functionName: string, userId: string, newUserId?: string) {
         this.#logger.debug(
-            'removeUserFromFunction: functionName=%s, userId=%s',
+            'removeUserFromFunction: functionName=%s, userId=%s, newUserId=%s',
             functionName,
             userId,
+            newUserId,
         );
 
         // Funktion basierend auf functionName finden
         const mandate = await this.#modelMap.MANDATES?.findOne({ functionName }).exec();
 
         if (!mandate) {
-            throw new Error(`Function mit dem Namen "${functionName}" nicht gefunden.`);
+            throw new Error(`Funktion mit dem Namen "${functionName}" nicht gefunden.`);
         }
 
-        // Benutzer entfernen
-        const updatedRole = await this.#modelMap
-            .MANDATES!.findByIdAndUpdate(
-                mandate._id, // Hier den _id-Wert verwenden
-                { $pull: { users: userId } }, // Benutzer aus dem Array entfernen
-                { new: true }, // Gibt das aktualisierte Dokument zurück
-            )
-            .exec();
-
-        if (!updatedRole) {
-            throw new Error(`Fehler beim Aktualisieren der Funktion "${functionName}".`);
+        if (!(mandate as MandateDocument).users.includes(userId)) {
+            throw new Error(
+                `Der Benutzer "${userId}" ist nicht mit der Funktion "${functionName}" verknüpft.`,
+            );
         }
+        if ((mandate as MandateDocument).isSingleUser) {
+            // Einzelbenutzer-Mandant: Prüfen, ob ein neuer Benutzer angegeben wurde
+            if (!(newUserId ?? '')) {
+                throw new Error(
+                    `Der Benutzer "${userId}" kann nicht entfernt werden, da der Mandant nur einen Benutzer erlaubt. Bitte geben Sie einen neuen Benutzer an.`,
+                );
+            }
 
-        this.#logger.debug('User erfolgreich entfernt: %o', updatedRole);
+            // Benutzer ersetzen
+            this.#logger.debug(
+                'Einzelbenutzer-Mandant erkannt. Ersetze Benutzer "%s" mit "%s".',
+                userId,
+                newUserId,
+            );
+            const updatedMandate = await this.#modelMap
+                .MANDATES!.findByIdAndUpdate(
+                    mandate._id, // ID des Mandanten
+                    { $set: { users: [newUserId] } }, // Ersetze den Benutzer
+                    { new: true }, // Gibt das aktualisierte Dokument zurück
+                )
+                .exec();
 
-        return updatedRole;
+            if (!updatedMandate) {
+                throw new Error(
+                    `Fehler beim Ersetzen des Benutzers "${userId}" in der Funktion "${functionName}".`,
+                );
+            }
+
+            this.#logger.debug(
+                'Benutzer erfolgreich ersetzt: mandate=%s, updatedUsers=%o',
+                functionName,
+                (updatedMandate as MandateDocument).users,
+            );
+
+            return updatedMandate;
+        } else {
+            // Mehrbenutzer-Mandant: Benutzer entfernen
+            this.#logger.debug('Mehrbenutzer-Mandant erkannt. Entferne Benutzer "%s".', userId);
+            const updatedMandate = await this.#modelMap
+                .MANDATES!.findByIdAndUpdate(
+                    mandate._id,
+                    { $pull: { users: userId } }, // Benutzer aus dem Array entfernen
+                    { new: true }, // Gibt das aktualisierte Dokument zurück
+                )
+                .exec();
+
+            if (!updatedMandate) {
+                throw new Error(
+                    `Fehler beim Entfernen des Benutzers "${userId}" in der Funktion "${functionName}".`,
+                );
+            }
+
+            this.#logger.debug(
+                'Benutzer erfolgreich entfernt: mandate=%s, updatedUsers=%o',
+                functionName,
+                (updatedMandate as MandateDocument).users,
+            );
+
+            return updatedMandate;
+        }
     }
 
     #getModel(entity: EntityCategoryType): Model<EntityType> {
@@ -177,59 +247,4 @@ export class WriteService {
         }
         return model;
     }
-
-    /**
-     * Erstellt eine Filterabfrage aus den gegebenen Filtern.
-     * @param {FilterInputDTO | undefined} filters - Die Filterkriterien.
-     * @returns {FilterQuery<any>} - Die erstellte Filterabfrage.
-     */
-    // #buildFilterQuery(filters?: FilterInput[]): FilterQuery<any> {
-    //     if (!filters || filters.length === 0) {
-    //         this.#logger.debug('buildFilterQuery: No filters provided');
-    //         return {};
-    //     }
-
-    //     const query: FilterQuery<any> = {};
-
-    //     for (const filter of filters) {
-    //         this.#processFilter(query, filter);
-    //     }
-
-    //     return query;
-    // }
-
-    // #processFilter(query: FilterQuery<any>, filter: FilterInput) {
-    //     if (filter.and) {
-    //         query.$and = filter.and.map((subFilter) => this.#buildFilterQuery([subFilter]));
-    //     }
-    //     if (filter.or) {
-    //         query.$or = filter.or.map((subFilter) => this.#buildFilterQuery([subFilter]));
-    //     }
-    //     if (filter.not) {
-    //         query.$not = this.#buildFilterQuery([filter.not]);
-    //     }
-    //     if ((filter.field ?? '') && filter.operator && filter.value !== undefined) {
-    //         this.#addFieldFilter(query, filter);
-    //     } else if ((filter.field ?? '') || filter.operator || filter.value !== undefined) {
-    //         this.#handleIncompleteFilter(filter);
-    //     }
-    // }
-
-    // #addFieldFilter(query: FilterQuery<any>, filter: FilterInput) {
-    //     if (!filter.operator) {
-    //         this.#logger.error('Invalid operator: %s', filter.operator);
-    //         throw new InvalidOperatorException(filter.operator);
-    //     }
-    //     const mongoOperator = operatorMap[filter.operator];
-    //     query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
-    // }
-
-    // #handleIncompleteFilter(filter: FilterInput) {
-    //     this.#logger.error('Incomplete filter provided: %o', filter);
-    //     throw new InvalidFilterException([
-    //         (filter.field ?? '') ? '' : 'field',
-    //         filter.operator ? '' : 'operator',
-    //         filter.value === undefined ? 'value' : '',
-    //     ]);
-    // }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable security/detect-object-injection */
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
@@ -12,6 +12,7 @@ import { CreateDataInput } from '../model/input/create.input.js';
 import { UpdateDataInput } from '../model/input/update.input.js';
 import { MutationPayload } from '../model/payload/mutation.payload.js';
 import { WriteService } from '../service/write.service.js';
+import { DUPLICATE_KEY_ERROR_CODE } from '../utils/konstanten.js';
 
 @Resolver()
 @Injectable()
@@ -63,6 +64,19 @@ export class MutationResolver {
             };
         } catch (error) {
             this.#logger.error('createEntity: Error occurred: %o', error);
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if ((error as any).name === 'ValidationError') {
+                throw new BadRequestException((error as Error).message); // Gibt die Validierungsfehlermeldung zurück
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (error instanceof Error && (error as any).code === DUPLICATE_KEY_ERROR_CODE) {
+                throw new ConflictException(
+                    `Die Funktion ${functionData?.functionName} existiert bereits.`,
+                );
+            }
+
             return {
                 success: false,
                 message: (error as Error).message,
