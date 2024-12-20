@@ -1,15 +1,13 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Add, Delete, Visibility, Inbox as InboxIcon } from '@mui/icons-material';
+import { Add, Delete } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
   IconButton,
   List,
-  ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   Modal,
   TextField,
@@ -213,22 +211,22 @@ export default function FunctionsSpalte({
       )}
       <List>
         {filteredFunctions.map((func) => (
-            <ListItemButton
-              selected={selectedIndex === func._id}
-              onClick={() => handleViewUser(func)}
-              sx={getListItemStyles(theme, selectedIndex === func._id)}
-            >
-              <ListItemText primary={func.functionName} />
-              <Tooltip title="Benutzer entfernen">
-                <IconButton
-                  edge="end"
-                  color="error"
-                  onClick={() => handleRemoveFunction(func)}
-                >
-                  <Delete />
-                </IconButton>
-              </Tooltip>
-            </ListItemButton>
+          <ListItemButton
+            selected={selectedIndex === func._id}
+            onClick={() => handleViewUser(func)}
+            sx={getListItemStyles(theme, selectedIndex === func._id)}
+          >
+            <ListItemText primary={func.functionName} />
+            <Tooltip title="Benutzer entfernen">
+              <IconButton
+                edge="end"
+                color="error"
+                onClick={() => handleRemoveFunction(func)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </ListItemButton>
         ))}
       </List>
 

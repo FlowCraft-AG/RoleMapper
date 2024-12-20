@@ -21,7 +21,7 @@ export const USERS_BY_FUNCTION = gql`
     getData(
       input: {
         entity: MANDATES
-        filter: { field: _id, operator: EQ, value: $functionId },
+        filter: { field: _id, operator: EQ, value: $functionId }
         sort: { field: functionName, direction: ASC }
       }
     ) {
@@ -41,7 +41,7 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
     getData(
       input: {
         entity: MANDATES
-        filter: { field: orgUnit, operator: EQ, value: $functionId },
+        filter: { field: orgUnit, operator: EQ, value: $functionId }
         sort: { field: functionName, direction: ASC }
       }
     ) {

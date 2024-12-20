@@ -1,14 +1,19 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Add, Delete, Visibility } from '@mui/icons-material';
-import { Autocomplete, Button, ListItemButton, Modal, TextField } from '@mui/material';
+import { Add, Delete } from '@mui/icons-material';
+import {
+  Autocomplete,
+  Button,
+  ListItemButton,
+  Modal,
+  TextField,
+} from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import { useState } from 'react';
@@ -193,9 +198,9 @@ export default function UsersSpalte({
         },
       });
       refetch(); // Aktualisiere die Benutzerliste
-        onRemove(userId, '');
-        setSelectedIndex(undefined);
-        onSelectUser('');
+      onRemove(userId, '');
+      setSelectedIndex(undefined);
+      onSelectUser('');
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);
     }
