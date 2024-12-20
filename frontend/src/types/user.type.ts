@@ -38,26 +38,28 @@ export type UserCredetials = {
 
 // Beispiel für das User Enum
 export enum UserEnum {
-    UserId = 'userId',  // Attribut
-    UserType = 'userType',  // Enum-Wert
-    UserRole = 'userRole',  // Enum-Wert
-    OrgUnit = 'orgUnit',
-    Active = 'active',
-    ValidFrom = 'validFrom',
-    ValidUntil = 'validUntil',
-    Employee = 'employee',
-    CostCenter = 'costCenter',
-    Department = 'department',
-    Student = 'student',
-    CourseOfStudy = 'courseOfStudy',
-    CourseOfStudyUnique = 'courseOfStudyUnique',
-    CourseOfStudyShort = 'courseOfStudyShort',
-    CourseOfStudyName = 'courseOfStudyName',
-    Level = 'level',
-    ExamRegulation = 'examRegulation',
+  UserId = 'userId', // Attribut
+  UserType = 'userType', // Enum-Wert
+  UserRole = 'userRole', // Enum-Wert
+  OrgUnit = 'orgUnit',
+  Active = 'active',
+  ValidFrom = 'validFrom',
+  ValidUntil = 'validUntil',
+  Employee = 'employee',
+  CostCenter = 'costCenter',
+  Department = 'department',
+  Student = 'student',
+  CourseOfStudy = 'courseOfStudy',
+  CourseOfStudyUnique = 'courseOfStudyUnique',
+  CourseOfStudyShort = 'courseOfStudyShort',
+  CourseOfStudyName = 'courseOfStudyName',
+  Level = 'level',
+  ExamRegulation = 'examRegulation',
 }
 
 // Extrahiert die Enum-Werte
 export const getEnumValues = (): string[] => {
-    return Object.values(UserEnum).filter(value => typeof value === 'string') as string[];
+  return Object.values(UserEnum).filter(
+    (value) => typeof value === 'string',
+  ) as string[];
 };

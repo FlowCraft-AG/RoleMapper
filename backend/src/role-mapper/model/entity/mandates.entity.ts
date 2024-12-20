@@ -5,6 +5,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { FilterInput } from '../input/filter.input';
+import { PaginationParameters } from '../input/pagination-parameters';
+import { SortInput } from '../input/sort.input';
+import { EntityCategoryType } from './entities.entity';
+
+type GraphQLMutationQuerys = {
+    entity: EntityCategoryType;
+    filter: FilterInput;
+    pagination?: PaginationParameters;
+    sort?: SortInput;
+};
 
 /**
  * Definiert das Schema für die Function-Entität.
@@ -38,6 +49,17 @@ export class Mandates extends Document {
     })
     functionName!: string;
 
+    /** Organisationseinheit, der die Funktion zugeordnet ist. */
+    @Prop({ required: true })
+    orgUnit!: Types.ObjectId;
+
+    /** Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist. */
+    @Prop({ required: true, default: false })
+    isSingleUser!: boolean;
+
+    @Prop({ required: true, default: false })
+    isImpliciteFunction!: boolean;
+
     /** Benutzer, die mit dieser Funktion verknüpft sind. */
     @Prop({
         type: [String],
@@ -52,15 +74,14 @@ export class Mandates extends Document {
                 'Das users-Array darf keine doppelten Werte enthalten (Groß-/Kleinschreibung wird ignoriert).',
         },
     })
-    users!: string[];
+    users?: string[];
 
-    /** Organisationseinheit, der die Funktion zugeordnet ist. */
-    @Prop({ required: true })
-    orgUnit!: Types.ObjectId;
-
-    /** Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist. */
-    @Prop({ required: true, default: false })
-    isSingleUser!: boolean;
+    /** Die gespeicherte GraphQL-Abfrage */
+    @Prop({
+        type: Object, // explizite Angabe des Typs für `query`
+        required: false,
+    })
+    query?: GraphQLMutationQuerys;
 }
 
 export type MandateDocument = Mandates & Document;

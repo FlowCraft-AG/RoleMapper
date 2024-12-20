@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @stylistic/indent */
 /* eslint-disable security/detect-object-injection */
@@ -20,6 +22,7 @@ import {
     CreateOrgUnitInput,
 } from '../model/input/create.input.js';
 import { FilterInput } from '../model/input/filter.input.js';
+import { SortInput } from '../model/input/sort.input.js';
 import { UpdateDataInput } from '../model/input/update.input.js';
 import { ReadService } from './read.service.js';
 
@@ -193,7 +196,7 @@ export class WriteService {
             throw new Error(`Funktion mit dem Namen "${functionName}" nicht gefunden.`);
         }
 
-        if (!(mandate as MandateDocument).users.includes(userId)) {
+        if (!(mandate as MandateDocument).users!.includes(userId)) {
             throw new Error(
                 `Der Benutzer "${userId}" ist nicht mit der Funktion "${functionName}" verknüpft.`,
             );
@@ -257,6 +260,47 @@ export class WriteService {
             );
 
             return updatedMandate;
+        }
+    }
+
+    async saveQuery(
+        functionName: string,
+        orgUnitId: string,
+        entity: EntityCategoryType,
+        filter?: FilterInput,
+        sort?: SortInput,
+    ) {
+        this.#logger.debug('findData: functionName=%s, orgUnit=%s', functionName, orgUnitId);
+
+        this.#logger.debug(
+            'findData: entity=%s, filter=%o, pagination=%o, sort=%o',
+            entity,
+            filter,
+            sort,
+        );
+
+        // Erstellen der Datenstruktur für die gespeicherte Query
+        const data = {
+            functionName,
+            orgUnit: orgUnitId,
+            query: {
+                entity,
+                filter,
+                sort,
+            },
+            isImpliciteFunction: true,
+        };
+        // Modell für die angegebene Entität abrufen
+        const model = this.#getModel('MANDATES');
+
+        try {
+            // Speichern der Query in der Datenbank
+            const result = await model.create(data);
+            this.#logger.debug('saveQuery: Data saved successfully: %o', result);
+            return true; // Rückgabe der gespeicherten Daten
+        } catch (error) {
+            this.#logger.error('saveQuery: Error saving query: %o', error);
+            throw new Error('Fehler beim Speichern der Query');
         }
     }
 

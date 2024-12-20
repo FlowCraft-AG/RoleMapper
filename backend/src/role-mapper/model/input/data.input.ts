@@ -9,3 +9,10 @@ export type DataInput = {
     pagination?: PaginationParameters;
     sort: SortInput; // Eine Liste von Sortierkriterien
 };
+
+export type MandateInput = {
+    entity: EntityCategoryType;
+    filter?: FilterInput;
+    pagination?: PaginationParameters;
+    sort: SortInput; // Eine Liste von Sortierkriterien
+};

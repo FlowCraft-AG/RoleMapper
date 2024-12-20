@@ -9,6 +9,7 @@ import { CreateEntityInput } from '../model/dto/create.dto.js';
 import { DeleteEntityInput } from '../model/dto/delete.dto.js';
 import { UpdateEntityInput } from '../model/dto/update.dto.js';
 import { CreateDataInput } from '../model/input/create.input.js';
+import { DataInput } from '../model/input/data.input.js';
 import { UpdateDataInput } from '../model/input/update.input.js';
 import { MutationPayload } from '../model/payload/mutation.payload.js';
 import { WriteService } from '../service/write.service.js';
@@ -178,5 +179,28 @@ export class MutationResolver {
             this.#logger.error('Error:', (error as Error).message);
             throw new Error((error as Error).message);
         }
+    }
+
+    @Public()
+    @Mutation('saveQuery')
+    @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
+    async saveQuery(
+        @Args('functionName') functionName: string, // Name der Funktion, für die die Daten abgerufen werden sollen
+        @Args('orgUnitId') orgUnitId: string, // ID der Organisationseinheit, für die die Daten abgerufen werden sollen
+        @Args('input') input: DataInput, // Eingabedaten, die die Entität, Filter und Paginierung enthalten
+    ) {
+        this.#logger.debug(
+            'getEntityData: functionName=%s, orgUnit=%s, input=%o',
+            functionName,
+            orgUnitId,
+            input,
+        );
+
+        const { entity, filter, sort } = input; // Extrahiere Eingabewerte
+
+        // Abrufen der gespeicherten Query und Ausführung
+        const result = await this.#service.saveQuery(functionName, orgUnitId, entity, filter, sort);
+        this.#logger.debug('Query result:', result);
+        return result; // Ergebnis der Abfrage zurückgeben
     }
 }

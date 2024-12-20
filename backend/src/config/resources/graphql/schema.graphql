@@ -291,6 +291,10 @@ type Function {
   Gibt an, ob die Funktion nur von einem Benutzer besetzt werden kann.
   """
   isSingleUser: Boolean
+  """
+  Gibt an, ob die Funktion implizit ist und nicht manuell zugewiesen werden kann.
+  """
+  isImpliciteFunction: Boolean
 }
 
 # Prozesse und Rollen
@@ -411,6 +415,19 @@ enum FilterOptions {
   type
   courseOfStudy
   level
+  isImpliciteFunction
+  isSingleUser
+
+  examRegulation
+  costCenter
+  department
+  courseOfStudyUnique
+  courseOfStudyShort
+  courseOfStudyName
+  alias
+  kostenstelleNr
+  key
+  value
 }
 
 type Mutation {
@@ -448,6 +465,8 @@ type Mutation {
   Entfernt einen Benutzer aus einer Funktion.
   """
   removeUserFromFunction(functionName: String!, userId: String!): Function
+
+  saveQuery(functionName: String!, orgUnitId: ID!, input: DataInput!): Boolean
 }
 
 """
@@ -496,6 +515,7 @@ input CreateFunctionInput {
   type: String
   users: [String!]!
   isSingleUser: Boolean
+  isImpliciteFunction: Boolean
 }
 
 input CreateProcessInput {

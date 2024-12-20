@@ -29,6 +29,7 @@ export type CreateFunctionInput = {
     type?: string;
     users: string[];
     isSingleUser?: boolean;
+    isImpliciteFunction?: boolean;
 };
 
 export type CreateProcessInput = {

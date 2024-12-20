@@ -14,7 +14,6 @@ import {
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
-import { CREATE_FUNCTIONS } from '../../graphql/mutations/create-function';
 import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
 import { FUNCTIONS_BY_ORG_UNIT } from '../../graphql/queries/get-functions';
 import client from '../../lib/apolloClient';
@@ -45,7 +44,7 @@ export default function FunctionsSpalte({
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
-  const [addUserToFunction] = useMutation(CREATE_FUNCTIONS, { client });
+
   const [removeUserFromFunction] = useMutation(DELETE_FUNCTIONS, { client });
   const [open, setOpen] = useState(false);
   const [newFunctionData, setNewFunctionData] = useState({
@@ -89,31 +88,6 @@ export default function FunctionsSpalte({
         <Alert severity="info">Keine Funktionen verfügbar</Alert>
       </Box>
     );
-
-  const validateInput = (functionName: string, users: string[]) => {
-    const newErrors: { [key: string]: string | null } = {};
-    const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
-    const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
-
-    if (functionName.trim()) {
-      newErrors.functionName = 'Der Funktionsname darf nicht leer sein.';
-    }
-
-    if (!functionNameRegex.test(functionName)) {
-      newErrors.functionName =
-        'Der Funktionsname darf nur Buchstaben enthalten.';
-    }
-
-    // Validierung für `users`
-    if (users.some((user) => !userIdRegex.test(user))) {
-      newErrors.users =
-        'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleInputChange = (field: string, value: string | string[]) => {
     setNewFunctionData((prev) => ({ ...prev, [field]: value }));
   };
@@ -128,31 +102,6 @@ export default function FunctionsSpalte({
       onSelect(func);
     }
   };
-
-  //   const handleAddFunction = async () => {
-  //     if (!validateInput()) {
-  //       return;
-  //     }
-
-  //     console.log('orgUnit', orgUnit);
-  //     try {
-  //       await addUserToFunction({
-  //         variables: {
-  //           functionName: newFunctionData.functionName,
-  //           orgUnit: orgUnit.id,
-  //           users: newFunctionData.users,
-  //         },
-  //       });
-  //       refetch(); // Aktualisiere die Daten nach der Mutation
-  //       setNewFunctionData({
-  //         functionName: '',
-  //         users: [],
-  //       });
-  //       setOpen(false);
-  //     } catch (err) {
-  //       console.error('Fehler beim Hinzufügen des Benutzers:', err);
-  //     }
-  //   };
 
   const handleRemoveFunction = async (func: Function) => {
     try {
@@ -195,33 +144,6 @@ export default function FunctionsSpalte({
     console.log('Benutzer:', userId);
     // Speichern der implizierten Funktion
     setOpenImplicitFunction(false);
-  };
-
-  const handleSaveExplicitFunction = async (
-    functionName: string,
-      users: string[],
-    isSingleUser: boolean,
-  ) => {
-    console.log('Funktionsname:', functionName);
-      console.log('Benutzer:', users);
-        console.log('Ist nur ein Benutzer:', isSingleUser);
-
-      try {
-        await addUserToFunction({
-          variables: {
-            functionName,
-            orgUnit: orgUnit.id,
-                users,
-            isSingleUser,
-          },
-        });
-        refetch(); // Aktualisiere die Daten nach der Mutation
-      } catch (err) {
-        console.error('Fehler beim Hinzufügen des Benutzers:', err);
-      }
-
-    // Speichern der expliziten Funktion
-    setOpenExplicitFunction(false);
   };
 
   const handleBackToSelectType = () => {
@@ -287,7 +209,10 @@ export default function FunctionsSpalte({
               <IconButton
                 edge="end"
                 color="error"
-                onClick={() => handleRemoveFunction(func)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Blockiere Event nur für den Button
+                  handleRemoveFunction(func);
+                }}
               >
                 <Delete />
               </IconButton>
@@ -312,66 +237,10 @@ export default function FunctionsSpalte({
       <ExplicitFunctionModal
         open={openExplicitFunction}
         onClose={() => setOpenExplicitFunction(false)}
-        onSave={handleSaveExplicitFunction}
         onBack={handleBackToSelectType}
+        orgUnit={orgUnit.id}
+        refetch={refetch}
       />
-      {/* <Modal open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}
-        >
-          <TextField
-            fullWidth
-            error={!!errors.functionName}
-            helperText={errors.functionName}
-            label="Funktionsname"
-            placeholder="z.B. Studentische Hilfskraft"
-            value={newFunctionData.functionName}
-            onChange={(e) => handleInputChange('functionName', e.target.value)}
-          />
-          <TextField
-            fullWidth
-            error={!!errors.users}
-            helperText={errors.users}
-            placeholder="z.B. gyca1011,lufr1012"
-            label="Benutzer (Kommagetrennt)"
-            value={newFunctionData.users.join(', ')}
-            onChange={(e) =>
-              handleInputChange(
-                'users',
-                e.target.value.split(',').map((u) => u.trim()),
-              )
-            }
-          />
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}
-          >
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleAddFunction}
-            >
-              Hinzufügen
-            </Button>
-            <Button fullWidth variant="outlined" onClick={() => setOpen(false)}>
-              Abbrechen
-            </Button>
-          </Box>
-        </Box>
-      </Modal> */}
     </Box>
   );
 }
