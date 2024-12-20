@@ -1,11 +1,12 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @stylistic/indent */
 /* eslint-disable security/detect-object-injection */
+/* eslint-disable @stylistic/operator-linebreak */
 
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
 import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
 import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
@@ -13,7 +14,11 @@ import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
 import { Process, ProcessDocument } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
-import { CreateDataInput } from '../model/input/create.input.js';
+import {
+    CreateDataInput,
+    CreateFunctionInput,
+    CreateOrgUnitInput,
+} from '../model/input/create.input.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { UpdateDataInput } from '../model/input/update.input.js';
 import { ReadService } from './read.service.js';
@@ -50,9 +55,20 @@ export class WriteService {
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
 
-    async createEntity(entity: EntityCategoryType, data: CreateDataInput | undefined) {
+    async createEntity(entity: EntityCategoryType, data: CreateDataInput) {
         this.#logger.debug('createEntity: entity=%s, data=%o', entity, data);
         const model = this.#getModel(entity);
+
+        // Typprüfung für ORG_UNITS
+        if (entity === 'ORG_UNITS' && this.#isCreateOrgUnitInput(data)) {
+            data.parentId = this.#convertToObjectId(data.parentId, 'parentId');
+        }
+
+        // Typprüfung für MANDATES
+        if (entity === 'MANDATES' && this.#isCreateMandateInput(data)) {
+            data.orgUnit = this.#convertToObjectId(data.orgUnit, 'orgUnit') ?? new Types.ObjectId();
+        }
+
         const result = await model.create(data);
         return result.toObject();
     }
@@ -248,5 +264,29 @@ export class WriteService {
             throw new BadRequestException(`Unknown entity: ${entity}`);
         }
         return model;
+    }
+
+    // Hilfsfunktion zur Typprüfung
+    #isCreateOrgUnitInput(data: CreateDataInput | undefined): data is CreateOrgUnitInput {
+        return (data as CreateOrgUnitInput)?.name !== undefined;
+    }
+
+    #isCreateMandateInput(data: CreateDataInput | undefined): data is CreateFunctionInput {
+        return (data as CreateFunctionInput)?.functionName !== undefined;
+    }
+
+    #convertToObjectId(
+        value: Types.ObjectId | string | undefined,
+        fieldName: string,
+    ): Types.ObjectId | undefined {
+        if (value !== undefined && value !== null && typeof value === 'string') {
+            try {
+                return new (Types.ObjectId as unknown as new (id: string) => Types.ObjectId)(value);
+            } catch (error) {
+                const errorMessage = (error as Error).message;
+                throw new Error(`Ungültige ${fieldName}: ${value}, Fehler: ${errorMessage}`);
+            }
+        }
+        return value;
     }
 }

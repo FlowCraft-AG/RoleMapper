@@ -44,3 +44,5 @@ export class OrgUnit extends Document {
 
 export type OrgUnitDocument = OrgUnit & Document;
 export const ORG_UNIT_SCHEMA = SchemaFactory.createForClass(OrgUnit);
+// versionKey deaktivieren
+ORG_UNIT_SCHEMA.set('versionKey', false);

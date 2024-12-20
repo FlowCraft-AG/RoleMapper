@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from '@apollo/client';
 import { Add, Delete, Visibility } from '@mui/icons-material';
-import { Autocomplete, Button, Modal, TextField } from '@mui/material';
+import { Autocomplete, Button, ListItemButton, Modal, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -193,7 +193,9 @@ export default function UsersSpalte({
         },
       });
       refetch(); // Aktualisiere die Benutzerliste
-      onRemove(userId, '');
+        onRemove(userId, '');
+        setSelectedIndex(undefined);
+        onSelectUser('');
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);
     }
@@ -232,35 +234,22 @@ export default function UsersSpalte({
 
       <List>
         {selectedFunction.users.map((userId: string) => (
-          <ListItem
+          <ListItemButton
             key={userId}
             sx={getListItemStyles(theme, selectedIndex === userId)}
-            disablePadding
-            secondaryAction={
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Tooltip title="Details anzeigen">
-                  <IconButton
-                    edge="end"
-                    color="primary"
-                    onClick={() => handleViewUser(userId)}
-                  >
-                    <Visibility />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Benutzer entfernen">
-                  <IconButton
-                    edge="end"
-                    color="error"
-                    onClick={() => handleRemoveUser(userId)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            }
+            onClick={() => handleViewUser(userId)}
           >
             <ListItemText primary={userId} />
-          </ListItem>
+            <Tooltip title="Benutzer entfernen">
+              <IconButton
+                edge="end"
+                color="error"
+                onClick={() => handleRemoveUser(userId)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </ListItemButton>
         ))}
       </List>
       {/* Modal für Benutzer hinzufügen */}

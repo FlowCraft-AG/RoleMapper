@@ -7,12 +7,19 @@ import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
+import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
+import { alpha, Chip, IconButton, Stack, styled, Tooltip, Typography } from '@mui/material';
+import { TreeItem2Props, TreeItem2 } from '@mui/x-tree-view/TreeItem2';
+import { useTreeItem2 } from '@mui/x-tree-view/useTreeItem2';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import CustomTreeItem from './CustomTreeItem';
 
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnitDTO) => void;
@@ -78,6 +85,7 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
           endIcon: CorporateFareTwoToneIcon,
+          item: CustomTreeItem,
         }}
         onItemClick={handleItemClick}
         sx={{

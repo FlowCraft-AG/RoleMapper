@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 /**
  * Definiert das Schema für die Function-Entität.
@@ -56,7 +56,7 @@ export class Mandates extends Document {
 
     /** Organisationseinheit, der die Funktion zugeordnet ist. */
     @Prop({ required: true })
-    orgUnit!: string;
+    orgUnit!: Types.ObjectId;
 
     /** Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist. */
     @Prop({ required: true, default: false })
@@ -74,3 +74,6 @@ MANDATE_SCHEMA.index(
         collation: { locale: 'en', strength: 2 }, // Groß-/Kleinschreibung ignorieren
     },
 );
+
+// versionKey deaktivieren
+MANDATE_SCHEMA.set('versionKey', false);

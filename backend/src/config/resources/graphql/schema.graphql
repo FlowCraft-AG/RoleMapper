@@ -30,6 +30,10 @@ input DataInput {
   Pagination-Parameter zur Steuerung der Ergebnisse.
   """
   pagination: PaginationInput
+  """
+  Sortierparameter für die Ergebnisse.
+  """
+  sort: SortInput
 }
 
 """
@@ -65,6 +69,28 @@ input FilterInput {
   AND: [FilterInput]
   OR: [FilterInput]
   NOR: [FilterInput]
+}
+
+"""
+Sortierparameter für Abfragen.
+"""
+input SortInput {
+  """
+  Feld, nach dem sortiert werden soll.
+  """
+  field: FilterOptions
+  """
+  Sortierreihenfolge, z. B. ASC oder DESC.
+  """
+  direction: directionInput
+}
+
+"""
+Sortierreihenfolge für Abfragen.
+"""
+enum directionInput {
+  ASC
+  DESC
 }
 
 # Rückgabewerte
@@ -469,6 +495,7 @@ input CreateFunctionInput {
   orgUnit: String!
   type: String
   users: [String!]!
+  isSingleUser: Boolean
 }
 
 input CreateProcessInput {
@@ -606,7 +633,13 @@ type MutationResponse {
   Das Ergebnis der Mutation, z. B. die erstellte oder aktualisierte Entität.
   """
   result: EntityResult
+  """
+  Anzahl der betroffenen Entitäten.
+  """
   affectedCount: Int
+  """
+  Warnungen oder Hinweise zur Operation.
+  """
   warnings: [String]
 }
 

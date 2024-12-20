@@ -38,7 +38,8 @@ export const USER_DETAILS = gql`
     getData(
       input: {
         entity: USERS
-        filter: { field: userId, operator: EQ, value: $userId }
+        filter: { field: userId, operator: EQ, value: $userId },
+        sort: { field: userId, direction: ASC }
       }
     ) {
       data {
@@ -80,7 +81,8 @@ export const MITGLIEDER = gql`
             { field: orgUnit, operator: EQ, value: $alias }
             { field: orgUnit, operator: EQ, value: $kostenstelleNr }
           ]
-        }
+        },
+        sort: { field: userId, direction: ASC }
       }
     ) {
       totalCount

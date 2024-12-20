@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Add, Delete, Visibility } from '@mui/icons-material';
+import { Add, Delete, Visibility, Inbox as InboxIcon } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
@@ -9,6 +9,7 @@ import {
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   Modal,
   TextField,
@@ -212,36 +213,25 @@ export default function FunctionsSpalte({
       )}
       <List>
         {filteredFunctions.map((func) => (
-          <ListItem
-            key={func._id}
-            sx={getListItemStyles(theme, selectedIndex === func._id)}
-            secondaryAction={
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Tooltip title="Details anzeigen">
-                  <IconButton
-                    edge="end"
-                    color="primary"
-                    onClick={() => handleViewUser(func)}
-                  >
-                    <Visibility />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Benutzer entfernen">
-                  <IconButton
-                    edge="end"
-                    color="error"
-                    onClick={() => handleRemoveFunction(func)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            }
-          >
-            <ListItemText primary={func.functionName} />
-          </ListItem>
+            <ListItemButton
+              selected={selectedIndex === func._id}
+              onClick={() => handleViewUser(func)}
+              sx={getListItemStyles(theme, selectedIndex === func._id)}
+            >
+              <ListItemText primary={func.functionName} />
+              <Tooltip title="Benutzer entfernen">
+                <IconButton
+                  edge="end"
+                  color="error"
+                  onClick={() => handleRemoveFunction(func)}
+                >
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            </ListItemButton>
         ))}
       </List>
+
       {/* Modal für Funktionen hinzufügen */}
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
