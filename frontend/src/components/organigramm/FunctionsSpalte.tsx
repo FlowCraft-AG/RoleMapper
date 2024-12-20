@@ -212,6 +212,7 @@ export default function FunctionsSpalte({
       <List>
         {filteredFunctions.map((func) => (
           <ListItemButton
+            key={func._id} // Eindeutiger Schlüssel für jedes Element
             selected={selectedIndex === func._id}
             onClick={() => handleViewUser(func)}
             sx={getListItemStyles(theme, selectedIndex === func._id)}

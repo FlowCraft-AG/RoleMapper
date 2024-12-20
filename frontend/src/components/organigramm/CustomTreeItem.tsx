@@ -29,8 +29,9 @@ import {
 import { CREATE_ORG_UNIT } from '../../graphql/mutations/create-org-unit';
 import { DELETE_ORG_UNIT } from '../../graphql/mutations/delete-org-unit';
 import client from '../../lib/apolloClient';
+import ConfirmDeleteModal from '../modal/ConfirmDeleteModal';
 
-interface ItemToRender {
+export interface ItemToRender {
   label: string;
   itemId: string;
   id?: string; // Kann undefined sein
@@ -354,7 +355,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
       </Modal>
 
       {/* Bestätigungsdialog für Löschen bei kindern */}
-      <Modal
+      {/* <Modal
         open={hasChildrenModal}
         onClose={() => setHasChildrenModal(false)}
         disableEscapeKeyDown={false}
@@ -404,7 +405,16 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
             </Box>
           </Box>
         </Fade>
-      </Modal>
+      </Modal> */}
+          <ConfirmDeleteModal
+            open={hasChildrenModal}
+            onClose={() => setHasChildrenModal(false)}
+              childrenToDelete={childrenToDelete}
+              renderChildren={childrenToDelete}
+            onConfirm={() => {
+              setHasChildrenModal(false);
+              setOpenConfirm(true);
+            }} />
     </>
   );
 });
