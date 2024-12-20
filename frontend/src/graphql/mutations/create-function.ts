@@ -5,6 +5,7 @@ export const CREATE_FUNCTIONS = gql`
     $functionName: String!
     $orgUnit: String!
     $users: [String!]!
+    $isSingleUser: Boolean!
   ) {
     createEntity(
       input: {
@@ -13,6 +14,7 @@ export const CREATE_FUNCTIONS = gql`
           functionName: $functionName
           orgUnit: $orgUnit
           users: $users
+          isSingleUser: $isSingleUser
         }
       }
     ) {

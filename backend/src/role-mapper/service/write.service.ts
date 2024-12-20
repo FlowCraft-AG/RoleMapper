@@ -62,6 +62,8 @@ export class WriteService {
         // Typprüfung für ORG_UNITS
         if (entity === 'ORG_UNITS' && this.#isCreateOrgUnitInput(data)) {
             data.parentId = this.#convertToObjectId(data.parentId, 'parentId');
+            data.supervisor =
+                this.#convertToObjectId(data.supervisor, 'supervisor') ?? new Types.ObjectId();
         }
 
         // Typprüfung für MANDATES

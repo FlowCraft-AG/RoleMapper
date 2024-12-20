@@ -114,3 +114,23 @@ export const MITGLIEDER = gql`
     }
   }
 `;
+
+export const GET_EMPLOYEES = gql`
+  query GetData {
+    getData(
+      input: {
+        entity: USERS
+        filter: { field: userType, operator: EQ, value: "employee" }
+        sort: { field: userId, direction: ASC }
+      }
+    ) {
+      totalCount
+      data {
+        ... on User {
+          userId
+          _id
+        }
+      }
+    }
+  }
+`;

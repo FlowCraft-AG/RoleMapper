@@ -9,8 +9,6 @@ import {
   List,
   ListItemButton,
   ListItemText,
-  Modal,
-  TextField,
   Tooltip,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
@@ -24,6 +22,9 @@ import theme from '../../theme';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
+import ExplicitFunctionModal from '../modal/ExplicitFunctionModal';
+import ImplicitFunctionModal from '../modal/ImplicitFunctionModal';
+import SelectFunctionTypeModal from '../modal/SelectFunctionTypeModal';
 
 interface FunctionsColumnProps {
   orgUnit: OrgUnitDTO;
@@ -57,6 +58,12 @@ export default function FunctionsSpalte({
     client,
   });
 
+  const [openSelectType, setOpenSelectType] = useState(false);
+  const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
+  const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
+  const [users, setUsers] = useState(['user1', 'user2']); // Diese Liste könnte von der GraphQL-Query kommen
+  const [selectedType, setSelectedType] = useState<string>('');
+
   if (loading)
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
@@ -83,22 +90,22 @@ export default function FunctionsSpalte({
       </Box>
     );
 
-  const validateInput = () => {
+  const validateInput = (functionName: string, users: string[]) => {
     const newErrors: { [key: string]: string | null } = {};
     const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 
-    if (!newFunctionData.functionName.trim()) {
+    if (functionName.trim()) {
       newErrors.functionName = 'Der Funktionsname darf nicht leer sein.';
     }
 
-    if (!functionNameRegex.test(newFunctionData.functionName)) {
+    if (!functionNameRegex.test(functionName)) {
       newErrors.functionName =
         'Der Funktionsname darf nur Buchstaben enthalten.';
     }
 
     // Validierung für `users`
-    if (newFunctionData.users.some((user) => !userIdRegex.test(user))) {
+    if (users.some((user) => !userIdRegex.test(user))) {
       newErrors.users =
         'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
     }
@@ -122,30 +129,30 @@ export default function FunctionsSpalte({
     }
   };
 
-  const handleAddFunction = async () => {
-    if (!validateInput()) {
-      return;
-    }
+  //   const handleAddFunction = async () => {
+  //     if (!validateInput()) {
+  //       return;
+  //     }
 
-    console.log('orgUnit', orgUnit);
-    try {
-      await addUserToFunction({
-        variables: {
-          functionName: newFunctionData.functionName,
-          orgUnit: orgUnit.id,
-          users: newFunctionData.users,
-        },
-      });
-      refetch(); // Aktualisiere die Daten nach der Mutation
-      setNewFunctionData({
-        functionName: '',
-        users: [],
-      });
-      setOpen(false);
-    } catch (err) {
-      console.error('Fehler beim Hinzufügen des Benutzers:', err);
-    }
-  };
+  //     console.log('orgUnit', orgUnit);
+  //     try {
+  //       await addUserToFunction({
+  //         variables: {
+  //           functionName: newFunctionData.functionName,
+  //           orgUnit: orgUnit.id,
+  //           users: newFunctionData.users,
+  //         },
+  //       });
+  //       refetch(); // Aktualisiere die Daten nach der Mutation
+  //       setNewFunctionData({
+  //         functionName: '',
+  //         users: [],
+  //       });
+  //       setOpen(false);
+  //     } catch (err) {
+  //       console.error('Fehler beim Hinzufügen des Benutzers:', err);
+  //     }
+  //   };
 
   const handleRemoveFunction = async (func: Function) => {
     try {
@@ -166,6 +173,63 @@ export default function FunctionsSpalte({
     handleClick(func);
   };
 
+  const handleAddFunctionClick = () => {
+    setOpenSelectType(true);
+  };
+
+  const handleSelectFunctionType = (type: string) => {
+    setSelectedType(type);
+    if (type === 'implizierte') {
+      setOpenImplicitFunction(true);
+    } else {
+      setOpenExplicitFunction(true);
+    }
+    setOpenSelectType(false);
+  };
+
+  const handleSaveImplicitFunction = async (
+    attribute: string,
+    userId: string,
+  ) => {
+    console.log('Attribut:', attribute);
+    console.log('Benutzer:', userId);
+    // Speichern der implizierten Funktion
+    setOpenImplicitFunction(false);
+  };
+
+  const handleSaveExplicitFunction = async (
+    functionName: string,
+      users: string[],
+    isSingleUser: boolean,
+  ) => {
+    console.log('Funktionsname:', functionName);
+      console.log('Benutzer:', users);
+        console.log('Ist nur ein Benutzer:', isSingleUser);
+
+      try {
+        await addUserToFunction({
+          variables: {
+            functionName,
+            orgUnit: orgUnit.id,
+                users,
+            isSingleUser,
+          },
+        });
+        refetch(); // Aktualisiere die Daten nach der Mutation
+      } catch (err) {
+        console.error('Fehler beim Hinzufügen des Benutzers:', err);
+      }
+
+    // Speichern der expliziten Funktion
+    setOpenExplicitFunction(false);
+  };
+
+  const handleBackToSelectType = () => {
+    setOpenSelectType(true);
+    setOpenImplicitFunction(false);
+    setOpenExplicitFunction(false);
+  };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
       <Box
@@ -180,13 +244,14 @@ export default function FunctionsSpalte({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setOpen(true)}
+          onClick={handleAddFunctionClick}
           sx={{ marginBottom: 2 }}
           startIcon={<Add />}
         >
           Funktion hinzufügen
         </Button>
       </Box>
+
       {rootOrgUnit && rootOrgUnit.hasMitglieder && (
         <List>
           <ListItemButton
@@ -232,7 +297,25 @@ export default function FunctionsSpalte({
       </List>
 
       {/* Modal für Funktionen hinzufügen */}
-      <Modal open={open} onClose={() => setOpen(false)}>
+      {/* Modals */}
+      <SelectFunctionTypeModal
+        open={openSelectType}
+        onClose={() => setOpenSelectType(false)}
+        onSelectType={handleSelectFunctionType}
+      />
+      <ImplicitFunctionModal
+        open={openImplicitFunction}
+        onClose={() => setOpenImplicitFunction(false)}
+        onSave={handleSaveImplicitFunction}
+        onBack={handleBackToSelectType}
+      />
+      <ExplicitFunctionModal
+        open={openExplicitFunction}
+        onClose={() => setOpenExplicitFunction(false)}
+        onSave={handleSaveExplicitFunction}
+        onBack={handleBackToSelectType}
+      />
+      {/* <Modal open={open} onClose={() => setOpen(false)}>
         <Box
           sx={{
             position: 'absolute',
@@ -288,7 +371,7 @@ export default function FunctionsSpalte({
             </Button>
           </Box>
         </Box>
-      </Modal>
+      </Modal> */}
     </Box>
   );
 }

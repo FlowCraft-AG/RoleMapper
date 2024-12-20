@@ -35,7 +35,7 @@ export class OrgUnit extends Document {
      * @prop {string} [supervisor] - Der Vorgesetzte der Organisationseinheit. Dieses Feld ist optional.
      */
     @Prop({ required: false })
-    supervisor?: string;
+    supervisor?: Types.ObjectId;
 
     alias?: string;
     kostenstelleNr?: string;

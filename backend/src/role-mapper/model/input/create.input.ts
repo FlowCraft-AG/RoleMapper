@@ -28,6 +28,7 @@ export type CreateFunctionInput = {
     orgUnit: Types.ObjectId;
     type?: string;
     users: string[];
+    isSingleUser?: boolean;
 };
 
 export type CreateProcessInput = {
@@ -44,7 +45,7 @@ export type ProcessRoleInput = {
 export type CreateOrgUnitInput = {
     name: string;
     parentId?: Types.ObjectId;
-    supervisor?: string;
+    supervisor?: Types.ObjectId;
 };
 
 export type CreateRoleInput = {
