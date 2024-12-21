@@ -378,7 +378,9 @@ describe('MutationResolver', () => {
         const message = data.errors ? data.errors[0].message : UNKNOWN_ERROR_MESSAGE;
 
         expect(data.data?.addUserToFunction).toBeNull();
-        expect(message).toMatch('Einzelbenutzer-Funktion erkannt!');
+        expect(message).toMatch(
+            'Einzelbenutzer-Funktion erkannt! Diese Funktion kann nur einem User zugewiesen werden.',
+        );
     });
 
     test('[GRAPHQL] remove SingleUser from Function', async () => {

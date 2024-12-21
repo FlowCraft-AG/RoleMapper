@@ -1,22 +1,20 @@
 'use client';
 
 import { useQuery } from '@apollo/client';
+import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { useState } from 'react';
-import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import CloseSquare from '@mui/icons-material/Close';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
-import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
-import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
-import { styled } from '@mui/material';
+import CustomTreeItem from './CustomTreeItem';
+import TransitionComponent from './TransitionComponent';
 
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnitDTO) => void;
@@ -25,7 +23,7 @@ interface OrgUnitRichTreeViewProps {
 export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
   const [expanded, setExpanded] = useState<string[]>([]); // Geöffnete Knoten
 
-  const { data, loading, error } = useQuery(ORG_UNITS, {
+  const { data, loading, error, refetch } = useQuery(ORG_UNITS, {
     client,
   });
 
@@ -51,7 +49,6 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
         children: buildTree(data, unit._id),
       }));
   }
-
 
   const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
     const selectedOrgUnit = orgUnitList.find((unit) => unit._id === nodeId);
@@ -83,6 +80,13 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
           endIcon: CorporateFareTwoToneIcon,
+          item: CustomTreeItem, // Refetch wird hier übergeben
+        }}
+        slotProps={{
+          item: {
+            refetch,
+            slots: { groupTransition: TransitionComponent },
+          },
         }}
         onItemClick={handleItemClick}
         sx={{
