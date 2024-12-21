@@ -1,30 +1,30 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Add, Delete, Visibility } from '@mui/icons-material';
+import { Add, Delete } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
   IconButton,
   List,
-  ListItem,
   ListItemButton,
   ListItemText,
-  Modal,
-  TextField,
   Tooltip,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
-import { CREATE_FUNCTIONS } from '../../graphql/mutations/create-function';
 import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
 import { FUNCTIONS_BY_ORG_UNIT } from '../../graphql/queries/get-functions';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
+import { getLogger } from '../../utils/logger';
 import { getListItemStyles } from '../../utils/styles';
+import ExplicitFunctionModal from '../modal/ExplicitFunctionModal';
+import ImplicitFunctionModal from '../modal/ImplicitFunctionModal';
+import SelectFunctionTypeModal from '../modal/SelectFunctionTypeModal';
 
 interface FunctionsColumnProps {
   orgUnit: OrgUnitDTO;
@@ -42,21 +42,20 @@ export default function FunctionsSpalte({
   handleMitgliederClick,
   onRemove,
 }: FunctionsColumnProps) {
+  const logger = getLogger(FunctionsSpalte.name);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
-  const [addUserToFunction] = useMutation(CREATE_FUNCTIONS, { client });
+
   const [removeUserFromFunction] = useMutation(DELETE_FUNCTIONS, { client });
-  const [open, setOpen] = useState(false);
-  const [newFunctionData, setNewFunctionData] = useState({
-    functionName: '',
-    users: [] as string[],
-  });
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   const { data, loading, error, refetch } = useQuery(FUNCTIONS_BY_ORG_UNIT, {
     client,
   });
+
+  const [openSelectType, setOpenSelectType] = useState(false);
+  const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
+  const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
 
   if (loading)
     return (
@@ -84,34 +83,6 @@ export default function FunctionsSpalte({
       </Box>
     );
 
-  const validateInput = () => {
-    const newErrors: { [key: string]: string | null } = {};
-    const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
-    const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
-
-    if (!newFunctionData.functionName.trim()) {
-      newErrors.functionName = 'Der Funktionsname darf nicht leer sein.';
-    }
-
-    if (!functionNameRegex.test(newFunctionData.functionName)) {
-      newErrors.functionName =
-        'Der Funktionsname darf nur Buchstaben enthalten.';
-    }
-
-    // Validierung für `users`
-    if (newFunctionData.users.some((user) => !userIdRegex.test(user))) {
-      newErrors.users =
-        'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleInputChange = (field: string, value: string | string[]) => {
-    setNewFunctionData((prev) => ({ ...prev, [field]: value }));
-  };
-
   // Klick-Handler für eine Funktion oder "Mitglieder"
   const handleClick = (func: Function | string) => {
     if (typeof func === 'string') {
@@ -120,31 +91,6 @@ export default function FunctionsSpalte({
     } else {
       setSelectedIndex(func._id);
       onSelect(func);
-    }
-  };
-
-  const handleAddFunction = async () => {
-    if (!validateInput()) {
-      return;
-    }
-
-    console.log('orgUnit', orgUnit);
-    try {
-      await addUserToFunction({
-        variables: {
-          functionName: newFunctionData.functionName,
-          orgUnit: orgUnit.id,
-          users: newFunctionData.users,
-        },
-      });
-      refetch(); // Aktualisiere die Daten nach der Mutation
-      setNewFunctionData({
-        functionName: '',
-        users: [],
-      });
-      setOpen(false);
-    } catch (err) {
-      console.error('Fehler beim Hinzufügen des Benutzers:', err);
     }
   };
 
@@ -167,6 +113,25 @@ export default function FunctionsSpalte({
     handleClick(func);
   };
 
+  const handleAddFunctionClick = () => {
+    setOpenSelectType(true);
+  };
+
+  const handleSelectFunctionType = (type: string) => {
+    if (type === 'implizierte') {
+      setOpenImplicitFunction(true);
+    } else {
+      setOpenExplicitFunction(true);
+    }
+    setOpenSelectType(false);
+  };
+
+  const handleBackToSelectType = () => {
+    setOpenSelectType(true);
+    setOpenImplicitFunction(false);
+    setOpenExplicitFunction(false);
+  };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
       <Box
@@ -181,13 +146,14 @@ export default function FunctionsSpalte({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setOpen(true)}
+          onClick={handleAddFunctionClick}
           sx={{ marginBottom: 2 }}
           startIcon={<Add />}
         >
           Funktion hinzufügen
         </Button>
       </Box>
+
       {rootOrgUnit && rootOrgUnit.hasMitglieder && (
         <List>
           <ListItemButton
@@ -212,94 +178,50 @@ export default function FunctionsSpalte({
       )}
       <List>
         {filteredFunctions.map((func) => (
-          <ListItem
-            key={func._id}
+          <ListItemButton
+            key={func._id} // Eindeutiger Schlüssel für jedes Element
+            selected={selectedIndex === func._id}
+            onClick={() => handleViewUser(func)}
             sx={getListItemStyles(theme, selectedIndex === func._id)}
-            secondaryAction={
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Tooltip title="Details anzeigen">
-                  <IconButton
-                    edge="end"
-                    color="primary"
-                    onClick={() => handleViewUser(func)}
-                  >
-                    <Visibility />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Benutzer entfernen">
-                  <IconButton
-                    edge="end"
-                    color="error"
-                    onClick={() => handleRemoveFunction(func)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            }
           >
             <ListItemText primary={func.functionName} />
-          </ListItem>
+            <Tooltip title="Benutzer entfernen">
+              <IconButton
+                edge="end"
+                color="error"
+                onClick={(e) => {
+                  e.stopPropagation(); // Blockiere Event nur für den Button
+                  handleRemoveFunction(func);
+                }}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </ListItemButton>
         ))}
       </List>
+
       {/* Modal für Funktionen hinzufügen */}
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}
-        >
-          <TextField
-            fullWidth
-            error={!!errors.functionName}
-            helperText={errors.functionName}
-            label="Funktionsname"
-            placeholder="z.B. Studentische Hilfskraft"
-            value={newFunctionData.functionName}
-            onChange={(e) => handleInputChange('functionName', e.target.value)}
-          />
-          <TextField
-            fullWidth
-            error={!!errors.users}
-            helperText={errors.users}
-            placeholder="z.B. gyca1011,lufr1012"
-            label="Benutzer (Kommagetrennt)"
-            value={newFunctionData.users.join(', ')}
-            onChange={(e) =>
-              handleInputChange(
-                'users',
-                e.target.value.split(',').map((u) => u.trim()),
-              )
-            }
-          />
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}
-          >
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleAddFunction}
-            >
-              Hinzufügen
-            </Button>
-            <Button fullWidth variant="outlined" onClick={() => setOpen(false)}>
-              Abbrechen
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      {/* Modals */}
+      <SelectFunctionTypeModal
+        open={openSelectType}
+        onClose={() => setOpenSelectType(false)}
+        onSelectType={handleSelectFunctionType}
+      />
+      <ImplicitFunctionModal
+        open={openImplicitFunction}
+        onClose={() => setOpenImplicitFunction(false)}
+        orgUnitId={orgUnit.id}
+        refetch={refetch}
+        onBack={handleBackToSelectType}
+      />
+      <ExplicitFunctionModal
+        open={openExplicitFunction}
+        onClose={() => setOpenExplicitFunction(false)}
+        onBack={handleBackToSelectType}
+        orgUnit={orgUnit.id}
+        refetch={refetch}
+      />
     </Box>
   );
 }

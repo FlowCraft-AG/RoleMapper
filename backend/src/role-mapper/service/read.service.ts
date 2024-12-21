@@ -1,4 +1,9 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable unicorn/no-array-callback-reference */
+/* eslint-disable security/detect-object-injection */
 /* eslint-disable @stylistic/indent */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
@@ -14,6 +19,7 @@ import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { PaginationParameters } from '../model/input/pagination-parameters.js';
+import { SortInput } from '../model/input/sort.input.js';
 import { RoleResult } from '../model/payload/role-payload.type.js';
 import { FilterField, FilterFields } from '../model/types/filter.type.js';
 import { operatorMap } from '../model/types/map.type.js';
@@ -132,6 +138,28 @@ export class ReadService {
         return { roles: filteredResults as RoleResult[] };
     }
 
+    // Funktion zum Abrufen der gespeicherten Query und Ausführen der findData-Methode
+    async executeSavedQuery(id: string) {
+        // Abrufen der gespeicherten Query basierend auf functionName und orgUnitId
+        const savedQuery = await this.#modelMap.MANDATES.findOne({
+            _id: id,
+        });
+
+        if (savedQuery === undefined || savedQuery.query === undefined) {
+            throw new Error('Keine gespeicherte Query gefunden');
+        }
+
+        const functionName: string = savedQuery.functionName;
+        // Extrahieren der Filter-, Sortier- und Paginierungsparameter aus der gespeicherten Query
+        const { filter, pagination, sort } = savedQuery.query;
+
+        // Aufruf der findData-Methode mit den abgerufenen Parametern
+        const data = await this.findData('USERS', filter, pagination, sort);
+
+        // Nur Mandates zurückgeben
+        return { functionName, data };
+    }
+
     /**
      * Führt eine dynamische Filterung für eine angegebene Entität durch.
      *
@@ -145,12 +173,14 @@ export class ReadService {
         entity: EntityCategoryType,
         filter?: FilterInput,
         pagination?: PaginationParameters,
+        orderBy?: SortInput,
     ) {
         this.#logger.debug(
-            'findData: entity=%s, filter=%o pagination=%o',
+            'findData: entity=%s, filter=%o, pagination=%o, orderBy=%o',
             entity,
             filter,
             pagination,
+            orderBy,
         );
 
         // Modell für die angegebene Entität abrufen
@@ -160,9 +190,12 @@ export class ReadService {
         const filterQuery = this.buildFilterQuery(filter);
         this.#logger.debug('findData: filterQuery=%o', filterQuery);
 
-        // Daten mit der generierten Query abrufen
-        // eslint-disable-next-line unicorn/no-array-callback-reference
-        const data = await model.find(filterQuery).exec();
+        // Erstellen der Sortierkriterien
+        const sortQuery = this.buildSortQuery(orderBy);
+        this.#logger.debug('findData: sortQuery=%o', sortQuery);
+
+        // Daten mit der generierten Query und Sortierung abrufen
+        const data = await model.find(filterQuery).sort(sortQuery).exec();
         this.#logger.debug('findData: data=%o', data);
         const rawData = data.map(
             (document: EntityType): EntityType => document.toObject() as EntityType,
@@ -220,6 +253,38 @@ export class ReadService {
     }
 
     /**
+     * Erstellt eine Sortier-Query basierend auf den angegebenen Bedingungen.
+     *
+     * @param {SortInput} orderBy - Die Sortierbedingungen.
+     * @returns {SortQuery} Die generierte Sortier-Query.
+     */
+    buildSortQuery(orderBy?: SortInput): Record<string, 1 | -1> {
+        if (!orderBy) {
+            this.#logger.debug('buildSortQuery: Keine Sortierbedingungen angegeben');
+            return {};
+        }
+
+        const { field, direction } = orderBy;
+
+        // Validierung des Felds
+        if (!field) {
+            throw new Error('Sortierfeld darf nicht leer sein.');
+        }
+
+        // Validierung der Richtung
+        if (direction !== 'ASC' && direction !== 'DESC') {
+            throw new Error(`Ungültige Sortierrichtung: ${direction}`);
+        }
+
+        const sortQuery: Record<string, 1 | -1> = {
+            [field]: direction === 'ASC' ? 1 : -1,
+        };
+
+        this.#logger.debug('buildSortQuery: sortQuery=%o', sortQuery);
+        return sortQuery;
+    }
+
+    /**
      * Mappt spezielle Felder (z. B. courseOfStudy -> student.courseOfStudy).
      *
      * @param field - Das ursprüngliche Feld.
@@ -231,12 +296,10 @@ export class ReadService {
             level: 'student.level',
         };
 
-        // eslint-disable-next-line security/detect-object-injection
         return fieldMap[field] ?? field;
     }
 
     #getModel(entity: EntityCategoryType): Model<EntityType> {
-        // eslint-disable-next-line security/detect-object-injection
         const model = this.#modelMap[entity];
         const validEntities = Object.keys(this.#modelMap).join(', ');
         if (model === undefined) {

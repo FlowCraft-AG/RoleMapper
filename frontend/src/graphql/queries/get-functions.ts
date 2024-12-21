@@ -10,6 +10,8 @@ export const FUNCTIONS = gql`
           functionName
           users
           orgUnit
+          isSingleUser
+          isImpliciteFunction
         }
       }
     }
@@ -22,6 +24,7 @@ export const USERS_BY_FUNCTION = gql`
       input: {
         entity: MANDATES
         filter: { field: _id, operator: EQ, value: $functionId }
+        sort: { field: functionName, direction: ASC }
       }
     ) {
       data {
@@ -29,6 +32,7 @@ export const USERS_BY_FUNCTION = gql`
           users
           functionName
           isSingleUser
+          isImpliciteFunction
         }
       }
     }
@@ -41,6 +45,7 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
       input: {
         entity: MANDATES
         filter: { field: orgUnit, operator: EQ, value: $functionId }
+        sort: { field: functionName, direction: ASC }
       }
     ) {
       data {
@@ -50,8 +55,18 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
           users
           orgUnit
           isSingleUser
+          isImpliciteFunction
         }
       }
+    }
+  }
+`;
+
+export const GET_SAVED_DATA = gql`
+  query GetSavedData($id: ID!) {
+    getSavedData(id: $id) {
+      users
+      functionName
     }
   }
 `;

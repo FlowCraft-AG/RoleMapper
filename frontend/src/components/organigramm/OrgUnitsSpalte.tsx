@@ -13,6 +13,8 @@ import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
+import CustomTreeItem from './CustomTreeItem';
+import TransitionComponent from './TransitionComponent';
 
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnitDTO) => void;
@@ -21,7 +23,7 @@ interface OrgUnitRichTreeViewProps {
 export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
   const [expanded, setExpanded] = useState<string[]>([]); // Geöffnete Knoten
 
-  const { data, loading, error } = useQuery(ORG_UNITS, {
+  const { data, loading, error, refetch } = useQuery(ORG_UNITS, {
     client,
   });
 
@@ -78,6 +80,13 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
           endIcon: CorporateFareTwoToneIcon,
+          item: CustomTreeItem, // Refetch wird hier übergeben
+        }}
+        slotProps={{
+          item: {
+            refetch,
+            slots: { groupTransition: TransitionComponent },
+          },
         }}
         onItemClick={handleItemClick}
         sx={{

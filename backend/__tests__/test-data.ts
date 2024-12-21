@@ -102,7 +102,7 @@ export const TEST_EMPLOYEE_2 = {
 export const TEST_MANDATES = {
     create: {
         functionName: 'name',
-        orgUnit: 'orgUnit',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
         type: 'asd',
         users: ['gyca1011'],
     },
@@ -116,7 +116,7 @@ export const TEST_MANDATES = {
 export const TEST_MANDATES2 = {
     create: {
         functionName: 'Studentx',
-        orgUnit: 'orgUnit',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
         type: 'asd',
         users: ['gyca1011'],
     },
@@ -130,13 +130,13 @@ export const TEST_MANDATES2 = {
 export const TEST_MANDATES_DUPLICATE = {
     create: {
         functionName: 'Studentx',
-        orgUnit: 'orgUnit',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
         type: 'asd',
         users: ['gyca1011'],
     },
     create2: {
         functionName: 'studentx',
-        orgUnit: 'orgUnit',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
         type: 'asd',
         users: ['gyca1011'],
     },

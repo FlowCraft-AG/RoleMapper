@@ -20,7 +20,7 @@ export function isUser(entity: EntityType): entity is User {
 export function isMandate(entity: EntityType): entity is Mandates {
     return (
         Array.isArray((entity as Mandates).users) &&
-        (entity as Mandates).users.every((u) => typeof u === 'string')
+        (entity as Mandates).users!.every((u) => typeof u === 'string')
     );
 }
 
