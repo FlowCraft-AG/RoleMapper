@@ -5,10 +5,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { FilterInput } from '../input/filter.input';
-import { PaginationParameters } from '../input/pagination-parameters';
-import { SortInput } from '../input/sort.input';
-import { EntityCategoryType } from './entities.entity';
+import { FilterInput } from '../input/filter.input.js';
+import { PaginationParameters } from '../input/pagination-parameters.js';
+import { SortInput } from '../input/sort.input.js';
+import { EntityCategoryType } from './entities.entity.js';
 
 type GraphQLMutationQuerys = {
     entity: EntityCategoryType;

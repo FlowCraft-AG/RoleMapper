@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @stylistic/indent */
 /* eslint-disable security/detect-object-injection */
 /* eslint-disable @stylistic/operator-linebreak */
-
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -298,7 +295,7 @@ export class WriteService {
             // Speichern der Query in der Datenbank
             const result = await model.create(data);
             this.#logger.debug('saveQuery: Data saved successfully: %o', result);
-            return true; // Rückgabe der gespeicherten Daten
+            return { success: true, result }; // Rückgabe der gespeicherten Daten
         } catch (error) {
             this.#logger.error('saveQuery: Error saving query: %o', error);
             throw new Error('Fehler beim Speichern der Query');

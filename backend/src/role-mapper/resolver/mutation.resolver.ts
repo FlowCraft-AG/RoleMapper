@@ -200,8 +200,19 @@ export class MutationResolver {
         const { entity, filter, sort } = input; // Extrahiere Eingabewerte
 
         // Abrufen der gespeicherten Query und Ausführung
-        const result = await this.#service.saveQuery(functionName, orgUnitId, entity, filter, sort);
+        const { result, success } = await this.#service.saveQuery(
+            functionName,
+            orgUnitId,
+            entity,
+            filter,
+            sort,
+        );
         this.#logger.debug('Query result:', result);
-        return result; // Ergebnis der Abfrage zurückgeben
+        // Rückgabe des Ergebnisses
+        return {
+            success,
+            message: `Save operation successful.`,
+            result,
+        };
     }
 }

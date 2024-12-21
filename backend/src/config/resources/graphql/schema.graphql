@@ -472,9 +472,14 @@ type Mutation {
   """
   removeUserFromFunction(functionName: String!, userId: String!): Function
 
-  saveQuery(functionName: String!, orgUnitId: ID!, input: DataInput!): Boolean
+  saveQuery(functionName: String!, orgUnitId: ID!, input: DataInput!): SavedQueryPayload
 }
 
+type SavedQueryPayload {
+  success: Boolean!
+  message: String
+  result: Function
+}
 """
 Input für das Erstellen einer neuen Entität.
 """
