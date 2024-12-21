@@ -1,6 +1,6 @@
 // src/components/modals/AddUserModal.tsx
 
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   Autocomplete,
   Box,
@@ -12,6 +12,7 @@ import {
 import React, { useState } from 'react';
 import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
 import client from '../../lib/apolloClient';
+import { USER_IDS } from '../../graphql/queries/get-users';
 
 interface AddUserModalProps {
   open: boolean;
@@ -33,9 +34,16 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   refetch,
   functionName,
 }) => {
-  const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
+    const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
+    const {
+        loading,
+        error,
+        data,
+      } = useQuery(USER_IDS, {
+        client,
+      });
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
-  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+    const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | null } = {};
@@ -84,14 +92,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   };
 
-  const options = [
-    'gycm1011',
-    'lufr1012',
-    'gyca1013',
-    'lufr1014',
-    'gyca1015',
-    'lufr1016',
-  ];
+  const options = data?.getData.data.map((user: any) => user.userId) || [];
 
   return (
     <>
@@ -129,8 +130,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Datalist example"
-                placeholder="Type to search..."
+                label="Benutzer-ID"
+                placeholder="eingabe..."
               />
             )}
             freeSolo // Erlaubt benutzerdefinierte Eingaben

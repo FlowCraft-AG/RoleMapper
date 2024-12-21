@@ -33,6 +33,22 @@ export const USERS = gql`
   }
 `;
 
+export const USER_IDS = gql`
+  query GetData {
+    getData(input: {
+        entity: USERS,
+        sort: { field: userId, direction: ASC }
+        }) {
+      totalCount
+      data {
+        ... on User {
+          userId
+        }
+      }
+    }
+  }
+`;
+
 export const USER_DETAILS = gql`
   query GetData($userId: String) {
     getData(

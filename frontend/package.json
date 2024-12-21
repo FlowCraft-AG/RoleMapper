@@ -39,6 +39,7 @@
     "@mui/material": "^6.2.0",
     "@mui/x-tree-view": "^7.23.2",
     "@react-spring/web": "^9.7.5",
+    "autosuggest-highlight": "^3.3.4",
     "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
     "graphql": "^16.9.0",
@@ -52,6 +53,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/autosuggest-highlight": "^3.2.3",
     "@types/fs-extra": "^11.0.4",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.9.3",

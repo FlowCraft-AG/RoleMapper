@@ -1,17 +1,28 @@
-import { useMutation } from '@apollo/client';
+'use client';
+
+import { useMutation, useQuery } from '@apollo/client';
 import {
+  Autocomplete,
   Box,
   Button,
+  CircularProgress,
+  darken,
   FormControlLabel,
+  lighten,
   Modal,
   Radio,
   RadioGroup,
   Snackbar,
+  styled,
   TextField,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
-import { CREATE_EXPLICITE_FUNCTIONS } from '../../graphql/mutations/create-function';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
+import { Fragment, useState } from 'react';
+import * as createFunction from '../../graphql/mutations/create-function';
+import { USER_IDS } from '../../graphql/queries/get-users';
+import { User } from '../../types/user.type';
 import client from '../../lib/apolloClient';
 
 interface ExplicitFunctionModalProps {
@@ -33,20 +44,31 @@ const ExplicitFunctionModal = ({
   const [users, setUsers] = useState<string[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+    const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
-  const [addUserToFunction] = useMutation(CREATE_EXPLICITE_FUNCTIONS, {
+  const [addUserToFunction] = useMutation(createFunction.CREATE_EXPLICITE_FUNCTIONS, {
     client,
   });
 
-  const handleUsersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setUsers(value.split(',').map((user) => user.trim()));
-  };
+  const { loading, error, data } = useQuery(USER_IDS, {
+    client,
+  });
+
+  // Prepare options and group them by first letter
+  const options = data?.getData.data.map((user: User) => user.userId) || [];
+
+  const groupedOptions = options.reduce((acc: any, userId) => {
+    const firstLetter = userId[0].toUpperCase();
+    if (!acc[firstLetter]) {
+      acc[firstLetter] = [];
+    }
+    acc[firstLetter].push(userId);
+    return acc;
+  }, {});
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | null } = {};
-    const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
+    const functionNameRegex = /^[a-zA-Z ]+$/; // Funktionsname kann Leerzeichen enthalten, aber keine Sonderzeichen
     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 
     if (!functionName.trim()) {
@@ -54,8 +76,10 @@ const ExplicitFunctionModal = ({
     }
 
     if (!functionNameRegex.test(functionName)) {
-      newErrors.functionName = 'Funktionsname darf nur Buchstaben enthalten.';
+      newErrors.functionName =
+        'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
     }
+      console.log('users:', users);
 
     if (users.some((user) => !userIdRegex.test(user))) {
       newErrors.users =
@@ -86,7 +110,7 @@ const ExplicitFunctionModal = ({
         console.error('Fehler beim Hinzufügen des Benutzers:', err);
         setSnackbar({
           open: true,
-          message: 'Fehler beim Hinzufügen des Benutzers:',
+          message: 'Fehler beim Hinzufügen des Benutzers.',
         });
       }
       resetFields(); // Eingabefelder zurücksetzen
@@ -100,6 +124,22 @@ const ExplicitFunctionModal = ({
     setErrors({});
     setIsSingleUser(false); // Zustand für den RadioButton zurücksetzen
   };
+
+    const GroupHeader = styled('div')(({ theme }) => ({
+      position: 'sticky',
+      top: '-8px',
+      padding: '4px 10px',
+      color: theme.palette.primary.main,
+      backgroundColor: lighten(theme.palette.primary.light, 0.85),
+      ...theme.applyStyles('dark', {
+        backgroundColor: darken(theme.palette.primary.main, 0.8),
+      }),
+    }));
+
+    const GroupItems = styled('ul')({
+      padding: 0,
+    });
+
 
   return (
     <>
@@ -136,16 +176,66 @@ const ExplicitFunctionModal = ({
             helperText={errors.functionName}
           />
 
-          <TextField
-            label="Benutzer (Kommagetrennt)"
-            value={users.join(', ')}
-            onChange={handleUsersChange}
-            fullWidth
-            error={!!errors.users}
-            helperText={errors.users}
+          <Autocomplete
+            options={options}
+            loading={loading}
+            groupBy={(option) => option[0].toUpperCase()}
+            getOptionLabel={(option) => option}
+            renderGroup={(params) => (
+              <li key={params.key}>
+                <GroupHeader>{params.group}</GroupHeader>
+                <GroupItems>{params.children}</GroupItems>
+              </li>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Benutzer (Kommagetrennt)"
+                placeholder="Benutzer-ID eingeben"
+                error={!!errors.users}
+                helperText={errors.users}
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    endAdornment: (
+                      <Fragment>
+                        {loading ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </Fragment>
+                    ),
+                  },
+                }}
+              />
+            )}
+            multiple
+            freeSolo
+            value={users}
+            onChange={(_, value) => setUsers(value)}
+            renderOption={(props, option, { inputValue }) => {
+              const matches = match(option, inputValue, { insideWords: true });
+              const parts = parse(option, matches);
+
+              return (
+                <li {...props}>
+                  <div>
+                    {parts.map((part, index) => (
+                      <span
+                        key={index}
+                        style={{
+                          fontWeight: part.highlight ? 700 : 400,
+                        }}
+                      >
+                        {part.text}
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              );
+            }}
           />
 
-          {/* Neue RadioGroup für die Auswahl, ob es nur ein Benutzer oder mehrere sein können */}
           <Typography variant="body1">
             Kann diese Funktion nur von einem Benutzer besetzt werden?
           </Typography>
