@@ -11,6 +11,12 @@ type Query {
   """
   getData(input: DataInput!): DataPayload!
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
+  getSavedData(id: ID!): MandatePayload
+}
+
+type MandatePayload {
+  users: [String!]!
+  functionName: String
 }
 
 # Abfrageparameter

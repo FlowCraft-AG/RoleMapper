@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { CREATE_FUNCTIONS } from '../../graphql/mutations/create-function';
+import { CREATE_EXPLICITE_FUNCTIONS } from '../../graphql/mutations/create-function';
 import client from '../../lib/apolloClient';
 
 interface ExplicitFunctionModalProps {
@@ -35,7 +35,9 @@ const ExplicitFunctionModal = ({
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
-  const [addUserToFunction] = useMutation(CREATE_FUNCTIONS, { client });
+  const [addUserToFunction] = useMutation(CREATE_EXPLICITE_FUNCTIONS, {
+    client,
+  });
 
   const handleUsersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -76,6 +78,10 @@ const ExplicitFunctionModal = ({
           },
         });
         refetch(); // Aktualisiere die Daten nach der Mutation
+        setSnackbar({
+          open: true,
+          message: 'Explizierte Funktion erfolgreich erstellt.',
+        });
       } catch (err) {
         console.error('Fehler beim Hinzufügen des Benutzers:', err);
         setSnackbar({

@@ -10,6 +10,8 @@ export const FUNCTIONS = gql`
           functionName
           users
           orgUnit
+          isSingleUser
+          isImpliciteFunction
         }
       }
     }
@@ -30,6 +32,7 @@ export const USERS_BY_FUNCTION = gql`
           users
           functionName
           isSingleUser
+          isImpliciteFunction
         }
       }
     }
@@ -52,8 +55,18 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
           users
           orgUnit
           isSingleUser
+          isImpliciteFunction
         }
       }
+    }
+  }
+`;
+
+export const GET_SAVED_DATA = gql`
+  query GetSavedData($id: ID!) {
+    getSavedData(id: $id) {
+      users
+      functionName
     }
   }
 `;

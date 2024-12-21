@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client';
 import {
   Box,
   Button,
@@ -11,20 +12,24 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { CREATE_IMPLICITE_FUNCTIONS } from '../../graphql/mutations/create-function';
+import client from '../../lib/apolloClient';
 import { getEnumValues } from '../../types/user.type';
 
 interface ImplicitFunctionModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (field: string, value: string) => void;
   onBack: () => void;
+  orgUnitId: string;
+  refetch: () => void;
 }
 
 const ImplicitFunctionModal = ({
   open,
   onClose,
-  onSave,
   onBack,
+  orgUnitId,
+  refetch,
 }: ImplicitFunctionModalProps) => {
   const [functionName, setFunctionName] = useState('');
   const [field, setField] = useState('');
@@ -32,43 +37,67 @@ const ImplicitFunctionModal = ({
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
+  const [createFunction] = useMutation(CREATE_IMPLICITE_FUNCTIONS, { client });
+
   // Extrahieren der Enum-Werte des UserAttributes
   const availableFields = getEnumValues(); // Hier erhalten wir alle Attributnamen des Enums
-
-  const handleSave = () => {
-    const newErrors: { [key: string]: string | null } = {};
-    const functionNameRegex = /^[a-zA-Z]+$/; // Nur Buchstaben
-
-    if (!functionName.trim()) {
-      newErrors.functionName = 'Funktionsname darf nicht leer sein.';
-    }
-
-    if (!functionNameRegex.test(functionName)) {
-      newErrors.functionName = 'Funktionsname darf nur Buchstaben enthalten.';
-    }
-
-    if (!field.trim()) {
-      newErrors.field = 'Attribut darf nicht leer sein.';
-    }
-
-    if (!value) {
-      newErrors.value = 'Benutzer muss ausgewählt werden.';
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      onSave(field, value);
-      resetFields(); // Eingabefelder zurücksetzen
-      onClose();
-    }
-  };
 
   const resetFields = () => {
     setFunctionName('');
     setField('');
     setValue('');
     setErrors({});
+  };
+
+  const handleSave = async () => {
+    const newErrors: { [key: string]: string | null } = {};
+    const functionNameRegex = /^[a-zA-Z\s]+$/; // Nur Buchstaben und Leerzeichen erlaubt
+
+    if (!functionName.trim()) {
+      newErrors.functionName = 'Funktionsname darf nicht leer sein.';
+    }
+
+    if (!functionNameRegex.test(functionName)) {
+      newErrors.functionName =
+        'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
+    }
+
+    if (!field.trim()) {
+      newErrors.field = 'Attribut muss ausgewählt sein.';
+    }
+
+    if (!value) {
+      newErrors.value = 'wert darf nicht leer sein!.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      try {
+        await createFunction({
+          variables: {
+            functionName,
+            field,
+            value,
+            orgUnitId,
+          },
+        });
+        refetch(); // Aktualisiere die Daten nach der Mutation
+        setSnackbar({
+          open: true,
+          message: 'Implizierte Funktion erfolgreich erstellt.',
+        });
+
+        resetFields(); // Eingabefelder zurücksetzen
+        onClose();
+      } catch (err) {
+        console.error('Fehler beim Hinzufügen des Benutzers:', err);
+        setSnackbar({
+          open: true,
+          message: 'Fehler beim Hinzufügen des Benutzers:',
+        });
+      }
+    }
   };
 
   return (
@@ -110,9 +139,9 @@ const ImplicitFunctionModal = ({
             <InputLabel id="select-user-label">Attribut</InputLabel>
             <Select
               labelId="select-user-label"
-              value={value}
+              value={field}
               onChange={(e) => {
-                setValue(e.target.value);
+                setField(e.target.value);
               }}
               fullWidth
               error={!!errors.value}
@@ -135,8 +164,8 @@ const ImplicitFunctionModal = ({
 
           <TextField
             label="wert"
-            value={field}
-            onChange={(e) => setField(e.target.value)}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             fullWidth
           />
 

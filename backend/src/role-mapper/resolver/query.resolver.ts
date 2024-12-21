@@ -5,6 +5,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
+import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
@@ -97,5 +98,22 @@ export class QueryResolver {
             data: paginatedData, // Typumwandlung
             totalCount: rawData.length,
         };
+    }
+
+    @Public()
+    @Query('getSavedData')
+    async getSavedData(@Args('id') id: string): Promise<any> {
+        this.#logger.debug('getSavedData: id=%s', id);
+
+        // Hole die gespeicherten Daten, basierend auf der Abfrage-ID
+        const { functionName, data } = await this.#service.executeSavedQuery(id);
+
+        // Stelle sicher, dass die Daten den Typ User haben und extrahiere die userId
+        const users = data.map((user) => {
+            const userTyped = user as User; // Typisiere das user-Objekt als User
+            return userTyped.userId; // Extrahiere userId
+        });
+        this.#logger.debug('Users %o:', users);
+        return { functionName, users };
     }
 }

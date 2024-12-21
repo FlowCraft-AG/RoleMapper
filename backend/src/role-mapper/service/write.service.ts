@@ -265,7 +265,7 @@ export class WriteService {
 
     async saveQuery(
         functionName: string,
-        orgUnitId: string,
+        orgUnitId: Types.ObjectId,
         entity: EntityCategoryType,
         filter?: FilterInput,
         sort?: SortInput,
@@ -290,6 +290,7 @@ export class WriteService {
             },
             isImpliciteFunction: true,
         };
+        data.orgUnit = this.#convertToObjectId(data.orgUnit, 'orgUnit') ?? new Types.ObjectId();
         // Modell für die angegebene Entität abrufen
         const model = this.#getModel('MANDATES');
 

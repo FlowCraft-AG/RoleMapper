@@ -12,6 +12,7 @@ import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
+import { getLogger } from '../../utils/logger';
 
 export default function OrganigrammPage() {
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<
@@ -30,6 +31,8 @@ export default function OrganigrammPage() {
     undefined,
   );
   const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
+  const [isImpliciteFunction, setIsImpliciteFunction] =
+    useState<boolean>(false);
 
   const [fetchMitglieder] = useLazyQuery(MITGLIEDER, {
     client,
@@ -79,12 +82,14 @@ export default function OrganigrammPage() {
     setSelectedFunctionId(functionInfo._id);
     setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
+    setIsImpliciteFunction(functionInfo.isImpliciteFunction);
   };
 
   const handleMitgliederClick = () => {
     setSelectedFunctionId('mitglieder'); // Reset functions
     setSelectedFunction(mitglied(selectedRootOrgUnit?.id, combinedUsers));
     setSelectedUserId(undefined); // Reset users
+    setIsImpliciteFunction(false);
   };
 
   const handleUserSelect = (userId: string) => {
@@ -108,6 +113,7 @@ export default function OrganigrammPage() {
       functionName: 'Mitglieder',
       orgUnit: orgUnitId,
       users: combinedUsers,
+      isImpliciteFunction: false,
     };
   };
 
@@ -210,6 +216,7 @@ export default function OrganigrammPage() {
               selectedMitglieder={selectedFunction}
               onSelectUser={handleUserSelect}
               onRemove={handleRemove}
+              isImpliciteFunction={isImpliciteFunction}
             />
           }
         </Box>

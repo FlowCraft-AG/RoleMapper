@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const CREATE_FUNCTIONS = gql`
+export const CREATE_EXPLICITE_FUNCTIONS = gql`
   mutation CreateEntity(
     $functionName: String!
     $orgUnit: String!
@@ -22,5 +22,24 @@ export const CREATE_FUNCTIONS = gql`
       message
       affectedCount
     }
+  }
+`;
+
+export const CREATE_IMPLICITE_FUNCTIONS = gql`
+  mutation CreateEntity(
+    $functionName: String!
+    $value: String
+    $orgUnitId: ID!
+    $field: FilterOptions
+  ) {
+    saveQuery(
+      functionName: $functionName
+      input: {
+        entity: USERS
+        filter: { field: $field, operator: EQ, value: $value }
+        sort: { field: userId, direction: ASC }
+      }
+      orgUnitId: $orgUnitId
+    )
   }
 `;

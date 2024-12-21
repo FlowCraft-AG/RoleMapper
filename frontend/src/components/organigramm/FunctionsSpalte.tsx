@@ -20,6 +20,7 @@ import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
+import { getLogger } from '../../utils/logger';
 import { getListItemStyles } from '../../utils/styles';
 import ExplicitFunctionModal from '../modal/ExplicitFunctionModal';
 import ImplicitFunctionModal from '../modal/ImplicitFunctionModal';
@@ -41,17 +42,12 @@ export default function FunctionsSpalte({
   handleMitgliederClick,
   onRemove,
 }: FunctionsColumnProps) {
+  const logger = getLogger(FunctionsSpalte.name);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
 
   const [removeUserFromFunction] = useMutation(DELETE_FUNCTIONS, { client });
-  const [open, setOpen] = useState(false);
-  const [newFunctionData, setNewFunctionData] = useState({
-    functionName: '',
-    users: [] as string[],
-  });
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   const { data, loading, error, refetch } = useQuery(FUNCTIONS_BY_ORG_UNIT, {
     client,
@@ -60,8 +56,6 @@ export default function FunctionsSpalte({
   const [openSelectType, setOpenSelectType] = useState(false);
   const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
   const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
-  const [users, setUsers] = useState(['user1', 'user2']); // Diese Liste könnte von der GraphQL-Query kommen
-  const [selectedType, setSelectedType] = useState<string>('');
 
   if (loading)
     return (
@@ -88,9 +82,6 @@ export default function FunctionsSpalte({
         <Alert severity="info">Keine Funktionen verfügbar</Alert>
       </Box>
     );
-  const handleInputChange = (field: string, value: string | string[]) => {
-    setNewFunctionData((prev) => ({ ...prev, [field]: value }));
-  };
 
   // Klick-Handler für eine Funktion oder "Mitglieder"
   const handleClick = (func: Function | string) => {
@@ -127,23 +118,12 @@ export default function FunctionsSpalte({
   };
 
   const handleSelectFunctionType = (type: string) => {
-    setSelectedType(type);
     if (type === 'implizierte') {
       setOpenImplicitFunction(true);
     } else {
       setOpenExplicitFunction(true);
     }
     setOpenSelectType(false);
-  };
-
-  const handleSaveImplicitFunction = async (
-    attribute: string,
-    userId: string,
-  ) => {
-    console.log('Attribut:', attribute);
-    console.log('Benutzer:', userId);
-    // Speichern der implizierten Funktion
-    setOpenImplicitFunction(false);
   };
 
   const handleBackToSelectType = () => {
@@ -231,7 +211,8 @@ export default function FunctionsSpalte({
       <ImplicitFunctionModal
         open={openImplicitFunction}
         onClose={() => setOpenImplicitFunction(false)}
-        onSave={handleSaveImplicitFunction}
+        orgUnitId={orgUnit.id}
+        refetch={refetch}
         onBack={handleBackToSelectType}
       />
       <ExplicitFunctionModal

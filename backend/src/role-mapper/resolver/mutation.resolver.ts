@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { CreateEntityInput } from '../model/dto/create.dto.js';
@@ -186,7 +187,7 @@ export class MutationResolver {
     @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
     async saveQuery(
         @Args('functionName') functionName: string, // Name der Funktion, für die die Daten abgerufen werden sollen
-        @Args('orgUnitId') orgUnitId: string, // ID der Organisationseinheit, für die die Daten abgerufen werden sollen
+        @Args('orgUnitId') orgUnitId: Types.ObjectId, // ID der Organisationseinheit, für die die Daten abgerufen werden sollen
         @Args('input') input: DataInput, // Eingabedaten, die die Entität, Filter und Paginierung enthalten
     ) {
         this.#logger.debug(

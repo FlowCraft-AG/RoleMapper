@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable unicorn/no-array-callback-reference */
 /* eslint-disable security/detect-object-injection */
@@ -133,6 +135,28 @@ export class ReadService {
         this.#logger.debug('findProcessRoles: filteredResults=%o', filteredResults);
         this.#logger.info('findProcessRoles: Verarbeitung abgeschlossen');
         return { roles: filteredResults as RoleResult[] };
+    }
+
+    // Funktion zum Abrufen der gespeicherten Query und Ausführen der findData-Methode
+    async executeSavedQuery(id: string) {
+        // Abrufen der gespeicherten Query basierend auf functionName und orgUnitId
+        const savedQuery = await this.#modelMap.MANDATES.findOne({
+            _id: id,
+        });
+
+        if (savedQuery === undefined || savedQuery.query === undefined) {
+            throw new Error('Keine gespeicherte Query gefunden');
+        }
+
+        const functionName: string = savedQuery.functionName;
+        // Extrahieren der Filter-, Sortier- und Paginierungsparameter aus der gespeicherten Query
+        const { filter, pagination, sort } = savedQuery.query;
+
+        // Aufruf der findData-Methode mit den abgerufenen Parametern
+        const data = await this.findData('USERS', filter, pagination, sort);
+
+        // Nur Mandates zurückgeben
+        return { functionName, data };
     }
 
     /**
