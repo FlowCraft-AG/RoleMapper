@@ -294,6 +294,12 @@ export class ReadService {
         const fieldMap: Record<string, string> = {
             courseOfStudy: 'student.courseOfStudy',
             level: 'student.level',
+            examRegulation: 'student.examRegulation',
+            costCenter: 'employee.costCenter',
+            department: 'employee.department',
+            courseOfStudyUnique: 'student.courseOfStudyUnique',
+            courseOfStudyShort: 'student.courseOfStudyShort',
+            courseOfStudyName: 'student.courseOfStudyName',
         };
 
         return fieldMap[field] ?? field;

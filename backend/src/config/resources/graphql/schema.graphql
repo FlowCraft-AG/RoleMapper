@@ -432,8 +432,6 @@ enum FilterOptions {
   courseOfStudyName
   alias
   kostenstelleNr
-  key
-  value
 }
 
 type Mutation {

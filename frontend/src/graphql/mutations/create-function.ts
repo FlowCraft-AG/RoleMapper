@@ -40,6 +40,8 @@ export const CREATE_IMPLICITE_FUNCTIONS = gql`
         sort: { field: userId, direction: ASC }
       }
       orgUnitId: $orgUnitId
-    )
+    ) {
+        success
+    }
   }
 `;
