@@ -7,13 +7,12 @@ import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-import { useState } from 'react';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
-import CustomTreeItem from './CustomTreeItem';
+import CustomTreeItem from '../customs/CustomTreeItem';
 import TransitionComponent from './TransitionComponent';
 
 interface OrgUnitRichTreeViewProps {
@@ -21,8 +20,6 @@ interface OrgUnitRichTreeViewProps {
 }
 
 export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
-  const [expanded, setExpanded] = useState<string[]>([]); // Geöffnete Knoten
-
   const { data, loading, error, refetch } = useQuery(ORG_UNITS, {
     client,
   });
@@ -80,11 +77,11 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
           endIcon: CorporateFareTwoToneIcon,
-          item: CustomTreeItem, // Refetch wird hier übergeben
+          item: CustomTreeItem,
         }}
         slotProps={{
           item: {
-            refetch,
+            refetch, // Refetch wird hier übergeben
             slots: { groupTransition: TransitionComponent },
           },
         }}

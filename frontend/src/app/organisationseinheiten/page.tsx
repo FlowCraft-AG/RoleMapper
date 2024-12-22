@@ -12,7 +12,6 @@ import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
-import { getLogger } from '../../utils/logger';
 
 export default function OrganigrammPage() {
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<

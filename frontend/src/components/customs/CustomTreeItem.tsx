@@ -17,6 +17,7 @@ import { CustomLabel } from '../customs/CustomLabel';
 import ConfirmDeleteModal from '../modal/ConfirmOrgUnitDeleteModal';
 import CreateOrgUnitModal from '../modal/CreateOrgUnitModal';
 import DeleteConfirmationModal from '../modal/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
+import EditOrgUnitModal from '../modal/EditOrgUnitModal';
 
 export interface ItemToRender {
   label: string;
@@ -25,21 +26,31 @@ export interface ItemToRender {
   children?: ItemToRender[]; // Rekursive Definition für verschachtelte Kinder
 }
 
+interface ChildProp {
+  itemsToRender?: ItemToRender[]; // Optional, falls es fehlen könnte
+}
+
 interface CustomTreeItemProps extends TreeItem2Props {
   refetch: () => void;
-  children?: ReactElement<{ itemsToRender?: ItemToRender[] }>[];
+  children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>;
 }
 
 const CustomTreeItem = forwardRef(function CustomTreeItem(
   { refetch, slots, slotProps, ...props }: CustomTreeItemProps,
   ref: Ref<HTMLLIElement>,
 ) {
+  const { id, itemId, label, children } = props;
   const { publicAPI } = useTreeItem2(props);
   const [openModal, setOpenModal] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [hasChildrenModal, setHasChildrenModal] = useState(false);
   const [childrenToDelete, setChildrenToDelete] = useState<ItemToRender[]>([]);
-  const [itemId, setItemId] = useState<string>('');
+  const [openEditModal, setOpenEditModal] = useState(false);
+
+  const handleEdit = (e: MouseEvent) => {
+    e.stopPropagation();
+    setOpenEditModal(true); // Modal öffnen
+  };
 
   const [deleteOrgUnit] = useMutation(DELETE_ORG_UNIT, { client });
 
@@ -60,7 +71,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
 
   const handleDelete = (e: MouseEvent) => {
     const childrenWithNames: ItemToRender[] = [];
-    Children.forEach(props.children, (child) => {
+    Children.forEach(children, (child) => {
       if (isValidElement(child)) {
         const items = child.props.itemsToRender || [];
         childrenWithNames.push(...items);
@@ -69,10 +80,8 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
 
     if (childrenWithNames.length > 0) {
       setChildrenToDelete(childrenWithNames); // Kinder speichern
-      setItemId(props.itemId); // Setze die ID der zu löschenden Organisationseinheit
       setHasChildrenModal(true); // Modal öffnen
     } else {
-      setItemId(props.itemId); // Setze die ID der zu löschenden Organisationseinheit
       setOpenConfirm(true); // Bestätigungs-Modal öffnen
     }
   };
@@ -89,10 +98,11 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
         slotProps={{
           ...slotProps,
           label: {
-            children: props.label,
-            id: props.itemId,
+            children: label,
+            id: itemId,
             onAdd: handleAdd,
             onDelete: handleDelete,
+            onEdit: handleEdit, // Funktion für Edit
           },
         }}
       />
@@ -102,7 +112,15 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
         open={openModal}
         onClose={() => setOpenModal(false)}
         refetch={refetch}
-        parentId={props.itemId}
+        parentId={itemId}
+      />
+
+      {/* Das ausgelagerte Modal für die Bearbeitung */}
+      <EditOrgUnitModal
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        itemId={itemId}
+        refetch={refetch}
       />
 
       {/* Bestätigungsdialog für das Löschen */}

@@ -20,3 +20,21 @@ export const ORG_UNITS = gql`
     }
   }
 `;
+
+
+export const ORG_UNITS_IDS = gql`
+  query GetData {
+    getData(
+      input: { entity: ORG_UNITS, sort: { field: name, direction: ASC } }
+    ) {
+      totalCount
+      data {
+        ... on OrgUnit {
+          _id
+          name
+          parentId
+        }
+      }
+    }
+  }
+`;

@@ -1,3 +1,6 @@
+/* eslint-disable unicorn/no-lonely-if */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @stylistic/indent */
 /* eslint-disable security/detect-object-injection */
@@ -91,6 +94,25 @@ export class WriteService {
         this.#logger.debug('updateEntity: entity=%s, filters=%o, data=%o', entity, filters, data);
         const model = this.#getModel(entity);
         const filterQuery = this.#readService.buildFilterQuery(filters);
+
+        if (entity === 'ORG_UNITS' && this.#isUpdateOrgUnitInput(data)) {
+            if (data.parentId) {
+                data.parentId = this.#convertToObjectId(data.parentId, 'parentId');
+            }
+            if (data.supervisor) {
+                data.supervisor =
+                    this.#convertToObjectId(data.supervisor, 'supervisor') ?? new Types.ObjectId();
+            }
+        }
+
+        // Typprüfung für MANDATES
+        if (entity === 'MANDATES' && this.#isUpdateMandateInput(data)) {
+            if (data.orgUnit) {
+                data.orgUnit =
+                    this.#convertToObjectId(data.orgUnit, 'orgUnit') ?? new Types.ObjectId();
+            }
+        }
+
         const result = await model.updateMany(filterQuery, data).exec();
         this.#logger.debug('updateEntity: result=%o', result);
         return {
@@ -332,5 +354,27 @@ export class WriteService {
             }
         }
         return value;
+    }
+
+    /**
+     * Überprüft, ob die Eingabe ein gültiges Update für ORG_UNITS ist.
+     * @param {any} data - Die Eingabedaten.
+     * @returns {boolean} - Gibt true zurück, wenn es sich um ein gültiges Update handelt.
+     */
+    #isUpdateOrgUnitInput(data) {
+        return (
+            data &&
+            (typeof data.parentId === 'string' || data.parentId === undefined) &&
+            (typeof data.supervisor === 'string' || data.supervisor === undefined)
+        );
+    }
+
+    /**
+     * Überprüft, ob die Eingabe ein gültiges Update für MANDATES ist.
+     * @param {any} data - Die Eingabedaten.
+     * @returns {boolean} - Gibt true zurück, wenn es sich um ein gültiges Update handelt.
+     */
+    #isUpdateMandateInput(data) {
+        return data && (typeof data.orgUnit === 'string' || data.orgUnit === undefined);
     }
 }

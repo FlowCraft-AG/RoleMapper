@@ -22,8 +22,8 @@ import parse from 'autosuggest-highlight/parse';
 import { Fragment, useState } from 'react';
 import * as createFunction from '../../graphql/mutations/create-function';
 import { USER_IDS } from '../../graphql/queries/get-users';
-import { User } from '../../types/user.type';
 import client from '../../lib/apolloClient';
+import { User } from '../../types/user.type';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
@@ -44,11 +44,14 @@ const ExplicitFunctionModal = ({
   const [users, setUsers] = useState<string[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
-    const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
-  const [addUserToFunction] = useMutation(createFunction.CREATE_EXPLICITE_FUNCTIONS, {
-    client,
-  });
+  const [addUserToFunction] = useMutation(
+    createFunction.CREATE_EXPLICITE_FUNCTIONS,
+    {
+      client,
+    },
+  );
 
   const { loading, error, data } = useQuery(USER_IDS, {
     client,
@@ -79,7 +82,7 @@ const ExplicitFunctionModal = ({
       newErrors.functionName =
         'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
     }
-      console.log('users:', users);
+    console.log('users:', users);
 
     if (users.some((user) => !userIdRegex.test(user))) {
       newErrors.users =
@@ -91,7 +94,8 @@ const ExplicitFunctionModal = ({
   };
 
   const handleSave = async () => {
-    if (validateInput()) {
+      if (!validateInput()) return;
+
       try {
         await addUserToFunction({
           variables: {
@@ -106,6 +110,9 @@ const ExplicitFunctionModal = ({
           open: true,
           message: 'Explizierte Funktion erfolgreich erstellt.',
         });
+          resetFields(); // Eingabefelder zurücksetzen
+      onClose();
+
       } catch (err) {
         console.error('Fehler beim Hinzufügen des Benutzers:', err);
         setSnackbar({
@@ -113,9 +120,6 @@ const ExplicitFunctionModal = ({
           message: 'Fehler beim Hinzufügen des Benutzers.',
         });
       }
-      resetFields(); // Eingabefelder zurücksetzen
-      onClose();
-    }
   };
 
   const resetFields = () => {
@@ -125,21 +129,20 @@ const ExplicitFunctionModal = ({
     setIsSingleUser(false); // Zustand für den RadioButton zurücksetzen
   };
 
-    const GroupHeader = styled('div')(({ theme }) => ({
-      position: 'sticky',
-      top: '-8px',
-      padding: '4px 10px',
-      color: theme.palette.primary.main,
-      backgroundColor: lighten(theme.palette.primary.light, 0.85),
-      ...theme.applyStyles('dark', {
-        backgroundColor: darken(theme.palette.primary.main, 0.8),
-      }),
-    }));
+  const GroupHeader = styled('div')(({ theme }) => ({
+    position: 'sticky',
+    top: '-8px',
+    padding: '4px 10px',
+    color: theme.palette.primary.main,
+    backgroundColor: lighten(theme.palette.primary.light, 0.85),
+    ...theme.applyStyles('dark', {
+      backgroundColor: darken(theme.palette.primary.main, 0.8),
+    }),
+  }));
 
-    const GroupItems = styled('ul')({
-      padding: 0,
-    });
-
+  const GroupItems = styled('ul')({
+    padding: 0,
+  });
 
   return (
     <>
@@ -199,9 +202,7 @@ const ExplicitFunctionModal = ({
                     ...params.InputProps,
                     endAdornment: (
                       <Fragment>
-                        {loading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
+                        {loading ?? <CircularProgress color="inherit" size={20} />}
                         {params.InputProps.endAdornment}
                       </Fragment>
                     ),
@@ -212,13 +213,16 @@ const ExplicitFunctionModal = ({
             multiple
             freeSolo
             value={users}
-            onChange={(_, value) => setUsers(value)}
+            onChange={(_, value) => {
+              setUsers(value);
+            }}
             renderOption={(props, option, { inputValue }) => {
               const matches = match(option, inputValue, { insideWords: true });
               const parts = parse(option, matches);
 
               return (
-                <li {...props}>
+                <li {...props} key={props.key}>
+                  {/* <li key={props.key}></li> */}
                   <div>
                     {parts.map((part, index) => (
                       <span

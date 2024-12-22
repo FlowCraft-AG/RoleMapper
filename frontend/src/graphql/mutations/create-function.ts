@@ -41,7 +41,7 @@ export const CREATE_IMPLICITE_FUNCTIONS = gql`
       }
       orgUnitId: $orgUnitId
     ) {
-        success
+      success
     }
   }
 `;

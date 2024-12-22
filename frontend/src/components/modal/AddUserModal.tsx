@@ -11,8 +11,8 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
-import client from '../../lib/apolloClient';
 import { USER_IDS } from '../../graphql/queries/get-users';
+import client from '../../lib/apolloClient';
 
 interface AddUserModalProps {
   open: boolean;
@@ -34,16 +34,12 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   refetch,
   functionName,
 }) => {
-    const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
-    const {
-        loading,
-        error,
-        data,
-      } = useQuery(USER_IDS, {
-        client,
-      });
+  const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
+  const { loading, error, data } = useQuery(USER_IDS, {
+    client,
+  });
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
-    const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | null } = {};

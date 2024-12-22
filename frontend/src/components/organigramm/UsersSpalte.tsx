@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery } from '@apollo/client';
 import { Add, Delete } from '@mui/icons-material';
-import { Button, ListItemButton } from '@mui/material';
+import { Button, ListItemButton, Snackbar } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -20,7 +20,6 @@ import {
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
-import { getLogger } from '../../utils/logger';
 import { getListItemStyles } from '../../utils/styles';
 import AddUserModal from '../modal/AddUserModal';
 
@@ -39,10 +38,10 @@ export default function UsersSpalte({
   onRemove,
   isImpliciteFunction,
 }: UsersColumnProps) {
-    console.log('USERS SPALTE');
-    console.log('selectedFunctionId: ', selectedFunctionId);
-    console.log('selectedMitglieder: ', selectedMitglieder);
-    console.log('isImpliciteFunction: ', isImpliciteFunction);
+  console.log('USERS SPALTE');
+  console.log('selectedFunctionId: ', selectedFunctionId);
+  console.log('selectedMitglieder: ', selectedMitglieder);
+  console.log('isImpliciteFunction: ', isImpliciteFunction);
 
   // Verwende zwei Queries, eine für den normalen Fall und eine für das "implizite" Szenario
   const {
@@ -76,6 +75,7 @@ export default function UsersSpalte({
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   let selectedFunction: FunctionInfo | undefined;
 
@@ -98,16 +98,16 @@ export default function UsersSpalte({
   }
 
   if (selectedFunctionId === 'mitglieder') {
-      selectedFunction = selectedMitglieder;
-      console.log('Mitglieder: selectedFunction: ', selectedFunction);
+    selectedFunction = selectedMitglieder;
+    console.log('Mitglieder: selectedFunction: ', selectedFunction);
   } else if (isImpliciteFunction === true) {
     // Funktion suchen
-      selectedFunction = savedData?.getSavedData;
-      console.log('Implizite Funktion: selectedFunction: ', selectedFunction);
+    selectedFunction = savedData?.getSavedData;
+    console.log('Implizite Funktion: selectedFunction: ', selectedFunction);
   } else {
     // Funktion suchen
-      selectedFunction = usersData?.getData?.data?.[0];
-      console.log('Explizite Funktion: selectedFunction: ', selectedFunction);
+    selectedFunction = usersData?.getData?.data?.[0];
+    console.log('Explizite Funktion: selectedFunction: ', selectedFunction);
   }
 
   const validateInput = () => {
@@ -143,7 +143,10 @@ export default function UsersSpalte({
       setNewUserId('');
       setOpen(false);
     } catch (err) {
-      console.error('Fehler beim Hinzufügen des Benutzers:', err);
+      setSnackbar({
+        open: true,
+        message: err.message,
+      });
 
       const newErrors: { [key: string]: string | null } = {};
       newErrors.userId = (err as any).message;
@@ -172,12 +175,21 @@ export default function UsersSpalte({
       setSelectedIndex(undefined);
       onSelectUser('');
     } catch (err) {
-      console.error('Fehler beim Entfernen des Benutzers:', err);
+      setSnackbar({
+        open: true,
+        message: err.message,
+      });
     }
   };
 
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
+      <Snackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ open: false, message: '' })}
+      />
       <Box
         sx={{
           position: 'sticky',

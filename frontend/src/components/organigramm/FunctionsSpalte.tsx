@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { Add, Delete } from '@mui/icons-material';
+import { Add, Delete, Edit } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
@@ -25,6 +25,7 @@ import { getListItemStyles } from '../../utils/styles';
 import ExplicitFunctionModal from '../modal/ExplicitFunctionModal';
 import ImplicitFunctionModal from '../modal/ImplicitFunctionModal';
 import SelectFunctionTypeModal from '../modal/SelectFunctionTypeModal';
+import EditFunctionModal from '../modal/EditFunctionModal';
 
 interface FunctionsColumnProps {
   orgUnit: OrgUnitDTO;
@@ -56,6 +57,9 @@ export default function FunctionsSpalte({
   const [openSelectType, setOpenSelectType] = useState(false);
   const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
   const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
+
+  const [openEditFunction, setOpenEditFunction] = useState(false); // State für Edit Modal
+  const [currentFunction, setCurrentFunction] = useState<Function | undefined>(undefined); // Funktion, die bearbeitet wird
 
   if (loading)
     return (
@@ -132,6 +136,11 @@ export default function FunctionsSpalte({
     setOpenExplicitFunction(false);
   };
 
+  const handleEditFunction = (func: Function) => {
+    setCurrentFunction(func);
+    setOpenEditFunction(true); // Öffne das Edit-Modal
+  };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
       <Box
@@ -185,6 +194,19 @@ export default function FunctionsSpalte({
             sx={getListItemStyles(theme, selectedIndex === func._id)}
           >
             <ListItemText primary={func.functionName} />
+            <Tooltip title="Bearbeiten">
+              <IconButton
+                edge="end"
+                color="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditFunction(func);
+                }}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+
             <Tooltip title="Benutzer entfernen">
               <IconButton
                 edge="end"
@@ -221,6 +243,14 @@ export default function FunctionsSpalte({
         onBack={handleBackToSelectType}
         orgUnit={orgUnit.id}
         refetch={refetch}
+      />
+
+      <EditFunctionModal
+        open={openEditFunction}
+        onClose={() => setOpenEditFunction(false)}
+        functionData={currentFunction}
+        refetch={refetch}
+
       />
     </Box>
   );
