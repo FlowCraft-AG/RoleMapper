@@ -55,7 +55,6 @@ jobs:
           ls -al
           ls -al frontend/.next
           echo "Current working directory: $(pwd)"
-          ls -al .next
           cd frontend
           ls -al .next
           if [ -d ".next" ]; then
