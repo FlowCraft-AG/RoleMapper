@@ -50,11 +50,21 @@ jobs:
       - name: ls -al
         run: ls -al
 
+      - name: cd..  ls -al
+        run: |
+          cd ..
+          ls -al
+
+      - name: cd  ls -al
+        run: |
+          cd
+          ls -al
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: .next
+          path: frontend/.next
           retention-days: 1
 
   analyze:
