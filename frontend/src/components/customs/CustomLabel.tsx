@@ -1,7 +1,5 @@
 import { AddCircleOutline, DeleteForever, Edit } from '@mui/icons-material';
 import { IconButton, Stack, Tooltip, Typography } from '@mui/material';
-import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
-import { ReactElement } from 'react';
 
 export interface ItemToRender {
   label: string;
@@ -10,14 +8,14 @@ export interface ItemToRender {
   children?: ItemToRender[]; // Rekursive Definition für verschachtelte Kinder
 }
 
-interface ChildProp {
-  itemsToRender?: ItemToRender[]; // Optional, falls es fehlen könnte
-}
+// interface ChildProp {
+//   itemsToRender?: ItemToRender[]; // Optional, falls es fehlen könnte
+// }
 
-interface CustomTreeItemProps extends TreeItem2Props {
-  refetch: () => void;
-  children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>;
-}
+// interface CustomTreeItemProps extends TreeItem2Props {
+//   refetch: () => void;
+//   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>;
+// }
 
 interface CustomLabelProps {
   children: React.ReactNode;

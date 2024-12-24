@@ -11,13 +11,25 @@ const theme = createTheme({
     },
     custom: {
       navbar: {
-        primary: '#000', // Schwarz
-        secondary: '#fff', // weiss  // Schriftfarbe für ausgewählte Elemente
+        primary: '#000000', // Schwarz
+        secondary: '#ffffff', // Weiß
       },
       selected: '#ff0000',
-      primary: '#000', // Schwarz
-      secondary: '#ff0000', // weiss  // Schriftfarbe für ausgewählte Elemente
+      primary: '#000000', // Schwarz
+      secondary: '#ffffff', // Weiß
     },
+    primary: {
+      main: '#1976d2', // Blau
+    },
+    secondary: {
+      main: '#ff4081', // Pink
+    },
+    error: {
+      main: '#d32f2f', // Rot
+    },
+  },
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
   },
 });
 

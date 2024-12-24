@@ -11,7 +11,6 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import { useState } from 'react';
-import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
 import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
 import {
   GET_SAVED_DATA,
@@ -67,14 +66,14 @@ export default function UsersSpalte({
       isImpliciteFunction === false ||
       isImpliciteFunction === undefined, // Query wird übersprungen, wenn implizit
   });
-  const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
+//   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [errors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   let selectedFunction: FunctionInfo | undefined;
@@ -110,50 +109,56 @@ export default function UsersSpalte({
     console.log('Explizite Funktion: selectedFunction: ', selectedFunction);
   }
 
-  const validateInput = () => {
-    const newErrors: { [key: string]: string | null } = {};
-    const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
+//   const validateInput = () => {
+//     const newErrors: { [key: string]: string | null } = {};
+//     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 
-    if (!newUserId.trim()) {
-      newErrors.userId = 'Der UserId darf nicht leer sein.';
-    }
+//     if (!newUserId.trim()) {
+//       newErrors.userId = 'Der UserId darf nicht leer sein.';
+//     }
 
-    // Validierung für `users`
-    if (!userIdRegex.test(newUserId)) {
-      newErrors.userId =
-        'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
-    }
+//     // Validierung für `users`
+//     if (!userIdRegex.test(newUserId)) {
+//       newErrors.userId =
+//         'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
+//     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
 
-  const handleAddUser = async () => {
-    if (!validateInput()) {
-      return;
-    }
-    try {
-      await addUserToFunction({
-        variables: {
-          functionName: selectedFunction?.functionName,
-          userId: newUserId,
-        },
-      });
-      refetch(); // Aktualisiere die Daten nach der Mutation
-      setNewUserId('');
-      setOpen(false);
-    } catch (err) {
-      setSnackbar({
-        open: true,
-        message: err.message,
-      });
-
-      const newErrors: { [key: string]: string | null } = {};
-      newErrors.userId = (err as any).message;
-      setErrors(newErrors);
-      setNewUserId('');
-    }
-  };
+  //   const handleAddUser = async () => {
+  //     if (!validateInput()) {
+  //       return;
+  //     }
+  //     try {
+  //       await addUserToFunction({
+  //         variables: {
+  //           functionName: selectedFunction?.functionName,
+  //           userId: newUserId,
+  //         },
+  //       });
+  //       refetch(); // Aktualisiere die Daten nach der Mutation
+  //       setNewUserId('');
+  //       setOpen(false);
+  //     } catch (err) {
+  //       if (err instanceof Error) {
+  //         setSnackbar({
+  //           open: true,
+  //           message: err.message,
+  //         });
+  //         const newErrors: { [key: string]: string | null } = {};
+  //         newErrors.userId = err.message;
+  //         setErrors(newErrors);
+  //         setNewUserId('');
+  //       } else {
+  //         setSnackbar({
+  //           open: true,
+  //           message: 'Fehler beim Speichern der Funktion.',
+  //         });
+  //       }
+  //     }
+  //   };
 
   const handleViewUser = (userId: string) => {
     setSelectedIndex(userId);
@@ -175,10 +180,17 @@ export default function UsersSpalte({
       setSelectedIndex(undefined);
       onSelectUser('');
     } catch (err) {
-      setSnackbar({
-        open: true,
-        message: err.message,
-      });
+      if (err instanceof Error) {
+        setSnackbar({
+          open: true,
+          message: err.message,
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: 'Fehler beim Speichern der Funktion.',
+        });
+      }
     }
   };
 
@@ -236,7 +248,7 @@ export default function UsersSpalte({
       <AddUserModal
         open={open}
         onClose={() => setOpen(false)}
-        onAddUser={handleAddUser}
+        //onAddUser={handleAddUser}
         errors={errors}
         newUserId={newUserId}
         setNewUserId={setNewUserId}

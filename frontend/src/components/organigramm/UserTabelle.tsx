@@ -17,6 +17,7 @@ import {
 import { USERS_BY_FUNCTION } from '../../graphql/queries/get-functions';
 import { USER_DETAILS } from '../../graphql/queries/get-users';
 import client from '../../lib/apolloClient';
+import { User } from '../../types/user.type';
 
 interface UserTableProps {
   selectedFunctionId: string;
@@ -105,7 +106,7 @@ export default function UserTable({ selectedFunctionId }: UserTableProps) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {usersDetails.map((user: any) => (
+              {usersDetails.map((user: User) => (
                 <TableRow
                   key={user.userId}
                   hover

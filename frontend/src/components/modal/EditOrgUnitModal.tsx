@@ -12,7 +12,19 @@ import { useState } from 'react';
 import { UPDATE_ORG_UNIT } from '../../graphql/mutations/org-unit.mutation';
 import client from '../../lib/apolloClient';
 
-const EditOrgUnitModal = ({ open, onClose, itemId, refetch }: any) => {
+interface EditOrgUnitModalProps {
+  open: boolean;
+  onClose: () => void;
+  itemId: string;
+  refetch: () => void;
+}
+
+const EditOrgUnitModal = ({
+  open,
+  onClose,
+  itemId,
+  refetch,
+}: EditOrgUnitModalProps) => {
   const [formData, setFormData] = useState({ name: '', supervisor: '' });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
