@@ -47,21 +47,17 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
-      - name: ls -al
-        run: ls -al
-
-      - name: cd..  ls -al
+      - name: Verify .next Directory
         run: |
-         echo "Arbeitsverzeichnis: $(pwd)"
-          cd ..
-          echo "Arbeitsverzeichnis: $(pwd)"
+          echo "Überprüfen des .next-Verzeichnisses nach dem Build..."
           ls -al
+          if [ -d ".next" ]; then
+            echo ".next directory exists.";
+          else
+            echo "Error: .next directory is missing.";
+            exit 1;
+          fi
 
-      - name: cd  ls -al
-        run: |
-          cd
-          echo "Arbeitsverzeichnis: $(pwd)"
-          ls -al
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
