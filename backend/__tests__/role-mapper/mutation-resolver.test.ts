@@ -9,8 +9,8 @@ import {
     ENDPOINTS,
     TEST_MANDATES2,
     TEST_MANDATES3,
-    TEST_MANDATES_DUPLICATE,
     TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION,
+    TEST_MANDATES_DUPLICATE,
     TEST_MANDATES_REMOVE_SINGLE_USER_FUNCTION_2,
 } from '../test-data.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
