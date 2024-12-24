@@ -3,6 +3,7 @@
 
 import {
   Box,
+  Button,
   Container,
   Paper,
   Table,
@@ -12,6 +13,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 interface ConfigData {
   key: string;
@@ -19,6 +21,8 @@ interface ConfigData {
 }
 
 const ConfigPage = () => {
+    const router = useRouter();
+
   // Hier die verfügbaren .env Variablen filtern
   const configData: ConfigData[] = [
     {
@@ -95,6 +99,16 @@ const ConfigPage = () => {
             </TableBody>
           </Table>
         </Paper>
+        <Box textAlign="center">
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => router.push('/konfigurationen/editor')}
+          >
+            Konfiguration bearbeiten
+          </Button>
+        </Box>
       </Box>
     </Container>
   );
