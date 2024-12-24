@@ -3,6 +3,7 @@ include:
 
 services:
   backend:
+    pull_policy: always
     image: calebscript/role-mapper-backend:2024.12.1
     ports:
       - published: 3000

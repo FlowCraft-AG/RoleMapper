@@ -1,5 +1,4 @@
-// app/config/page.tsx
-'use client';
+
 
 import {
   Box,
@@ -13,15 +12,18 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { getLogger } from '../../utils/logger';
 
-interface ConfigData {
+
+export interface ConfigData {
   key: string;
   value: string | null;
 }
 
+
 const ConfigPage = () => {
-    const router = useRouter();
+    const logger = getLogger('ConfigPage');
+
 
   // Hier die verfügbaren .env Variablen filtern
   const configData: ConfigData[] = [
@@ -67,6 +69,9 @@ const ConfigPage = () => {
     },
   ];
 
+    configData.map((config) => logger.debug('%s=%s', config.key, config.value));
+
+
   return (
     <Container maxWidth="md">
       <Box sx={{ py: 4 }}>
@@ -99,7 +104,7 @@ const ConfigPage = () => {
             </TableBody>
           </Table>
         </Paper>
-        <Box textAlign="center">
+        {/* <Box textAlign="center">
           <Button
             variant="contained"
             color="primary"
@@ -108,7 +113,7 @@ const ConfigPage = () => {
           >
             Konfiguration bearbeiten
           </Button>
-        </Box>
+        </Box> */}
       </Box>
     </Container>
   );
