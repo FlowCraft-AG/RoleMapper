@@ -51,6 +51,9 @@ jobs:
         run: |
           echo "Überprüfen des .next-Verzeichnisses nach dem Build..."
           ls -al
+          ls cd .. -al
+          echo "Current working directory: $(pwd)"
+          ls -al .next
           if [ -d ".next" ]; then
             echo ".next directory exists.";
           else
@@ -63,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: .next
+          path: frontend/.next/**/*
           retention-days: 1
 
   analyze:
