@@ -2,6 +2,16 @@
 
 # Definiere ARG für die Umgebungsvariablen
 ARG NODE_VERSION=23
+ARG NODE_TLS_REJECT_UNAUTHORIZED
+ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_ID
+ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET
+ARG KEYCLOAK_ISSUER
+ARG NEXT_PUBLIC_BACKEND_SERVER_URL
+ARG NEXTAUTH_URL
+ARG NEXT_PUBLIC_LOG_LEVEL
+ARG NEXT_PUBLIC_NODE_ENV
+ARG NEXT_PUBLIC_PINO_PRETTY
+ARG NEXT_PUBLIC_LOG_DIR
 
 # ---------------------------------------------------------------------------------------
 # S t a g e   d i s t
@@ -74,6 +84,17 @@ EOF
 # ------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-bookworm-slim AS final
 
+ENV NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED} \
+    NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${NEXT_PUBLIC_KEYCLOAK_CLIENT_ID}\
+    NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET} \
+    KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER} \
+    NEXT_PUBLIC_BACKEND_SERVER_URL=${NEXT_PUBLIC_BACKEND_SERVER_URL} \
+    NEXTAUTH_URL=${NEXTAUTH_URL} \
+    NEXT_PUBLIC_LOG_LEVEL=${NEXT_PUBLIC_LOG_LEVEL} \
+    NEXT_PUBLIC_NODE_ENV=${NEXT_PUBLIC_NODE_ENV} \
+    NEXT_PUBLIC_PINO_PRETTY=${NEXT_PUBLIC_PINO_PRETTY} \
+    NEXT_PUBLIC_LOG_DIR=${NEXT_PUBLIC_LOG_DIR}
+
 # Anzeige bei "docker inspect ..."
 LABEL org.opencontainers.image.title="frontend" \
     org.opencontainers.image.description="Frontend für das dynamische Rollen- und Funktionsmanagement" \
@@ -104,7 +125,7 @@ COPY --from=dependencies --chown=node:node /home/node/node_modules ./node_module
 COPY --from=dist --chown=node:node /home/node/public ./public
 COPY --from=dist --chown=node:node /home/node/.next ./.next
 
-EXPOSE 3000
+EXPOSE 4000
 
 # Setze EntryPoint für den Container
 ENTRYPOINT ["dumb-init", "npm", "start"]

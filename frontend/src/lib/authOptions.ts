@@ -14,8 +14,8 @@ const logger = getLogger('authOptions');
 export const authOptions: AuthOptions = {
   providers: [
     KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID as string,
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET as string,
+      clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
+      clientSecret: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET as string,
       issuer: process.env.KEYCLOAK_ISSUER,
     }),
     CredentialsProvider({

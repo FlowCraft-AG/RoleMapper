@@ -12,6 +12,7 @@ export default function Navigation() {
     { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/rollen', label: 'Ermittle Rollen' },
+    { href: '/konfigurationen', label: 'Konfigurationen' },
   ];
 
   return (

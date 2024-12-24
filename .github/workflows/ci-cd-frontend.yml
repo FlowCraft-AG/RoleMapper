@@ -8,7 +8,6 @@ on:
   push:
     branches:
       - main
-      - dockerfile-frontend
     tags:
       - 'v*' # Nur für Versionstags (z. B. v1.0.0)
 
@@ -143,6 +142,7 @@ jobs:
           echo "NEXT_PUBLIC_NODE_ENV=development" >> .env
           echo "NEXT_PUBLIC_PINO_PRETTY=true" >> .env
           echo "NEXT_PUBLIC_LOG_DIR=logs" >> .env
+          echo "NEXTAUTH_URL=http://localhost:4000" >> .env
 
 
       - name: Build Docker image
