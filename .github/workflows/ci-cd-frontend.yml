@@ -132,6 +132,19 @@ jobs:
       - name: Extract build package
         run: unzip next.zip -d ./next
 
+      - name: Create .env file
+        run: |
+          echo "NODE_TLS_REJECT_UNAUTHORIZED=0" >> .env
+          echo "KEYCLOAK_CLIENT_ID=rolemapper" >> .env
+          echo "KEYCLOAK_CLIENT_SECRET=zomzt73VuP6LTUpPpZf5pghlv8exNCtB" >> .env
+          echo "KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft" >> .env
+          echo "NEXT_PUBLIC_BACKEND_SERVER_URL=https://localhost:3000/graphql" >> .env
+          echo "NEXT_PUBLIC_LOG_LEVEL=debug" >> .env
+          echo "NEXT_PUBLIC_NODE_ENV=development" >> .env
+          echo "NEXT_PUBLIC_PINO_PRETTY=true" >> .env
+          echo "NEXT_PUBLIC_LOG_DIR=logs" >> .env
+
+
       - name: Build Docker image
         run: |
           docker build \
@@ -156,3 +169,6 @@ jobs:
         run: |
           docker tag flowcraft/role-mapper-frontend:2024.12.24 calebscript/role-mapper-frontend:2024.12.24
           docker push calebscript/role-mapper-frontend:2024.12.24
+          
+      - name: Clean up .env file
+        run: rm .env
