@@ -30,7 +30,6 @@ services:
     env_file: .env
     hostname: backend
     container_name: rolemapper-backend
-    pull_policy: always
     deploy:
       resources:
         limits:

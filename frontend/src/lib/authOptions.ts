@@ -12,6 +12,7 @@ import client from './apolloClient';
 const logger = getLogger('authOptions');
 
 export const authOptions: AuthOptions = {
+    secret: process.env.NEXTAUTH_SECRET || 'development-secret',
   providers: [
     KeycloakProvider({
       clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,

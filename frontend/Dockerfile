@@ -128,4 +128,4 @@ COPY --from=dist --chown=node:node /home/node/.next ./.next
 EXPOSE 4000
 
 # Setze EntryPoint für den Container
-ENTRYPOINT ["dumb-init", "npm", "dev"]
+ENTRYPOINT ["dumb-init", "npm", "run" "start"]

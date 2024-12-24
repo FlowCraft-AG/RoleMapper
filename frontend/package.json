@@ -20,7 +20,7 @@
   "scripts": {
     "dev": "next dev --turbopack -p 4000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 4000",
     "lint": "next lint",
     "check": "npm-check",
     "dev:tls": "node server.js --turbopack",
