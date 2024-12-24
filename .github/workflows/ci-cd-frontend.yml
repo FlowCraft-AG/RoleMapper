@@ -157,6 +157,7 @@ jobs:
             --build-arg NEXT_PUBLIC_NODE_ENV=development \
             --build-arg NEXT_PUBLIC_PINO_PRETTY=true \
             --build-arg NEXT_PUBLIC_LOG_DIR=logs \
+            --build-arg NEXTAUTH_URL=http://localhost:4000 \
             -t flowcraft/role-mapper-frontend:2024.12.24 .
 
       - name: Log in to Docker Hub
@@ -169,6 +170,6 @@ jobs:
         run: |
           docker tag flowcraft/role-mapper-frontend:2024.12.24 calebscript/role-mapper-frontend:2024.12.24
           docker push calebscript/role-mapper-frontend:2024.12.24
-          
+
       - name: Clean up .env file
         run: rm .env

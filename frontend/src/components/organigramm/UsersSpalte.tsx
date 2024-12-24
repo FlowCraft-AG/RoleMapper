@@ -66,7 +66,7 @@ export default function UsersSpalte({
       isImpliciteFunction === false ||
       isImpliciteFunction === undefined, // Query wird übersprungen, wenn implizit
   });
-//   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
+  //   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
@@ -109,23 +109,23 @@ export default function UsersSpalte({
     console.log('Explizite Funktion: selectedFunction: ', selectedFunction);
   }
 
-//   const validateInput = () => {
-//     const newErrors: { [key: string]: string | null } = {};
-//     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
+  //   const validateInput = () => {
+  //     const newErrors: { [key: string]: string | null } = {};
+  //     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 
-//     if (!newUserId.trim()) {
-//       newErrors.userId = 'Der UserId darf nicht leer sein.';
-//     }
+  //     if (!newUserId.trim()) {
+  //       newErrors.userId = 'Der UserId darf nicht leer sein.';
+  //     }
 
-//     // Validierung für `users`
-//     if (!userIdRegex.test(newUserId)) {
-//       newErrors.userId =
-//         'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
-//     }
+  //     // Validierung für `users`
+  //     if (!userIdRegex.test(newUserId)) {
+  //       newErrors.userId =
+  //         'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
+  //     }
 
-//     setErrors(newErrors);
-//     return Object.keys(newErrors).length === 0;
-//   };
+  //     setErrors(newErrors);
+  //     return Object.keys(newErrors).length === 0;
+  //   };
 
   //   const handleAddUser = async () => {
   //     if (!validateInput()) {

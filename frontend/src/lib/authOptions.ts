@@ -136,6 +136,8 @@ export const authOptions: AuthOptions = {
       return session;
     },
     redirect({ url, baseUrl }) {
+      logger.debug('Redirect URL: %s', url);
+      logger.debug('Base URL: %s', baseUrl);
       return url.startsWith(baseUrl) ? url : `${baseUrl}/startseite`;
     },
   },

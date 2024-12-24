@@ -20,7 +20,7 @@ function initializeLogger(): pino.Logger {
     NEXT_PUBLIC_PINO_PRETTY = 'true',
   } = process.env;
 
-  const logDir = resolve(process.cwd(), 'src', NEXT_PUBLIC_LOG_DIR);
+  const logDir = resolve(process.cwd(), NEXT_PUBLIC_LOG_DIR);
   const logFile = resolve(logDir, 'server.log');
   const logLevel = NEXT_PUBLIC_LOG_LEVEL;
   const prettyEnabled = NEXT_PUBLIC_PINO_PRETTY === 'true';

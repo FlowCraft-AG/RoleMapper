@@ -9,7 +9,7 @@ export default function Navigation() {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: '/dummy', label: 'Dummy' },
+    { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/rollen', label: 'Ermittle Rollen' },
   ];

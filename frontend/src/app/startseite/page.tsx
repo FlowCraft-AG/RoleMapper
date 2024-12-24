@@ -94,7 +94,7 @@ export default function Startseite() {
           <Button
             variant="contained"
             color="error"
-            onClick={() => signOut({ callbackUrl: '/' })}
+            onClick={() => signOut({ callbackUrl: '/startseite' })}
           >
             Ausloggen
           </Button>

@@ -22,15 +22,15 @@ import { UserCredetials } from '../../types/user.type';
 interface CreateOrgUnitModalProps {
   open: boolean;
   onClose: () => void;
-    refetch: () => void;
-    parentId: string;
+  refetch: () => void;
+  parentId: string;
 }
 
 const CreateOrgUnitModal = ({
   open,
   onClose,
-    refetch,
-parentId
+  refetch,
+  parentId,
 }: CreateOrgUnitModalProps) => {
   const [formData, setFormData] = useState({ name: '', supervisor: '' });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
