@@ -1,7 +1,8 @@
-/* eslint-disable unicorn/no-lonely-if */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable sonarjs/no-collapsible-if */
+/* eslint-disable @stylistic/indent-binary-ops */
+/* eslint-disable unicorn/no-lonely-if */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @stylistic/indent */
 /* eslint-disable security/detect-object-injection */
 /* eslint-disable @stylistic/operator-linebreak */
@@ -23,7 +24,11 @@ import {
 } from '../model/input/create.input.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { SortInput } from '../model/input/sort.input.js';
-import { UpdateDataInput } from '../model/input/update.input.js';
+import {
+    UpdateDataInput,
+    UpdateFunctionInput,
+    UpdateOrgUnitInput,
+} from '../model/input/update.input.js';
 import { ReadService } from './read.service.js';
 
 @Injectable()
@@ -86,22 +91,18 @@ export class WriteService {
      * @returns {Promise<any>} - Das Ergebnis der Aktualisierung.
      * @throws {Error} - Wenn die Entität unbekannt ist.
      */
-    async updateEntity(
-        entity: EntityCategoryType,
-        filters: FilterInput,
-        data: UpdateDataInput | undefined,
-    ) {
+    async updateEntity(entity: EntityCategoryType, filters: FilterInput, data: UpdateDataInput) {
         this.#logger.debug('updateEntity: entity=%s, filters=%o, data=%o', entity, filters, data);
         const model = this.#getModel(entity);
         const filterQuery = this.#readService.buildFilterQuery(filters);
 
-        if (entity === 'ORG_UNITS' && this.#isUpdateOrgUnitInput(data)) {
+        // Typprüfung für ORG_UNITS
+        if (this.#isUpdateOrgUnitInput(data)) {
             if (data.parentId) {
                 data.parentId = this.#convertToObjectId(data.parentId, 'parentId');
             }
             if (data.supervisor) {
-                data.supervisor =
-                    this.#convertToObjectId(data.supervisor, 'supervisor') ?? new Types.ObjectId();
+                data.supervisor = this.#convertToObjectId(data.supervisor, 'supervisor');
             }
         }
 
@@ -361,20 +362,26 @@ export class WriteService {
      * @param {any} data - Die Eingabedaten.
      * @returns {boolean} - Gibt true zurück, wenn es sich um ein gültiges Update handelt.
      */
-    #isUpdateOrgUnitInput(data) {
+    #isUpdateOrgUnitInput(data: UpdateDataInput): data is UpdateOrgUnitInput {
         return (
-            data &&
-            (typeof data.parentId === 'string' || data.parentId === undefined) &&
-            (typeof data.supervisor === 'string' || data.supervisor === undefined)
+            typeof (data as UpdateOrgUnitInput).orgUnitId === 'string' &&
+            (typeof (data as UpdateOrgUnitInput).parentId === 'string' ||
+                (data as UpdateOrgUnitInput).parentId === undefined) &&
+            (typeof (data as UpdateOrgUnitInput).supervisor === 'string' ||
+                (data as UpdateOrgUnitInput).supervisor === undefined)
         );
     }
 
     /**
      * Überprüft, ob die Eingabe ein gültiges Update für MANDATES ist.
-     * @param {any} data - Die Eingabedaten.
+     * @param {UpdateDataInput} data - Die Eingabedaten.
      * @returns {boolean} - Gibt true zurück, wenn es sich um ein gültiges Update handelt.
      */
-    #isUpdateMandateInput(data) {
-        return data && (typeof data.orgUnit === 'string' || data.orgUnit === undefined);
+    #isUpdateMandateInput(data: UpdateDataInput): data is UpdateFunctionInput {
+        return (
+            data &&
+            'functionName' in data && // Prüft, ob es sich um ein Mandat handelt
+            (typeof data.orgUnit === 'string' || data.orgUnit === undefined)
+        );
     }
 }

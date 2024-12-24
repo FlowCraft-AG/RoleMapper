@@ -17,7 +17,7 @@ export type TokenInput = {
 /** Typdefinition für Refresh-Daten bei GraphQL */
 export type RefreshInput = {
     /** Refresh Token */
-    readonly refreshToken: string; // eslint-disable-line @typescript-eslint/naming-convention
+    readonly refreshToken: string;
 };
 
 @Resolver()
