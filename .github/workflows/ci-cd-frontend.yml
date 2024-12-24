@@ -51,9 +51,12 @@ jobs:
         run: |
           echo "Überprüfen des .next-Verzeichnisses nach dem Build..."
           ls -al
-          ls -al cd ..
+          cd ..
+          ls -al
           ls -al frontend/.next
           echo "Current working directory: $(pwd)"
+          ls -al .next
+          cd frontend
           ls -al .next
           if [ -d ".next" ]; then
             echo ".next directory exists.";
