@@ -47,11 +47,14 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
+      - name: copy .next folder
+        run: cp -r .next next_copy
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: frontend
+          path: frontend/next_copy
           retention-days: 1
 
   analyze:
@@ -102,13 +105,13 @@ jobs:
           path: frontend/.next
 
       - name: Package build for distribution
-        run: zip -r dist.zip .next
+        run: zip -r next.zip .next
 
       - name: Upload packaged build
         uses: actions/upload-artifact@v4
         with:
           name: packaged-build
-          path: frontend/dist.zip
+          path: frontend/next.zip
 
   docker:
     runs-on: ubuntu-latest
@@ -127,7 +130,7 @@ jobs:
           path: ./frontend
 
       - name: Extract build package
-        run: unzip dist.zip -d ./dist
+        run: unzip next.zip -d ./next
 
       - name: Build Docker image
         run: |
