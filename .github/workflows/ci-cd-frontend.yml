@@ -134,9 +134,9 @@ jobs:
       - name: Create .env file
         run: |
           echo "NODE_TLS_REJECT_UNAUTHORIZED=0" >> .env
-          echo "KEYCLOAK_CLIENT_ID=rolemapper" >> .env
-          echo "KEYCLOAK_CLIENT_SECRET=zomzt73VuP6LTUpPpZf5pghlv8exNCtB" >> .env
-          echo "KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft" >> .env
+          echo "NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=rolemapper" >> .env
+          echo "NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft" >> .env
           echo "NEXT_PUBLIC_BACKEND_SERVER_URL=https://localhost:3000/graphql" >> .env
           echo "NEXT_PUBLIC_LOG_LEVEL=debug" >> .env
           echo "NEXT_PUBLIC_NODE_ENV=development" >> .env
@@ -149,9 +149,9 @@ jobs:
         run: |
           docker build \
             --build-arg NODE_TLS_REJECT_UNAUTHORIZED=0 \
-            --build-arg KEYCLOAK_CLIENT_ID=rolemapper \
-             --build-arg CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
-            --build-arg KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft \
+            --build-arg NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=rolemapper \
+            --build-arg NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
+            --build-arg NEXT_PUBLIC_KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft \
             --build-arg NEXT_PUBLIC_BACKEND_SERVER_URL=https://localhost:3000/graphql \
             --build-arg NEXT_PUBLIC_LOG_LEVEL=debug \
             --build-arg NEXT_PUBLIC_NODE_ENV=development \

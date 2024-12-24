@@ -6,7 +6,7 @@ services:
     image: calebscript/role-mapper-frontend:2024.12.24
     ports:
       - published: 4000
-        target: 4000
+        target: 3000
     volumes:
       - type: bind
         source: ../../../frontend/logs
@@ -23,7 +23,7 @@ services:
     depends_on:
       backend:
         condition: service_started
-    env_file: ./.env
+    env_file: .env
     hostname: frontend
     container_name: rolemapper-frontend
     deploy:
