@@ -47,6 +47,9 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
+      - name: ls -al
+        run: ls -al
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
