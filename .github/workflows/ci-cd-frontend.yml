@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: ./frontend/.next
+          path: .next
           retention-days: 1
 
   analyze:
