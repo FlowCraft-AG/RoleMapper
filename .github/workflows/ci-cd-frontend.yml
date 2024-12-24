@@ -52,12 +52,15 @@ jobs:
 
       - name: cd..  ls -al
         run: |
+         echo "Arbeitsverzeichnis: $(pwd)"
           cd ..
+          echo "Arbeitsverzeichnis: $(pwd)"
           ls -al
 
       - name: cd  ls -al
         run: |
           cd
+          echo "Arbeitsverzeichnis: $(pwd)"
           ls -al
 
       - name: Upload build artifacts
