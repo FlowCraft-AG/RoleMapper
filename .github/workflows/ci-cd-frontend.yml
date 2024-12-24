@@ -47,29 +47,11 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
-      - name: Verify .next Directory
-        run: |
-          echo "Überprüfen des .next-Verzeichnisses nach dem Build..."
-          ls -al
-          cd ..
-          ls -al
-          ls -al frontend/.next
-          echo "Current working directory: $(pwd)"
-          cd frontend
-          ls -al .next
-          if [ -d ".next" ]; then
-            echo ".next directory exists.";
-          else
-            echo "Error: .next directory is missing.";
-            exit 1;
-          fi
-
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: frontend/.next/**/*
+          path: frontend
           retention-days: 1
 
   analyze:
