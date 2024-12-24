@@ -53,21 +53,21 @@ const ExplicitFunctionModal = ({
     },
   );
 
-  const { loading, error, data } = useQuery(USER_IDS, {
+  const { loading, data } = useQuery(USER_IDS, {
     client,
   });
 
   // Prepare options and group them by first letter
   const options = data?.getData.data.map((user: User) => user.userId) || [];
 
-  const groupedOptions = options.reduce((acc: any, userId) => {
-    const firstLetter = userId[0].toUpperCase();
-    if (!acc[firstLetter]) {
-      acc[firstLetter] = [];
-    }
-    acc[firstLetter].push(userId);
-    return acc;
-  }, {});
+  //   const groupedOptions = options.reduce((acc: any, userId: string) => {
+  //     const firstLetter = userId[0].toUpperCase();
+  //     if (!acc[firstLetter]) {
+  //       acc[firstLetter] = [];
+  //     }
+  //     acc[firstLetter].push(userId);
+  //     return acc;
+  //   }, {});
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | null } = {};
@@ -94,32 +94,31 @@ const ExplicitFunctionModal = ({
   };
 
   const handleSave = async () => {
-      if (!validateInput()) return;
+    if (!validateInput()) return;
 
-      try {
-        await addUserToFunction({
-          variables: {
-            functionName,
-            orgUnit,
-            users,
-            isSingleUser,
-          },
-        });
-        refetch(); // Aktualisiere die Daten nach der Mutation
-        setSnackbar({
-          open: true,
-          message: 'Explizierte Funktion erfolgreich erstellt.',
-        });
-          resetFields(); // Eingabefelder zurücksetzen
+    try {
+      await addUserToFunction({
+        variables: {
+          functionName,
+          orgUnit,
+          users,
+          isSingleUser,
+        },
+      });
+      refetch(); // Aktualisiere die Daten nach der Mutation
+      setSnackbar({
+        open: true,
+        message: 'Explizierte Funktion erfolgreich erstellt.',
+      });
+      resetFields(); // Eingabefelder zurücksetzen
       onClose();
-
-      } catch (err) {
-        console.error('Fehler beim Hinzufügen des Benutzers:', err);
-        setSnackbar({
-          open: true,
-          message: 'Fehler beim Hinzufügen des Benutzers.',
-        });
-      }
+    } catch (err) {
+      console.error('Fehler beim Hinzufügen des Benutzers:', err);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Hinzufügen des Benutzers.',
+      });
+    }
   };
 
   const resetFields = () => {
@@ -202,7 +201,9 @@ const ExplicitFunctionModal = ({
                     ...params.InputProps,
                     endAdornment: (
                       <Fragment>
-                        {loading ?? <CircularProgress color="inherit" size={20} />}
+                        {loading ?? (
+                          <CircularProgress color="inherit" size={20} />
+                        )}
                         {params.InputProps.endAdornment}
                       </Fragment>
                     ),

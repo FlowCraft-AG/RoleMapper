@@ -13,11 +13,11 @@ import React, { useState } from 'react';
 import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
 import { USER_IDS } from '../../graphql/queries/get-users';
 import client from '../../lib/apolloClient';
+import { User } from '../../types/user.type';
 
 interface AddUserModalProps {
   open: boolean;
   onClose: () => void;
-  onAddUser: (userId: string) => void;
   errors: { [key: string]: string | null };
   newUserId: string;
   setNewUserId: React.Dispatch<React.SetStateAction<string>>;
@@ -28,14 +28,13 @@ interface AddUserModalProps {
 const AddUserModal: React.FC<AddUserModalProps> = ({
   open,
   onClose,
-  onAddUser,
   newUserId,
   setNewUserId,
   refetch,
   functionName,
 }) => {
   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
-  const { loading, error, data } = useQuery(USER_IDS, {
+  const { data } = useQuery(USER_IDS, {
     client,
   });
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
@@ -82,13 +81,16 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       });
 
       const newErrors: { [key: string]: string | null } = {};
-      newErrors.userId = (err as any).message;
+      if (err instanceof Error) {
+        newErrors.userId = err.message;
+      }
       setErrors(newErrors);
       setNewUserId('');
     }
   };
 
-  const options = data?.getData.data.map((user: any) => user.userId) || [];
+  const options: string[] =
+    data?.getData.data.map((user: User) => user.userId) || [];
 
   return (
     <>

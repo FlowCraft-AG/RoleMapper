@@ -20,12 +20,11 @@ import client from '../../lib/apolloClient';
 import theme from '../../theme';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
-import { getLogger } from '../../utils/logger';
 import { getListItemStyles } from '../../utils/styles';
+import EditFunctionModal from '../modal/EditFunctionModal';
 import ExplicitFunctionModal from '../modal/ExplicitFunctionModal';
 import ImplicitFunctionModal from '../modal/ImplicitFunctionModal';
 import SelectFunctionTypeModal from '../modal/SelectFunctionTypeModal';
-import EditFunctionModal from '../modal/EditFunctionModal';
 
 interface FunctionsColumnProps {
   orgUnit: OrgUnitDTO;
@@ -43,7 +42,6 @@ export default function FunctionsSpalte({
   handleMitgliederClick,
   onRemove,
 }: FunctionsColumnProps) {
-  const logger = getLogger(FunctionsSpalte.name);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
@@ -59,7 +57,9 @@ export default function FunctionsSpalte({
   const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
 
   const [openEditFunction, setOpenEditFunction] = useState(false); // State für Edit Modal
-  const [currentFunction, setCurrentFunction] = useState<Function | undefined>(undefined); // Funktion, die bearbeitet wird
+  const [currentFunction, setCurrentFunction] = useState<Function | undefined>(
+    undefined,
+  ); // Funktion, die bearbeitet wird
 
   if (loading)
     return (
@@ -250,7 +250,6 @@ export default function FunctionsSpalte({
         onClose={() => setOpenEditFunction(false)}
         functionData={currentFunction}
         refetch={refetch}
-
       />
     </Box>
   );

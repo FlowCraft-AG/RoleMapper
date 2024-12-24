@@ -71,7 +71,7 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
     }
 
     async refresh(refresh_token: string | undefined) {
-        this.#logger.debug('refresh: refresh_token=%s', refresh_token);
+        this.#logger.debug('refresh: refresh_token=%o', refresh_token);
         if (refresh_token === undefined) {
             return;
         }

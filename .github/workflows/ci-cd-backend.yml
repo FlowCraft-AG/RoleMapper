@@ -53,7 +53,7 @@ jobs:
       - name: Compile TypeScript
         run: npx tsc
 
-      - name: Upload dist folder
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.node-version }}
@@ -174,7 +174,7 @@ jobs:
             --build-arg CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
             --build-arg SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
             --build-arg SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
-            -t flowcraft/role-mapper:2024.12.1 .
+            -t flowcraft/role-mapper-backend:2024.12.1 .
 
       - name: Clean up .env file
         run: rm .env
@@ -187,5 +187,5 @@ jobs:
 
       - name: Push Docker image to registry
         run: |
-          docker tag flowcraft/role-mapper:2024.12.1 calebscript/role-mapper:2024.12.1
-          docker push calebscript/role-mapper:2024.12.1
+          docker tag flowcraft/role-mapper-backend:2024.12.1 calebscript/role-mapper-backend:2024.12.1
+          docker push calebscript/role-mapper-backend:2024.12.1

@@ -1,12 +1,19 @@
 'use client';
 
-import { useQuery } from '@apollo/client';
+import {
+  ApolloQueryResult,
+  OperationVariables,
+  useQuery,
+} from '@apollo/client';
 import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
+import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
+import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
+import { JSXElementConstructor } from 'react';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
 import client from '../../lib/apolloClient';
 import theme from '../../theme';
@@ -77,13 +84,13 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
           endIcon: CorporateFareTwoToneIcon,
-          item: CustomTreeItem,
+          item: CustomTreeItem as unknown as JSXElementConstructor<TreeItemProps>,
         }}
         slotProps={{
           item: {
             refetch, // Refetch wird hier übergeben
             slots: { groupTransition: TransitionComponent },
-          },
+          } as ExtendedSlotProps, // Erweiterter Typ
         }}
         onItemClick={handleItemClick}
         sx={{
@@ -97,4 +104,10 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       />
     </Box>
   );
+}
+
+interface ExtendedSlotProps extends TreeItem2Props {
+  refetch: (
+    variables?: Partial<OperationVariables>,
+  ) => Promise<ApolloQueryResult<{ getData: { data: OrgUnit[] } }>>;
 }

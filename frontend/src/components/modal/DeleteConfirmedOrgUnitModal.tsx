@@ -6,7 +6,6 @@ import client from '../../lib/apolloClient';
 interface DeleteConfirmationModalProps {
   open: boolean;
   onClose: () => void;
-  onDelete: () => void;
   itemId: string;
   childrenToDelete: string[];
   refetch: () => void;
@@ -15,7 +14,6 @@ interface DeleteConfirmationModalProps {
 const DeleteConfirmationModal = ({
   open,
   onClose,
-  onDelete,
   itemId,
   childrenToDelete,
   refetch,

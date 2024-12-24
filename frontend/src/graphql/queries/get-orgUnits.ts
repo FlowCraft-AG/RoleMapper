@@ -21,7 +21,6 @@ export const ORG_UNITS = gql`
   }
 `;
 
-
 export const ORG_UNITS_IDS = gql`
   query GetData {
     getData(

@@ -13,16 +13,16 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Function } from '../../types/function.type';
-import { ORG_UNITS_IDS } from '../../graphql/queries/get-orgUnits';
 import { UPDATE_FUNCTIONS } from '../../graphql/mutations/update-function';
+import { ORG_UNITS_IDS } from '../../graphql/queries/get-orgUnits';
 import client from '../../lib/apolloClient';
+import { Function } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 
 interface EditFunctionModalProps {
   open: boolean;
   onClose: () => void;
-  functionData: Function | undefined
+  functionData: Function | undefined;
   refetch: () => void;
 }
 
@@ -39,7 +39,6 @@ const EditFunctionModal = ({
   const [isSingleUser, setIsSingleUser] = useState(functionData?.isSingleUser);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
-
   // Update state wenn `functionData`  sich ändert
   useEffect(() => {
     if (functionData) {
@@ -54,15 +53,14 @@ const EditFunctionModal = ({
     { client },
   );
 
-   const orgUnitsMap = new Map(
-     orgUnitsData?.getData.data.map((unit) => [unit._id, unit.name]),
-   );
+  const orgUnitsMap = new Map(
+    orgUnitsData?.getData.data.map((unit: OrgUnit) => [unit._id, unit.name]),
+  );
 
-   const options = orgUnitsData?.getData.data.map((unit: OrgUnit) => ({
-       ...unit,
-     displayName: `${unit.name} (${orgUnitsMap.get(unit.parentId)})`,
-   }));
-
+  const options = orgUnitsData?.getData.data.map((unit: OrgUnit) => ({
+    ...unit,
+    displayName: `${unit.name} (${orgUnitsMap.get(unit.parentId)})`,
+  }));
 
   const [updateFunction] = useMutation(UPDATE_FUNCTIONS, { client });
   const validateFunctionName = (name: string) => /^[a-zA-Z\s]+$/.test(name);
@@ -93,10 +91,18 @@ const EditFunctionModal = ({
       onClose();
     } catch (error) {
       console.error('Error updating function:', error);
-      setSnackbar({
-        open: true,
-        message: error.message,
-      });
+      if (error instanceof Error) {
+        setSnackbar({
+          open: true,
+          message: error.message,
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: 'Fehler beim Speichern der Funktion.',
+        });
+      }
+
       setIsSaving(false);
     }
   };
@@ -151,8 +157,9 @@ const EditFunctionModal = ({
               </li>
             )}
             value={
-              orgUnitsData?.getData.data.find((ou) => ou._id === orgUnitId) ||
-              null
+              orgUnitsData?.getData.data.find(
+                (ou: OrgUnit) => ou._id === orgUnitId,
+              ) || null
             }
             onChange={(_, newValue) => setOrgUnitId(newValue?._id || undefined)}
             renderInput={(params) => (

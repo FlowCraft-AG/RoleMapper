@@ -2,8 +2,8 @@ include:
   - path: ./keycloak/compose.yml
 
 services:
-  app:
-    image: calebscript/role-mapper:2024.12.1
+  backend:
+    image: calebscript/role-mapper-backend:2024.12.1
     ports:
       - published: 3000
         target: 3000
@@ -28,8 +28,8 @@ services:
       keycloak:
         condition: service_started
     env_file: .env
-    hostname: rolemapper
-    container_name: backend
+    hostname: backend
+    container_name: rolemapper-backend
     deploy:
       resources:
         limits:

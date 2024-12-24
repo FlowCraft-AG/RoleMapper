@@ -11,7 +11,11 @@ export const UPDATE_FUNCTIONS = gql`
       input: {
         entity: MANDATES
         filter: { field: functionName, operator: EQ, value: $value }
-        functionData: { functionName: $newFunctionName, orgUnit: $newOrgUnit, isSingleUser: $newIsSingleUser }
+        functionData: {
+          functionName: $newFunctionName
+          orgUnit: $newOrgUnit
+          isSingleUser: $newIsSingleUser
+        }
       }
     ) {
       success

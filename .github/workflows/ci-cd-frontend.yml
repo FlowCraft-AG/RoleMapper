@@ -1,0 +1,175 @@
+name: CI/CD Pipeline Frontend
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+  push:
+    branches:
+      - main
+      - dockerfile-frontend
+    tags:
+      - 'v*' # Nur für Versionstags (z. B. v1.0.0)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    strategy:
+      matrix:
+        node-version: [22.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Compile TypeScript
+        run: npx tsc
+
+      - name: copy .next folder
+        run: cp -r .next next_copy
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/next_copy
+          retention-days: 1
+
+  analyze:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run security audit
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Generate documentation
+        run: npm run typedoc
+
+      - name: Deploy documentation
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          publish_dir: ./docs/backend
+
+  package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    needs: [build, analyze]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: frontend/.next
+
+      - name: Package build for distribution
+        run: zip -r next.zip .next
+
+      - name: Upload packaged build
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-build
+          path: frontend/next.zip
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: package
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download packaged build
+        uses: actions/download-artifact@v4
+        with:
+          name: packaged-build
+          path: ./frontend
+
+      - name: Extract build package
+        run: unzip next.zip -d ./next
+
+      - name: Create .env file
+        run: |
+          echo "NODE_TLS_REJECT_UNAUTHORIZED=0" >> .env
+          echo "KEYCLOAK_CLIENT_ID=rolemapper" >> .env
+          echo "KEYCLOAK_CLIENT_SECRET=zomzt73VuP6LTUpPpZf5pghlv8exNCtB" >> .env
+          echo "KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft" >> .env
+          echo "NEXT_PUBLIC_BACKEND_SERVER_URL=https://localhost:3000/graphql" >> .env
+          echo "NEXT_PUBLIC_LOG_LEVEL=debug" >> .env
+          echo "NEXT_PUBLIC_NODE_ENV=development" >> .env
+          echo "NEXT_PUBLIC_PINO_PRETTY=true" >> .env
+          echo "NEXT_PUBLIC_LOG_DIR=logs" >> .env
+
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg NODE_TLS_REJECT_UNAUTHORIZED=0 \
+            --build-arg KEYCLOAK_CLIENT_ID=rolemapper \
+             --build-arg CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
+            --build-arg KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft \
+            --build-arg NEXT_PUBLIC_BACKEND_SERVER_URL=https://localhost:3000/graphql \
+            --build-arg NEXT_PUBLIC_LOG_LEVEL=debug \
+            --build-arg NEXT_PUBLIC_NODE_ENV=development \
+            --build-arg NEXT_PUBLIC_PINO_PRETTY=true \
+            --build-arg NEXT_PUBLIC_LOG_DIR=logs \
+            --build-arg NEXTAUTH_URL=http://localhost:4000 \
+            -t flowcraft/role-mapper-frontend:2024.12.24 .
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push Docker image
+        run: |
+          docker tag flowcraft/role-mapper-frontend:2024.12.24 calebscript/role-mapper-frontend:2024.12.24
+          docker push calebscript/role-mapper-frontend:2024.12.24
+
+      - name: Clean up .env file
+        run: rm .env

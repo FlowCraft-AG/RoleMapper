@@ -17,7 +17,7 @@ export type TokenInput = {
 /** Typdefinition für Refresh-Daten bei GraphQL */
 export type RefreshInput = {
     /** Refresh Token */
-    readonly refresh_token: string; // eslint-disable-line @typescript-eslint/naming-convention
+    readonly refreshToken: string;
 };
 
 @Resolver()
@@ -51,11 +51,11 @@ export class TokenResolver {
     @Mutation('refreshToken')
     @Public()
     async refresh(@Args() input: RefreshInput) {
-        this.#logger.debug('refresh: input=%o', input);
-        // eslint-disable-next-line camelcase, @typescript-eslint/naming-convention
-        const { refresh_token } = input;
+        this.#logger.debug('refresh: refreshToken=%o', input);
 
-        const result = await this.#keycloakService.refresh(refresh_token);
+        const { refreshToken } = input;
+
+        const result = await this.#keycloakService.refresh(refreshToken);
         if (result === undefined) {
             throw new BadUserInputError('Falscher Token');
         }
