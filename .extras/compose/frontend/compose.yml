@@ -25,7 +25,9 @@ services:
     depends_on:
       backend:
         condition: service_started
-    env_file: .env
+    env_file: ../frontend/.env
+    environment:
+      NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: rolemapper
     hostname: frontend
     container_name: rolemapper-frontend
     deploy:

@@ -12,6 +12,7 @@ ARG NEXT_PUBLIC_LOG_LEVEL
 ARG NEXT_PUBLIC_NODE_ENV
 ARG NEXT_PUBLIC_PINO_PRETTY
 ARG NEXT_PUBLIC_LOG_DIR
+ARG NEXTAUTH_SECRET
 
 # ---------------------------------------------------------------------------------------
 # S t a g e   d i s t
@@ -93,7 +94,8 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED} \
     NEXT_PUBLIC_LOG_LEVEL=${NEXT_PUBLIC_LOG_LEVEL} \
     NEXT_PUBLIC_NODE_ENV=${NEXT_PUBLIC_NODE_ENV} \
     NEXT_PUBLIC_PINO_PRETTY=${NEXT_PUBLIC_PINO_PRETTY} \
-    NEXT_PUBLIC_LOG_DIR=${NEXT_PUBLIC_LOG_DIR}
+    NEXT_PUBLIC_LOG_DIR=${NEXT_PUBLIC_LOG_DIR} \
+    NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
 
 # Anzeige bei "docker inspect ..."
 LABEL org.opencontainers.image.title="frontend" \
@@ -128,4 +130,4 @@ COPY --from=dist --chown=node:node /home/node/.next ./.next
 EXPOSE 4000
 
 # Setze EntryPoint für den Container
-ENTRYPOINT ["dumb-init", "npm", "run" "start"]
+ENTRYPOINT ["dumb-init", "npm", "start"]
