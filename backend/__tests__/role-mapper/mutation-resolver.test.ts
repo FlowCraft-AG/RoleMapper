@@ -10,8 +10,8 @@ import {
     TEST_MANDATES2,
     TEST_MANDATES3,
     TEST_MANDATES_DUPLICATE,
-    TEST_MANDATES_SINGLE_USER_FUNCTION,
-    TEST_MANDATES_SINGLE_USER_FUNCTION_2,
+    TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION,
+    TEST_MANDATES_REMOVE_SINGLE_USER_FUNCTION_2,
 } from '../test-data.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 import type { GraphQLResponseBody } from './query-resolver.test.js';
@@ -354,7 +354,7 @@ describe('MutationResolver', () => {
     });
 
     test('[GRAPHQL] add to Single User Function ', async () => {
-        const mandate = TEST_MANDATES_SINGLE_USER_FUNCTION;
+        const mandate = TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION;
         const query = `
             mutation AddUserToFunction {
                 addUserToFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
@@ -384,7 +384,7 @@ describe('MutationResolver', () => {
     });
 
     test('[GRAPHQL] remove SingleUser from Function', async () => {
-        const mandate = TEST_MANDATES_SINGLE_USER_FUNCTION_2;
+        const mandate = TEST_MANDATES_REMOVE_SINGLE_USER_FUNCTION_2;
         const query = `
             mutation RemoveUserFromFunction {
                 removeUserFromFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
