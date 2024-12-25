@@ -16,7 +16,7 @@ import {
   GET_SAVED_DATA,
   USERS_BY_FUNCTION,
 } from '../../graphql/queries/get-functions';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
 import { getListItemStyles } from '../../utils/styles';

@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { Box, Button, Fade, Modal, Typography } from '@mui/material';
 import { DELETE_ORG_UNIT } from '../../graphql/mutations/delete-org-unit';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 
 interface DeleteConfirmationModalProps {
   open: boolean;

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { UPDATE_ORG_UNIT } from '../../graphql/mutations/org-unit.mutation';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 
 interface EditOrgUnitModalProps {
   open: boolean;

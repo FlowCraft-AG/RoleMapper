@@ -7,6 +7,7 @@ export const corsOptions: CorsOptions = {
         'http://localhost:4000',
         'https://localhost:4000',
         'http://frontend:4000',
+        'https://frontend:4000',
     ],
     // origin: true,
 

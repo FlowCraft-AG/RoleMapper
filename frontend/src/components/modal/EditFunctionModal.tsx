@@ -15,7 +15,7 @@ import {
 import { useEffect, useState } from 'react';
 import { UPDATE_FUNCTIONS } from '../../graphql/mutations/update-function';
 import { ORG_UNITS_IDS } from '../../graphql/queries/get-orgUnits';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import { Function } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 

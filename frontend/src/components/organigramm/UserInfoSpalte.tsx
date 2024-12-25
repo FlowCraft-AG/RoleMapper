@@ -3,7 +3,7 @@
 import { useQuery } from '@apollo/client';
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { USER_DETAILS } from '../../graphql/queries/get-users';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 
 interface UserInfoColumnProps {
   userId: string; // Der ausgewählte Benutzer

@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { CREATE_IMPLICITE_FUNCTIONS } from '../../graphql/mutations/create-function';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import { getEnumValues } from '../../types/user.type';
 
 interface ImplicitFunctionModalProps {

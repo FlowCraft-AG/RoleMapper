@@ -16,7 +16,7 @@ import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
 import { FUNCTIONS_BY_ORG_UNIT } from '../../graphql/queries/get-functions';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import theme from '../../theme';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';

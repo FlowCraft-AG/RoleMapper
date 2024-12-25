@@ -16,7 +16,7 @@ import {
 import { useState } from 'react';
 import { CREATE_ORG_UNIT } from '../../graphql/mutations/create-org-unit'; // Mutation zum Erstellen der Organisationseinheit
 import { GET_EMPLOYEES } from '../../graphql/queries/get-users'; // GraphQL-Abfrage importieren
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import { UserCredetials } from '../../types/user.type';
 
 interface CreateOrgUnitModalProps {

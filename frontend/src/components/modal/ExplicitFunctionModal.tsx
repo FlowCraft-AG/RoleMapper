@@ -22,7 +22,7 @@ import parse from 'autosuggest-highlight/parse';
 import { Fragment, useState } from 'react';
 import * as createFunction from '../../graphql/mutations/create-function';
 import { USER_IDS } from '../../graphql/queries/get-users';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import { User } from '../../types/user.type';
 
 interface ExplicitFunctionModalProps {

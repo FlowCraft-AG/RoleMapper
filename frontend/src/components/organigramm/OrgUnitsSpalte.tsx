@@ -15,7 +15,7 @@ import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import { JSXElementConstructor } from 'react';
 import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import theme from '../../theme';
 import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';

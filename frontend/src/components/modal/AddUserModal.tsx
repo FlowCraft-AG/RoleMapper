@@ -12,7 +12,7 @@ import {
 import React, { useState } from 'react';
 import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
 import { USER_IDS } from '../../graphql/queries/get-users';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import { User } from '../../types/user.type';
 
 interface AddUserModalProps {

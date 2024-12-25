@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { USERS_BY_FUNCTION } from '../../graphql/queries/get-functions';
 import { USER_DETAILS } from '../../graphql/queries/get-users';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import { User } from '../../types/user.type';
 
 interface UserTableProps {

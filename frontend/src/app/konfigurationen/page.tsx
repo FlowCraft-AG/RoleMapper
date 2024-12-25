@@ -44,6 +44,10 @@ const ConfigPage = () => {
       value: ENV.NEXT_PUBLIC_BACKEND_SERVER_URL || null,
     },
     {
+      key: 'NEXT_PUBLIC_BACKEND_CLIENT_URL',
+      value: ENV.NEXT_PUBLIC_BACKEND_CLIENT_URL || null,
+    },
+    {
       key: 'NEXTAUTH_URL',
       value: ENV.NEXTAUTH_URL || null,
     },

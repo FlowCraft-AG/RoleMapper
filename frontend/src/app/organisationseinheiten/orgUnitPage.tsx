@@ -8,7 +8,7 @@ import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
 import { MITGLIEDER } from '../../graphql/queries/get-users';
-import client from '../../lib/apolloClient';
+import { client } from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
@@ -17,6 +17,10 @@ import { ENV } from '../../utils/env';
 export default function OrganigrammPage() {
   console.log('OrganigrammPage');
   console.log('HKAPage');
+  console.log(
+    'NEXT_PUBLIC_BACKEND_CLIENT_URL=',
+    ENV.NEXT_PUBLIC_BACKEND_CLIENT_URL,
+  );
   console.log(
     'NEXT_PUBLIC_BACKEND_SERVER_URL=',
     ENV.NEXT_PUBLIC_BACKEND_SERVER_URL,
