@@ -6,11 +6,7 @@ import KeycloakProvider, {
 } from 'next-auth/providers/keycloak';
 import { OAuthConfig } from 'next-auth/providers/oauth';
 import { LOGIN, REFRESH_TOKEN } from '../graphql/mutations/auth';
-import {
-  ENV,
-  logEnvironmentVariables,
-  validateEnvironmentVariables,
-} from '../utils/env';
+import { ENV, logEnvironmentVariables } from '../utils/env';
 import { getLogger } from '../utils/logger';
 import { serverClient } from './apolloClient';
 
