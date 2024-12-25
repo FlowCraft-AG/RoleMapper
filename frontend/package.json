@@ -44,7 +44,7 @@
     "autosuggest-highlight": "^3.3.4",
     "dotenv": "^16.4.7",
     "fs-extra": "^11.2.0",
-    "graphql": "^16.9.0",
+    "graphql": "^16.10.0",
     "graphql-request": "^7.1.2",
     "jsonwebtoken": "^9.0.2",
     "next": "15.0.4",
