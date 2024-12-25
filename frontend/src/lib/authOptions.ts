@@ -17,7 +17,7 @@ import { serverClient } from './apolloClient';
 const logger = getLogger('authOptions');
 
 logEnvironmentVariables();
-validateEnvironmentVariables();
+// validateEnvironmentVariables();
 
 export const authOptions: AuthOptions = {
   secret: ENV.NEXTAUTH_SECRET || 'development-secret',
