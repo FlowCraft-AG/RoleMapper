@@ -5,19 +5,21 @@ import KeycloakProvider, {
   KeycloakProfile,
 } from 'next-auth/providers/keycloak';
 import { OAuthConfig } from 'next-auth/providers/oauth';
+import { ConfigData } from '../app/konfigurationen/page';
 import { LOGIN, REFRESH_TOKEN } from '../graphql/mutations/auth';
+import { ENV } from '../utils/env';
 import { getLogger } from '../utils/logger';
 import client from './apolloClient';
 
 const logger = getLogger('authOptions');
 
 export const authOptions: AuthOptions = {
-    secret: process.env.NEXTAUTH_SECRET || 'development-secret',
+  secret: ENV.NEXTAUTH_SECRET || 'development-secret',
   providers: [
     KeycloakProvider({
-      clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
-      clientSecret: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET as string,
-      issuer: process.env.KEYCLOAK_ISSUER,
+      clientId: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
+      clientSecret: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET as string,
+      issuer: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER,
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -139,6 +141,56 @@ export const authOptions: AuthOptions = {
     redirect({ url, baseUrl }) {
       logger.debug('Redirect URL: %s', url);
       logger.debug('Base URL: %s', baseUrl);
+
+      const configData: ConfigData[] = [
+        {
+          key: 'NODE_TLS_REJECT_UNAUTHORIZED',
+          value: ENV.NODE_TLS_REJECT_UNAUTHORIZED || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_KEYCLOAK_CLIENT_ID',
+          value: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET',
+          value: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_KEYCLOAK_ISSUER',
+          value: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_BACKEND_SERVER_URL',
+          value: ENV.NEXT_PUBLIC_BACKEND_SERVER_URL || null,
+        },
+        {
+          key: 'NEXTAUTH_URL',
+          value: ENV.NEXTAUTH_URL || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_LOG_LEVEL',
+          value: ENV.NEXT_PUBLIC_LOG_LEVEL || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_NODE_ENV',
+          value: ENV.NEXT_PUBLIC_NODE_ENV || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_PINO_PRETTY',
+          value: ENV.NEXT_PUBLIC_PINO_PRETTY || null,
+        },
+        {
+          key: 'NEXT_PUBLIC_LOG_DIR',
+          value: ENV.NEXT_PUBLIC_LOG_DIR || null,
+        },
+      ];
+
+      configData.map((config) =>
+        logger.info('%s=%s', config.key, config.value),
+      );
+
+      console.log('TEST: ', ENV.NEXT_PUBLIC_BACKEND_SERVER_URL);
+
       return url.startsWith(baseUrl) ? url : `${baseUrl}/startseite`;
     },
   },

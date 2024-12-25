@@ -147,7 +147,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build \
+            docker build \
             --build-arg NODE_TLS_REJECT_UNAUTHORIZED=0 \
             --build-arg NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=rolemapper \
             --build-arg NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
@@ -158,7 +158,9 @@ jobs:
             --build-arg NEXT_PUBLIC_PINO_PRETTY=true \
             --build-arg NEXT_PUBLIC_LOG_DIR=logs \
             --build-arg NEXTAUTH_URL=http://localhost:4000 \
-            -t flowcraft/role-mapper-frontend:2024.12.24 .
+            -t flowcraft/role-mapper-frontend:2024.12.24 \
+            .
+
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

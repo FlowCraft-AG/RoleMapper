@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import { resolve } from 'path';
 import pino from 'pino';
 import pretty from 'pino-pretty';
+import { ENV } from './env';
 
 // Singleton Logger-Instanz
 let loggerInstance: pino.Logger | null = null;
@@ -18,7 +19,7 @@ function initializeLogger(): pino.Logger {
     NEXT_PUBLIC_LOG_LEVEL = 'info',
     NEXT_PUBLIC_LOG_DIR = 'logs',
     NEXT_PUBLIC_PINO_PRETTY = 'true',
-  } = process.env;
+  } = ENV;
 
   const logDir = resolve(process.cwd(), NEXT_PUBLIC_LOG_DIR);
   const logFile = resolve(logDir, 'server.log');
