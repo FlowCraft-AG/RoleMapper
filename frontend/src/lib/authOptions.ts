@@ -15,13 +15,22 @@ const logger = getLogger('authOptions');
 logEnvironmentVariables();
 // validateEnvironmentVariables();
 
+if (typeof window === 'undefined') {
+  console.log('Server');
+} else {
+  console.log('Client');
+}
+
 export const authOptions: AuthOptions = {
   secret: ENV.NEXTAUTH_SECRET || 'development-secret',
   providers: [
     KeycloakProvider({
       clientId: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
       clientSecret: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET as string,
-      issuer: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER,
+      issuer:
+        typeof window === 'undefined'
+          ? ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER // Backend (SSR)
+          : 'http://localhost:8880/realms/flowcraft', // Client
     }),
     CredentialsProvider({
       name: 'Credentials',
