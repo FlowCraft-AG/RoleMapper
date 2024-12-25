@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.10.0
 
 # Definiere ARG für die Umgebungsvariablen
-# ARG NODE_VERSION=23
+ARG NODE_VERSION=23
 # ARG NODE_TLS_REJECT_UNAUTHORIZED
 # ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_ID
 # ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET
@@ -33,8 +33,6 @@
 # ---------------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-bookworm-slim AS dist
 
-# Installiere curl im Container
-RUN apt-get update && apt-get install -y curl
 
 ARG NODE_TLS_REJECT_UNAUTHORIZED
 ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_ID
@@ -69,7 +67,8 @@ apt-get update
 apt-get upgrade --yes
 
 # Installiere Python und Abhängigkeiten
-apt-get install --no-install-recommends --yes python3.11=3.11.2-6+deb12u4 python3.11-dev=3.11.2-6+deb12u4 python3.11-minimal=3.11.2-6+deb12u4
+# Installiere curl im Container
+apt-get install --no-install-recommends --yes python3.11=3.11.2-6+deb12u4 python3.11-dev=3.11.2-6+deb12u4 python3.11-minimal=3.11.2-6+deb12u4 curl
 ln -s /usr/bin/python3.11 /usr/bin/python3
 ln -s /usr/bin/python3.11 /usr/bin/python
 
@@ -129,23 +128,6 @@ EOF
 # ------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-bookworm-slim AS final
 
-# Installiere curl im Container
-RUN apt-get update && apt-get install -y curl
-
-# Argumente erneut deklarieren, um sie in Umgebungsvariablen zu überführen
-ARG NODE_TLS_REJECT_UNAUTHORIZED
-ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_ID
-ARG NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET
-ARG NEXT_PUBLIC_KEYCLOAK_ISSUER
-ARG NEXT_PUBLIC_BACKEND_SERVER_URL
-ARG NEXT_PUBLIC_BACKEND_CLIENT_URL
-ARG NEXTAUTH_URL
-ARG NEXT_PUBLIC_LOG_LEVEL
-ARG NEXT_PUBLIC_NODE_ENV
-ARG NEXT_PUBLIC_PINO_PRETTY
-ARG NEXT_PUBLIC_LOG_DIR
-ARG NEXTAUTH_SECRET
-
 # Umgebungsvariablen festlegen
 ENV NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED} \
     NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${NEXT_PUBLIC_KEYCLOAK_CLIENT_ID} \
@@ -159,20 +141,6 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED} \
     NEXT_PUBLIC_PINO_PRETTY=${NEXT_PUBLIC_PINO_PRETTY} \
     NEXT_PUBLIC_LOG_DIR=${NEXT_PUBLIC_LOG_DIR} \
     NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-
-# Debugging der Umgebungsvariablen
-RUN echo "NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED}" \
-    && echo "NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=${NEXT_PUBLIC_KEYCLOAK_CLIENT_ID}" \
-    && echo "NEXT_PUBLIC_KEYCLOAK_ISSUER=${NEXT_PUBLIC_KEYCLOAK_ISSUER}" \
-    && echo "NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET}" \
-    && echo "NEXT_PUBLIC_BACKEND_SERVER_URL=${NEXT_PUBLIC_BACKEND_SERVER_URL}" \
-    && echo "NEXT_PUBLIC_BACKEND_CLIENT_URL=${NEXT_PUBLIC_BACKEND_CLIENT_URL}" \
-    && echo "NEXTAUTH_URL=${NEXTAUTH_URL}" \
-    && echo "NEXT_PUBLIC_LOG_LEVEL=${NEXT_PUBLIC_LOG_LEVEL}" \
-    && echo "NEXT_PUBLIC_NODE_ENV=${NEXT_PUBLIC_NODE_ENV}" \
-    && echo "NEXT_PUBLIC_PINO_PRETTY=${NEXT_PUBLIC_PINO_PRETTY}" \
-    && echo "NEXT_PUBLIC_LOG_DIR=${NEXT_PUBLIC_LOG_DIR}" \
-    && echo "NEXTAUTH_SECRET=${NEXTAUTH_SECRET}"
 
 # Anzeige bei "docker inspect ..."
 LABEL org.opencontainers.image.title="frontend" \
