@@ -289,31 +289,32 @@ export async function Members(): Promise<string[]> {
 // Function to update an existing function
 export async function updateFunction({
   functionName,
-  orgUnitId,
+  newOrgUnitId,
   isSingleUser,
-  oldFunctionName,
+    oldFunctionName,
+  orgUnitId,
 }: {
   functionName: string;
-  orgUnitId: string;
+  newOrgUnitId: string;
   isSingleUser: boolean;
-  oldFunctionName: string;
+        oldFunctionName: string;
+    orgUnitId: string;
 }): Promise<Function[]> {
   try {
-    logger.debug('functionName %o', functionName);
-    logger.debug('orgUnitId %o', orgUnitId);
-    logger.debug('isSingleUser %o', isSingleUser);
-    logger.debug('oldFunctionName %o', oldFunctionName);
     // Perform mutation to update the function
     await client.mutate({
       mutation: UPDATE_FUNCTIONS,
       variables: {
         value: oldFunctionName,
         newFunctionName: functionName,
-        newOrgUnit: orgUnitId,
+        newOrgUnit: newOrgUnitId,
         newIsSingleUser: isSingleUser,
       },
       refetchQueries: [
-        { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+        {
+          query: FUNCTIONS_BY_ORG_UNIT,
+          variables: { orgUnitId: orgUnitId },
+        },
       ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });

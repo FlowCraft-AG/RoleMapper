@@ -140,24 +140,26 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       console.error('Fakultät für %s nicht gefunden.', selectedOrgUnit.name);
       return;
     }
-      console.log('Fakultät gefunden:', facultyParent);
+    console.log('Fakultät gefunden:', facultyParent);
 
     // Dynamische Farbänderung basierend auf Fakultät
     const newTheme = getFacultyTheme(facultyParent.name);
     //const newTheme = getFacultyTheme(selectedOrgUnit.name);
 
-      if (hasChildren(orgUnits, selectedOrgUnit._id)) {
+    if (hasChildren(orgUnits, selectedOrgUnit._id)) {
+      // Finde alle Kinder und Enkelkinder der ausgewählten Organisationseinheit
+      const orgUnitHierarchy = getOrgUnitHierarchy(
+        orgUnits,
+        selectedOrgUnit._id,
+      );
+      console.log('orgUnitHierarchy', orgUnitHierarchy);
 
-          // Finde alle Kinder und Enkelkinder der ausgewählten Organisationseinheit
-          const orgUnitHierarchy = getOrgUnitHierarchy(orgUnits, selectedOrgUnit._id);
-          console.log('orgUnitHierarchy', orgUnitHierarchy);
-
-          // Das Theme für die gesamte Hierarchie anwenden
-          orgUnitHierarchy.forEach((unit) => applyThemeToOrgUnit(unit, newTheme));
-      } else {
-            // Das Theme nur für die ausgewählte Organisationseinheit anwenden
-            applyThemeToOrgUnit(selectedOrgUnit, newTheme);
-        }
+      // Das Theme für die gesamte Hierarchie anwenden
+      orgUnitHierarchy.forEach((unit) => applyThemeToOrgUnit(unit, newTheme));
+    } else {
+      // Das Theme nur für die ausgewählte Organisationseinheit anwenden
+      applyThemeToOrgUnit(selectedOrgUnit, newTheme);
+    }
 
     // Weitergabe der Auswahl an die Parent-Komponente
     onSelect({

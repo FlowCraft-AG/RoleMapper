@@ -24,6 +24,7 @@ interface EditFunctionModalProps {
   onClose: () => void;
   functionData: Function | undefined;
   refetch: (functionList: Function[]) => void; // Callback zur Aktualisierung der Funktionliste
+  onEdit: (functionId: string) => void;
 }
 
 const EditFunctionModal = ({
@@ -31,8 +32,10 @@ const EditFunctionModal = ({
   onClose,
   functionData,
   refetch,
+  onEdit,
 }: EditFunctionModalProps) => {
-  console.log('EDIT FUNCTION MODAL');
+    console.log('EDIT FUNCTION MODAL');
+    console.log('selectedFunction:', functionData);
   const [isSaving, setIsSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [formData, setFormData] = useState({
@@ -85,9 +88,10 @@ const EditFunctionModal = ({
     try {
       const updatedFunction = await updateFunction({
         functionName: formData.functionName!,
-        orgUnitId: formData.orgUnitId!,
+        newOrgUnitId: formData.orgUnitId!,
         isSingleUser: formData.isSingleUser!,
         oldFunctionName: functionData?.functionName || '',
+        orgUnitId: functionData?.orgUnit || '',
       });
       setSnackbar({
         open: true,
@@ -95,7 +99,7 @@ const EditFunctionModal = ({
       });
       refetch(updatedFunction);
       setIsSaving(false);
-      onClose();
+      onEdit(functionData?._id || '');
     } catch (error) {
       console.error('Error updating function:', error);
       if (error instanceof Error) {

@@ -174,6 +174,11 @@ export default function FunctionsSpalte({
     setOpenEditFunction(true); // Öffne das Edit-Modal
   };
 
+  const onEdit = (functionId: string) => {
+    setOpenEditFunction(false);
+    onRemove('', functionId);
+  };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
       <Box
@@ -309,6 +314,7 @@ export default function FunctionsSpalte({
       <EditFunctionModal
         open={openEditFunction}
         onClose={() => setOpenEditFunction(false)}
+        onEdit={onEdit}
         functionData={currentFunction}
         refetch={refetch}
       />
