@@ -247,26 +247,29 @@ export default function UsersSpalte({
         message={snackbar.message}
         autoHideDuration={3000}
         onClose={() => setSnackbar({ open: false, message: '' })}
-      />
-      <Box
-        sx={{
-          position: 'sticky',
-          top: 50, // Überschrift bleibt oben
-          backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
-          zIndex: 1,
-          padding: 1,
-        }}
-      >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setOpen(true)}
-          sx={{ marginBottom: 2 }}
-          startIcon={<Add />}
-        >
-          Benutzer hinzufügen
-        </Button>
-      </Box>
+          />
+          {!isImpliciteFunction && (
+              <Box
+                  sx={{
+                      position: 'sticky',
+                      top: 50, // Überschrift bleibt oben
+                      backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
+                      zIndex: 1,
+                      padding: 1,
+                  }}
+              >
+
+                  <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => setOpen(true)}
+                      sx={{ marginBottom: 2 }}
+                      startIcon={<Add />}
+                  >
+                      Benutzer hinzufügen
+                  </Button>
+              </Box>
+          )}
 
       <List>
         {!selectedFunction ||
@@ -277,30 +280,37 @@ export default function UsersSpalte({
                 sx={getListItemStyles(theme, selectedIndex === userId)}
                 onClick={() => handleViewUser(userId)}
               >
-                <ListItemText primary={userId} />
-                <Tooltip title="Benutzer entfernen">
-                  <IconButton
-                    edge="end"
-                    color="error"
-                    onClick={() => handleRemoveUser(userId)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
+                    <ListItemText primary={userId} />
+                    {!isImpliciteFunction && (
+                        <Tooltip title="Benutzer entfernen">
+                            <IconButton
+                                edge="end"
+                                color="error"
+                                onClick={() => {
+                                    if (!isImpliciteFunction) {
+                                        handleRemoveUser(userId);
+                                    }
+                                }}
+                            >
+                                <Delete />
+                            </IconButton>
+                        </Tooltip>
+                    )}
               </ListItemButton>
             )))}
       </List>
       {/* Modal für Benutzer hinzufügen */}
-      <AddUserModal
-        open={open}
-        onClose={() => setOpen(false)}
-        //onAddUser={handleAddUser}
-        errors={errors}
-        newUserId={newUserId}
-        setNewUserId={setNewUserId}
-        refetch={refetch}
-        functionName={selectedFunction?.functionName}
-      />
+      {!isImpliciteFunction && (
+        <AddUserModal
+          open={open}
+          onClose={() => setOpen(false)}
+          errors={errors}
+          newUserId={newUserId}
+          setNewUserId={setNewUserId}
+          refetch={refetch}
+          functionName={selectedFunction?.functionName}
+        />
+      )}
     </Box>
   );
 }

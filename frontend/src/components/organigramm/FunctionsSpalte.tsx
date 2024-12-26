@@ -1,6 +1,6 @@
 'use client';
 
-import { Add, Delete, Edit } from '@mui/icons-material';
+import { Add, Delete, DynamicFeed, Edit, Group, Layers, Person, Settings, Visibility } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
@@ -216,6 +216,34 @@ export default function FunctionsSpalte({
             onClick={() => handleViewUser(func)}
             sx={getListItemStyles(theme, selectedIndex === func._id)}
           >
+            {/* Icon abhängig von implizit/explizit und Einzelperson/Mehrpersonen */}
+            {/* Icon abhängig vom Funktionstyp */}
+            <Tooltip
+              title={`${
+                func.isImpliciteFunction
+                  ? 'Implizite Funktion'
+                  : 'Explizite Funktion'
+              } - ${
+                func.isImpliciteFunction
+                  ? 'Mehrere Personen belegen diese Funktion'
+                  : func.isSingleUser
+                    ? 'Nur eine Person kann diese Funktion belegen'
+                    : 'Mehrere Personen können diese Funktion belegen'
+              }`}
+                >
+                    {/* Icon abhängig vom Funktionstyp */}
+                    {/*Das DynamicFeed-Icon, das dynamische, abgeleitete Gruppen repräsentiert.*/}
+                    {/*Das Person-Icon repräsentiert eine einzelne Person.*/}
+                    {/*Das Group-Icon repräsentiert eine Gruppe von Personen.*/}
+              {func.isImpliciteFunction ? (
+                <DynamicFeed sx={{ marginRight: 1 }} color="action" /> // Icon für implizite Funktionen
+              ) : func.isSingleUser ? (
+                <Person sx={{ marginRight: 1 }} color="action" /> // Icon für Einzelperson
+              ) : (
+                <Group sx={{ marginRight: 1 }} color="action" /> // Icon für Gruppen
+              )}
+            </Tooltip>
+
             <ListItemText primary={func.functionName} />
             <Tooltip title="Bearbeiten">
               <IconButton

@@ -12,6 +12,7 @@ import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { fetchMitgliederIds } from './fetchkp';
 
 export default function OrganigrammPage() {
+    console.log('ORGANIGRAMM PAGE');
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<
     OrgUnitDTO | undefined
   >(undefined);
@@ -53,7 +54,9 @@ export default function OrganigrammPage() {
   const handleFunctionSelect = (functionInfo: FunctionInfo) => {
     setSelectedFunctionId(functionInfo._id);
     setSelectedFunction(functionInfo);
-    setSelectedUserId(undefined); // Reset selection
+      setSelectedUserId(undefined); // Reset selection
+      console.log('selectedFunctionId: ', functionInfo._id);
+        console.log('selectedFunction: ', functionInfo);
     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
   };
 
