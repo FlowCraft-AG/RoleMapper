@@ -65,11 +65,11 @@ export default function FunctionsSpalte({
       console.log('Functions:', functionList);
       setFunctions(functionList);
     } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-            setError('Ein unbekannter Fehler ist aufgetreten.');
-        }
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Ein unbekannter Fehler ist aufgetreten.');
+      }
     } finally {
       setLoading(false);
     }
@@ -126,7 +126,7 @@ export default function FunctionsSpalte({
   };
 
   const handleRemoveFunction = async (func: Function) => {
-    const success = await removeFunction(func._id); // Serverseitige Funktion aufrufen
+    const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
     if (success) {
       setFunctions((prev) => prev.filter((f) => f._id !== func._id)); // Update den lokalen Zustand
       onRemove('', func._id);

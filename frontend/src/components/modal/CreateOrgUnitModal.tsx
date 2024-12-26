@@ -46,12 +46,12 @@ const CreateOrgUnitModal = ({
       const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
       setUserData(employees);
     } catch (error) {
-        if (error instanceof Error) {
-          setUserError(error.message);
-          setSnackbar({ open: true, message: error.message });
-        } else {
-            setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer.' });
-        }
+      if (error instanceof Error) {
+        setUserError(error.message);
+        setSnackbar({ open: true, message: error.message });
+      } else {
+        setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer.' });
+      }
     } finally {
       setLoading(false);
     }

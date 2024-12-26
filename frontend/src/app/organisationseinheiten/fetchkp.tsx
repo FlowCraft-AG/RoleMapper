@@ -205,11 +205,18 @@ export async function createImpliciteFunction({
 }
 
 // Funktion zum Löschen einer Funktion
-export async function removeFunction(functionId: string): Promise<boolean> {
+export async function removeFunction(
+  functionId: string,
+  orgUnitId: string,
+): Promise<boolean> {
   try {
     await client.mutate({
       mutation: DELETE_FUNCTIONS,
       variables: { functionId },
+      refetchQueries: [
+        { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+      ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
     return true;
   } catch (error) {
