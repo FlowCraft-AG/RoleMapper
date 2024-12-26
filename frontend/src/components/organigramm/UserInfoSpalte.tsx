@@ -1,7 +1,7 @@
 'use client';
 
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchUserDetails } from '../../app/organisationseinheiten/fetchkp';
 import { User } from '../../types/user.type';
 
@@ -14,13 +14,7 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (userId) {
-      fetchData();
-    }
-  }, [userId]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -33,7 +27,14 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]); // Die Funktion wird nur beim ersten Laden ausgeführt
+
+  useEffect(() => {
+    if (userId) {
+      fetchData();
+    }
+  }, [userId, fetchData]);
+
   if (loading)
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>

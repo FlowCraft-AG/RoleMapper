@@ -1,5 +1,7 @@
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -51,12 +53,18 @@ const EditOrgUnitModal = ({
     } catch (error) {
       setSnackbar({
         open: true,
-        message: 'Fehler beim Bearbeiten der Organisationseinheit',
+        message: error.message,
       });
     } finally {
       setLoading(false);
     }
   };
+  if (loading)
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
   return (
     <>
       <Snackbar

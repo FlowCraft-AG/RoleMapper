@@ -65,7 +65,7 @@ export default function FunctionsSpalte({
       console.log('Functions:', functionList);
       setFunctions(functionList);
     } catch (err) {
-      setError('Fehler beim Laden der Funktionen.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }

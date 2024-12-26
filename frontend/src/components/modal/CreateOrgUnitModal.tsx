@@ -37,7 +37,7 @@ const CreateOrgUnitModal = ({
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [userError, setUserError] = useState(null);
+  const [userError, setUserError] = useState(undefined);
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = async () => {
@@ -46,7 +46,8 @@ const CreateOrgUnitModal = ({
       const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
       setUserData(employees);
     } catch (error) {
-      setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer' });
+      setUserError(error.message);
+      setSnackbar({ open: true, message: error });
     } finally {
       setLoading(false);
     }

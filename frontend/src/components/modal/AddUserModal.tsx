@@ -77,6 +77,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
     }
 
+    console.log('errors:', errors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

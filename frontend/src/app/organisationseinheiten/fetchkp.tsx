@@ -82,7 +82,7 @@ export async function createOrgUnit(
   parentId: string,
 ): Promise<OrgUnit[]> {
   try {
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: CREATE_ORG_UNIT,
       variables: { name, supervisor, parentId },
       refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
@@ -108,7 +108,7 @@ export async function updateOrgUnit(
 ): Promise<OrgUnit[]> {
   try {
     // Mutation zum Bearbeiten der Organisationseinheit
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: UPDATE_ORG_UNIT,
       variables: { id: orgUnitId, name, supervisor },
       refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
@@ -178,7 +178,7 @@ export async function createImpliciteFunction({
   orgUnitId: string;
 }): Promise<Function[]> {
   try {
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: CREATE_IMPLICITE_FUNCTIONS,
       variables: { functionName, field, value, orgUnitId },
       refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
@@ -190,7 +190,7 @@ export async function createImpliciteFunction({
   } catch (error) {
     console.error('Fehler beim Erstellen der Funktion:', error);
     throw new ApolloError({
-      errorMessage: (error as any).message,
+      errorMessage: error.message,
     });
   }
 }
@@ -225,7 +225,7 @@ export async function createExplicitFunction({
 }): Promise<Function[]> {
   try {
     // Mutation zum Erstellen einer Funktion
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: CREATE_EXPLICITE_FUNCTIONS,
       variables: {
         functionName,
@@ -243,7 +243,7 @@ export async function createExplicitFunction({
   } catch (error) {
     console.error('Fehler beim Erstellen der expliziten Funktion:', error);
     throw new ApolloError({
-      errorMessage: (error as any).message,
+      errorMessage: error.message,
     });
   }
 }
@@ -281,7 +281,7 @@ export async function updateFunction({
     logger.debug('isSingleUser %o', isSingleUser);
     logger.debug('oldFunctionName %o', oldFunctionName);
     // Perform mutation to update the function
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: UPDATE_FUNCTIONS,
       variables: {
         value: oldFunctionName,
