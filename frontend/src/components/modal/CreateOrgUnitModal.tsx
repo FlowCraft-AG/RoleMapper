@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from '@apollo/client';
 import {
   Box,
   Button,
@@ -13,38 +12,50 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
-import { CREATE_ORG_UNIT } from '../../graphql/mutations/create-org-unit'; // Mutation zum Erstellen der Organisationseinheit
-import { GET_EMPLOYEES } from '../../graphql/queries/get-users'; // GraphQL-Abfrage importieren
-import { client } from '../../lib/apolloClient';
+import { useEffect, useState } from 'react';
+import {
+  createOrgUnit,
+  fetchEmployees,
+} from '../../app/organisationseinheiten/fetchkp';
+import { OrgUnit } from '../../types/orgUnit.type';
 import { UserCredetials } from '../../types/user.type';
 
 interface CreateOrgUnitModalProps {
   open: boolean;
   onClose: () => void;
-  refetch: () => void;
   parentId: string;
+  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
 }
 
 const CreateOrgUnitModal = ({
   open,
   onClose,
-  refetch,
   parentId,
+  refetch, // Callback zur Aktualisierung der Liste
 }: CreateOrgUnitModalProps) => {
   const [formData, setFormData] = useState({ name: '', supervisor: '' });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const {
-    data: userData,
-    loading: userLoading,
-    error: userError,
-  } = useQuery(GET_EMPLOYEES, { client });
+  const [userData, setUserData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [userError, setUserError] = useState(null);
 
-  const [createOrgUnit] = useMutation(CREATE_ORG_UNIT, { client });
+  // Funktion zum Abrufen der Benutzer von der Serverseite
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
+      setUserData(employees);
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Regular Expression für ObjectId Validierung
   const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
-  const handleCreate = () => {
+
+  const handleCreate = async () => {
     if (!formData.name || /\d/.test(formData.name)) {
       setSnackbar({ open: true, message: 'Name darf keine Zahlen enthalten.' });
       return;
@@ -53,28 +64,32 @@ const CreateOrgUnitModal = ({
       alert('Supervisor darf nur Buchstaben enthalten.');
       return;
     }
-
-    createOrgUnit({
-      variables: {
-        name: formData.name,
-        supervisor: formData.supervisor || null,
-        parentId: parentId,
-      },
-    })
-      .then(() => {
-        console.log('Organisationseinheit erfolgreich erstellt.');
-        refetch();
-        onClose();
-        setFormData({ name: '', supervisor: '' });
-      })
-      .catch((err) => {
-        console.error(err);
-        setSnackbar({
-          open: true,
-          message: 'Fehler beim Erstellen der Einheit.',
-        });
+    try {
+      const updatedOrgUnits = await createOrgUnit(
+        formData.name,
+        formData.supervisor || null,
+        parentId,
+      ); // Serverseitige Funktion zum Erstellen der Organisationseinheit
+      console.log('Organisationseinheit erfolgreich erstellt.');
+      refetch(updatedOrgUnits); // Aktualisiere die Liste
+      onClose();
+      setFormData({ name: '', supervisor: '' });
+    } catch (err) {
+      console.error(err);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Erstellen der Einheit.',
       });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (open) {
+      loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
+    }
+  }, [open]);
 
   return (
     <>
@@ -143,14 +158,14 @@ const CreateOrgUnitModal = ({
                   overflowY: 'auto', // Scrollbar für den Fall, dass die Liste zu lang ist
                 }}
               >
-                {userLoading ? (
+                {loading ? (
                   <MenuItem value="">
                     <CircularProgress size={24} />
                   </MenuItem>
                 ) : userError ? (
                   <MenuItem value="">Fehler beim Laden der Benutzer</MenuItem>
                 ) : (
-                  userData.getData.data.map((user: UserCredetials) => (
+                  userData.map((user: UserCredetials) => (
                     <MenuItem key={user._id} value={user._id}>
                       {user.userId}
                     </MenuItem>

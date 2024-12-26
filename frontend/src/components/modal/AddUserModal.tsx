@@ -1,6 +1,5 @@
 // src/components/modals/AddUserModal.tsx
 
-import { useMutation, useQuery } from '@apollo/client';
 import {
   Autocomplete,
   Box,
@@ -9,11 +8,11 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import React, { useState } from 'react';
-import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
-import { USER_IDS } from '../../graphql/queries/get-users';
-import { client } from '../../lib/apolloClient';
-import { User } from '../../types/user.type';
+import React, { useEffect, useState } from 'react';
+import {
+  addUserToFunction,
+  fetchUserIds,
+} from '../../app/organisationseinheiten/fetchkp';
 
 interface AddUserModalProps {
   open: boolean;
@@ -33,12 +32,36 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   refetch,
   functionName,
 }) => {
-  const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
-  const { data } = useQuery(USER_IDS, {
-    client,
-  });
+  //   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
+  //   const { data } = useQuery(USER_IDS, {
+  //     client,
+  //   });
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [userIds, setUserIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      fetchUsers();
+    }
+  }, [open]);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const fetchedUserIds = await fetchUserIds();
+      setUserIds(fetchedUserIds);
+    } catch (error) {
+      console.error('Fehler beim Laden der Benutzer-IDs:', error);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Laden der Benutzer-IDs.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | null } = {};
@@ -63,12 +86,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       return;
     }
     try {
-      await addUserToFunction({
-        variables: {
-          functionName,
-          userId: newUserId,
-        },
-      });
+      await addUserToFunction(functionName!, newUserId);
       console.log('Benutzer erfolgreich hinzugefügt');
       refetch(); // Aktualisiere die Daten nach der Mutation
       setNewUserId('');
@@ -77,9 +95,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       console.error('Fehler beim Hinzufügen des Benutzers:', err);
       setSnackbar({
         open: true,
-        message: 'Fehler beim Hinzufügen des Benutzers:',
+        message: 'Fehler beim Hinzufügen des Benutzers.',
       });
-
       const newErrors: { [key: string]: string | null } = {};
       if (err instanceof Error) {
         newErrors.userId = err.message;
@@ -89,8 +106,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   };
 
-  const options: string[] =
-    data?.getData.data.map((user: User) => user.userId) || [];
+  //   const options: string[] =
+  //     data?.getData.data.map((user: User) => user.userId) || [];
 
   return (
     <>
@@ -114,17 +131,18 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
             p: 4,
           }}
         >
-          <TextField
+          {/* <TextField
             fullWidth
             error={!!errors.userId}
             helperText={errors.userId}
             label="Benutzer-ID"
             value={newUserId}
             onChange={(e) => setNewUserId(e.target.value)}
-          />
+          /> */}
 
           <Autocomplete
-            options={options}
+            options={userIds}
+            loading={loading}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -132,6 +150,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
                 placeholder="eingabe..."
               />
             )}
+            value={newUserId}
+            onChange={(_, newValue) => setNewUserId(newValue || '')}
             freeSolo // Erlaubt benutzerdefinierte Eingaben
           />
 

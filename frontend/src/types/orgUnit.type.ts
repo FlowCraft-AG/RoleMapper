@@ -21,6 +21,12 @@ export type OrgUnitDTO = {
   hasMitglieder?: boolean;
 };
 
+export type OrgUnitInfo = {
+  _id: string;
+  name: string;
+  parentId: string | undefined;
+};
+
 export type OrgUnitListProps = {
   orgUnits: OrgUnit[];
   functionsByOrgUnit: Record<string, Function[]>;
