@@ -138,7 +138,6 @@ jobs:
           echo "NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> .env
           echo "NEXT_PUBLIC_KEYCLOAK_ISSUER=http://keycloak:8080/realms/flowcraft" >> .env
           echo "NEXT_PUBLIC_BACKEND_SERVER_URL=https://backend:3000/graphql" >> .env
-          echo "NEXT_PUBLIC_BACKEND_CLIENT_URL=https://localhost:3000/graphql" >> .env
           echo "NEXT_PUBLIC_LOG_LEVEL=debug" >> .env
           echo "NEXT_PUBLIC_NODE_ENV=development" >> .env
           echo "NEXT_PUBLIC_PINO_PRETTY=true" >> .env
@@ -154,7 +153,6 @@ jobs:
             --build-arg NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
             --build-arg NEXT_PUBLIC_KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft \
             --build-arg NEXT_PUBLIC_BACKEND_SERVER_URL=https://backend:3000/graphql \
-            --build-arg NEXT_PUBLIC_BACKEND_CLIENT_URL=https://localhost:3000/graphql \
             --build-arg NEXT_PUBLIC_LOG_LEVEL=debug \
             --build-arg NEXT_PUBLIC_NODE_ENV=development \
             --build-arg NEXT_PUBLIC_PINO_PRETTY=true \

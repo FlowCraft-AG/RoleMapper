@@ -1,6 +1,5 @@
 'use client';
 
-import { useMutation, useQuery } from '@apollo/client';
 import { Add, Delete, Edit } from '@mui/icons-material';
 import {
   Button,
@@ -13,10 +12,11 @@ import {
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
-import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
-import { FUNCTIONS_BY_ORG_UNIT } from '../../graphql/queries/get-functions';
-import { client } from '../../lib/apolloClient';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  fetchFunctionsByOrgUnit,
+  removeFunction,
+} from '../../app/organisationseinheiten/fetchkp';
 import theme from '../../theme';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
@@ -42,15 +42,12 @@ export default function FunctionsSpalte({
   handleMitgliederClick,
   onRemove,
 }: FunctionsColumnProps) {
+  const [functions, setFunctions] = useState<Function[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
-
-  const [removeUserFromFunction] = useMutation(DELETE_FUNCTIONS, { client });
-
-  const { data, loading, error, refetch } = useQuery(FUNCTIONS_BY_ORG_UNIT, {
-    client,
-  });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [openSelectType, setOpenSelectType] = useState(false);
   const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
@@ -60,6 +57,37 @@ export default function FunctionsSpalte({
   const [currentFunction, setCurrentFunction] = useState<Function | undefined>(
     undefined,
   ); // Funktion, die bearbeitet wird
+
+  const loadFunctions = useCallback(async (orgUnitId: string) => {
+    try {
+      setLoading(true);
+      const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
+      console.log('Functions:', functionList);
+      setFunctions(functionList);
+    } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+            setError('Ein unbekannter Fehler ist aufgetreten.');
+        }
+    } finally {
+      setLoading(false);
+    }
+  }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
+
+  const refetch = (functionList: Function[]) => {
+    console.log('Refetching Functions');
+    setFunctions(functionList);
+  };
+
+  useEffect(() => {
+    console.log('FunctionsSpalte: useEffect');
+    console.log('orgUnit:', orgUnit);
+    if (orgUnit && orgUnit.id) {
+      loadFunctions(orgUnit.id); // Hier wird `orgUnit.id` als Parameter übergeben
+    }
+  }, [orgUnit, loadFunctions]); // Reagiert auf Änderungen der `orgUnit.id`
+  // Der Effekt wird nur beim ersten Laden der Komponente ausgeführt.
 
   if (loading)
     return (
@@ -71,11 +99,10 @@ export default function FunctionsSpalte({
   if (error)
     return (
       <Box sx={{ p: 2 }}>
-        <Alert severity="error">Fehler: {error.message}</Alert>
+        <Alert severity="error">Fehler: {error}</Alert>
       </Box>
     );
 
-  const functions: Function[] = data.getData.data;
   // Funktionen filtern
   const filteredFunctions: Function[] =
     functions.filter((func: Function) => func.orgUnit === orgUnit.id) || [];
@@ -99,16 +126,12 @@ export default function FunctionsSpalte({
   };
 
   const handleRemoveFunction = async (func: Function) => {
-    try {
-      await removeUserFromFunction({
-        variables: {
-          functionName: func.functionName,
-        },
-      });
-      refetch();
+    const success = await removeFunction(func._id); // Serverseitige Funktion aufrufen
+    if (success) {
+      setFunctions((prev) => prev.filter((f) => f._id !== func._id)); // Update den lokalen Zustand
       onRemove('', func._id);
-    } catch (err) {
-      console.error('Fehler beim Entfernen des Benutzers:', err);
+    } else {
+      setError('Fehler beim Entfernen der Funktion.');
     }
   };
 
@@ -241,7 +264,7 @@ export default function FunctionsSpalte({
         open={openExplicitFunction}
         onClose={() => setOpenExplicitFunction(false)}
         onBack={handleBackToSelectType}
-        orgUnit={orgUnit.id}
+        orgUnitId={orgUnit.id}
         refetch={refetch}
       />
 

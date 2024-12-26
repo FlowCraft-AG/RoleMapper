@@ -1,6 +1,7 @@
-import { useMutation } from '@apollo/client';
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -8,15 +9,15 @@ import {
   Snackbar,
   TextField,
 } from '@mui/material';
-import { useState } from 'react';
-import { UPDATE_ORG_UNIT } from '../../graphql/mutations/org-unit.mutation';
-import { client } from '../../lib/apolloClient';
+import { useEffect, useState } from 'react';
+import { updateOrgUnit } from '../../app/organisationseinheiten/fetchkp';
+import { OrgUnit } from '../../types/orgUnit.type';
 
 interface EditOrgUnitModalProps {
   open: boolean;
   onClose: () => void;
   itemId: string;
-  refetch: () => void;
+  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
 }
 
 const EditOrgUnitModal = ({
@@ -27,34 +28,50 @@ const EditOrgUnitModal = ({
 }: EditOrgUnitModalProps) => {
   const [formData, setFormData] = useState({ name: '', supervisor: '' });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [loading, setLoading] = useState(false);
 
-  const [updateOrgUnit] = useMutation(UPDATE_ORG_UNIT, { client });
-
-  const handleSave = () => {
-    // GraphQL-Mutation hier ausführen, z. B. UPDATE_ORG_UNIT
-    updateOrgUnit({
-      variables: {
-        name: formData.name,
-        supervisor: formData.supervisor || null,
-        id: itemId,
-      },
-    })
-      .then(() => {
-        refetch();
-        onClose();
-        setFormData({ name: '', supervisor: '' });
-      })
-      .catch((err) => {
-        console.error(err);
-        setSnackbar({
-          open: true,
-          message: 'Fehler beim Aktuallisieren der Einheit.',
-        });
+  useEffect(() => {
+    if (open) {
+      // Hier kannst du die Organisationseinheit mit dem itemId laden (z.B. durch eine API)
+      setFormData({
+        name: '',
+        supervisor: '',
       });
-    refetch(); // Daten neu laden
-    onClose(); // Modal schließen
-  };
+    }
+  }, [open, itemId]);
 
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const newOrgUnitList = await updateOrgUnit(
+        itemId,
+        formData.name,
+        formData.supervisor,
+      ); // Bearbeite die Organisationseinheit
+      await refetch(newOrgUnitList); // Lade die neuesten Daten
+      onClose(); // Schließe das Modal
+    } catch (error) {
+        if (error instanceof Error) {
+          setSnackbar({
+            open: true,
+            message: error.message,
+          });
+        } else {
+            setSnackbar({
+                open: true,
+                message: 'Ein Fehler ist aufgetreten.',
+            });
+            }
+    } finally {
+      setLoading(false);
+    }
+  };
+  if (loading)
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
   return (
     <>
       <Snackbar

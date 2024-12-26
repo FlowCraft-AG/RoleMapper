@@ -1,6 +1,5 @@
 'use client';
 
-import { useMutation, useQuery } from '@apollo/client';
 import { Add, Delete } from '@mui/icons-material';
 import { Button, ListItemButton, Snackbar } from '@mui/material';
 import Alert from '@mui/material/Alert';
@@ -10,13 +9,12 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
-import { useState } from 'react';
-import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
+import { useEffect, useState } from 'react';
 import {
-  GET_SAVED_DATA,
-  USERS_BY_FUNCTION,
-} from '../../graphql/queries/get-functions';
-import { client } from '../../lib/apolloClient';
+  fetchSavedData,
+  fetchUsersByFunction,
+  removeUserFromFunction,
+} from '../../app/organisationseinheiten/fetchkp';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
 import { getListItemStyles } from '../../utils/styles';
@@ -42,43 +40,74 @@ export default function UsersSpalte({
   console.log('selectedMitglieder: ', selectedMitglieder);
   console.log('isImpliciteFunction: ', isImpliciteFunction);
 
-  // Verwende zwei Queries, eine für den normalen Fall und eine für das "implizite" Szenario
-  const {
-    loading: usersLoading,
-    error: usersError,
-    data: usersData,
-    refetch: refetch,
-  } = useQuery(USERS_BY_FUNCTION, {
-    client,
-    variables: { functionId: selectedFunctionId },
-    skip: selectedFunctionId === 'mitglieder' || isImpliciteFunction === true, // Query wird übersprungen
-  });
-
-  const {
-    loading: savedDataLoading,
-    error: savedDataError,
-    data: savedData,
-  } = useQuery(GET_SAVED_DATA, {
-    client,
-    variables: { id: selectedFunctionId },
-    skip:
-      selectedFunctionId === 'mitglieder' ||
-      isImpliciteFunction === false ||
-      isImpliciteFunction === undefined, // Query wird übersprungen, wenn implizit
-  });
-  //   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
-  const [removeUserFromFunction] = useMutation(REMOVE_FUNCTIONS, { client });
-  const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
-    undefined,
-  );
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
   const [errors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
-  let selectedFunction: FunctionInfo | undefined;
+  const [selectedFunction, setSelectedFunction] = useState<
+    FunctionInfo | undefined
+  >(undefined);
+  const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
+    undefined,
+  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  if (usersLoading || savedDataLoading) {
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      setError(null);
+      try {
+        if (selectedFunctionId === 'mitglieder') {
+          setSelectedFunction(selectedMitglieder);
+        } else if (isImpliciteFunction) {
+          const data = await fetchSavedData(selectedFunctionId);
+          setSelectedFunction(data);
+        } else {
+          const data = await fetchUsersByFunction(selectedFunctionId);
+          setSelectedFunction(data);
+        }
+      } catch (err) {
+        console.error('Fehler beim Laden der Benutzer:', err);
+        setError('Fehler beim Laden der Benutzer');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [selectedFunctionId, isImpliciteFunction, selectedMitglieder]);
+
+  const refetch = () => {
+    console.log('Refetching Functions');
+    // refetch wird benötigt
+  };
+
+  const handleRemoveUser = async (userId: string) => {
+    try {
+      await removeUserFromFunction(selectedFunction!.functionName, userId);
+      setSelectedFunction((prev) => ({
+        ...prev!,
+        users: prev?.users.filter((id) => id !== userId) || [],
+      }));
+      onRemove(userId, selectedFunctionId);
+      setSnackbar({ open: true, message: 'Benutzer erfolgreich entfernt' });
+    } catch (err) {
+      console.error('Fehler beim Entfernen des Benutzers:', err);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Entfernen des Benutzers',
+      });
+    }
+  };
+
+  const handleViewUser = (userId: string) => {
+    setSelectedIndex(userId);
+    onSelectUser(userId);
+  };
+
+  if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
         <CircularProgress />
@@ -86,28 +115,52 @@ export default function UsersSpalte({
     );
   }
 
-  if (usersError || savedDataError) {
+  if (error) {
     return (
       <Box sx={{ p: 2 }}>
-        <Alert severity="error">
-          Fehler: {usersError?.message || savedDataError?.message}
-        </Alert>
+        <Alert severity="error">Fehler: {error}</Alert>
       </Box>
     );
   }
+  //   let selectedFunction: FunctionInfo | undefined;
+  //   if (selectedFunctionId === 'mitglieder') {
+  //     selectedFunction = selectedMitglieder;
+  //     console.log('Mitglieder: selectedFunction: ', selectedFunction);
+  //   } else if (isImpliciteFunction === true) {
+  //     // Funktion suchen
+  //     selectedFunction = savedData?.getSavedData;
+  //     console.log('Implizite Funktion: selectedFunction: ', selectedFunction);
+  //   } else {
+  //     // Funktion suchen
+  //     selectedFunction = usersData?.getData?.data?.[0];
+  //     console.log('Explizite Funktion: selectedFunction: ', selectedFunction);
+  //   }
 
-  if (selectedFunctionId === 'mitglieder') {
-    selectedFunction = selectedMitglieder;
-    console.log('Mitglieder: selectedFunction: ', selectedFunction);
-  } else if (isImpliciteFunction === true) {
-    // Funktion suchen
-    selectedFunction = savedData?.getSavedData;
-    console.log('Implizite Funktion: selectedFunction: ', selectedFunction);
-  } else {
-    // Funktion suchen
-    selectedFunction = usersData?.getData?.data?.[0];
-    console.log('Explizite Funktion: selectedFunction: ', selectedFunction);
-  }
+  //   // Verwende zwei Queries, eine für den normalen Fall und eine für das "implizite" Szenario
+  //   const {
+  //     loading: usersLoading,
+  //     error: usersError,
+  //     data: usersData,
+  //     refetch: refetch,
+  //   } = useQuery(USERS_BY_FUNCTION, {
+  //     client,
+  //     variables: { functionId: selectedFunctionId },
+  //     skip: selectedFunctionId === 'mitglieder' || isImpliciteFunction === true, // Query wird übersprungen
+  //   });
+
+  //   const {
+  //     loading: savedDataLoading,
+  //     error: savedDataError,
+  //     data: savedData,
+  //   } = useQuery(GET_SAVED_DATA, {
+  //     client,
+  //     variables: { id: selectedFunctionId },
+  //     skip:
+  //       selectedFunctionId === 'mitglieder' ||
+  //       isImpliciteFunction === false ||
+  //       isImpliciteFunction === undefined, // Query wird übersprungen, wenn implizit
+  //   });
+  //   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
 
   //   const validateInput = () => {
   //     const newErrors: { [key: string]: string | null } = {};
@@ -160,39 +213,32 @@ export default function UsersSpalte({
   //     }
   //   };
 
-  const handleViewUser = (userId: string) => {
-    setSelectedIndex(userId);
-    if (onSelectUser) {
-      onSelectUser(userId);
-    }
-  };
-
-  const handleRemoveUser = async (userId: string) => {
-    try {
-      await removeUserFromFunction({
-        variables: {
-          functionName: selectedFunction?.functionName,
-          userId,
-        },
-      });
-      refetch(); // Aktualisiere die Benutzerliste
-      onRemove(userId, '');
-      setSelectedIndex(undefined);
-      onSelectUser('');
-    } catch (err) {
-      if (err instanceof Error) {
-        setSnackbar({
-          open: true,
-          message: err.message,
-        });
-      } else {
-        setSnackbar({
-          open: true,
-          message: 'Fehler beim Speichern der Funktion.',
-        });
-      }
-    }
-  };
+  //   const handleRemoveUser = async (userId: string) => {
+  //     try {
+  //       await removeUserFromFunction({
+  //         variables: {
+  //           functionName: selectedFunction?.functionName,
+  //           userId,
+  //         },
+  //       });
+  //       refetch(); // Aktualisiere die Benutzerliste
+  //       onRemove(userId, '');
+  //       setSelectedIndex(undefined);
+  //       onSelectUser('');
+  //     } catch (err) {
+  //       if (err instanceof Error) {
+  //         setSnackbar({
+  //           open: true,
+  //           message: err.message,
+  //         });
+  //       } else {
+  //         setSnackbar({
+  //           open: true,
+  //           message: 'Fehler beim Speichern der Funktion.',
+  //         });
+  //       }
+  //     }
+  //   };
 
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>

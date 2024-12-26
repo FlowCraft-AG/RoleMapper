@@ -1,30 +1,17 @@
 'use client';
 
-import { useLazyQuery } from '@apollo/client';
 import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
-import { MITGLIEDER } from '../../graphql/queries/get-users';
-import { client } from '../../lib/apolloClient';
 import theme from '../../theme';
 import { FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
-import { ENV } from '../../utils/env';
+import { fetchMitgliederIds } from './fetchkp';
 
 export default function OrganigrammPage() {
-  console.log('OrganigrammPage');
-  console.log('HKAPage');
-  console.log(
-    'NEXT_PUBLIC_BACKEND_CLIENT_URL=',
-    ENV.NEXT_PUBLIC_BACKEND_CLIENT_URL,
-  );
-  console.log(
-    'NEXT_PUBLIC_BACKEND_SERVER_URL=',
-    ENV.NEXT_PUBLIC_BACKEND_SERVER_URL,
-  );
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<
     OrgUnitDTO | undefined
   >(undefined);
@@ -44,34 +31,9 @@ export default function OrganigrammPage() {
   const [isImpliciteFunction, setIsImpliciteFunction] =
     useState<boolean>(false);
 
-  const [fetchMitglieder] = useLazyQuery(MITGLIEDER, {
-    client,
-    onCompleted: (data) => {
-      setCombinedUsers(
-        data.getData.data.map((user: { userId: string }) => user.userId),
-      );
-    },
-    onError: () => {
-      setCombinedUsers([]);
-    },
-  });
-
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
-    const { data } = await fetchMitglieder({
-      variables: {
-        alias: alias || null,
-        kostenstelleNr: kostenstelleNr || null,
-      },
-    });
-    return data.getData.data.map((user: { userId: string }) => user.userId);
+    return await fetchMitgliederIds(alias, kostenstelleNr);
   };
-
-  //   const isChild = (
-  //     orgUnit: OrgUnitDTO,
-  //     currentRootOrgUnit: OrgUnitDTO | undefined,
-  //   ) => {
-  //     return orgUnit.parentId === currentRootOrgUnit?.id;
-  //   };
 
   const handleOrgUnitSelect = async (orgUnitDTO: OrgUnitDTO) => {
     setSelectedOrgUnit(orgUnitDTO);

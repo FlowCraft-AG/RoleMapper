@@ -1,21 +1,16 @@
 'use client';
 
-import {
-  ApolloQueryResult,
-  OperationVariables,
-  useQuery,
-} from '@apollo/client';
 import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
+import { Alert, CircularProgress } from '@mui/material';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
-import { JSXElementConstructor } from 'react';
-import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
-import { client } from '../../lib/apolloClient';
+import { JSXElementConstructor, useCallback, useEffect, useState } from 'react';
+import { fetchOrgUnits } from '../../app/organisationseinheiten/fetchkp';
 import theme from '../../theme';
 import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
@@ -27,17 +22,56 @@ interface OrgUnitRichTreeViewProps {
 }
 
 export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
-  const { data, loading, error, refetch } = useQuery(ORG_UNITS, {
-    client,
-  });
+  const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (loading) return <div>Lade Organisationseinheiten...</div>;
-  if (error) return <div>Fehler beim Laden der Daten.</div>;
+  // Funktion zum Abrufen der Organisationseinheiten
+  const loadOrgUnits = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await fetchOrgUnits(); // Serverseitige Funktion aufrufen
+      setOrgUnits(data);
+    } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+            setError('Ein unbekannter Fehler ist aufgetreten.');
+        }
+    } finally {
+      setLoading(false);
+    }
+  }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
+
+  const refetch = (orgUnitList: OrgUnit[]) => {
+    console.log('Refetching OrgUnits');
+    setOrgUnits(orgUnitList);
+  };
+
+  useEffect(() => {
+    loadOrgUnits();
+  }, [loadOrgUnits]); // Der Effekt wird nur beim ersten Laden der Komponente ausgeführt.
+
+  // Ladeanzeige während des Abfragens
+  if (loading)
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  // Fehlerbehandlung
+  if (error)
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity="error">Fehler: {error}</Alert>
+      </Box>
+    );
 
   // Prüfe, ob die Organisationseinheit ein Root-Knoten ist (z. B. IWI, EI, WW)
   const isRootOrgUnit = (orgUnit: OrgUnit) =>
     orgUnit?.alias || orgUnit?.kostenstelleNr;
-  const orgUnitList: OrgUnit[] = data.getData.data;
+  const orgUnitList: OrgUnit[] = orgUnits;
   const treeData = buildTree(orgUnitList, null);
 
   // Baue die Tree-Datenstruktur
@@ -88,7 +122,7 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
         }}
         slotProps={{
           item: {
-            refetch, // Refetch wird hier übergeben
+            refetch, // Weitergabe der Refetch-Methode an CustomTreeItem
             slots: { groupTransition: TransitionComponent },
           } as ExtendedSlotProps, // Erweiterter Typ
         }}
@@ -107,7 +141,5 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
 }
 
 interface ExtendedSlotProps extends TreeItem2Props {
-  refetch: (
-    variables?: Partial<OperationVariables>,
-  ) => Promise<ApolloQueryResult<{ getData: { data: OrgUnit[] } }>>;
+  refetch: () => Promise<void>; // Die refetch-Methode
 }
