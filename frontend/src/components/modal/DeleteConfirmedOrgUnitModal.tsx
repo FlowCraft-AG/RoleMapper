@@ -42,10 +42,17 @@ const DeleteConfirmationModal = ({
       await refetch(newOrgUnitList); // Lade die neuesten Daten
       onClose(); // Schließe das Modal
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: error.message,
-      });
+        if (error instanceof Error) {
+          setSnackbar({
+            open: true,
+            message: error.message,
+          });
+        } else {
+            setSnackbar({
+              open: true,
+              message: 'Fehler beim Löschen der Organisationseinheit.',
+            });
+        }
     } finally {
       setLoading(false);
     }

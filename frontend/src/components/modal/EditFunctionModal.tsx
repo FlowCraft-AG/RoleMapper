@@ -84,10 +84,10 @@ const EditFunctionModal = ({
 
     try {
       const updatedFunction = await updateFunction({
-        functionName: formData.functionName,
-        orgUnitId: formData.orgUnitId,
-        isSingleUser: formData.isSingleUser,
-        oldFunctionName: functionData?.functionName,
+        functionName: formData.functionName!,
+        orgUnitId: formData.orgUnitId!,
+        isSingleUser: formData.isSingleUser!,
+        oldFunctionName: functionData?.functionName || '',
       });
       setSnackbar({
         open: true,

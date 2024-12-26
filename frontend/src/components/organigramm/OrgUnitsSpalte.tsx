@@ -33,7 +33,11 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       const data = await fetchOrgUnits(); // Serverseitige Funktion aufrufen
       setOrgUnits(data);
     } catch (err) {
-      setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+            setError('Ein unbekannter Fehler ist aufgetreten.');
+        }
     } finally {
       setLoading(false);
     }

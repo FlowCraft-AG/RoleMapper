@@ -181,17 +181,26 @@ export async function createImpliciteFunction({
     await client.mutate({
       mutation: CREATE_IMPLICITE_FUNCTIONS,
       variables: { functionName, field, value, orgUnitId },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      refetchQueries: [
+        { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+      ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
     // Nach der Erstellung führen wir den Refetch durch, um die neuesten Daten zu holen
     const updatedFunctionList = await fetchFunctionsByOrgUnit(orgUnitId);
     return updatedFunctionList; // Rückgabe der neuen Funktion
   } catch (error) {
-    console.error('Fehler beim Erstellen der Funktion:', error);
-    throw new ApolloError({
-      errorMessage: error.message,
-    });
+    if (error instanceof Error) {
+      console.error('Fehler:', error.message);
+      throw new ApolloError({
+        errorMessage: error.message,
+      });
+    } else {
+      console.error('Unbekannter Fehler:', error);
+      throw new ApolloError({
+        errorMessage: 'Ein unbekannter Fehler ist aufgetreten.',
+      });
+    }
   }
 }
 
@@ -201,8 +210,6 @@ export async function removeFunction(functionId: string): Promise<boolean> {
     await client.mutate({
       mutation: DELETE_FUNCTIONS,
       variables: { functionId },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
-      awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
     return true;
   } catch (error) {
@@ -233,7 +240,9 @@ export async function createExplicitFunction({
         users,
         isSingleUser,
       },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      refetchQueries: [
+        { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+      ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
 
@@ -241,10 +250,17 @@ export async function createExplicitFunction({
     const updatedFunctionList = await fetchFunctionsByOrgUnit(orgUnitId);
     return updatedFunctionList;
   } catch (error) {
-    console.error('Fehler beim Erstellen der expliziten Funktion:', error);
-    throw new ApolloError({
-      errorMessage: error.message,
-    });
+    if (error instanceof Error) {
+      console.error('Fehler:', error.message);
+      throw new ApolloError({
+        errorMessage: error.message,
+      });
+    } else {
+      console.error('Unbekannter Fehler:', error);
+      throw new ApolloError({
+        errorMessage: 'Ein unbekannter Fehler ist aufgetreten.',
+      });
+    }
   }
 }
 
@@ -289,7 +305,9 @@ export async function updateFunction({
         newOrgUnit: orgUnitId,
         newIsSingleUser: isSingleUser,
       },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      refetchQueries: [
+        { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+      ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
 
