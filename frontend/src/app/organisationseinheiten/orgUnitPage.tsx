@@ -1,18 +1,18 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
-import { useState } from 'react';
+import { Box, Typography, useTheme } from '@mui/material';
+import { useEffect, useState } from 'react';
 import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
-import theme from '../../theme';
+import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { fetchMitgliederIds } from './fetchkp';
 
 export default function OrganigrammPage() {
-    console.log('ORGANIGRAMM PAGE');
+  console.log('ORGANIGRAMM PAGE');
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<
     OrgUnitDTO | undefined
   >(undefined);
@@ -31,6 +31,12 @@ export default function OrganigrammPage() {
   const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
   const [isImpliciteFunction, setIsImpliciteFunction] =
     useState<boolean>(false);
+  const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+
+  useEffect(() => {
+    console.log('Aktualisiertes Theme:', theme.palette);
+  }, [setFacultyTheme]);
 
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     return await fetchMitgliederIds(alias, kostenstelleNr);
@@ -54,9 +60,9 @@ export default function OrganigrammPage() {
   const handleFunctionSelect = (functionInfo: FunctionInfo) => {
     setSelectedFunctionId(functionInfo._id);
     setSelectedFunction(functionInfo);
-      setSelectedUserId(undefined); // Reset selection
-      console.log('selectedFunctionId: ', functionInfo._id);
-        console.log('selectedFunction: ', functionInfo);
+    setSelectedUserId(undefined); // Reset selection
+    console.log('selectedFunctionId: ', functionInfo._id);
+    console.log('selectedFunction: ', functionInfo);
     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
   };
 

@@ -1,7 +1,13 @@
 'use client';
 
 import { Add, Delete, Search } from '@mui/icons-material';
-import { Button, ListItemButton, Snackbar, TextField } from '@mui/material';
+import {
+  Button,
+  ListItemButton,
+  Snackbar,
+  TextField,
+  useTheme,
+} from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -15,7 +21,7 @@ import {
   fetchUsersByFunction,
   removeUserFromFunction,
 } from '../../app/organisationseinheiten/fetchkp';
-import theme from '../../theme';
+import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { FunctionInfo } from '../../types/function.type';
 import { getListItemStyles } from '../../utils/styles';
 import AddUserModal from '../modal/AddUserModal';
@@ -39,9 +45,11 @@ export default function UsersSpalte({
   console.log('selectedFunctionId: ', selectedFunctionId);
   console.log('selectedMitglieder: ', selectedMitglieder);
   console.log('isImpliciteFunction: ', isImpliciteFunction);
+  const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredUsers, setFilteredUsers] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
   const [errors] = useState<{ [key: string]: string | null }>({});
@@ -54,25 +62,22 @@ export default function UsersSpalte({
     undefined,
   );
   const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-      // Filtere Benutzer basierend auf der Suchanfrage
-      if (selectedFunction && selectedFunction.users) {
-        const lowercasedTerm = searchTerm.toLowerCase();
-        const filtered = selectedFunction.users.filter((user) =>
-          user.toLowerCase().includes(lowercasedTerm),
-        );
-        setFilteredUsers(filtered);
-      }
-    }, [searchTerm, selectedFunction]);
+  useEffect(() => {
+    // Filtere Benutzer basierend auf der Suchanfrage
+    if (selectedFunction && selectedFunction.users) {
+      const lowercasedTerm = searchTerm.toLowerCase();
+      const filtered = selectedFunction.users.filter((user) =>
+        user.toLowerCase().includes(lowercasedTerm),
+      );
+      setFilteredUsers(filtered);
+    }
+  }, [searchTerm, selectedFunction]);
 
-      const handleSearchChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
-      ) => {
-        setSearchTerm(event.target.value);
-      };
-
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
 
   useEffect(() => {
     async function fetchData() {

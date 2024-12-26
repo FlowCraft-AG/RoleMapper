@@ -1,8 +1,15 @@
 'use client';
 
-import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchUserDetails } from '../../app/organisationseinheiten/fetchkp';
+import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { User } from '../../types/user.type';
 
 interface UserInfoColumnProps {
@@ -10,6 +17,8 @@ interface UserInfoColumnProps {
 }
 
 export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
+  const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

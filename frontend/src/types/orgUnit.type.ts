@@ -8,6 +8,7 @@ export type OrgUnit = {
   alias: string | null;
   kostenstelleNr: string | null;
   type: string | null;
+  children?: OrgUnit[];
 };
 
 export type OrgUnitDTO = {

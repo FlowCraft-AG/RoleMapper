@@ -2,7 +2,7 @@
 
 import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
+const hkaTheme = createTheme({
   palette: {
     divider: '#ff0000', // Eigene Divider-Farbe
     text: {
@@ -31,6 +31,11 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Roboto, Arial, sans-serif',
   },
+  transitions: {
+    duration: {
+      standard: 500, // 500ms Übergang
+    },
+  },
 });
 
 declare module '@mui/material/styles' {
@@ -58,4 +63,4 @@ declare module '@mui/material/styles' {
   }
 }
 
-export default theme;
+export default hkaTheme;

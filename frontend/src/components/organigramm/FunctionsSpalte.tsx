@@ -1,6 +1,13 @@
 'use client';
 
-import { Add, Delete, DynamicFeed, Edit, Group, Layers, Person, Settings, Visibility } from '@mui/icons-material';
+import {
+  Add,
+  Delete,
+  DynamicFeed,
+  Edit,
+  Group,
+  Person,
+} from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
@@ -9,6 +16,7 @@ import {
   ListItemButton,
   ListItemText,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -17,7 +25,7 @@ import {
   fetchFunctionsByOrgUnit,
   removeFunction,
 } from '../../app/organisationseinheiten/fetchkp';
-import theme from '../../theme';
+import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
@@ -42,6 +50,8 @@ export default function FunctionsSpalte({
   handleMitgliederClick,
   onRemove,
 }: FunctionsColumnProps) {
+  const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
   const [functions, setFunctions] = useState<Function[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
@@ -230,11 +240,11 @@ export default function FunctionsSpalte({
                     ? 'Nur eine Person kann diese Funktion belegen'
                     : 'Mehrere Personen können diese Funktion belegen'
               }`}
-                >
-                    {/* Icon abhängig vom Funktionstyp */}
-                    {/*Das DynamicFeed-Icon, das dynamische, abgeleitete Gruppen repräsentiert.*/}
-                    {/*Das Person-Icon repräsentiert eine einzelne Person.*/}
-                    {/*Das Group-Icon repräsentiert eine Gruppe von Personen.*/}
+            >
+              {/* Icon abhängig vom Funktionstyp */}
+              {/*Das DynamicFeed-Icon, das dynamische, abgeleitete Gruppen repräsentiert.*/}
+              {/*Das Person-Icon repräsentiert eine einzelne Person.*/}
+              {/*Das Group-Icon repräsentiert eine Gruppe von Personen.*/}
               {func.isImpliciteFunction ? (
                 <DynamicFeed sx={{ marginRight: 1 }} color="action" /> // Icon für implizite Funktionen
               ) : func.isSingleUser ? (
