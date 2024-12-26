@@ -105,9 +105,11 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       child.children = getOrgUnitHierarchy(orgUnits, child._id); // Füge Kinder zu jedem Kind hinzu
     });
 
-    console.log('children', children);
-
     return children;
+  };
+
+  const hasChildren = (orgUnits: OrgUnit[], unitId: string): boolean => {
+    return orgUnits.some((unit) => unit.parentId === unitId);
   };
 
   const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
@@ -118,23 +120,44 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       return;
     }
 
+    // Prüfe, ob die ausgewählte Einheit Kinder hat
+    const unitHasChildren = hasChildren(orgUnits, selectedOrgUnit._id);
+    console.log(
+      'hat die OrgUnit %s kinder: ',
+      selectedOrgUnit.name,
+      unitHasChildren,
+    );
+
+    // Finde den Fakultäts-Parent
+    const facultyParent = findFacultyParent(orgUnits, selectedOrgUnit);
+    console.log(
+      'die OrgUnit %s ist in der Fakultät :',
+      selectedOrgUnit.name,
+      facultyParent,
+    );
+
+    if (!facultyParent) {
+      console.error('Fakultät für %s nicht gefunden.', selectedOrgUnit.name);
+      return;
+    }
+      console.log('Fakultät gefunden:', facultyParent);
+
     // Dynamische Farbänderung basierend auf Fakultät
-    const newTheme = getFacultyTheme(selectedOrgUnit.name);
+    const newTheme = getFacultyTheme(facultyParent.name);
+    //const newTheme = getFacultyTheme(selectedOrgUnit.name);
 
-    // Funktion, um das Theme rekursiv auf alle Knoten anzuwenden
-    const applyThemeToOrgUnit = (unit: OrgUnit, theme: FacultyTheme) => {
-      setFacultyTheme(theme); // Setze das Theme für das aktuelle Element
+      if (hasChildren(orgUnits, selectedOrgUnit._id)) {
 
-      // Rekursiv auf alle Kinder und Enkelkinder anwenden
-      unit.children?.forEach((child) => applyThemeToOrgUnit(child, theme));
-    };
+          // Finde alle Kinder und Enkelkinder der ausgewählten Organisationseinheit
+          const orgUnitHierarchy = getOrgUnitHierarchy(orgUnits, selectedOrgUnit._id);
+          console.log('orgUnitHierarchy', orgUnitHierarchy);
 
-    // Finde alle Kinder und Enkelkinder der ausgewählten Organisationseinheit
-    const orgUnitHierarchy = getOrgUnitHierarchy(orgUnits, selectedOrgUnit._id);
-    console.log('orgUnitHierarchy', orgUnitHierarchy);
-
-    // Das Theme für die gesamte Hierarchie anwenden
-    orgUnitHierarchy.forEach((unit) => applyThemeToOrgUnit(unit, newTheme));
+          // Das Theme für die gesamte Hierarchie anwenden
+          orgUnitHierarchy.forEach((unit) => applyThemeToOrgUnit(unit, newTheme));
+      } else {
+            // Das Theme nur für die ausgewählte Organisationseinheit anwenden
+            applyThemeToOrgUnit(selectedOrgUnit, newTheme);
+        }
 
     // Weitergabe der Auswahl an die Parent-Komponente
     onSelect({
@@ -146,6 +169,42 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
     });
   };
 
+  // Funktion, um das Theme rekursiv auf alle Knoten anzuwenden
+  const applyThemeToOrgUnit = (unit: OrgUnit, theme: FacultyTheme) => {
+    setFacultyTheme(theme); // Setze das Theme für das aktuelle Element
+
+    // Rekursiv auf alle Kinder und Enkelkinder anwenden
+    unit.children?.forEach((child) => applyThemeToOrgUnit(child, theme));
+  };
+
+  const findFacultyParent = (
+    orgUnits: OrgUnit[],
+    currentUnit: OrgUnit,
+  ): OrgUnit | null => {
+    // Wenn die aktuelle Einheit keine übergeordnete Einheit hat, ist sie selbst eine Fakultät
+    if (!currentUnit.parentId) {
+      return currentUnit;
+    }
+
+    // Finde die übergeordnete Einheit
+    const parentUnit = orgUnits.find(
+      (unit) => unit._id === currentUnit.parentId,
+    );
+
+    if (!parentUnit) {
+      return null;
+    }
+
+    // Prüfe, ob der Parent "Fakultät" heißt
+    if (parentUnit.name === 'Fakultät') {
+      console.log('Fakultät gefunden:', parentUnit);
+      console.log('Aktuelle Einheit:', currentUnit);
+      return currentUnit;
+    }
+
+    // Rekursiv nach oben gehen bis zur Wurzel-Fakultät
+    return findFacultyParent(orgUnits, parentUnit);
+  };
   return (
     <Box sx={{ minHeight: 352, minWidth: 250 }}>
       <RichTreeView
