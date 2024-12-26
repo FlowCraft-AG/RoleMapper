@@ -13,7 +13,7 @@ export default function Navigation() {
 
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
-  }, [setFacultyTheme]);
+  }, [setFacultyTheme, theme.palette]);
 
   const navLinks = [
     { href: '/startseite', label: 'Startseite' },

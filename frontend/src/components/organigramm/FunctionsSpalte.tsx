@@ -25,7 +25,6 @@ import {
   fetchFunctionsByOrgUnit,
   removeFunction,
 } from '../../app/organisationseinheiten/fetchkp';
-import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
@@ -51,7 +50,7 @@ export default function FunctionsSpalte({
   onRemove,
 }: FunctionsColumnProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
-  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
   const [functions, setFunctions] = useState<Function[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,

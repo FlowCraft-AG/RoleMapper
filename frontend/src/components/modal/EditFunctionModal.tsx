@@ -34,8 +34,8 @@ const EditFunctionModal = ({
   refetch,
   onEdit,
 }: EditFunctionModalProps) => {
-    console.log('EDIT FUNCTION MODAL');
-    console.log('selectedFunction:', functionData);
+  console.log('EDIT FUNCTION MODAL');
+  console.log('selectedFunction:', functionData);
   const [isSaving, setIsSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [formData, setFormData] = useState({
@@ -71,9 +71,9 @@ const EditFunctionModal = ({
     }
   };
 
-  const orgUnitsMap = new Map(
-    orgUnits.map((unit: OrgUnitInfo | undefined) => [unit?._id, unit?.name]),
-  );
+  //   const orgUnitsMap = new Map(
+  //     orgUnits.map((unit: OrgUnitInfo | undefined) => [unit?._id, unit?.name]),
+  //   );
 
   const validateFunctionName = (name: string) => /^[a-zA-Z\s]+$/.test(name);
 

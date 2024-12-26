@@ -36,7 +36,7 @@ export default function OrganigrammPage() {
 
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
-  }, [setFacultyTheme]);
+  }, [setFacultyTheme, theme.palette]);
 
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     return await fetchMitgliederIds(alias, kostenstelleNr);

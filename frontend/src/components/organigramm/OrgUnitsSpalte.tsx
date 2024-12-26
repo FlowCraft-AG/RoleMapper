@@ -120,6 +120,13 @@ export default function OrgUnitsSpalte({ onSelect }: OrgUnitRichTreeViewProps) {
       return;
     }
 
+    const isRoot = isRootOrgUnit(selectedOrgUnit);
+    console.log(
+      'ist die orgUnit %s ein rootOrgUnit',
+      selectedOrgUnit.name,
+      isRoot,
+    );
+
     // Prüfe, ob die ausgewählte Einheit Kinder hat
     const unitHasChildren = hasChildren(orgUnits, selectedOrgUnit._id);
     console.log(

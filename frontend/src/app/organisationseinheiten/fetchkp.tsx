@@ -291,14 +291,14 @@ export async function updateFunction({
   functionName,
   newOrgUnitId,
   isSingleUser,
-    oldFunctionName,
+  oldFunctionName,
   orgUnitId,
 }: {
   functionName: string;
   newOrgUnitId: string;
   isSingleUser: boolean;
-        oldFunctionName: string;
-    orgUnitId: string;
+  oldFunctionName: string;
+  orgUnitId: string;
 }): Promise<Function[]> {
   try {
     // Perform mutation to update the function

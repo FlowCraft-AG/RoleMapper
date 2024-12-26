@@ -21,7 +21,6 @@ import {
   fetchUsersByFunction,
   removeUserFromFunction,
 } from '../../app/organisationseinheiten/fetchkp';
-import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { FunctionInfo } from '../../types/function.type';
 import { getListItemStyles } from '../../utils/styles';
 import AddUserModal from '../modal/AddUserModal';
@@ -46,7 +45,7 @@ export default function UsersSpalte({
   console.log('selectedMitglieder: ', selectedMitglieder);
   console.log('isImpliciteFunction: ', isImpliciteFunction);
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
-  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState<string[]>([]);
