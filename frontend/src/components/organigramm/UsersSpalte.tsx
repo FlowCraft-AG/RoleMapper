@@ -1,7 +1,7 @@
 'use client';
 
-import { Add, Delete } from '@mui/icons-material';
-import { Button, ListItemButton, Snackbar } from '@mui/material';
+import { Add, Delete, Search } from '@mui/icons-material';
+import { Button, ListItemButton, Snackbar, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -40,6 +40,8 @@ export default function UsersSpalte({
   console.log('selectedMitglieder: ', selectedMitglieder);
   console.log('isImpliciteFunction: ', isImpliciteFunction);
 
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
   const [errors] = useState<{ [key: string]: string | null }>({});
@@ -52,7 +54,25 @@ export default function UsersSpalte({
     undefined,
   );
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+      // Filtere Benutzer basierend auf der Suchanfrage
+      if (selectedFunction && selectedFunction.users) {
+        const lowercasedTerm = searchTerm.toLowerCase();
+        const filtered = selectedFunction.users.filter((user) =>
+          user.toLowerCase().includes(lowercasedTerm),
+        );
+        setFilteredUsers(filtered);
+      }
+    }, [searchTerm, selectedFunction]);
+
+      const handleSearchChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+      ) => {
+        setSearchTerm(event.target.value);
+      };
+
 
   useEffect(() => {
     async function fetchData() {
@@ -247,57 +267,91 @@ export default function UsersSpalte({
         message={snackbar.message}
         autoHideDuration={3000}
         onClose={() => setSnackbar({ open: false, message: '' })}
-          />
-          {!isImpliciteFunction && (
-              <Box
-                  sx={{
-                      position: 'sticky',
-                      top: 50, // Überschrift bleibt oben
-                      backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
-                      zIndex: 1,
-                      padding: 1,
-                  }}
-              >
+      />
 
-                  <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => setOpen(true)}
-                      sx={{ marginBottom: 2 }}
-                      startIcon={<Add />}
-                  >
-                      Benutzer hinzufügen
-                  </Button>
-              </Box>
-          )}
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 50, // Überschrift bleibt oben
+          backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
+          zIndex: 1,
+          padding: 1,
+          //   display: 'flex', // Flexbox aktivieren
+          //   alignItems: 'center', // Vertikal ausrichten
+          //   gap: 2, // Abstand zwischen Button und Suchfeld
+        }}
+      >
+        {!isImpliciteFunction && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpen(true)}
+            startIcon={<Add />}
+            sx={{
+              width: '100%', // Vollbreite
+              marginBottom: 2, // Abstand zum Textfeld
+              height: 40, // Einheitliche Höhe
+            }}
+          >
+            Benutzer hinzufügen
+          </Button>
+        )}
+
+        <TextField
+          fullWidth
+          variant="outlined"
+          size="small"
+          placeholder="Benutzer suchen..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          InputProps={{
+            startAdornment: (
+              <IconButton>
+                <Search />
+              </IconButton>
+            ),
+          }}
+          sx={{
+            height: 40, // Einheitliche Höhe
+            '.MuiOutlinedInput-root': {
+              height: '100%', // Input-Container passt sich an
+            },
+          }}
+        />
+      </Box>
 
       <List>
-        {!selectedFunction ||
-          (selectedFunction.users?.length > 0 &&
-            selectedFunction.users.map((userId: string) => (
-              <ListItemButton
-                key={userId}
-                sx={getListItemStyles(theme, selectedIndex === userId)}
-                onClick={() => handleViewUser(userId)}
-              >
-                    <ListItemText primary={userId} />
-                    {!isImpliciteFunction && (
-                        <Tooltip title="Benutzer entfernen">
-                            <IconButton
-                                edge="end"
-                                color="error"
-                                onClick={() => {
-                                    if (!isImpliciteFunction) {
-                                        handleRemoveUser(userId);
-                                    }
-                                }}
-                            >
-                                <Delete />
-                            </IconButton>
-                        </Tooltip>
-                    )}
-              </ListItemButton>
-            )))}
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((userId: string) => (
+            <ListItemButton
+              key={userId}
+              sx={getListItemStyles(theme, selectedIndex === userId)}
+              onClick={() => handleViewUser(userId)}
+            >
+              <ListItemText primary={userId} />
+              {/* Entfernen-Icon nur anzeigen, wenn die Funktion nicht implizit ist */}
+              {!isImpliciteFunction && (
+                <Tooltip title="Benutzer entfernen">
+                  <IconButton
+                    edge="end"
+                    color="error"
+                    onClick={() => {
+                      if (!isImpliciteFunction) {
+                        handleRemoveUser(userId);
+                      }
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </ListItemButton>
+          ))
+        ) : (
+          <Box sx={{ p: 2 }}>
+            <Alert severity="info">Keine Benutzer gefunden</Alert>
+          </Box>
+        )}
       </List>
       {/* Modal für Benutzer hinzufügen */}
       {!isImpliciteFunction && (
