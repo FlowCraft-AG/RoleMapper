@@ -151,7 +151,7 @@ jobs:
             --build-arg NODE_TLS_REJECT_UNAUTHORIZED=0 \
             --build-arg NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=rolemapper \
             --build-arg NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }} \
-            --build-arg NEXT_PUBLIC_KEYCLOAK_ISSUER=http://localhost:8880/realms/flowcraft \
+            --build-arg NEXT_PUBLIC_KEYCLOAK_ISSUER=http://keycloak:8080/realms/flowcraft \
             --build-arg NEXT_PUBLIC_BACKEND_SERVER_URL=https://backend:3000/graphql \
             --build-arg NEXT_PUBLIC_LOG_LEVEL=debug \
             --build-arg NEXT_PUBLIC_NODE_ENV=development \

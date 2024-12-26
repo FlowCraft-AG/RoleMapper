@@ -22,10 +22,6 @@ export const authOptions: AuthOptions = {
       clientId: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
       clientSecret: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET as string,
       issuer: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER as string,
-      //   issuer:
-      //     typeof window === 'undefined'
-      //       ? ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER // Backend (SSR)
-      //       : 'http://localhost:8880/realms/flowcraft', // Client
     }),
     CredentialsProvider({
       name: 'Credentials',

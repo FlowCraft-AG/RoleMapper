@@ -24,8 +24,8 @@ const ThemeProviderWrapper = ({ children }: { children: React.ReactNode }) => {
     divider: '#ff0000',
     custom: {
       navbar: {
-        primary: '#ffffff',
-        secondary: '#000000',
+        primary: '#000',
+        secondary: '#fff',
       },
       selected: '#ff0000',
       primary: '#ff0000',
