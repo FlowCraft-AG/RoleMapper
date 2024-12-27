@@ -20,11 +20,14 @@ import CustomTreeItem from '../customs/CustomTreeItem';
 import TransitionComponent from './TransitionComponent';
 
 interface OrgUnitRichTreeViewProps {
-    onSelect: (orgUnit: OrgUnitDTO) => void;
-    onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
+  onSelect: (orgUnit: OrgUnitDTO) => void;
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
-export default function OrgUnitsSpalte({ onSelect,onRemove }: OrgUnitRichTreeViewProps) {
+export default function OrgUnitsSpalte({
+  onSelect,
+  onRemove,
+}: OrgUnitRichTreeViewProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
@@ -226,8 +229,8 @@ export default function OrgUnitsSpalte({ onSelect,onRemove }: OrgUnitRichTreeVie
           item: CustomTreeItem as unknown as JSXElementConstructor<TreeItemProps>,
         }}
         slotProps={{
-            item: {
-              onRemove,
+          item: {
+            onRemove,
             refetch, // Weitergabe der Refetch-Methode an CustomTreeItem
             slots: { groupTransition: TransitionComponent },
           } as ExtendedSlotProps, // Erweiterter Typ
@@ -247,6 +250,6 @@ export default function OrgUnitsSpalte({ onSelect,onRemove }: OrgUnitRichTreeVie
 }
 
 interface ExtendedSlotProps extends TreeItem2Props {
-    refetch: () => Promise<void>; // Die refetch-Methode
-    onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
+  refetch: () => Promise<void>; // Die refetch-Methode
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }

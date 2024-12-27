@@ -22,8 +22,8 @@ interface DeleteConfirmationModalProps {
   itemId: string;
   childrenToDelete: ItemToRender[];
   refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
-    functionList: Function[];
-    onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
+  functionList: Function[];
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
 const DeleteConfirmationModal = ({
@@ -32,10 +32,9 @@ const DeleteConfirmationModal = ({
   itemId,
   childrenToDelete,
   refetch,
-    functionList,
-    onRemove,
+  functionList,
+  onRemove,
 }: DeleteConfirmationModalProps) => {
-  console.log('DeleteConfirmationModalProps: ', childrenToDelete);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
@@ -49,6 +48,17 @@ const DeleteConfirmationModal = ({
         message: 'Fehler beim Entfernen der Funktion.',
       });
     }
+  };
+
+  // Rekursive Funktion, um alle IDs (inkl. Kinder) zu sammeln
+  const collectAllIds = (item: ItemToRender): string[] => {
+    let ids = [item.itemId];
+    if (item.children && item.children.length > 0) {
+      for (const child of item.children) {
+        ids = ids.concat(collectAllIds(child));
+      }
+    }
+    return ids;
   };
 
   const removeOrgUnitRecursively = async (item: ItemToRender) => {
@@ -66,12 +76,13 @@ const DeleteConfirmationModal = ({
   const handleDelete = async () => {
     setLoading(true);
     try {
+      // Alle zu löschenden IDs sammeln
+      const allIds = [itemId, ...childrenToDelete.flatMap(collectAllIds)];
+
+      // Funktionen entfernen
       if (functionList.length > 0) {
         for (const func of functionList) {
-          const success = await handleRemoveFunction(func);
-          if (success) {
-            console.log('Function removed');
-          }
+          await handleRemoveFunction(func);
         }
       }
 
@@ -82,8 +93,8 @@ const DeleteConfirmationModal = ({
 
       // Lösche die Hauptorganisationseinheit
       const newOrgUnitList = await removeOrgUnit(itemId);
-        await refetch(newOrgUnitList); // Lade die neuesten Daten
-        onRemove('', '', itemId); // Entferne die Organisationseinheit aus dem Tree
+      await refetch(newOrgUnitList); // Lade die neuesten Daten
+      onRemove(allIds); // Übergebe alle IDs an `onRemove`
       onClose(); // Schließe das Modal
     } catch (error) {
       if (error instanceof Error) {

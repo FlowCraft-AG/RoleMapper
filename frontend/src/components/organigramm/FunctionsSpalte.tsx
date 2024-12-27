@@ -39,7 +39,7 @@ interface FunctionsColumnProps {
   functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
   onSelect: (functionInfo: FunctionInfo) => void;
   handleMitgliederClick: () => void;
-  onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
 export default function FunctionsSpalte({
@@ -85,13 +85,10 @@ export default function FunctionsSpalte({
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const refetch = (functionList: Function[]) => {
-    console.log('Refetching Functions');
     setFunctions(functionList);
   };
 
   useEffect(() => {
-    console.log('FunctionsSpalte: useEffect');
-    console.log('orgUnit:', orgUnit);
     if (orgUnit && orgUnit.id) {
       loadFunctions(orgUnit.id); // Hier wird `orgUnit.id` als Parameter übergeben
     }
@@ -131,7 +128,7 @@ export default function FunctionsSpalte({
     const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
     if (success) {
       setFunctions((prev) => prev.filter((f) => f._id !== func._id)); // Update den lokalen Zustand
-      onRemove('', func._id, '');
+      onRemove([func._id]); // Übergebe die ID an `onRemove`
     } else {
       setError('Fehler beim Entfernen der Funktion.');
     }
@@ -168,7 +165,7 @@ export default function FunctionsSpalte({
 
   const onEdit = (functionId: string) => {
     setOpenEditFunction(false);
-    onRemove('', functionId, '');
+    onRemove([functionId]); // Entferne die alte Funktion
   };
 
   return (
@@ -211,6 +208,12 @@ export default function FunctionsSpalte({
               selectedIndex === `mitglieder_${rootOrgUnit.name}`,
             )}
           >
+            <Tooltip title={'Mitglieder im ' + rootOrgUnit.name}>
+              <Box display="flex" alignItems="center">
+                {/*Das DynamicFeed-Icon, das dynamische, abgeleitete Gruppen repräsentiert.*/}
+                <DynamicFeed sx={{ marginRight: 1 }} color="action" />
+              </Box>
+            </Tooltip>
             <ListItemText
               primary={
                 rootOrgUnit.name === 'Rektorat'

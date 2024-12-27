@@ -21,7 +21,6 @@ import ChildFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal3';
 import CreateOrgUnitModal from '../modal/CreateOrgUnitModal';
 import DeleteConfirmationModal from '../modal/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
 import EditOrgUnitModal from '../modal/EditOrgUnitModal';
-import { on } from 'events';
 
 export interface ItemToRender {
   label: string;
@@ -35,7 +34,7 @@ interface ChildProp {
 }
 
 interface CustomTreeItemProps extends TreeItem2Props {
-  onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   refetch: () => Promise<void>; // Die refetch-Methode
   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>; // Optional, falls es verschachtelte Organisationseinheiten gibt
 }
@@ -114,7 +113,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     // Prüfe, ob Kinder Funktionen haben
     const childrenWithFunctions =
       await checkChildrenForFunctions(childrenWithNames);
-    console.log('childrenWithFunctions', childrenWithFunctions);
 
     if (childrenWithFunctions.length > 0) {
       setChildFunctions(childrenWithFunctions); // Funktionen der Kinder speichern
@@ -126,6 +124,14 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
   };
 
   const handleFinalDelete = async () => {
+    // Kombiniere die Funktionen der Organisationseinheit und der Kinder
+    const combinedFunctions = [
+      { orgUnit: label as string, functions: orgUnitFunctions },
+      ...childFunctions,
+    ];
+    setChildFunctions(combinedFunctions);
+
+    // Setze das Modal mit den kombinierten Funktionen
     setOpenConfirmDeleteModal(true); // Bestätigungs-Modal öffnen
   };
 
@@ -228,8 +234,8 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
       {/* Bestätigungsdialog für das Löschen */}
       <DeleteConfirmationModal
         open={openConfirmDeleteModal}
-              onClose={() => setOpenConfirmDeleteModal(false)}
-              onRemove={onRemove}
+        onClose={() => setOpenConfirmDeleteModal(false)}
+        onRemove={onRemove}
         itemId={itemId}
         childrenToDelete={childrenToDelete} // IDs rekursiv extrahieren
         functionList={childFunctions.flatMap((child) => child.functions)} // Funktionen der Kinder
