@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Modal, Skeleton, Typography, useTheme } from '@mui/material';
+import { Box, Modal, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
@@ -86,7 +86,7 @@ export default function OrganigrammPage() {
       setSelectedFunction(undefined);
       setSelectedUserId(undefined);
     }
-    if (ids.includes(selectedOrgUnit?.id!)) {
+    if (ids.includes(selectedOrgUnit?.id || '')) {
       setSelectedOrgUnit(undefined);
       setSelectedFunctionId(undefined);
       setSelectedFunction(undefined);
@@ -186,17 +186,13 @@ export default function OrganigrammPage() {
           >
             Funktionen
           </Typography>
-          {selectedOrgUnit ? (
-            <FunctionsSpalte
-              orgUnit={selectedOrgUnit}
-              onSelect={handleFunctionSelect}
-              rootOrgUnit={selectedRootOrgUnit}
-              handleMitgliederClick={handleMitgliederClick}
-              onRemove={handleRemove}
-            />
-          ) : (
-            <Skeleton variant="rectangular" width="100%" height={200} />
-          )}
+          <FunctionsSpalte
+            orgUnit={selectedOrgUnit}
+            onSelect={handleFunctionSelect}
+            rootOrgUnit={selectedRootOrgUnit}
+            handleMitgliederClick={handleMitgliederClick}
+            onRemove={handleRemove}
+          />
         </Box>
       )}
 
@@ -231,17 +227,13 @@ export default function OrganigrammPage() {
           >
             Benutzer
           </Typography>
-          {selectedFunctionId ? (
-            <UsersSpalte
-              selectedFunctionId={selectedFunctionId}
-              selectedMitglieder={selectedFunction}
-              onSelectUser={handleUserSelect}
-              onRemove={handleRemove}
-              isImpliciteFunction={isImpliciteFunction}
-            />
-          ) : (
-            <Skeleton variant="rectangular" width="100%" height={200} />
-          )}
+          <UsersSpalte
+            selectedFunctionId={selectedFunctionId}
+            selectedMitglieder={selectedFunction}
+            onSelectUser={handleUserSelect}
+            onRemove={handleRemove}
+            isImpliciteFunction={isImpliciteFunction}
+          />
         </Box>
       )}
 

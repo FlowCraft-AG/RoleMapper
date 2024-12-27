@@ -75,29 +75,29 @@ const DeleteConfirmationModal = ({
 
   const handleDelete = async () => {
     setLoading(true);
-      try {
-        // Alle zu löschenden IDs sammeln
-        const allIds = [itemId, ...childrenToDelete.flatMap(collectAllIds)];
+    try {
+      // Alle zu löschenden IDs sammeln
+      const allIds = [itemId, ...childrenToDelete.flatMap(collectAllIds)];
 
-        // Funktionen entfernen
-        if (functionList.length > 0) {
-          for (const func of functionList) {
-            await handleRemoveFunction(func);
-          }
+      // Funktionen entfernen
+      if (functionList.length > 0) {
+        for (const func of functionList) {
+          await handleRemoveFunction(func);
         }
+      }
 
-        // Lösche alle Kinder
-        for (const childId of childrenToDelete) {
-          await removeOrgUnitRecursively(childId); // Lösche die Kinder
-        }
+      // Lösche alle Kinder
+      for (const childId of childrenToDelete) {
+        await removeOrgUnitRecursively(childId); // Lösche die Kinder
+      }
 
-        // Lösche die Hauptorganisationseinheit
-        const newOrgUnitList = await removeOrgUnit(itemId);
-        await refetch(newOrgUnitList); // Lade die neuesten Daten
+      // Lösche die Hauptorganisationseinheit
+      const newOrgUnitList = await removeOrgUnit(itemId);
+      await refetch(newOrgUnitList); // Lade die neuesten Daten
 
-        onRemove(allIds); // Übergebe alle IDs an `onRemove`
-        onClose(); // Schließe das Modal
-      } catch (error) {
+      onRemove(allIds); // Übergebe alle IDs an `onRemove`
+      onClose(); // Schließe das Modal
+    } catch (error) {
       if (error instanceof Error) {
         setSnackbar({
           open: true,

@@ -56,7 +56,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
   const [orgUnitFunctions, setOrgUnitFunctions] = useState<Function[]>([]); // Funktionen der Organisationseinheit
   const [childFunctions, setChildFunctions] = useState<
     { orgUnit: string; functions: Function[] }[]
-        >([]); // Funktionen der Kinder
+  >([]); // Funktionen der Kinder
 
   const handleAdd = () => {
     setOpenCreateModal(true);
@@ -123,14 +123,17 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     handleFinalDelete();
   };
 
-    const handleFinalDelete = async () => {
-      // Kombiniere die Funktionen der Organisationseinheit und der Kinder
-        const combinedFunctions = [{ orgUnit: label as string, functions: orgUnitFunctions }, ...childFunctions];
-        setChildFunctions(combinedFunctions);
-        
-      // Setze das Modal mit den kombinierten Funktionen
-      setOpenConfirmDeleteModal(true); // Bestätigungs-Modal öffnen
-    };
+  const handleFinalDelete = async () => {
+    // Kombiniere die Funktionen der Organisationseinheit und der Kinder
+    const combinedFunctions = [
+      { orgUnit: label as string, functions: orgUnitFunctions },
+      ...childFunctions,
+    ];
+    setChildFunctions(combinedFunctions);
+
+    // Setze das Modal mit den kombinierten Funktionen
+    setOpenConfirmDeleteModal(true); // Bestätigungs-Modal öffnen
+  };
 
   // Prüfe, ob Kinder oder deren Nachkommen Funktionen haben
   const checkChildrenForFunctions = async (children: ItemToRender[]) => {
