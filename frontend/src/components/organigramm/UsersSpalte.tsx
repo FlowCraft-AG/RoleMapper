@@ -29,7 +29,7 @@ interface UsersColumnProps {
   selectedFunctionId: string;
   selectedMitglieder: FunctionInfo | undefined;
   onSelectUser: (userId: string) => void;
-  onRemove: (userId: string, functionId: string) => void;
+  onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
   isImpliciteFunction: boolean;
 }
 
@@ -123,7 +123,7 @@ export default function UsersSpalte({
         ...prev!,
         users: prev?.users.filter((id) => id !== userId) || [],
       }));
-      onRemove(userId, '');
+      onRemove(userId, '', '');
       setSnackbar({ open: true, message: 'Benutzer erfolgreich entfernt' });
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);

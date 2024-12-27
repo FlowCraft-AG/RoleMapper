@@ -77,7 +77,11 @@ export default function OrganigrammPage() {
     setSelectedUserId(userId);
   };
 
-  const handleRemove = (userId: string, functionId: string) => {
+  const handleRemove = (
+    userId: string,
+    functionId: string,
+    orgUnitId: string,
+  ) => {
     if (userId === selectedUserId) {
       setSelectedUserId(undefined);
     }
@@ -143,6 +147,7 @@ export default function OrganigrammPage() {
         </Typography>
         <OrgUnitsSpalte
           onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
+          onRemove={handleRemove}
         />
       </Box>
 

@@ -34,12 +34,13 @@ interface ChildProp {
 }
 
 interface CustomTreeItemProps extends TreeItem2Props {
+  onRemove: (userId: string, functionId: string, orgUnitId: string) => void; // Die onRemove-Methode
   refetch: () => Promise<void>; // Die refetch-Methode
   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>; // Optional, falls es verschachtelte Organisationseinheiten gibt
 }
 
 const CustomTreeItem = forwardRef(function CustomTreeItem(
-  { refetch, slots, slotProps, ...props }: CustomTreeItemProps,
+  { onRemove, refetch, slots, slotProps, ...props }: CustomTreeItemProps,
   ref: Ref<HTMLLIElement>,
 ) {
   const { itemId, label, children } = props;
@@ -227,6 +228,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
       <DeleteConfirmationModal
         open={openConfirmDeleteModal}
         onClose={() => setOpenConfirmDeleteModal(false)}
+        onRemove={onRemove}
         itemId={itemId}
         childrenToDelete={childrenToDelete} // IDs rekursiv extrahieren
         functionList={childFunctions.flatMap((child) => child.functions)} // Funktionen der Kinder
