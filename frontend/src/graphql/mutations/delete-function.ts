@@ -1,11 +1,11 @@
 import { gql } from '@apollo/client';
 
 export const DELETE_FUNCTIONS = gql`
-  mutation DeleteEntity($functionName: String) {
+  mutation DeleteEntity($functionId: String) {
     deleteEntity(
       input: {
         entity: MANDATES
-        filter: { field: functionName, operator: EQ, value: $functionName }
+        filter: { field: _id, operator: EQ, value: $functionId }
       }
     ) {
       success

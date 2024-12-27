@@ -1,0 +1,38 @@
+include:
+  - path: ../backend/compose.yml
+
+services:
+  frontend:
+    # pull_policy: always
+    # image: calebscript/role-mapper-frontend:2024.12.24
+    image: flowcraft/role-mapper-frontend:2024.12.24
+    ports:
+      - published: 4000
+        target: 4000
+    volumes:
+      - type: bind
+        source: ../../../frontend/logs
+        target: /opt/app/logs
+        read_only: false
+      - type: bind
+        source: ../../../.volumes/keys/certificate.crt
+        target: /opt/.volumes/keys/certificate.crt
+        read_only: true
+      - type: bind
+        source: ../../../.volumes/keys/key.pem
+        target: /opt/.volumes/keys/key.pem
+        read_only: true
+    depends_on:
+      backend:
+        condition: service_started
+    env_file: .env
+    hostname: frontend
+    container_name: rolemapper-frontend
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
