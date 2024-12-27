@@ -40,11 +40,11 @@ export const USERS_BY_FUNCTION = gql`
 `;
 
 export const FUNCTIONS_BY_ORG_UNIT = gql`
-  query GetData($functionId: String) {
+  query GetData($orgUnitId: String) {
     getData(
       input: {
         entity: MANDATES
-        filter: { field: orgUnit, operator: EQ, value: $functionId }
+        filter: { field: orgUnit, operator: EQ, value: $orgUnitId }
         sort: { field: functionName, direction: ASC }
       }
     ) {

@@ -1,12 +1,19 @@
 'use client';
 
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import theme from '../theme';
+import { useEffect } from 'react';
+import { useFacultyTheme } from '../theme/ThemeProviderWrapper';
 
 export default function Navigation() {
   const pathname = usePathname();
+  const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+
+  useEffect(() => {
+    console.log('Aktualisiertes Theme:', theme.palette);
+  }, [setFacultyTheme, theme.palette]);
 
   const navLinks = [
     { href: '/startseite', label: 'Startseite' },
@@ -25,7 +32,7 @@ export default function Navigation() {
         padding: '10px 20px',
         backgroundColor:
           theme.palette.custom?.selected || theme.palette.primary.main,
-        color: theme.palette.custom?.navbar.secondary || '#fff',
+        color: theme.palette.custom?.navbar?.secondary || '#fff',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
@@ -36,8 +43,8 @@ export default function Navigation() {
             style={{
               color:
                 pathname === link.href
-                  ? theme.palette.custom?.navbar.primary || '#000'
-                  : theme.palette.custom?.navbar.secondary || '#fff',
+                  ? theme.palette.custom?.navbar?.primary || '#000'
+                  : theme.palette.custom?.navbar?.secondary || '#fff',
               textDecoration: 'none',
               fontWeight: pathname === link.href ? 'bold' : 'normal',
             }}
@@ -51,8 +58,8 @@ export default function Navigation() {
         style={{
           color:
             pathname === '/login'
-              ? theme.palette.custom?.navbar.primary || '#000'
-              : theme.palette.custom?.navbar.secondary || '#fff',
+              ? theme.palette.custom?.navbar?.primary || '#000'
+              : theme.palette.custom?.navbar?.secondary || '#fff',
           textDecoration: 'none',
           fontWeight: pathname === '/login' ? 'bold' : 'normal',
         }}
