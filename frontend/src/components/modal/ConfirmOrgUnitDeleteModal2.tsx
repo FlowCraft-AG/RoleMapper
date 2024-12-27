@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { ItemToRender } from '../customs/CustomLabel';
+import { ItemToRender } from '../customs/CustomTreeItem';
 
 interface ConfirmDeleteModalProps {
   open: boolean;
@@ -44,7 +44,6 @@ function ConfirmDeleteModal({
       onClose={onClose}
       aria-labelledby="delete-confirmation-title"
       aria-describedby="delete-confirmation-description"
-      disableEscapeKeyDown={false}
       closeAfterTransition
       BackdropProps={{
         timeout: 500,
@@ -60,22 +59,23 @@ function ConfirmDeleteModal({
             bgcolor: 'background.paper',
             borderRadius: 2,
             p: 4,
-            width: 450,
+            width: '90%',
+            maxWidth: 600,
             maxHeight: '80vh', // Begrenzung der maximalen Höhe
-            overflowY: 'auto', // Aktiviert das Scrollen, wenn der Inhalt zu groß ist
+            overflowY: 'auto', // Aktiviert Scrollen bei großen Daten
             boxShadow: 24,
           }}
         >
           <Typography
             id="delete-confirmation-title"
             variant="h6"
-            sx={{ mb: 2, fontWeight: 'bold' }}
+            sx={{ mb: 3, fontWeight: 'bold' }}
           >
-            Löschen bestätigen
+            Löschung bestätigen
           </Typography>
-          <Typography id="delete-confirmation-description" sx={{ mb: 2 }}>
-            Diese Organisationseinheit hat folgende Untereinheiten, die
-            ebenfalls gelöscht werden:
+          <Typography id="delete-confirmation-description" sx={{ mb: 3 }}>
+            Diese Organisationseinheit hat folgende untergeordnete Einheiten,
+            die ebenfalls gelöscht werden:
           </Typography>
 
           {/* Liste der Kinder mit Aufklappfunktion */}
@@ -84,13 +84,27 @@ function ConfirmDeleteModal({
               <div key={child.itemId}>
                 <ListItemButton
                   onClick={() => handleToggle(child.itemId)}
-                  sx={{ display: 'list-item' }}
+                  sx={{
+                    display: 'list-item',
+                    bgcolor: expandedItems.includes(child.itemId)
+                      ? 'action.hover'
+                      : 'background.paper',
+                    borderRadius: 1,
+                    mb: 1,
+                  }}
                 >
                   <ListItemText
-                    primary={child.label}
+                    primary={
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: 'bold' }}
+                      >
+                        {child.label}
+                      </Typography>
+                    }
                     secondary={
                       child.children &&
-                      `Untereinheiten: ${child.children.length}`
+                      `${child.children.length} Untereinheiten`
                     }
                   />
                 </ListItemButton>
@@ -104,8 +118,23 @@ function ConfirmDeleteModal({
                   <List component="div" disablePadding>
                     {child.children &&
                       child.children.map((subChild) => (
-                        <ListItem key={subChild.itemId} sx={{ pl: 4 }}>
-                          <ListItemText primary={subChild.label} />
+                        <ListItem
+                          key={subChild.itemId}
+                          sx={{
+                            pl: 4,
+                            py: 1,
+                            bgcolor: 'background.default',
+                            mb: 1,
+                            borderRadius: 1,
+                          }}
+                        >
+                          <ListItemText
+                            primary={
+                              <Typography variant="body2">
+                                {subChild.label}
+                              </Typography>
+                            }
+                          />
                         </ListItem>
                       ))}
                   </List>
@@ -114,14 +143,19 @@ function ConfirmDeleteModal({
             ))}
           </List>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-            <Button variant="outlined" onClick={onClose} sx={{ minWidth: 120 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+            <Button
+              onClick={onClose}
+              variant="outlined"
+              color="secondary"
+              sx={{ minWidth: 120 }}
+            >
               Abbrechen
             </Button>
             <Button
+              onClick={onConfirm}
               variant="contained"
               color="error"
-              onClick={onConfirm}
               sx={{ minWidth: 120 }}
             >
               Weiter

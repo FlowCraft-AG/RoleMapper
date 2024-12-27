@@ -189,7 +189,7 @@ const EditOrgUnitModal = ({
               flexDirection: 'column',
               gap: 2,
               width: 400,
-                          boxShadow: 24,
+              boxShadow: 24,
               height: 300,
             }}
           >

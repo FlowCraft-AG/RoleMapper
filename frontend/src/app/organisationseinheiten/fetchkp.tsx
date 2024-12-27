@@ -95,6 +95,21 @@ export async function getOrgUnitById(orgUnitId: string): Promise<OrgUnit> {
   }
 }
 
+export async function checkForFunctions(orgUnitId: string): Promise<boolean> {
+  try {
+    logger.debug('orgUnitId %o', orgUnitId);
+    const { data } = await client.query({
+      query: FUNCTIONS_BY_ORG_UNIT,
+      variables: { orgUnitId },
+    });
+
+    return data.getData.data.length > 0;
+  } catch (error) {
+    console.error('Fehler bei der Abfrage von Funktionen:', error);
+    return false;
+  }
+}
+
 // Funktion zum Erstellen der Organisationseinheit
 export async function createOrgUnit(
   name: string,
@@ -203,6 +218,7 @@ export async function createImpliciteFunction({
       variables: { functionName, field, value, orgUnitId },
       refetchQueries: [
         { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+        { query: ORG_UNITS },
       ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
