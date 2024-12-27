@@ -290,10 +290,10 @@ export class WriteService {
         filter?: FilterInput,
         sort?: SortInput,
     ) {
-        this.#logger.debug('findData: functionName=%s, orgUnit=%s', functionName, orgUnitId);
+        this.#logger.debug('saveQuery: functionName=%s, orgUnit=%s', functionName, orgUnitId);
 
         this.#logger.debug(
-            'findData: entity=%s, filter=%o, pagination=%o, sort=%o',
+            'saveQuery: entity=%s, filter=%o, pagination=%o, sort=%o',
             entity,
             filter,
             sort,

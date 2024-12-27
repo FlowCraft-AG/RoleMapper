@@ -1,12 +1,11 @@
 'use client';
 
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from '@mui/material/styles';
 import { SessionProvider } from 'next-auth/react';
 import localFont from 'next/font/local';
 import React from 'react';
 import Navigation from '../components/Navigation';
-import theme from '../theme';
+import ThemeProviderWrapper from '../theme/ThemeProviderWrapper';
 import './globals.css';
 
 const geistSans = localFont({
@@ -33,13 +32,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <SessionProvider>
-          <ThemeProvider theme={theme}>
+        <ThemeProviderWrapper>
+          <SessionProvider>
+            {/* <ThemeProvider theme={theme}> */}
             <CssBaseline />
             <Navigation />
             {children}
-          </ThemeProvider>
-        </SessionProvider>
+            {/* </ThemeProvider> */}
+          </SessionProvider>
+        </ThemeProviderWrapper>
       </body>
     </html>
   );
