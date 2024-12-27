@@ -1,6 +1,5 @@
 'use client';
 
-import { useMutation, useQuery } from '@apollo/client';
 import {
   Autocomplete,
   Box,
@@ -19,52 +18,66 @@ import {
 } from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { Fragment, useState } from 'react';
-import * as createFunction from '../../graphql/mutations/create-function';
-import { USER_IDS } from '../../graphql/queries/get-users';
-import { User } from '../../types/user.type';
-import client from '../../lib/apolloClient';
+import { Fragment, useEffect, useState } from 'react';
+import {
+  createExplicitFunction,
+  fetchUserIds,
+} from '../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../types/function.type';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
   onClose: () => void;
   onBack: () => void;
-  orgUnit: string;
-  refetch: () => void;
+  orgUnitId: string;
+  refetch: (functionList: Function[]) => void;
 }
 
 const ExplicitFunctionModal = ({
   open,
   onClose,
   onBack,
-  orgUnit,
+  orgUnitId,
   refetch,
 }: ExplicitFunctionModalProps) => {
   const [functionName, setFunctionName] = useState('');
   const [users, setUsers] = useState<string[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
-    const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [loading, setLoading] = useState(false);
+  // Extrahieren der Benutzer-IDs aus der Serverseite
+  const [userIds, setUserIds] = useState<string[]>([]);
 
-  const [addUserToFunction] = useMutation(createFunction.CREATE_EXPLICITE_FUNCTIONS, {
-    client,
-  });
-
-  const { loading, error, data } = useQuery(USER_IDS, {
-    client,
-  });
+  // Funktion zum Abrufen der Benutzer von der Serverseite
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      const users = await fetchUserIds(); // Funktion von der Serverseite verwenden
+      setUserIds(users);
+    } catch (error) {
+      console.error('Fehler beim Laden der Benutzer-IDs:', error);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Laden der Benutzer-IDs',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Prepare options and group them by first letter
-  const options = data?.getData.data.map((user: User) => user.userId) || [];
+  // const options = data?.getData.data.map((user: User) => user.userId) || [];
+  const options = userIds;
 
-  const groupedOptions = options.reduce((acc: any, userId) => {
-    const firstLetter = userId[0].toUpperCase();
-    if (!acc[firstLetter]) {
-      acc[firstLetter] = [];
-    }
-    acc[firstLetter].push(userId);
-    return acc;
-  }, {});
+  //   const groupedOptions = options.reduce((acc: any, userId: string) => {
+  //     const firstLetter = userId[0].toUpperCase();
+  //     if (!acc[firstLetter]) {
+  //       acc[firstLetter] = [];
+  //     }
+  //     acc[firstLetter].push(userId);
+  //     return acc;
+  //   }, {});
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | null } = {};
@@ -79,7 +92,7 @@ const ExplicitFunctionModal = ({
       newErrors.functionName =
         'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
     }
-      console.log('users:', users);
+    console.log('users:', users);
 
     if (users.some((user) => !userIdRegex.test(user))) {
       newErrors.users =
@@ -91,30 +104,28 @@ const ExplicitFunctionModal = ({
   };
 
   const handleSave = async () => {
-    if (validateInput()) {
-      try {
-        await addUserToFunction({
-          variables: {
-            functionName,
-            orgUnit,
-            users,
-            isSingleUser,
-          },
-        });
-        refetch(); // Aktualisiere die Daten nach der Mutation
-        setSnackbar({
-          open: true,
-          message: 'Explizierte Funktion erfolgreich erstellt.',
-        });
-      } catch (err) {
-        console.error('Fehler beim Hinzufügen des Benutzers:', err);
-        setSnackbar({
-          open: true,
-          message: 'Fehler beim Hinzufügen des Benutzers.',
-        });
-      }
+    if (!validateInput()) return;
+
+    try {
+      const newFunctionList = await createExplicitFunction({
+        functionName,
+        orgUnitId,
+        users,
+        isSingleUser,
+      });
+      refetch(newFunctionList); // Aktualisiere die Daten nach der Mutation
+      setSnackbar({
+        open: true,
+        message: 'Explizierte Funktion erfolgreich erstellt.',
+      });
       resetFields(); // Eingabefelder zurücksetzen
       onClose();
+    } catch (err) {
+      console.error('Fehler beim Hinzufügen des Benutzers:', err);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Hinzufügen des Benutzers.',
+      });
     }
   };
 
@@ -125,21 +136,26 @@ const ExplicitFunctionModal = ({
     setIsSingleUser(false); // Zustand für den RadioButton zurücksetzen
   };
 
-    const GroupHeader = styled('div')(({ theme }) => ({
-      position: 'sticky',
-      top: '-8px',
-      padding: '4px 10px',
-      color: theme.palette.primary.main,
-      backgroundColor: lighten(theme.palette.primary.light, 0.85),
-      ...theme.applyStyles('dark', {
-        backgroundColor: darken(theme.palette.primary.main, 0.8),
-      }),
-    }));
+  const GroupHeader = styled('div')(({ theme }) => ({
+    position: 'sticky',
+    top: '-8px',
+    padding: '4px 10px',
+    color: theme.palette.primary.main,
+    backgroundColor: lighten(theme.palette.primary.light, 0.85),
+    ...theme.applyStyles('dark', {
+      backgroundColor: darken(theme.palette.primary.main, 0.8),
+    }),
+  }));
 
-    const GroupItems = styled('ul')({
-      padding: 0,
-    });
+  const GroupItems = styled('ul')({
+    padding: 0,
+  });
 
+  useEffect(() => {
+    if (open) {
+      loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
+    }
+  }, [open]);
 
   return (
     <>
@@ -199,9 +215,9 @@ const ExplicitFunctionModal = ({
                     ...params.InputProps,
                     endAdornment: (
                       <Fragment>
-                        {loading ? (
+                        {loading ?? (
                           <CircularProgress color="inherit" size={20} />
-                        ) : null}
+                        )}
                         {params.InputProps.endAdornment}
                       </Fragment>
                     ),
@@ -212,13 +228,16 @@ const ExplicitFunctionModal = ({
             multiple
             freeSolo
             value={users}
-            onChange={(_, value) => setUsers(value)}
+            onChange={(_, value) => {
+              setUsers(value);
+            }}
             renderOption={(props, option, { inputValue }) => {
               const matches = match(option, inputValue, { insideWords: true });
               const parts = parse(option, matches);
 
               return (
-                <li {...props}>
+                <li {...props} key={props.key}>
+                  {/* <li key={props.key}></li> */}
                   <div>
                     {parts.map((part, index) => (
                       <span

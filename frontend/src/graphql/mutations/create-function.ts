@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const CREATE_EXPLICITE_FUNCTIONS = gql`
   mutation CreateEntity(
     $functionName: String!
-    $orgUnit: String!
+    $orgUnitId: String!
     $users: [String!]!
     $isSingleUser: Boolean!
   ) {
@@ -12,7 +12,7 @@ export const CREATE_EXPLICITE_FUNCTIONS = gql`
         entity: MANDATES
         functionData: {
           functionName: $functionName
-          orgUnit: $orgUnit
+          orgUnit: $orgUnitId
           users: $users
           isSingleUser: $isSingleUser
         }
@@ -26,7 +26,7 @@ export const CREATE_EXPLICITE_FUNCTIONS = gql`
 `;
 
 export const CREATE_IMPLICITE_FUNCTIONS = gql`
-  mutation CreateEntity(
+  mutation Save(
     $functionName: String!
     $value: String
     $orgUnitId: ID!
@@ -40,6 +40,8 @@ export const CREATE_IMPLICITE_FUNCTIONS = gql`
         sort: { field: userId, direction: ASC }
       }
       orgUnitId: $orgUnitId
-    )
+    ) {
+      success
+    }
   }
 `;
