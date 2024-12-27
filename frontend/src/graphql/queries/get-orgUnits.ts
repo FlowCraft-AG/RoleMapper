@@ -37,3 +37,23 @@ export const ORG_UNITS_IDS = gql`
     }
   }
 `;
+
+export const ORG_UNIT_BY_ID = gql`
+  query GetData($id: String!) {
+    getData(
+      input: {
+        entity: ORG_UNITS
+        filter: { field: _id, operator: EQ, value: $id }
+      }
+    ) {
+      totalCount
+      data {
+        ... on OrgUnit {
+          _id
+          name
+          supervisor
+        }
+      }
+    }
+  }
+`;

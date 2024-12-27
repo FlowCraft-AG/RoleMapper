@@ -17,8 +17,12 @@ export class OrgUnit extends Document {
      * Der Name der Organisationseinheit.
      *
      * @prop {string} name - Der Name der Organisationseinheit. Dieses Feld ist erforderlich.
+     *                        Es darf Duplikate geben.
      */
-    @Prop({ required: true })
+    @Prop({
+        required: true,
+        // unique: true
+    })
     name!: string;
 
     /**
@@ -46,3 +50,8 @@ export type OrgUnitDocument = OrgUnit & Document;
 export const ORG_UNIT_SCHEMA = SchemaFactory.createForClass(OrgUnit);
 // versionKey deaktivieren
 ORG_UNIT_SCHEMA.set('versionKey', false);
+
+// Indexe setzen
+// ORG_UNIT_SCHEMA.index({ name: 1 }, { unique: true }); // Sicherstellen, dass 'name' eindeutig ist
+// Zusammengesetzter Index für parentId und name
+ORG_UNIT_SCHEMA.index({ parentId: 1, name: 1 }, { unique: true });

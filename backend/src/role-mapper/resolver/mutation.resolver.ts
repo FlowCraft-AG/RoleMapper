@@ -1,4 +1,5 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/operator-linebreak */
 /* eslint-disable security/detect-object-injection */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
@@ -67,6 +68,38 @@ export class MutationResolver {
         } catch (error) {
             this.#logger.error('createEntity: Error occurred: %o', error);
 
+            // Dynamische Fehlermeldungen basierend auf der Entity
+            let errorMessage = 'An error occurred during the operation.';
+            switch (entity) {
+                case 'USERS': {
+                    errorMessage = 'Ein Fehler ist beim Erstellen eines Benutzers aufgetreten.';
+
+                    break;
+                }
+                case 'MANDATES': {
+                    errorMessage = `Die Funktion "${functionData?.functionName}" existiert bereits oder konnte nicht erstellt werden.`;
+
+                    break;
+                }
+                case 'PROCESSES': {
+                    errorMessage = 'Ein Fehler ist beim Erstellen eines Prozesses aufgetreten.';
+
+                    break;
+                }
+                case 'ORG_UNITS': {
+                    errorMessage =
+                        'Ein Fehler ist beim Erstellen einer Organisationseinheit aufgetreten.';
+
+                    break;
+                }
+                case 'ROLES': {
+                    errorMessage = 'Ein Fehler ist beim Erstellen einer Rolle aufgetreten.';
+
+                    break;
+                }
+                // No default
+            }
+
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if ((error as any).name === 'ValidationError') {
                 throw new BadRequestException((error as Error).message); // Gibt die Validierungsfehlermeldung zurück
@@ -74,9 +107,7 @@ export class MutationResolver {
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (error instanceof Error && (error as any).code === DUPLICATE_KEY_ERROR_CODE) {
-                throw new ConflictException(
-                    `Die Funktion ${functionData?.functionName} existiert bereits.`,
-                );
+                throw new ConflictException(errorMessage); // Duplikatsfehler
             }
 
             return {
@@ -94,7 +125,6 @@ export class MutationResolver {
     @Mutation('updateEntity')
     async updateEntity(@Args('input') input: UpdateEntityInput): Promise<MutationPayload> {
         this.#logger.debug('updateEntity: input=%o', input);
-        // eslint-disable-next-line @stylistic/operator-linebreak
         const { entity, filter, userData, functionData, processData, orgUnitData, roleData } =
             input;
         try {
