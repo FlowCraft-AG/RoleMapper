@@ -100,7 +100,6 @@ const CreateOrgUnitModal = ({
         formData.supervisor || null,
         parentId,
       ); // Serverseitige Funktion zum Erstellen der Organisationseinheit
-      console.log('Organisationseinheit erfolgreich erstellt.');
       refetch(updatedOrgUnits); // Aktualisiere die Liste
       onClose();
       setFormData({ name: '', supervisor: '' });

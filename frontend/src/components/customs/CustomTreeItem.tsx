@@ -34,7 +34,7 @@ interface ChildProp {
 }
 
 interface CustomTreeItemProps extends TreeItem2Props {
-  onRemove: (userId: string, functionId: string, orgUnitId: string) => void; // Die onRemove-Methode
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   refetch: () => Promise<void>; // Die refetch-Methode
   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>; // Optional, falls es verschachtelte Organisationseinheiten gibt
 }
@@ -56,7 +56,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
   const [orgUnitFunctions, setOrgUnitFunctions] = useState<Function[]>([]); // Funktionen der Organisationseinheit
   const [childFunctions, setChildFunctions] = useState<
     { orgUnit: string; functions: Function[] }[]
-  >([]); // Funktionen der Kinder
+        >([]); // Funktionen der Kinder
 
   const handleAdd = () => {
     setOpenCreateModal(true);
@@ -113,7 +113,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     // Prüfe, ob Kinder Funktionen haben
     const childrenWithFunctions =
       await checkChildrenForFunctions(childrenWithNames);
-    console.log('childrenWithFunctions', childrenWithFunctions);
 
     if (childrenWithFunctions.length > 0) {
       setChildFunctions(childrenWithFunctions); // Funktionen der Kinder speichern
@@ -124,9 +123,14 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     handleFinalDelete();
   };
 
-  const handleFinalDelete = async () => {
-    setOpenConfirmDeleteModal(true); // Bestätigungs-Modal öffnen
-  };
+    const handleFinalDelete = async () => {
+      // Kombiniere die Funktionen der Organisationseinheit und der Kinder
+        const combinedFunctions = [{ orgUnit: label as string, functions: orgUnitFunctions }, ...childFunctions];
+        setChildFunctions(combinedFunctions);
+        
+      // Setze das Modal mit den kombinierten Funktionen
+      setOpenConfirmDeleteModal(true); // Bestätigungs-Modal öffnen
+    };
 
   // Prüfe, ob Kinder oder deren Nachkommen Funktionen haben
   const checkChildrenForFunctions = async (children: ItemToRender[]) => {

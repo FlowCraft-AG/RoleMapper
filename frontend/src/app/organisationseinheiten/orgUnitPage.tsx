@@ -77,15 +77,17 @@ export default function OrganigrammPage() {
     setSelectedUserId(userId);
   };
 
-  const handleRemove = (
-    userId: string,
-    functionId: string,
-    orgUnitId: string,
-  ) => {
-    if (userId === selectedUserId) {
+  const handleRemove = (ids: string[]) => {
+    if (ids.includes(selectedUserId!)) {
       setSelectedUserId(undefined);
     }
-    if (functionId === selectedFunctionId) {
+    if (ids.includes(selectedFunctionId!)) {
+      setSelectedFunctionId(undefined);
+      setSelectedFunction(undefined);
+      setSelectedUserId(undefined);
+    }
+    if (ids.includes(selectedOrgUnit?.id!)) {
+      setSelectedOrgUnit(undefined);
       setSelectedFunctionId(undefined);
       setSelectedFunction(undefined);
       setSelectedUserId(undefined);

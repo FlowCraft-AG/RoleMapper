@@ -21,7 +21,7 @@ import TransitionComponent from './TransitionComponent';
 
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnitDTO) => void;
-  onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
 export default function OrgUnitsSpalte({
@@ -251,5 +251,5 @@ export default function OrgUnitsSpalte({
 
 interface ExtendedSlotProps extends TreeItem2Props {
   refetch: () => Promise<void>; // Die refetch-Methode
-  onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
