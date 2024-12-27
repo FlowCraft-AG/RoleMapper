@@ -191,7 +191,7 @@ export class MutationResolver {
         @Args('input') input: DataInput, // Eingabedaten, die die Entität, Filter und Paginierung enthalten
     ) {
         this.#logger.debug(
-            'getEntityData: functionName=%s, orgUnit=%s, input=%o',
+            'saveQuery: functionName=%s, orgUnit=%s, input=%o',
             functionName,
             orgUnitId,
             input,

@@ -2,16 +2,20 @@ import { gql } from '@apollo/client';
 
 export const UPDATE_FUNCTIONS = gql`
   mutation CreateEntity(
-    $functionName: String!
-    $orgUnit: String!
-    $type: String!
-    $users: [String!]!
+    $value: String!
+    $newFunctionName: String
+    $newOrgUnit: String
+    $newIsSingleUser: Boolean
   ) {
     updateEntity(
       input: {
         entity: MANDATES
-        filters: [{ field: functionName, operator: EQ, value: "Student" }]
-        functionData: { functionName: "name2" }
+        filter: { field: functionName, operator: EQ, value: $value }
+        functionData: {
+          functionName: $newFunctionName
+          orgUnit: $newOrgUnit
+          isSingleUser: $newIsSingleUser
+        }
       }
     ) {
       success

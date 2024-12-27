@@ -26,8 +26,17 @@ type Userfilter =
     | 'orgUnit'
     | 'active'
     | 'courseOfStudy'
+    | 'examRegulation'
+    | 'costCenter'
+    | 'department'
+    | 'courseOfStudyUnique'
+    | 'courseOfStudyShort'
+    | ' courseOfStudyName'
+    | 'alias'
+    | 'kostenstelleNr'
     | 'level';
-type Mandatefilter = 'functionName' | 'orgUnit' | 'users' | 'isSingleUser';
+
+type Mandatefilter = 'functionName' | 'orgUnit' | 'users' | 'isSingleUser' | 'isImpliciteFunction';
 type OrgUnitfilter = 'name' | 'parentId' | 'supervisor';
 type Processfilter = 'processId' | 'name' | 'roles';
 type Rolefilter = 'roleId' | 'name';
