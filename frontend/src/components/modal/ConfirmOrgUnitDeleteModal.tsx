@@ -11,8 +11,21 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { ItemToRender } from '../customs/CustomLabel';
 
-function ConfirmDeleteModal({ open, onClose, childrenToDelete, onConfirm }) {
+interface ConfirmDeleteModalProps {
+  open: boolean;
+  onClose: () => void;
+  childrenToDelete: ItemToRender[];
+  onConfirm: () => void;
+}
+
+function ConfirmDeleteModal({
+  open,
+  onClose,
+  childrenToDelete,
+  onConfirm,
+}: ConfirmDeleteModalProps) {
   // Zustand, um die expandierten Kinder zu verfolgen
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
