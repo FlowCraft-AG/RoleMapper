@@ -3,9 +3,9 @@ include:
 
 services:
   frontend:
-    pull_policy: always
-    image: calebscript/role-mapper-frontend:2024.12.24
-    # image: flowcraft/role-mapper-frontend:2024.12.24
+    # pull_policy: always
+    # image: calebscript/role-mapper-frontend:2024.12.24
+    image: flowcraft/role-mapper-frontend:2024.12.24
     ports:
       - published: 4000
         target: 4000

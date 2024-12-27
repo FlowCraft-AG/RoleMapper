@@ -1,5 +1,6 @@
 export const ENV = {
-  NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_TLS_REJECT_UNAUTHORIZED ?? '0',
+  NODE_TLS_REJECT_UNAUTHORIZED:
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED ?? 'N/A',
   NEXT_PUBLIC_KEYCLOAK_CLIENT_ID:
     process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID ?? 'N/A',
   NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET:
@@ -7,13 +8,13 @@ export const ENV = {
   NEXT_PUBLIC_KEYCLOAK_ISSUER: process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER ?? 'N/A',
   NEXT_PUBLIC_BACKEND_SERVER_URL:
     process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ?? 'N/A',
-  NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? 'secret',
-  NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'http://localhost:4000',
-  NEXTAUTH_DEBUG: process.env.NEXTAUTH_DEBUG ?? 'true',
-  NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL ?? 'debug',
-  NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'development',
-  NEXT_PUBLIC_PINO_PRETTY: process.env.NEXT_PUBLIC_PINO_PRETTY ?? 'true',
-  NEXT_PUBLIC_LOG_DIR: process.env.NEXT_PUBLIC_LOG_DIR ?? 'logs',
+  NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? 'N/A',
+  NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'N/A',
+  NEXTAUTH_DEBUG: process.env.NEXTAUTH_DEBUG ?? 'N/A',
+  NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL ?? 'N/A',
+  NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'N/A',
+  NEXT_PUBLIC_PINO_PRETTY: process.env.NEXT_PUBLIC_PINO_PRETTY ?? 'N/A',
+  NEXT_PUBLIC_LOG_DIR: process.env.NEXT_PUBLIC_LOG_DIR ?? 'N/A',
 };
 
 export const logEnvironmentVariables = () => {
