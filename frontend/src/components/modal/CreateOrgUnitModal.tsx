@@ -170,6 +170,7 @@ const CreateOrgUnitModal = ({
               gap: 2,
               width: 400,
               boxShadow: 24,
+              height: 300,
             }}
           >
             <Typography variant="h6">Neue Organisationseinheit</Typography>

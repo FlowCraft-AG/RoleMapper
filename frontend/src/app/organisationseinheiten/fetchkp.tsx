@@ -17,7 +17,11 @@ import {
   GET_SAVED_DATA,
   USERS_BY_FUNCTION,
 } from '../../graphql/queries/get-functions';
-import { ORG_UNITS, ORG_UNITS_IDS } from '../../graphql/queries/get-orgUnits';
+import {
+  ORG_UNIT_BY_ID,
+  ORG_UNITS,
+  ORG_UNITS_IDS,
+} from '../../graphql/queries/get-orgUnits';
 import {
   GET_EMPLOYEES,
   MITGLIEDER,
@@ -72,6 +76,22 @@ export async function fetchEmployees() {
   } catch (error) {
     console.error('Fehler beim Laden der Benutzer:', error);
     throw new ApolloError({ errorMessage: 'Fehler beim Laden der Benutzer' });
+  }
+}
+
+export async function getOrgUnitById(orgUnitId: string): Promise<OrgUnit> {
+  try {
+    const { data } = await client.query({
+      query: ORG_UNIT_BY_ID,
+      variables: { id: orgUnitId },
+    });
+
+    return data.getData.data[0]; // Rückgabe der Organisationseinheit
+  } catch (error) {
+    console.error('Fehler beim Laden der Organisationseinheit:', error);
+    throw new ApolloError({
+      errorMessage: 'Fehler beim Laden der Organisationseinheit',
+    });
   }
 }
 
