@@ -63,26 +63,26 @@ export default function UsersSpalte({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-    const loadFunctions = useCallback(async (orgUnitId: string) => {
-        setLoading(true);
-        setError(null);
-        try {
-          if (selectedFunctionId === 'mitglieder') {
-            setSelectedFunction(selectedMitglieder);
-          } else if (isImpliciteFunction) {
-            const data = await fetchSavedData(selectedFunctionId);
-            setSelectedFunction(data);
-          } else {
-            const data = await fetchUsersByFunction(selectedFunctionId);
-            setSelectedFunction(data);
-          }
-        } catch (err) {
-          console.error('Fehler beim Laden der Benutzer:', err);
-          setError('Fehler beim Laden der Benutzer');
-        } finally {
-          setLoading(false);
-        }
-    },[selectedFunctionId, selectedMitglieder, isImpliciteFunction]); // Die Funktion wird nur beim ersten Laden ausgeführt
+  const loadFunctions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (selectedFunctionId === 'mitglieder') {
+        setSelectedFunction(selectedMitglieder);
+      } else if (isImpliciteFunction) {
+        const data = await fetchSavedData(selectedFunctionId);
+        setSelectedFunction(data);
+      } else {
+        const data = await fetchUsersByFunction(selectedFunctionId);
+        setSelectedFunction(data);
+      }
+    } catch (err) {
+      console.error('Fehler beim Laden der Benutzer:', err);
+      setError('Fehler beim Laden der Benutzer');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedFunctionId, selectedMitglieder, isImpliciteFunction]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   useEffect(() => {
     // Filtere Benutzer basierend auf der Suchanfrage
@@ -99,11 +99,11 @@ export default function UsersSpalte({
     setSearchTerm(event.target.value);
   };
 
-    useEffect(() => {
-      if (selectedFunctionId) {
-        loadFunctions(selectedFunctionId);
-      }
-    }, [selectedFunctionId, loadFunctions]);
+  useEffect(() => {
+    if (selectedFunctionId) {
+      loadFunctions();
+    }
+  }, [selectedFunctionId, loadFunctions]);
 
   const refetch = (functionInfo: FunctionInfo) => {
     console.log('Refetching Functions');
@@ -114,7 +114,11 @@ export default function UsersSpalte({
 
   const handleRemoveUser = async (userId: string) => {
     try {
-      await removeUserFromFunction(selectedFunction!.functionName, userId, selectedFunctionId);
+      await removeUserFromFunction(
+        selectedFunction!.functionName,
+        userId,
+        selectedFunctionId,
+      );
       setSelectedFunction((prev) => ({
         ...prev!,
         users: prev?.users.filter((id) => id !== userId) || [],
@@ -150,123 +154,6 @@ export default function UsersSpalte({
       </Box>
     );
   }
-  //   let selectedFunction: FunctionInfo | undefined;
-  //   if (selectedFunctionId === 'mitglieder') {
-  //     selectedFunction = selectedMitglieder;
-  //     console.log('Mitglieder: selectedFunction: ', selectedFunction);
-  //   } else if (isImpliciteFunction === true) {
-  //     // Funktion suchen
-  //     selectedFunction = savedData?.getSavedData;
-  //     console.log('Implizite Funktion: selectedFunction: ', selectedFunction);
-  //   } else {
-  //     // Funktion suchen
-  //     selectedFunction = usersData?.getData?.data?.[0];
-  //     console.log('Explizite Funktion: selectedFunction: ', selectedFunction);
-  //   }
-
-  //   // Verwende zwei Queries, eine für den normalen Fall und eine für das "implizite" Szenario
-  //   const {
-  //     loading: usersLoading,
-  //     error: usersError,
-  //     data: usersData,
-  //     refetch: refetch,
-  //   } = useQuery(USERS_BY_FUNCTION, {
-  //     client,
-  //     variables: { functionId: selectedFunctionId },
-  //     skip: selectedFunctionId === 'mitglieder' || isImpliciteFunction === true, // Query wird übersprungen
-  //   });
-
-  //   const {
-  //     loading: savedDataLoading,
-  //     error: savedDataError,
-  //     data: savedData,
-  //   } = useQuery(GET_SAVED_DATA, {
-  //     client,
-  //     variables: { id: selectedFunctionId },
-  //     skip:
-  //       selectedFunctionId === 'mitglieder' ||
-  //       isImpliciteFunction === false ||
-  //       isImpliciteFunction === undefined, // Query wird übersprungen, wenn implizit
-  //   });
-  //   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
-
-  //   const validateInput = () => {
-  //     const newErrors: { [key: string]: string | null } = {};
-  //     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
-
-  //     if (!newUserId.trim()) {
-  //       newErrors.userId = 'Der UserId darf nicht leer sein.';
-  //     }
-
-  //     // Validierung für `users`
-  //     if (!userIdRegex.test(newUserId)) {
-  //       newErrors.userId =
-  //         'Benutzernamen müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
-  //     }
-
-  //     setErrors(newErrors);
-  //     return Object.keys(newErrors).length === 0;
-  //   };
-
-  //   const handleAddUser = async () => {
-  //     if (!validateInput()) {
-  //       return;
-  //     }
-  //     try {
-  //       await addUserToFunction({
-  //         variables: {
-  //           functionName: selectedFunction?.functionName,
-  //           userId: newUserId,
-  //         },
-  //       });
-  //       refetch(); // Aktualisiere die Daten nach der Mutation
-  //       setNewUserId('');
-  //       setOpen(false);
-  //     } catch (err) {
-  //       if (err instanceof Error) {
-  //         setSnackbar({
-  //           open: true,
-  //           message: err.message,
-  //         });
-  //         const newErrors: { [key: string]: string | null } = {};
-  //         newErrors.userId = err.message;
-  //         setErrors(newErrors);
-  //         setNewUserId('');
-  //       } else {
-  //         setSnackbar({
-  //           open: true,
-  //           message: 'Fehler beim Speichern der Funktion.',
-  //         });
-  //       }
-  //     }
-  //   };
-
-  //   const handleRemoveUser = async (userId: string) => {
-  //     try {
-  //       await removeUserFromFunction({
-  //         variables: {
-  //           functionName: selectedFunction?.functionName,
-  //           userId,
-  //         },
-  //       });
-  //       refetch(); // Aktualisiere die Benutzerliste
-  //       onRemove(userId, '');
-  //       setSelectedIndex(undefined);
-  //       onSelectUser('');
-  //     } catch (err) {
-  //       if (err instanceof Error) {
-  //         setSnackbar({
-  //           open: true,
-  //           message: err.message,
-  //         });
-  //       } else {
-  //         setSnackbar({
-  //           open: true,
-  //           message: 'Fehler beim Speichern der Funktion.',
-  //         });
-  //       }
-  //     }
-  //   };
 
   return (
     <Box sx={{ minHeight: 352, minWidth: 250, p: 2 }}>
@@ -343,7 +230,8 @@ export default function UsersSpalte({
                   <IconButton
                     edge="end"
                     color="error"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       if (!isImpliciteFunction) {
                         handleRemoveUser(userId);
                       }
@@ -370,8 +258,8 @@ export default function UsersSpalte({
           newUserId={newUserId}
           setNewUserId={setNewUserId}
           refetch={refetch}
-                  functionName={selectedFunction?.functionName}
-                    functionId={selectedFunctionId}
+          functionName={selectedFunction?.functionName}
+          functionId={selectedFunctionId}
         />
       )}
     </Box>

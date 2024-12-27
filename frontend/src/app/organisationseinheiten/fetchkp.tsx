@@ -414,8 +414,8 @@ export async function fetchUsersByFunction(functionId: string) {
 
 export async function removeUserFromFunction(
   functionName: string,
-    userId: string,
-    functionId: string,
+  userId: string,
+  functionId: string,
 ) {
   try {
     const { data } = await client.mutate({
@@ -459,7 +459,11 @@ export async function fetchUserIds(): Promise<string[]> {
   }
 }
 
-export async function addUserToFunction(functionName: string, userId: string, functionId: string) {
+export async function addUserToFunction(
+  functionName: string,
+  userId: string,
+  functionId: string,
+) {
   try {
     await client.mutate({
       mutation: ADD_FUNCTIONS,

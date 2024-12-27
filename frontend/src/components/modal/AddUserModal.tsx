@@ -4,16 +4,22 @@ import {
   Autocomplete,
   Box,
   Button,
+  CircularProgress,
+  darken,
+  lighten,
   Modal,
   Snackbar,
+  styled,
   TextField,
 } from '@mui/material';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
 import React, { useEffect, useState } from 'react';
-import { FunctionInfo } from '../../types/function.type';
 import {
   addUserToFunction,
   fetchUserIds,
 } from '../../app/organisationseinheiten/fetchkp';
+import { FunctionInfo } from '../../types/function.type';
 
 interface AddUserModalProps {
   open: boolean;
@@ -22,8 +28,8 @@ interface AddUserModalProps {
   newUserId: string;
   setNewUserId: React.Dispatch<React.SetStateAction<string>>;
   refetch: (FunctionInfo: FunctionInfo) => void;
-    functionName: string | undefined;
-    functionId: string;
+  functionName: string | undefined;
+  functionId: string;
 }
 
 const AddUserModal: React.FC<AddUserModalProps> = ({
@@ -32,13 +38,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   newUserId,
   setNewUserId,
   refetch,
-    functionName,
-    functionId,
+  functionName,
+  functionId,
 }) => {
-  //   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
-  //   const { data } = useQuery(USER_IDS, {
-  //     client,
-  //   });
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [userIds, setUserIds] = useState<string[]>([]);
@@ -90,8 +92,12 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       return;
     }
     try {
-        const newUserList = await addUserToFunction(functionName!, newUserId, functionId);
-        console.log('newUserList:', newUserList);
+      const newUserList = await addUserToFunction(
+        functionName!,
+        newUserId,
+        functionId,
+      );
+      console.log('newUserList:', newUserList);
       console.log('Benutzer erfolgreich hinzugefügt');
       refetch(newUserList); // Aktualisiere die Daten nach der Mutation
       setNewUserId('');
@@ -111,8 +117,22 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   };
 
-  //   const options: string[] =
-  //     data?.getData.data.map((user: User) => user.userId) || [];
+  const options: string[] = userIds;
+
+  const GroupHeader = styled('div')(({ theme }) => ({
+    position: 'sticky',
+    top: '-8px',
+    padding: '4px 10px',
+    color: theme.palette.primary.main,
+    backgroundColor: lighten(theme.palette.primary.light, 0.85),
+    ...theme.applyStyles('dark', {
+      backgroundColor: darken(theme.palette.primary.main, 0.8),
+    }),
+  }));
+
+  const GroupItems = styled('ul')({
+    padding: 0,
+  });
 
   return (
     <>
@@ -136,30 +156,66 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
             p: 4,
           }}
         >
-          {/* <TextField
-            fullWidth
-            error={!!errors.userId}
-            helperText={errors.userId}
-            label="Benutzer-ID"
-            value={newUserId}
-            onChange={(e) => setNewUserId(e.target.value)}
-          /> */}
-
           <Autocomplete
-            options={userIds}
+            options={options}
             loading={loading}
+            groupBy={(option) => option[0].toUpperCase()}
+            getOptionLabel={(option) => option}
+            renderGroup={(params) => (
+              <li key={params.key}>
+                <GroupHeader>{params.group}</GroupHeader>
+                <GroupItems>{params.children}</GroupItems>
+              </li>
+            )}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Benutzer-ID"
-                placeholder="eingabe..."
+                label="Supervisor"
+                placeholder="Supervisor auswählen"
+                error={!!errors.supervisor}
+                helperText={errors.supervisor || ''}
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {loading && (
+                          <CircularProgress color="inherit" size={20} />
+                        )}
+                        {params.InputProps.endAdornment}
+                      </>
+                    ),
+                  },
+                }}
               />
             )}
             value={newUserId}
             onChange={(_, newValue) => setNewUserId(newValue || '')}
-            freeSolo // Erlaubt benutzerdefinierte Eingaben
-          />
+            renderOption={(props, option, { inputValue }) => {
+              const matches = match(option, inputValue, {
+                insideWords: true,
+              });
+              const parts = parse(option, matches);
 
+              return (
+                <li {...props} key={props.key}>
+                  {/* <li key={props.key}></li> */}
+                  <div>
+                    {parts.map((part, index) => (
+                      <span
+                        key={index}
+                        style={{
+                          fontWeight: part.highlight ? 700 : 400,
+                        }}
+                      >
+                        {part.text}
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              );
+            }}
+          />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Button variant="contained" color="primary" onClick={handleAddUser}>
               Hinzufügen

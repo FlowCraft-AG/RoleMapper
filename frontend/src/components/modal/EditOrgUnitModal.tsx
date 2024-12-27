@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   fetchEmployees,
   getOrgUnitById,
@@ -48,7 +48,7 @@ const EditOrgUnitModal = ({
   const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
 
   // Funktion zum Laden der Organisationseinheit
-  const loadOrgUnitData = async () => {
+  const loadOrgUnitData = useCallback(async () => {
     setLoading(true);
     try {
       const orgUnit = await getOrgUnitById(itemId); // API-Aufruf zum Laden der Organisationseinheit
@@ -61,13 +61,14 @@ const EditOrgUnitModal = ({
         open: true,
         message: 'Fehler beim Laden der Organisationseinheit.',
       });
+      console.error('Fehler beim Laden der Organisationseinheit:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [itemId]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
@@ -76,20 +77,21 @@ const EditOrgUnitModal = ({
       if (error instanceof Error) {
         setUserError(error.message);
         setSnackbar({ open: true, message: error.message });
+        console.error('Fehler beim Laden der Benutzer:', userError);
       } else {
         setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer.' });
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [userError]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   useEffect(() => {
     if (open) {
       loadOrgUnitData(); // Lade Daten der Organisationseinheit
       loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
     }
-  }, [open, itemId]);
+  }, [open, itemId, loadOrgUnitData, loadUsers]);
 
   const handleSave = async () => {
     if (!formData.name) {

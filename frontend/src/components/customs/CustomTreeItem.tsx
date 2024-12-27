@@ -49,7 +49,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
   const [openChildrenModal, setOpenChildrenModal] = useState(false); // modal 2
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false); // modal 4
 
-  const [hasChildrenModal, setHasChildrenModal] = useState(false);
   const [childrenToDelete, setChildrenToDelete] = useState<ItemToRender[]>([]);
   const [openEditModal, setOpenEditModal] = useState(false);
 
@@ -206,7 +205,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
       {/* Bestätigungsdialog für das Löschen bei Kindern */}
       <ConfirmDeleteModal
         open={openChildrenModal}
-        onClose={() => setHasChildrenModal(false)}
+        onClose={() => setOpenChildrenModal(false)}
         childrenToDelete={childrenToDelete}
         onConfirm={() => {
           setOpenChildrenModal(false);
@@ -230,9 +229,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
         onClose={() => setOpenConfirmDeleteModal(false)}
         itemId={itemId}
         childrenToDelete={childrenToDelete} // IDs rekursiv extrahieren
-        functionList={childFunctions.flatMap(
-          (child) => child.functions,
-        )} // Funktionen der Kinder
+        functionList={childFunctions.flatMap((child) => child.functions)} // Funktionen der Kinder
         refetch={refetch}
       />
     </>

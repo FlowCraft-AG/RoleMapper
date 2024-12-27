@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   createOrgUnit,
   fetchEmployees,
@@ -43,7 +43,7 @@ const CreateOrgUnitModal = ({
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
@@ -52,13 +52,14 @@ const CreateOrgUnitModal = ({
       if (error instanceof Error) {
         setUserError(error.message);
         setSnackbar({ open: true, message: error.message });
+        console.error('Fehler beim Laden der Benutzer:', userError);
       } else {
         setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer.' });
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [userError]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const handleCreate = async () => {
     // Name-Validierung: keine Sonderzeichen oder Zahlen, nur Buchstaben erlaubt
@@ -118,7 +119,7 @@ const CreateOrgUnitModal = ({
     if (open) {
       loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
     }
-  }, [open]);
+  }, [open, loadUsers]);
 
   const options: UserCredetials[] = userData;
 
