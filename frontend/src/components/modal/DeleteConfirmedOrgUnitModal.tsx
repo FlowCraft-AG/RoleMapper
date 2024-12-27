@@ -94,7 +94,6 @@ const DeleteConfirmationModal = ({
       // Lösche die Hauptorganisationseinheit
       const newOrgUnitList = await removeOrgUnit(itemId);
       await refetch(newOrgUnitList); // Lade die neuesten Daten
-
       onRemove(allIds); // Übergebe alle IDs an `onRemove`
       onClose(); // Schließe das Modal
     } catch (error) {
