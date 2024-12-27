@@ -1,22 +1,6 @@
 import { AddCircleOutline, DeleteForever, Edit } from '@mui/icons-material';
 import { IconButton, Stack, Tooltip, Typography } from '@mui/material';
 
-export interface ItemToRender {
-  label: string;
-  itemId: string;
-  id?: string; // Kann undefined sein
-  children?: ItemToRender[]; // Rekursive Definition für verschachtelte Kinder
-}
-
-// interface ChildProp {
-//   itemsToRender?: ItemToRender[]; // Optional, falls es fehlen könnte
-// }
-
-// interface CustomTreeItemProps extends TreeItem2Props {
-//   refetch: () => void;
-//   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>;
-// }
-
 export interface CustomLabelProps {
   children: React.ReactNode;
   className?: string;

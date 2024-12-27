@@ -17,7 +17,11 @@ import {
   GET_SAVED_DATA,
   USERS_BY_FUNCTION,
 } from '../../graphql/queries/get-functions';
-import { ORG_UNITS, ORG_UNITS_IDS } from '../../graphql/queries/get-orgUnits';
+import {
+  ORG_UNIT_BY_ID,
+  ORG_UNITS,
+  ORG_UNITS_IDS,
+} from '../../graphql/queries/get-orgUnits';
 import {
   GET_EMPLOYEES,
   MITGLIEDER,
@@ -72,6 +76,37 @@ export async function fetchEmployees() {
   } catch (error) {
     console.error('Fehler beim Laden der Benutzer:', error);
     throw new ApolloError({ errorMessage: 'Fehler beim Laden der Benutzer' });
+  }
+}
+
+export async function getOrgUnitById(orgUnitId: string): Promise<OrgUnit> {
+  try {
+    const { data } = await client.query({
+      query: ORG_UNIT_BY_ID,
+      variables: { id: orgUnitId },
+    });
+
+    return data.getData.data[0]; // Rückgabe der Organisationseinheit
+  } catch (error) {
+    console.error('Fehler beim Laden der Organisationseinheit:', error);
+    throw new ApolloError({
+      errorMessage: 'Fehler beim Laden der Organisationseinheit',
+    });
+  }
+}
+
+export async function checkForFunctions(orgUnitId: string): Promise<boolean> {
+  try {
+    logger.debug('orgUnitId %o', orgUnitId);
+    const { data } = await client.query({
+      query: FUNCTIONS_BY_ORG_UNIT,
+      variables: { orgUnitId },
+    });
+
+    return data.getData.data.length > 0;
+  } catch (error) {
+    console.error('Fehler bei der Abfrage von Funktionen:', error);
+    return false;
   }
 }
 
@@ -183,6 +218,7 @@ export async function createImpliciteFunction({
       variables: { functionName, field, value, orgUnitId },
       refetchQueries: [
         { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+        { query: ORG_UNITS },
       ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
@@ -379,6 +415,7 @@ export async function fetchUsersByFunction(functionId: string) {
 export async function removeUserFromFunction(
   functionName: string,
   userId: string,
+  functionId: string,
 ) {
   try {
     const { data } = await client.mutate({
@@ -387,7 +424,12 @@ export async function removeUserFromFunction(
         functionName,
         userId,
       },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      refetchQueries: [
+        {
+          query: USERS_BY_FUNCTION,
+          variables: { functionId },
+        },
+      ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
 
@@ -417,14 +459,20 @@ export async function fetchUserIds(): Promise<string[]> {
   }
 }
 
-export async function addUserToFunction(functionName: string, userId: string) {
+export async function addUserToFunction(
+  functionName: string,
+  userId: string,
+  functionId: string,
+) {
   try {
     await client.mutate({
       mutation: ADD_FUNCTIONS,
       variables: { functionName, userId },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      refetchQueries: [{ query: USERS_BY_FUNCTION, variables: { functionId } }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
+    const updatedFunctionList = await fetchUsersByFunction(functionId);
+    return updatedFunctionList; // Rückgabe der neuen Funktion
   } catch (error) {
     console.error('Fehler beim Hinzufügen des Benutzers:', error);
     throw new Error('Fehler beim Hinzufügen des Benutzers');

@@ -1,18 +1,20 @@
 import {
+  Autocomplete,
   Box,
   Button,
   CircularProgress,
+  darken,
   Fade,
-  FormControl,
-  InputLabel,
-  MenuItem,
+  lighten,
   Modal,
-  Select,
   Snackbar,
+  styled,
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
+import { useCallback, useEffect, useState } from 'react';
 import {
   createOrgUnit,
   fetchEmployees,
@@ -38,9 +40,10 @@ const CreateOrgUnitModal = ({
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
+  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
@@ -49,27 +52,49 @@ const CreateOrgUnitModal = ({
       if (error instanceof Error) {
         setUserError(error.message);
         setSnackbar({ open: true, message: error.message });
+        console.error('Fehler beim Laden der Benutzer:', userError);
       } else {
         setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer.' });
       }
     } finally {
       setLoading(false);
     }
-  };
-
-  // Regular Expression für ObjectId Validierung
-  const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
+  }, [userError]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const handleCreate = async () => {
-    if (!formData.name || /\d/.test(formData.name)) {
-      setSnackbar({ open: true, message: 'Name darf keine Zahlen enthalten.' });
+    // Name-Validierung: keine Sonderzeichen oder Zahlen, nur Buchstaben erlaubt
+    const nameRegex = /^[a-zA-ZäöüÄÖÜß]+$/; // Optional: deutsche Umlaute zulassen
+    if (!formData.name || !nameRegex.test(formData.name)) {
+      setSnackbar({
+        open: true,
+        message:
+          'Name darf nur Buchstaben enthalten und keine Sonderzeichen oder Zahlen.',
+      });
       return;
     }
+
+    // Supervisor-Validierung: genau 8 Zeichen, erste 4 Kleinbuchstaben, letzte 4 Ziffern
+    //const supervisorRegex = /^[a-z]{4}[0-9]{4}$/;
+    // Regular Expression für ObjectId Validierung
+    const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
     if (formData.supervisor && !isValidObjectId(formData.supervisor)) {
-      alert('Supervisor darf nur Buchstaben enthalten.');
+      setSnackbar({
+        open: true,
+        message:
+          'Supervisor-ID muss aus genau 8 Zeichen bestehen: 4 Kleinbuchstaben gefolgt von 4 Ziffern.',
+      });
       return;
     }
+
     try {
+      console.log(
+        'Erstelle Organisationseinheit...  mit Name:',
+        formData.name,
+        'Supervisor:',
+        formData.supervisor,
+        'ParentId:',
+        parentId,
+      );
       const updatedOrgUnits = await createOrgUnit(
         formData.name,
         formData.supervisor || null,
@@ -94,7 +119,24 @@ const CreateOrgUnitModal = ({
     if (open) {
       loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
     }
-  }, [open]);
+  }, [open, loadUsers]);
+
+  const options: UserCredetials[] = userData;
+
+  const GroupHeader = styled('div')(({ theme }) => ({
+    position: 'sticky',
+    top: '-8px',
+    padding: '4px 10px',
+    color: theme.palette.primary.main,
+    backgroundColor: lighten(theme.palette.primary.light, 0.85),
+    ...theme.applyStyles('dark', {
+      backgroundColor: darken(theme.palette.primary.main, 0.8),
+    }),
+  }));
+
+  const GroupItems = styled('ul')({
+    padding: 0,
+  });
 
   return (
     <>
@@ -128,6 +170,8 @@ const CreateOrgUnitModal = ({
               flexDirection: 'column',
               gap: 2,
               width: 400,
+              boxShadow: 24,
+              height: 300,
             }}
           >
             <Typography variant="h6">Neue Organisationseinheit</Typography>
@@ -139,45 +183,75 @@ const CreateOrgUnitModal = ({
               }
               required
             />
-            <FormControl fullWidth>
-              <InputLabel id="select-supervisor-label">Supervisor</InputLabel>
-              <Select
-                labelId="select-supervisor-label"
-                value={formData.supervisor}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    supervisor: e.target.value,
-                  }))
-                }
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 300, // Maximale Höhe des Menüs
-                      overflowY: 'auto', // Scrollbar für das Menü aktivieren
+            <Autocomplete
+              options={options}
+              loading={loading}
+              groupBy={(option) => option.userId[0].toUpperCase()}
+              getOptionLabel={(option) => option.userId}
+              renderGroup={(params) => (
+                <li key={params.key}>
+                  <GroupHeader>{params.group}</GroupHeader>
+                  <GroupItems>{params.children}</GroupItems>
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Supervisor"
+                  placeholder="Supervisor auswählen"
+                  error={!!errors.supervisor}
+                  helperText={errors.supervisor || ''}
+                  slotProps={{
+                    input: {
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {loading && (
+                            <CircularProgress color="inherit" size={20} />
+                          )}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
                     },
-                  },
-                }}
-                sx={{
-                  maxHeight: 300, // Maximale Höhe des Select
-                  overflowY: 'auto', // Scrollbar für den Fall, dass die Liste zu lang ist
-                }}
-              >
-                {loading ? (
-                  <MenuItem value="">
-                    <CircularProgress size={24} />
-                  </MenuItem>
-                ) : userError ? (
-                  <MenuItem value="">Fehler beim Laden der Benutzer</MenuItem>
-                ) : (
-                  userData.map((user: UserCredetials) => (
-                    <MenuItem key={user._id} value={user._id}>
-                      {user.userId}
-                    </MenuItem>
-                  ))
-                )}
-              </Select>
-            </FormControl>
+                  }}
+                />
+              )}
+              value={
+                options.find((user) => user._id === formData.supervisor) || null
+              } // Supervisor über _id suchen
+              onChange={(_, value) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  supervisor: value?._id || '',
+                }));
+                // Fehler zurücksetzen, wenn eine Auswahl getroffen wird
+                setErrors((prev) => ({ ...prev, supervisor: null }));
+              }}
+              renderOption={(props, option, { inputValue }) => {
+                const matches = match(option.userId, inputValue, {
+                  insideWords: true,
+                });
+                const parts = parse(option.userId, matches);
+
+                return (
+                  <li {...props} key={props.key}>
+                    {/* <li key={props.key}></li> */}
+                    <div>
+                      {parts.map((part, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            fontWeight: part.highlight ? 700 : 400,
+                          }}
+                        >
+                          {part.text}
+                        </span>
+                      ))}
+                    </div>
+                  </li>
+                );
+              }}
+            />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button variant="outlined" onClick={onClose}>
                 Abbrechen

@@ -116,13 +116,6 @@ export default function FunctionsSpalte({
   const filteredFunctions: Function[] =
     functions.filter((func: Function) => func.orgUnit === orgUnit.id) || [];
 
-  if (functions.length === 0 && orgUnit.hasMitglieder === undefined)
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="info">Keine Funktionen verfügbar</Alert>
-      </Box>
-    );
-
   // Klick-Handler für eine Funktion oder "Mitglieder"
   const handleClick = (func: Function | string) => {
     if (typeof func === 'string') {
@@ -199,6 +192,12 @@ export default function FunctionsSpalte({
           Funktion hinzufügen
         </Button>
       </Box>
+
+      {functions.length === 0 && (
+        <Box sx={{ p: 2 }}>
+          <Alert severity="info">Keine Funktionen verfügbar</Alert>
+        </Box>
+      )}
 
       {rootOrgUnit && rootOrgUnit.hasMitglieder && (
         <List>
