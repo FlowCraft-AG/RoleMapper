@@ -39,7 +39,7 @@ interface FunctionsColumnProps {
   functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
   onSelect: (functionInfo: FunctionInfo) => void;
   handleMitgliederClick: () => void;
-  onRemove: (userId: string, functionId: string) => void;
+  onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
 }
 
 export default function FunctionsSpalte({
@@ -131,7 +131,7 @@ export default function FunctionsSpalte({
     const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
     if (success) {
       setFunctions((prev) => prev.filter((f) => f._id !== func._id)); // Update den lokalen Zustand
-      onRemove('', func._id);
+      onRemove('', func._id, '');
     } else {
       setError('Fehler beim Entfernen der Funktion.');
     }
@@ -168,7 +168,7 @@ export default function FunctionsSpalte({
 
   const onEdit = (functionId: string) => {
     setOpenEditFunction(false);
-    onRemove('', functionId);
+    onRemove('', functionId, '');
   };
 
   return (

@@ -21,6 +21,7 @@ import ChildFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal3';
 import CreateOrgUnitModal from '../modal/CreateOrgUnitModal';
 import DeleteConfirmationModal from '../modal/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
 import EditOrgUnitModal from '../modal/EditOrgUnitModal';
+import { on } from 'events';
 
 export interface ItemToRender {
   label: string;
@@ -34,12 +35,13 @@ interface ChildProp {
 }
 
 interface CustomTreeItemProps extends TreeItem2Props {
+  onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
   refetch: () => Promise<void>; // Die refetch-Methode
   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>; // Optional, falls es verschachtelte Organisationseinheiten gibt
 }
 
 const CustomTreeItem = forwardRef(function CustomTreeItem(
-  { refetch, slots, slotProps, ...props }: CustomTreeItemProps,
+  { onRemove, refetch, slots, slotProps, ...props }: CustomTreeItemProps,
   ref: Ref<HTMLLIElement>,
 ) {
   const { itemId, label, children } = props;
@@ -226,7 +228,8 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
       {/* Bestätigungsdialog für das Löschen */}
       <DeleteConfirmationModal
         open={openConfirmDeleteModal}
-        onClose={() => setOpenConfirmDeleteModal(false)}
+              onClose={() => setOpenConfirmDeleteModal(false)}
+              onRemove={onRemove}
         itemId={itemId}
         childrenToDelete={childrenToDelete} // IDs rekursiv extrahieren
         functionList={childFunctions.flatMap((child) => child.functions)} // Funktionen der Kinder

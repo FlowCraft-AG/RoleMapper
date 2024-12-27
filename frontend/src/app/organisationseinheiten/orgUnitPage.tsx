@@ -77,11 +77,17 @@ export default function OrganigrammPage() {
     setSelectedUserId(userId);
   };
 
-  const handleRemove = (userId: string, functionId: string) => {
+  const handleRemove = (userId: string, functionId: string, orgUnitId: string) => {
     if (userId === selectedUserId) {
       setSelectedUserId(undefined);
     }
     if (functionId === selectedFunctionId) {
+      setSelectedFunctionId(undefined);
+      setSelectedFunction(undefined);
+      setSelectedUserId(undefined);
+    }
+    if (orgUnitId === selectedOrgUnit?.id) {
+      setSelectedOrgUnit(undefined);
       setSelectedFunctionId(undefined);
       setSelectedFunction(undefined);
       setSelectedUserId(undefined);
@@ -121,7 +127,8 @@ export default function OrganigrammPage() {
           Organisationseinheiten
         </Typography>
         <OrgUnitsSpalte
-          onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
+                  onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
+                    onRemove={handleRemove}
         />
       </Box>
 

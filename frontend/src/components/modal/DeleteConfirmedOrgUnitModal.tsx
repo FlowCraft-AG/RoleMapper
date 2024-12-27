@@ -22,7 +22,8 @@ interface DeleteConfirmationModalProps {
   itemId: string;
   childrenToDelete: ItemToRender[];
   refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
-  functionList: Function[];
+    functionList: Function[];
+    onRemove: (userId: string, functionId: string, orgUnitId: string) => void;
 }
 
 const DeleteConfirmationModal = ({
@@ -31,7 +32,8 @@ const DeleteConfirmationModal = ({
   itemId,
   childrenToDelete,
   refetch,
-  functionList,
+    functionList,
+    onRemove,
 }: DeleteConfirmationModalProps) => {
   console.log('DeleteConfirmationModalProps: ', childrenToDelete);
   const [loading, setLoading] = useState(false);
@@ -80,7 +82,8 @@ const DeleteConfirmationModal = ({
 
       // Lösche die Hauptorganisationseinheit
       const newOrgUnitList = await removeOrgUnit(itemId);
-      await refetch(newOrgUnitList); // Lade die neuesten Daten
+        await refetch(newOrgUnitList); // Lade die neuesten Daten
+        onRemove('', '', itemId); // Entferne die Organisationseinheit aus dem Tree
       onClose(); // Schließe das Modal
     } catch (error) {
       if (error instanceof Error) {
