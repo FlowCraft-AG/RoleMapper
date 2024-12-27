@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Modal, Typography, useTheme } from '@mui/material';
+import { Box, Modal, Skeleton, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
@@ -184,13 +184,17 @@ export default function OrganigrammPage() {
           >
             Funktionen
           </Typography>
-          <FunctionsSpalte
-            orgUnit={selectedOrgUnit}
-            onSelect={handleFunctionSelect}
-            rootOrgUnit={selectedRootOrgUnit}
-            handleMitgliederClick={handleMitgliederClick}
-            onRemove={handleRemove}
-          />
+          {selectedOrgUnit ? (
+            <FunctionsSpalte
+              orgUnit={selectedOrgUnit}
+              onSelect={handleFunctionSelect}
+              rootOrgUnit={selectedRootOrgUnit}
+              handleMitgliederClick={handleMitgliederClick}
+              onRemove={handleRemove}
+            />
+          ) : (
+            <Skeleton variant="rectangular" width="100%" height={200} />
+          )}
         </Box>
       )}
 
@@ -225,13 +229,17 @@ export default function OrganigrammPage() {
           >
             Benutzer
           </Typography>
-          <UsersSpalte
-            selectedFunctionId={selectedFunctionId}
-            selectedMitglieder={selectedFunction}
-            onSelectUser={handleUserSelect}
-            onRemove={handleRemove}
-            isImpliciteFunction={isImpliciteFunction}
-          />
+          {selectedFunctionId ? (
+            <UsersSpalte
+              selectedFunctionId={selectedFunctionId}
+              selectedMitglieder={selectedFunction}
+              onSelectUser={handleUserSelect}
+              onRemove={handleRemove}
+              isImpliciteFunction={isImpliciteFunction}
+            />
+          ) : (
+            <Skeleton variant="rectangular" width="100%" height={200} />
+          )}
         </Box>
       )}
 
