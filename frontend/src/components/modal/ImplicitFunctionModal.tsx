@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/client';
 import {
   Box,
   Button,
@@ -12,8 +11,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { CREATE_IMPLICITE_FUNCTIONS } from '../../graphql/mutations/create-function';
-import { client } from '../../lib/apolloClient';
+import { createImpliciteFunction } from '../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../types/function.type';
 import { getEnumValues } from '../../types/user.type';
 
 interface ImplicitFunctionModalProps {
@@ -21,7 +20,7 @@ interface ImplicitFunctionModalProps {
   onClose: () => void;
   onBack: () => void;
   orgUnitId: string;
-  refetch: () => void;
+  refetch: (functionList: Function[]) => void; // Callback zur Aktualisierung der Funktionliste
 }
 
 const ImplicitFunctionModal = ({
@@ -36,8 +35,6 @@ const ImplicitFunctionModal = ({
   const [value, setValue] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-
-  const [createFunction] = useMutation(CREATE_IMPLICITE_FUNCTIONS, { client });
 
   // Extrahieren der Enum-Werte des UserAttributes
   const availableFields = getEnumValues(); // Hier erhalten wir alle Attributnamen des Enums
@@ -74,15 +71,13 @@ const ImplicitFunctionModal = ({
       setErrors(newErrors);
     } else {
       try {
-        await createFunction({
-          variables: {
-            functionName,
-            field,
-            value,
-            orgUnitId,
-          },
+        const newFunction = await createImpliciteFunction({
+          functionName,
+          orgUnitId,
+          field,
+          value,
         });
-        refetch(); // Aktualisiere die Daten nach der Mutation
+        refetch(newFunction); // Aktualisiere die Liste
         setSnackbar({
           open: true,
           message: 'Implizierte Funktion erfolgreich erstellt.',

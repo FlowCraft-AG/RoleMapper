@@ -156,7 +156,7 @@ export default function SignInPage() {
         color="text.secondary"
         sx={{ mt: 4 }}
       >
-        © {new Date().getFullYear()} H-KA. Alle Rechte vorbehalten.
+        © {new Date().getFullYear()} FlowCraft. Alle Rechte vorbehalten.
       </Typography>
     </Container>
   );

@@ -9,19 +9,11 @@ import {
   useState,
 } from 'react';
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
-import { CustomLabel } from '../customs/CustomLabel';
+import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';
 import ConfirmDeleteModal from '../modal/ConfirmOrgUnitDeleteModal';
 import CreateOrgUnitModal from '../modal/CreateOrgUnitModal';
 import DeleteConfirmationModal from '../modal/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
 import EditOrgUnitModal from '../modal/EditOrgUnitModal';
-
-interface CustomLabelProps {
-  children: string;
-  id: string;
-  onAdd: (e: MouseEvent<HTMLButtonElement>) => void;
-  onDelete: (e: MouseEvent<HTMLButtonElement>) => void;
-  onEdit: (e: MouseEvent<HTMLButtonElement>) => void;
-}
 
 export interface ItemToRender {
   label: string;
@@ -35,8 +27,8 @@ interface ChildProp {
 }
 
 interface CustomTreeItemProps extends TreeItem2Props {
-  refetch: () => void;
-  children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>;
+  refetch: () => Promise<void>; // Die refetch-Methode
+  children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>; // Optional, falls es verschachtelte Organisationseinheiten gibt
 }
 
 const CustomTreeItem = forwardRef(function CustomTreeItem(
@@ -76,19 +68,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     setOpenEditModal(true); // Modal öffnen
   };
 
-  //   const [deleteOrgUnit] = useMutation(DELETE_ORG_UNIT, { client });
-
-  //   const collectAllIds = (items: ItemToRender[]): string[] => {
-  //     const ids: string[] = [];
-  //     items.forEach((item) => {
-  //       ids.push(item.itemId); // ID hinzufügen
-  //       if (item.children && item.children.length > 0) {
-  //         ids.push(...collectAllIds(item.children)); // Rekursiv Kinder-IDs sammeln
-  //       }
-  //     });
-  //     return ids;
-  //   };
-
   return (
     <>
       <StyledTreeItem
@@ -114,8 +93,8 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
       <CreateOrgUnitModal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        refetch={refetch}
         parentId={itemId}
+        refetch={refetch}
       />
 
       {/* Das ausgelagerte Modal für die Bearbeitung */}

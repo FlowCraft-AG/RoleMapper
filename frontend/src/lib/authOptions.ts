@@ -6,18 +6,14 @@ import KeycloakProvider, {
 } from 'next-auth/providers/keycloak';
 import { OAuthConfig } from 'next-auth/providers/oauth';
 import { LOGIN, REFRESH_TOKEN } from '../graphql/mutations/auth';
-import {
-  ENV,
-  logEnvironmentVariables,
-  validateEnvironmentVariables,
-} from '../utils/env';
+import { ENV, logEnvironmentVariables } from '../utils/env';
 import { getLogger } from '../utils/logger';
-import { serverClient } from './apolloClient';
+import client from './apolloClient';
 
 const logger = getLogger('authOptions');
 
 logEnvironmentVariables();
-validateEnvironmentVariables();
+// validateEnvironmentVariables();
 
 export const authOptions: AuthOptions = {
   secret: ENV.NEXTAUTH_SECRET || 'development-secret',
@@ -25,7 +21,7 @@ export const authOptions: AuthOptions = {
     KeycloakProvider({
       clientId: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
       clientSecret: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET as string,
-      issuer: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER,
+      issuer: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER as string,
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -39,7 +35,7 @@ export const authOptions: AuthOptions = {
           password: '',
         };
         try {
-          const { data } = await serverClient.mutate({
+          const { data } = await client.mutate({
             mutation: LOGIN,
             variables: { username, password },
           });
@@ -101,7 +97,7 @@ export const authOptions: AuthOptions = {
         (token.expires_in && token.expires_in - nowTimeStamp < 60) // automatische Aktualisierung
       ) {
         try {
-          const { data } = await serverClient.mutate({
+          const { data } = await client.mutate({
             mutation: REFRESH_TOKEN,
             variables: { refreshToken: token.refresh_token },
           });

@@ -1,6 +1,5 @@
 'use client';
 
-import { useMutation, useQuery } from '@apollo/client';
 import {
   Autocomplete,
   Box,
@@ -19,25 +18,26 @@ import {
 } from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { Fragment, useState } from 'react';
-import * as createFunction from '../../graphql/mutations/create-function';
-import { USER_IDS } from '../../graphql/queries/get-users';
-import { client } from '../../lib/apolloClient';
-import { User } from '../../types/user.type';
+import { Fragment, useEffect, useState } from 'react';
+import {
+  createExplicitFunction,
+  fetchUserIds,
+} from '../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../types/function.type';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
   onClose: () => void;
   onBack: () => void;
-  orgUnit: string;
-  refetch: () => void;
+  orgUnitId: string;
+  refetch: (functionList: Function[]) => void;
 }
 
 const ExplicitFunctionModal = ({
   open,
   onClose,
   onBack,
-  orgUnit,
+  orgUnitId,
   refetch,
 }: ExplicitFunctionModalProps) => {
   const [functionName, setFunctionName] = useState('');
@@ -45,20 +45,30 @@ const ExplicitFunctionModal = ({
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [loading, setLoading] = useState(false);
+  // Extrahieren der Benutzer-IDs aus der Serverseite
+  const [userIds, setUserIds] = useState<string[]>([]);
 
-  const [addUserToFunction] = useMutation(
-    createFunction.CREATE_EXPLICITE_FUNCTIONS,
-    {
-      client,
-    },
-  );
-
-  const { loading, data } = useQuery(USER_IDS, {
-    client,
-  });
+  // Funktion zum Abrufen der Benutzer von der Serverseite
+  const loadUsers = async () => {
+    setLoading(true);
+    try {
+      const users = await fetchUserIds(); // Funktion von der Serverseite verwenden
+      setUserIds(users);
+    } catch (error) {
+      console.error('Fehler beim Laden der Benutzer-IDs:', error);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Laden der Benutzer-IDs',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Prepare options and group them by first letter
-  const options = data?.getData.data.map((user: User) => user.userId) || [];
+  // const options = data?.getData.data.map((user: User) => user.userId) || [];
+  const options = userIds;
 
   //   const groupedOptions = options.reduce((acc: any, userId: string) => {
   //     const firstLetter = userId[0].toUpperCase();
@@ -97,15 +107,13 @@ const ExplicitFunctionModal = ({
     if (!validateInput()) return;
 
     try {
-      await addUserToFunction({
-        variables: {
-          functionName,
-          orgUnit,
-          users,
-          isSingleUser,
-        },
+      const newFunctionList = await createExplicitFunction({
+        functionName,
+        orgUnitId,
+        users,
+        isSingleUser,
       });
-      refetch(); // Aktualisiere die Daten nach der Mutation
+      refetch(newFunctionList); // Aktualisiere die Daten nach der Mutation
       setSnackbar({
         open: true,
         message: 'Explizierte Funktion erfolgreich erstellt.',
@@ -142,6 +150,12 @@ const ExplicitFunctionModal = ({
   const GroupItems = styled('ul')({
     padding: 0,
   });
+
+  useEffect(() => {
+    if (open) {
+      loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
+    }
+  }, [open]);
 
   return (
     <>
