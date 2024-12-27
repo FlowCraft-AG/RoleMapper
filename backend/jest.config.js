@@ -12,7 +12,7 @@ const jestConfig = {
             'ts-jest',
             {
                 useESM: true,
-                isolatedModules: false,
+                isolatedModules: true,
             },
         ],
     },
@@ -35,6 +35,7 @@ const jestConfig = {
     errorOnDeprecated: true,
     testTimeout: 60_000,
     verbose: true,
+    maxWorkers: 1, // Tests sequenziell ausführen
 };
 
 export default jestConfig;

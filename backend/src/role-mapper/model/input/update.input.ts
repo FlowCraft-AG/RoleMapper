@@ -1,3 +1,4 @@
+import type { Types } from 'mongoose';
 import { type ProcessRoleInput } from './create.input.js';
 import { type QueryStageInput } from './query-stage.input.js';
 
@@ -26,7 +27,7 @@ export type UpdateEmployeeInput = {
 
 export type UpdateFunctionInput = {
     functionName: string;
-    orgUnit?: string;
+    orgUnit?: Types.ObjectId | string;
     type?: string;
     users?: string[];
 };
@@ -40,8 +41,8 @@ export type UpdateProcessInput = {
 export type UpdateOrgUnitInput = {
     orgUnitId: string;
     name?: string;
-    parentId?: string;
-    supervisor?: string;
+    parentId?: Types.ObjectId | string;
+    supervisor?: Types.ObjectId | string;
 };
 
 export type UpdateRoleInput = {

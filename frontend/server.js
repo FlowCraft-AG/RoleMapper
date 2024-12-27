@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const port = 4000
 
-const dev = process.env.NODE_ENV !== 'production';
+const dev = process.env.NEXT_PUBLIC_NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
