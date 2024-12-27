@@ -1,6 +1,13 @@
-'use client';
-
-import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  Divider,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchUserDetails } from '../../app/organisationseinheiten/fetchkp';
 import { User } from '../../types/user.type';
@@ -27,13 +34,24 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
     } finally {
       setLoading(false);
     }
-  }, [userId]); // Die Funktion wird nur beim ersten Laden ausgeführt
+  }, [userId]);
 
   useEffect(() => {
     if (userId) {
       fetchData();
     }
   }, [userId, fetchData]);
+
+  const formatDate = (timestamp: string | undefined) => {
+    if (!timestamp) return 'Nicht verfügbar';
+    const numericTimestamp = parseInt(timestamp, 10);
+    if (isNaN(numericTimestamp)) return 'Ungültiges Datum';
+    return new Date(numericTimestamp).toLocaleDateString('de-DE', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
   if (loading)
     return (
@@ -49,49 +67,108 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
       </Box>
     );
 
-  //   const selectedUser = data?.getData.data[0];
-
   return (
-    <Box sx={{ minHeight: 352, minWidth: 250, p: 2, paddingTop: 8 }}>
-      <Typography>
-        <strong>UserID:</strong> {selectedUser?.userId}
+    <Box
+      sx={{
+        minHeight: 352,
+        minWidth: 300,
+        p: 2,
+        paddingTop: 4,
+        backgroundColor: 'background.default',
+        borderRadius: 4,
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+        overflow: 'auto',
+        maxHeight: 'calc(100vh - 64px)',
+      }}
+    >
+      <Typography
+        variant="h5"
+        sx={{
+          textAlign: 'center',
+          fontWeight: 'bold',
+          mb: 3,
+          color: 'primary.main',
+          borderBottom: `3px solid`,
+          borderImage: `linear-gradient(to right, #ff5722, #2196f3) 1`,
+          borderImageSlice: 1,
+        }}
+      >
+        Benutzerinformationen
       </Typography>
-      <Typography>
-        <strong>Rolle:</strong> {selectedUser?.userRole}
-      </Typography>
-      <Typography>
-        <strong>Typ:</strong> {selectedUser?.userType}
-      </Typography>
-      <Typography>
-        <strong>Aktiv:</strong> {selectedUser?.active ? 'Ja' : 'Nein'}
-      </Typography>
-      <Typography>
-        <strong>Gültig von:</strong> {selectedUser?.validFrom}
-      </Typography>
-      <Typography>
-        <strong>Gültig bis:</strong> {selectedUser?.validUntil}
-      </Typography>
-      {selectedUser?.employee && (
-        <>
-          <Typography>
-            <strong>Kostenstelle:</strong> {selectedUser?.employee.costCenter}
-          </Typography>
-          <Typography>
-            <strong>Abteilung:</strong> {selectedUser?.employee.department}
-          </Typography>
-        </>
-      )}
-      {selectedUser?.student && (
-        <>
-          <Typography>
-            <strong>Studiengang:</strong>{' '}
-            {selectedUser?.student.courseOfStudyName}
-          </Typography>
-          <Typography>
-            <strong>Prüfungsordnung:</strong>{' '}
-            {selectedUser?.student.examRegulation}
-          </Typography>
-        </>
+
+      {selectedUser ? (
+        <Card
+          sx={{
+            borderRadius: 2,
+            backgroundColor: 'background.paper',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+          }}
+        >
+          <CardContent>
+            <Typography variant="subtitle1" gutterBottom>
+              <strong>UserID:</strong> {selectedUser.userId}
+            </Typography>
+
+            <Divider sx={{ mb: 2 }} />
+
+            <Typography variant="body1" gutterBottom>
+              <strong>Rolle:</strong> {selectedUser.userRole}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              <strong>Typ:</strong> {selectedUser.userType}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              <strong>Aktiv:</strong>{' '}
+              {selectedUser.active ? (
+                <Tooltip title="Benutzer ist aktiv">
+                  <span style={{ color: 'green' }}>Ja</span>
+                </Tooltip>
+              ) : (
+                <Tooltip title="Benutzer ist inaktiv">
+                  <span style={{ color: 'red' }}>Nein</span>
+                </Tooltip>
+              )}
+            </Typography>
+
+            <Typography variant="body1" gutterBottom>
+              <strong>Gültig von:</strong> {formatDate(selectedUser.validFrom)}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              <strong>Gültig bis:</strong> {formatDate(selectedUser.validUntil)}
+            </Typography>
+
+            {selectedUser.employee && (
+              <>
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="body1" gutterBottom>
+                  <strong>Kostenstelle:</strong>{' '}
+                  {selectedUser.employee.costCenter}
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  <strong>Abteilung:</strong> {selectedUser.employee.department}
+                </Typography>
+              </>
+            )}
+
+            {selectedUser.student && (
+              <>
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="body1" gutterBottom>
+                  <strong>Studiengang:</strong>{' '}
+                  {selectedUser.student.courseOfStudyName}
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  <strong>Prüfungsordnung:</strong>{' '}
+                  {selectedUser.student.examRegulation}
+                </Typography>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Typography variant="body1" color="text.secondary">
+          Keine Benutzerinformationen verfügbar.
+        </Typography>
       )}
     </Box>
   );

@@ -176,7 +176,7 @@ export default function UsersSpalte({
           //   gap: 2, // Abstand zwischen Button und Suchfeld
         }}
       >
-        {!isImpliciteFunction && (
+        {!isImpliciteFunction && selectedFunctionId !== 'mitglieder' && (
           <Button
             variant="contained"
             color="primary"
@@ -225,14 +225,17 @@ export default function UsersSpalte({
             >
               <ListItemText primary={userId} />
               {/* Entfernen-Icon nur anzeigen, wenn die Funktion nicht implizit ist */}
-              {!isImpliciteFunction && (
+              {!isImpliciteFunction && selectedFunctionId !== 'mitglieder' && (
                 <Tooltip title="Benutzer entfernen">
                   <IconButton
                     edge="end"
                     color="error"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (!isImpliciteFunction) {
+                      if (
+                        !isImpliciteFunction &&
+                        selectedFunctionId !== 'mitglieder'
+                      ) {
                         handleRemoveUser(userId);
                       }
                     }}
@@ -250,7 +253,7 @@ export default function UsersSpalte({
         )}
       </List>
       {/* Modal für Benutzer hinzufügen */}
-      {!isImpliciteFunction && (
+      {!isImpliciteFunction && selectedFunctionId !== 'mitglieder' && (
         <AddUserModal
           open={open}
           onClose={() => setOpen(false)}
