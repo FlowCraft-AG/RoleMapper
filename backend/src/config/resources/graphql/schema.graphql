@@ -301,7 +301,78 @@ type Function {
   Gibt an, ob die Funktion implizit ist und nicht manuell zugewiesen werden kann.
   """
   isImpliciteFunction: Boolean
+
+  query: GraphQlQuery
 }
+
+type GraphQlQuery {
+  """
+  Die Ziel-Entität der Abfrage, z. B. USERS, MANDATES.
+  """
+  entity: EntityType
+  """
+  Filterbedingungen der Abfrage.
+  """
+  filter: Filter
+  """
+  Pagination-Parameter der Abfrage.
+  """
+  pagination: Pagination
+  """
+  Sortierparameter der Abfrage.
+  """
+  sort: Sort
+}
+
+"""
+Filterbedingungen als Output-Typ.
+"""
+type Filter {
+  """
+  Das zu filternde Feld, z. B. userId oder orgUnit.
+  """
+  field: FilterOptions
+  """
+  Der Vergleichsoperator, z. B. EQ oder IN.
+  """
+  operator: Operator
+  """
+  Der Vergleichswert.
+  """
+  value: String
+  AND: [Filter]
+  OR: [Filter]
+  NOR: [Filter]
+}
+
+"""
+Pagination-Parameter als Output-Typ.
+"""
+type Pagination {
+  """
+  Anzahl der zurückzugebenden Ergebnisse.
+  """
+  limit: Int
+  """
+  Startpunkt der Ergebnisse.
+  """
+  offset: Int
+}
+
+"""
+Sortierparameter als Output-Typ.
+"""
+type Sort {
+  """
+  Feld, nach dem sortiert werden soll.
+  """
+  field: FilterOptions
+  """
+  Sortierreihenfolge, z. B. ASC oder DESC.
+  """
+  direction: directionInput
+}
+
 
 # Prozesse und Rollen
 """
@@ -432,8 +503,6 @@ enum FilterOptions {
   courseOfStudyName
   alias
   kostenstelleNr
-  key
-  value
 }
 
 type Mutation {
@@ -584,7 +653,7 @@ input UpdateEntityInput {
 }
 
 input UpdateUserInput {
-  userId: String!
+  userId: String
   userType: String
   userRole: String
   orgUnit: String
@@ -607,27 +676,28 @@ input UpdateEmployeeInput {
 }
 
 input UpdateFunctionInput {
-  functionName: String!
+  functionName: String
   orgUnit: String
   type: String
   users: [String!]
+  isSingleUser: Boolean
 }
 
 input UpdateProcessInput {
-  processId: String!
+  processId: String
   name: String
   roles: [ProcessRoleInput]
 }
 
 input UpdateOrgUnitInput {
-  orgUnitId: String!
+  orgUnitId: String
   name: String
   parentId: String
   supervisor: String
 }
 
 input UpdateRoleInput {
-  roleId: String!
+  roleId: String
   name: String
   query: [QueryStageInput]
 }

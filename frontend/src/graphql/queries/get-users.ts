@@ -35,10 +35,7 @@ export const USERS = gql`
 
 export const USER_IDS = gql`
   query GetData {
-    getData(input: {
-        entity: USERS,
-        sort: { field: userId, direction: ASC }
-        }) {
+    getData(input: { entity: USERS, sort: { field: userId, direction: ASC } }) {
       totalCount
       data {
         ... on User {

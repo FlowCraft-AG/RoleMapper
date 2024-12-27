@@ -149,12 +149,12 @@ export const TEST_MANDATES3 = {
     userId: 'gyca1011',
 };
 
-export const TEST_MANDATES_SINGLE_USER_FUNCTION = {
+export const TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION = {
     functionName: 'Dekan',
     userId: 'gyca1011',
 };
 
-export const TEST_MANDATES_SINGLE_USER_FUNCTION_2 = {
+export const TEST_MANDATES_REMOVE_SINGLE_USER_FUNCTION_2 = {
     functionName: 'Dekan',
     userId: USER_DATA.LEITER_2,
 };

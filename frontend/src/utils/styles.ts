@@ -1,4 +1,6 @@
-export function getListItemStyles(theme: any, isSelected: boolean) {
+import { Theme } from '@mui/material';
+
+export function getListItemStyles(theme: Theme, isSelected: boolean) {
   return {
     color: isSelected
       ? theme.palette.custom?.selected
