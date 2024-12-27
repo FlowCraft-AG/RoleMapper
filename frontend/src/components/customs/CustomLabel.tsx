@@ -17,7 +17,7 @@ export interface ItemToRender {
 //   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>;
 // }
 
-interface CustomLabelProps {
+export interface CustomLabelProps {
   children: React.ReactNode;
   className?: string;
   onAdd: (event: React.MouseEvent<HTMLButtonElement>) => void; // Füge die onAdd-Funktion hinzu (Callback für Add-Button)

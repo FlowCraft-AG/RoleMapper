@@ -1,14 +1,22 @@
-import { useMutation } from '@apollo/client';
-import { Box, Button, Fade, Modal, Typography } from '@mui/material';
-import { DELETE_ORG_UNIT } from '../../graphql/mutations/delete-org-unit';
-import { client } from '../../lib/apolloClient';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Fade,
+  Modal,
+  Snackbar,
+  Typography,
+} from '@mui/material';
+import { useState } from 'react';
+import { removeOrgUnit } from '../../app/organisationseinheiten/fetchkp';
+import { OrgUnit } from '../../types/orgUnit.type';
 
 interface DeleteConfirmationModalProps {
   open: boolean;
   onClose: () => void;
   itemId: string;
   childrenToDelete: string[];
-  refetch: () => void;
+  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
 }
 
 const DeleteConfirmationModal = ({
@@ -18,66 +26,95 @@ const DeleteConfirmationModal = ({
   childrenToDelete,
   refetch,
 }: DeleteConfirmationModalProps) => {
-  const [deleteOrgUnit] = useMutation(DELETE_ORG_UNIT, { client });
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const handleDelete = async () => {
+    setLoading(true);
     try {
-      // Löschen aller Untereinheiten
-      for (const id of childrenToDelete) {
-        await deleteOrgUnit({ variables: { value: id } });
-        console.log(`Eintrag ${id} wurde gelöscht.`);
+      // Lösche alle Kinder
+      for (const childId of childrenToDelete) {
+        await removeOrgUnit(childId); // Lösche die Kinder
       }
-      // Löschen der aktuellen Organisationseinheit
-      await deleteOrgUnit({ variables: { value: itemId } });
-      console.log(`Eintrag ${itemId} wurde gelöscht.`);
 
-      // Daten neu laden
-      refetch();
-      onClose();
-    } catch (err) {
-      console.error('Fehler beim Löschen:', err);
+      // Lösche die Hauptorganisationseinheit
+      const newOrgUnitList = await removeOrgUnit(itemId);
+      await refetch(newOrgUnitList); // Lade die neuesten Daten
+      onClose(); // Schließe das Modal
+    } catch (error) {
+      if (error instanceof Error) {
+        setSnackbar({
+          open: true,
+          message: error.message,
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: 'Fehler beim Löschen der Organisationseinheit.',
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading)
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      disableEscapeKeyDown={false}
-      closeAfterTransition
-      BackdropProps={{
-        timeout: 500,
-      }}
-    >
-      <Fade in={open}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            borderRadius: 2,
-            p: 4,
-            width: 300,
-          }}
-        >
-          <Typography variant="h6">Löschen bestätigen</Typography>
-          <Typography>
-            Möchten Sie diese Organisationseinheit wirklich löschen? Alle
-            Untereinheiten werden ebenfalls gelöscht.
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-            <Button variant="outlined" onClick={onClose}>
-              Abbrechen
-            </Button>
-            <Button variant="contained" color="error" onClick={handleDelete}>
-              Löschen
-            </Button>
+    <>
+      <Snackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ open: false, message: '' })}
+      />
+
+      <Modal
+        open={open}
+        onClose={onClose}
+        disableEscapeKeyDown={false}
+        closeAfterTransition
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              p: 4,
+              width: 300,
+            }}
+          >
+            <Typography variant="h6">Löschen bestätigen</Typography>
+            <Typography>
+              Möchten Sie diese Organisationseinheit wirklich löschen? Alle
+              Untereinheiten werden ebenfalls gelöscht.
+            </Typography>
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}
+            >
+              <Button variant="outlined" onClick={onClose}>
+                Abbrechen
+              </Button>
+              <Button variant="contained" color="error" onClick={handleDelete}>
+                Löschen
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Fade>
-    </Modal>
+        </Fade>
+      </Modal>
+    </>
   );
 };
 

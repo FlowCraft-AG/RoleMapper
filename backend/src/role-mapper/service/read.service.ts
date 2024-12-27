@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { getLogger } from '../../logger/logger.js';
 import { InvalidOperatorException } from '../error/exceptions.js';
 import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
@@ -196,11 +196,9 @@ export class ReadService {
 
         // Daten mit der generierten Query und Sortierung abrufen
         const data = await model.find(filterQuery).sort(sortQuery).exec();
-        this.#logger.debug('findData: data=%o', data);
         const rawData = data.map(
             (document: EntityType): EntityType => document.toObject() as EntityType,
         );
-        this.#logger.debug('findData: rawData=%o', rawData);
 
         // Anwendung der Paginierung, wenn angegeben
         const paginatedData = pagination
@@ -245,6 +243,21 @@ export class ReadService {
 
         // Verarbeitung der Felder, falls gesetzt
         if (filter && this.#isAnyFieldSet(filter)) {
+            // Log-Ausgabe, um den Typ und Wert des Filters zu überprüfen
+            this.#logger.warn('field %s', filter.field);
+            this.#logger.warn('value ist vom Typ %s', typeof filter.value);
+            this.#logger.warn('value: %o', filter.value);
+
+            // Wenn das Filterfeld eine ObjectId sein könnte, konvertiere es
+            if (filter.field === 'orgUnit' && typeof filter.value === 'string') {
+                // Versuche, die String-ID in eine ObjectId umzuwandeln
+                const convertedValue = this.#convertToObjectIdIfNeeded(filter.value);
+                if (convertedValue instanceof Types.ObjectId) {
+                    this.#logger.debug('ObjectId konvertiert: %s', convertedValue);
+                }
+                filter.value = convertedValue; // Setze den konvertierten Wert zurück
+            }
+
             // this.#validateFilterFields(filter);
             this.#buildFieldQuery(filter, query);
         }
@@ -393,5 +406,14 @@ export class ReadService {
         }
 
         query[filter.field as FilterFields] = { [mongoOperator]: filter.value };
+    }
+
+    // Diese Methode prüft, ob der Wert eine gültige ObjectId ist und konvertiert ihn
+    #convertToObjectIdIfNeeded(value: string) {
+        if (typeof value === 'string' && /^[\da-f]{24}$/i.test(value)) {
+            // Wenn der Wert eine 24-stellige hexadezimale Zahl ist, dann konvertiere ihn in eine ObjectId
+            return new Types.ObjectId(value);
+        }
+        return value; // Falls keine ObjectId, gib den Wert unverändert zurück
     }
 }

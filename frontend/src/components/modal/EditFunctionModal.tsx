@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from '@apollo/client';
 import {
   Autocomplete,
   Box,
@@ -13,17 +12,19 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { UPDATE_FUNCTIONS } from '../../graphql/mutations/update-function';
-import { ORG_UNITS_IDS } from '../../graphql/queries/get-orgUnits';
-import { client } from '../../lib/apolloClient';
+import {
+  fetchOrgUnitsIds,
+  updateFunction,
+} from '../../app/organisationseinheiten/fetchkp';
 import { Function } from '../../types/function.type';
-import { OrgUnit } from '../../types/orgUnit.type';
+import { OrgUnitInfo } from '../../types/orgUnit.type';
 
 interface EditFunctionModalProps {
   open: boolean;
   onClose: () => void;
   functionData: Function | undefined;
-  refetch: () => void;
+  refetch: (functionList: Function[]) => void; // Callback zur Aktualisierung der Funktionliste
+  onEdit: (functionId: string) => void;
 }
 
 const EditFunctionModal = ({
@@ -31,42 +32,53 @@ const EditFunctionModal = ({
   onClose,
   functionData,
   refetch,
+  onEdit,
 }: EditFunctionModalProps) => {
   console.log('EDIT FUNCTION MODAL');
-  const [functionName, setFunctionName] = useState(functionData?.functionName);
+  console.log('selectedFunction:', functionData);
   const [isSaving, setIsSaving] = useState(false);
-  const [orgUnitId, setOrgUnitId] = useState(functionData?.orgUnit);
-  const [isSingleUser, setIsSingleUser] = useState(functionData?.isSingleUser);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [formData, setFormData] = useState({
+    functionName: functionData?.functionName,
+    orgUnitId: functionData?.orgUnit,
+    isSingleUser: functionData?.isSingleUser,
+  });
+  const [orgUnits, setOrgUnits] = useState<OrgUnitInfo[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Update state wenn `functionData`  sich ändert
   useEffect(() => {
-    if (functionData) {
-      setFunctionName(functionData.functionName);
-      setOrgUnitId(functionData.orgUnit);
-      setIsSingleUser(functionData.isSingleUser);
+    if (open && functionData) {
+      setFormData({
+        functionName: functionData.functionName,
+        orgUnitId: functionData.orgUnit,
+        isSingleUser: functionData.isSingleUser,
+      });
+      // Fetch org units only when modal opens
+      fetchOrgUnits();
     }
-  }, [functionData]);
+  }, [open, functionData]);
 
-  const { data: orgUnitsData, loading: orgUnitsLoading } = useQuery(
-    ORG_UNITS_IDS,
-    { client },
-  );
+  const fetchOrgUnits = async () => {
+    setLoading(true);
+    try {
+      const orgUnitsResponse = await fetchOrgUnitsIds(); // Fetch data from the server
+      setOrgUnits(orgUnitsResponse);
+    } catch (error) {
+      console.error('Failed to fetch organization units:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const orgUnitsMap = new Map(
-    orgUnitsData?.getData.data.map((unit: OrgUnit) => [unit._id, unit.name]),
-  );
+  //   const orgUnitsMap = new Map(
+  //     orgUnits.map((unit: OrgUnitInfo | undefined) => [unit?._id, unit?.name]),
+  //   );
 
-  const options = orgUnitsData?.getData.data.map((unit: OrgUnit) => ({
-    ...unit,
-    displayName: `${unit.name} (${orgUnitsMap.get(unit.parentId)})`,
-  }));
-
-  const [updateFunction] = useMutation(UPDATE_FUNCTIONS, { client });
   const validateFunctionName = (name: string) => /^[a-zA-Z\s]+$/.test(name);
 
   const handleSave = async () => {
-    if (!validateFunctionName(functionName!)) {
+    if (!validateFunctionName(formData.functionName!)) {
       console.error('Invalid function name');
       return;
     }
@@ -74,21 +86,20 @@ const EditFunctionModal = ({
     setIsSaving(true);
 
     try {
-      await updateFunction({
-        variables: {
-          value: functionData?.functionName, // Der alte Name der Funktion
-          newFunctionName: functionName ?? functionData?.functionName, // Der neue Name der Funktion (falls geändert)
-          newOrgUnit: orgUnitId ?? functionData?.orgUnit, // Die neue OrgUnit-ID (falls geändert)
-          newIsSingleUser: isSingleUser ?? functionData?.isSingleUser, // Der neue Status (falls geändert)
-        },
+      const updatedFunction = await updateFunction({
+        functionName: formData.functionName!,
+        newOrgUnitId: formData.orgUnitId!,
+        isSingleUser: formData.isSingleUser!,
+        oldFunctionName: functionData?.functionName || '',
+        orgUnitId: functionData?.orgUnit || '',
       });
       setSnackbar({
         open: true,
         message: 'Explizierte Funktion erfolgreich erstellt.',
       });
-      refetch();
+      refetch(updatedFunction);
       setIsSaving(false);
-      onClose();
+      onEdit(functionData?._id || '');
     } catch (error) {
       console.error('Error updating function:', error);
       if (error instanceof Error) {
@@ -106,6 +117,50 @@ const EditFunctionModal = ({
       setIsSaving(false);
     }
   };
+
+  const buildDisplayName = (
+    unit: { name: string; parentId?: string },
+    orgUnitsMap: Map<string, { name: string; parentId?: string }>,
+  ): string => {
+    const parent = unit.parentId ? orgUnitsMap.get(unit.parentId) : null;
+    const grandParent = parent?.parentId
+      ? orgUnitsMap.get(parent.parentId)
+      : null;
+
+    // Sonderfall: Wenn der Parent "Hochschule" ist, zeige nur den Namen des Kindes
+    if (parent?.name === 'Hochschule') {
+      return unit.name;
+    }
+
+    // Fall: Es gibt sowohl einen Parent als auch einen Grandparent
+    if (parent && grandParent) {
+      return `${unit.name} (${grandParent.name}, ${parent.name})`;
+    }
+
+    // Fall: Es gibt nur einen Parent
+    if (parent) {
+      return `${unit.name} (${parent.name})`;
+    }
+
+    // Fallback: Nur der Name des aktuellen Knotens
+    return unit.name;
+  };
+
+  // Optionen für Autocomplete generieren
+  const options = orgUnits.map((unit) => ({
+    ...unit,
+    displayName: buildDisplayName(
+      unit,
+      new Map(orgUnits.map((u) => [u._id, u])),
+    ),
+  }));
+
+  //   const options = orgUnits.map(
+  //     (unit: { _id: string; name: string; parentId?: string }) => ({
+  //       ...unit,
+  //       displayName: `${unit.name} (${orgUnitsMap.get(unit?.parentId)})`,
+  //     }),
+  //   );
 
   return (
     <>
@@ -135,14 +190,16 @@ const EditFunctionModal = ({
           <Typography variant="h6">Funktion bearbeiten</Typography>
           <TextField
             label="Funktionsname"
-            value={functionName}
-            onChange={(e) => setFunctionName(e.target.value)}
+            value={formData.functionName}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, functionName: e.target.value }))
+            }
             fullWidth
             margin="normal"
           />
           <Autocomplete
             options={options}
-            loading={orgUnitsLoading}
+            loading={loading}
             getOptionLabel={(option) => {
               // Überprüfen, ob der Name verfügbar ist
               if (!option.name) {
@@ -156,12 +213,13 @@ const EditFunctionModal = ({
                 {option.displayName}
               </li>
             )}
-            value={
-              orgUnitsData?.getData.data.find(
-                (ou: OrgUnit) => ou._id === orgUnitId,
-              ) || null
+            value={options.find((ou) => ou._id === formData.orgUnitId) || null}
+            onChange={(_, newValue) =>
+              setFormData((prev) => ({
+                ...prev,
+                orgUnitId: newValue?._id || '',
+              }))
             }
-            onChange={(_, newValue) => setOrgUnitId(newValue?._id || undefined)}
             renderInput={(params) => (
               <TextField {...params} label="Organisationseinheit" />
             )}
@@ -169,8 +227,13 @@ const EditFunctionModal = ({
           <Typography>Einzelnutzer?</Typography>
           <RadioGroup
             row
-            value={isSingleUser ? 'true' : 'false'}
-            onChange={(e) => setIsSingleUser(e.target.value === 'true')}
+            value={formData.isSingleUser ? 'true' : 'false'}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                isSingleUser: e.target.value === 'true',
+              }))
+            }
           >
             <FormControlLabel value="true" control={<Radio />} label="Ja" />
             <FormControlLabel value="false" control={<Radio />} label="Nein" />

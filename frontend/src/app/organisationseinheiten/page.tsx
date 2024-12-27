@@ -22,6 +22,5 @@ export default async function HKAPage() {
     'NEXT_PUBLIC_BACKEND_SERVER_URL=%s',
     ENV.NEXT_PUBLIC_BACKEND_SERVER_URL,
   );
-  console.info('TEST: ', ENV.NEXT_PUBLIC_BACKEND_SERVER_URL);
   return <OrganigrammPage />;
 }
