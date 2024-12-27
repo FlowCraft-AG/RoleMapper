@@ -9,6 +9,7 @@ import {
   TextField,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { FunctionInfo } from '../../types/function.type';
 import {
   addUserToFunction,
   fetchUserIds,
@@ -20,8 +21,9 @@ interface AddUserModalProps {
   errors: { [key: string]: string | null };
   newUserId: string;
   setNewUserId: React.Dispatch<React.SetStateAction<string>>;
-  refetch: () => void;
-  functionName: string | undefined;
+  refetch: (FunctionInfo: FunctionInfo) => void;
+    functionName: string | undefined;
+    functionId: string;
 }
 
 const AddUserModal: React.FC<AddUserModalProps> = ({
@@ -30,7 +32,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   newUserId,
   setNewUserId,
   refetch,
-  functionName,
+    functionName,
+    functionId,
 }) => {
   //   const [addUserToFunction] = useMutation(ADD_FUNCTIONS, { client });
   //   const { data } = useQuery(USER_IDS, {
@@ -87,9 +90,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       return;
     }
     try {
-      await addUserToFunction(functionName!, newUserId);
+        const newUserList = await addUserToFunction(functionName!, newUserId, functionId);
+        console.log('newUserList:', newUserList);
       console.log('Benutzer erfolgreich hinzugefügt');
-      refetch(); // Aktualisiere die Daten nach der Mutation
+      refetch(newUserList); // Aktualisiere die Daten nach der Mutation
       setNewUserId('');
       onClose();
     } catch (err) {

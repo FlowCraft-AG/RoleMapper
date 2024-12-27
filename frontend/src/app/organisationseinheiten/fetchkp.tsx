@@ -414,7 +414,8 @@ export async function fetchUsersByFunction(functionId: string) {
 
 export async function removeUserFromFunction(
   functionName: string,
-  userId: string,
+    userId: string,
+    functionId: string,
 ) {
   try {
     const { data } = await client.mutate({
@@ -423,7 +424,12 @@ export async function removeUserFromFunction(
         functionName,
         userId,
       },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      refetchQueries: [
+        {
+          query: USERS_BY_FUNCTION,
+          variables: { functionId },
+        },
+      ], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
 
@@ -453,14 +459,16 @@ export async function fetchUserIds(): Promise<string[]> {
   }
 }
 
-export async function addUserToFunction(functionName: string, userId: string) {
+export async function addUserToFunction(functionName: string, userId: string, functionId: string) {
   try {
     await client.mutate({
       mutation: ADD_FUNCTIONS,
       variables: { functionName, userId },
-      refetchQueries: [{ query: ORG_UNITS }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
+      refetchQueries: [{ query: USERS_BY_FUNCTION, variables: { functionId } }], // Refetch die ORG_UNITS-Abfrage, um die neuesten Daten zu holen
       awaitRefetchQueries: true, // Wartet darauf, dass die Refetch-Abfragen abgeschlossen sind
     });
+    const updatedFunctionList = await fetchUsersByFunction(functionId);
+    return updatedFunctionList; // Rückgabe der neuen Funktion
   } catch (error) {
     console.error('Fehler beim Hinzufügen des Benutzers:', error);
     throw new Error('Fehler beim Hinzufügen des Benutzers');

@@ -15,7 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   fetchSavedData,
   fetchUsersByFunction,
@@ -63,6 +63,27 @@ export default function UsersSpalte({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+    const loadFunctions = useCallback(async (orgUnitId: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+          if (selectedFunctionId === 'mitglieder') {
+            setSelectedFunction(selectedMitglieder);
+          } else if (isImpliciteFunction) {
+            const data = await fetchSavedData(selectedFunctionId);
+            setSelectedFunction(data);
+          } else {
+            const data = await fetchUsersByFunction(selectedFunctionId);
+            setSelectedFunction(data);
+          }
+        } catch (err) {
+          console.error('Fehler beim Laden der Benutzer:', err);
+          setError('Fehler beim Laden der Benutzer');
+        } finally {
+          setLoading(false);
+        }
+    },[selectedFunctionId, selectedMitglieder, isImpliciteFunction]); // Die Funktion wird nur beim ersten Laden ausgeführt
+
   useEffect(() => {
     // Filtere Benutzer basierend auf der Suchanfrage
     if (selectedFunction && selectedFunction.users) {
@@ -78,44 +99,27 @@ export default function UsersSpalte({
     setSearchTerm(event.target.value);
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setError(null);
-      try {
-        if (selectedFunctionId === 'mitglieder') {
-          setSelectedFunction(selectedMitglieder);
-        } else if (isImpliciteFunction) {
-          const data = await fetchSavedData(selectedFunctionId);
-          setSelectedFunction(data);
-        } else {
-          const data = await fetchUsersByFunction(selectedFunctionId);
-          setSelectedFunction(data);
-        }
-      } catch (err) {
-        console.error('Fehler beim Laden der Benutzer:', err);
-        setError('Fehler beim Laden der Benutzer');
-      } finally {
-        setLoading(false);
+    useEffect(() => {
+      if (selectedFunctionId) {
+        loadFunctions(selectedFunctionId);
       }
-    }
+    }, [selectedFunctionId, loadFunctions]);
 
-    fetchData();
-  }, [selectedFunctionId, isImpliciteFunction, selectedMitglieder]);
-
-  const refetch = () => {
+  const refetch = (functionInfo: FunctionInfo) => {
     console.log('Refetching Functions');
-    // refetch wird benötigt
+    setSelectedFunction(functionInfo); // Aktualisiere den Zustand
+    setFilteredUsers(functionInfo.users); // Aktualisiere die gefilterte Liste
+    setSearchTerm(''); // Suchfeld zurücksetzen
   };
 
   const handleRemoveUser = async (userId: string) => {
     try {
-      await removeUserFromFunction(selectedFunction!.functionName, userId);
+      await removeUserFromFunction(selectedFunction!.functionName, userId, selectedFunctionId);
       setSelectedFunction((prev) => ({
         ...prev!,
         users: prev?.users.filter((id) => id !== userId) || [],
       }));
-      onRemove(userId, selectedFunctionId);
+      onRemove(userId, '');
       setSnackbar({ open: true, message: 'Benutzer erfolgreich entfernt' });
     } catch (err) {
       console.error('Fehler beim Entfernen des Benutzers:', err);
@@ -366,7 +370,8 @@ export default function UsersSpalte({
           newUserId={newUserId}
           setNewUserId={setNewUserId}
           refetch={refetch}
-          functionName={selectedFunction?.functionName}
+                  functionName={selectedFunction?.functionName}
+                    functionId={selectedFunctionId}
         />
       )}
     </Box>
