@@ -8,15 +8,21 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { removeOrgUnit } from '../../app/organisationseinheiten/fetchkp';
+import {
+  removeFunction,
+  removeOrgUnit,
+} from '../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
+import { ItemToRender } from '../customs/CustomTreeItem';
 
 interface DeleteConfirmationModalProps {
   open: boolean;
   onClose: () => void;
   itemId: string;
-  childrenToDelete: string[];
+  childrenToDelete: ItemToRender[];
   refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
+  functionList: Function[];
 }
 
 const DeleteConfirmationModal = ({
@@ -25,16 +31,51 @@ const DeleteConfirmationModal = ({
   itemId,
   childrenToDelete,
   refetch,
+  functionList,
 }: DeleteConfirmationModalProps) => {
+  console.log('DeleteConfirmationModalProps: ', childrenToDelete);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+
+  const handleRemoveFunction = async (func: Function) => {
+    const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
+    if (success) {
+      return success;
+    } else {
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Entfernen der Funktion.',
+      });
+    }
+  };
+
+  const removeOrgUnitRecursively = async (item: ItemToRender) => {
+    // Lösche alle Kinder rekursiv
+    if (item.children && item.children.length > 0) {
+      for (const child of item.children) {
+        await removeOrgUnitRecursively(child); // Rekursiver Aufruf für jedes Kind
+      }
+    }
+
+    // Lösche das aktuelle Element
+    await removeOrgUnit(item.itemId);
+  };
 
   const handleDelete = async () => {
     setLoading(true);
     try {
+      if (functionList.length > 0) {
+        for (const func of functionList) {
+          const success = await handleRemoveFunction(func);
+          if (success) {
+            console.log('Function removed');
+          }
+        }
+      }
+
       // Lösche alle Kinder
       for (const childId of childrenToDelete) {
-        await removeOrgUnit(childId); // Lösche die Kinder
+        await removeOrgUnitRecursively(childId); // Lösche die Kinder
       }
 
       // Lösche die Hauptorganisationseinheit
