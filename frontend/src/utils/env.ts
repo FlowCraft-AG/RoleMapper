@@ -11,10 +11,10 @@ export const ENV = {
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ?? 'N/A',
   NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? 'N/A',
   NEXTAUTH_DEBUG: process.env.NEXTAUTH_DEBUG ?? 'N/A',
-  NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL ?? 'N/A',
+  NEXT_PUBLIC_LOG_LEVEL: process.env.NEXT_PUBLIC_LOG_LEVEL ?? 'info',
   NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'N/A',
-  NEXT_PUBLIC_PINO_PRETTY: process.env.NEXT_PUBLIC_PINO_PRETTY ?? 'N/A',
-  NEXT_PUBLIC_LOG_DIR: process.env.NEXT_PUBLIC_LOG_DIR ?? 'N/A',
+  NEXT_PUBLIC_PINO_PRETTY: process.env.NEXT_PUBLIC_PINO_PRETTY ?? 'true',
+  NEXT_PUBLIC_LOG_DIR: process.env.NEXT_PUBLIC_LOG_DIR ?? 'logs',
 };
 
 export const logEnvironmentVariables = () => {
