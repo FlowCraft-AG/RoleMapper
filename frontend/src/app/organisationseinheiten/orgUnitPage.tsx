@@ -77,10 +77,8 @@ export default function OrganigrammPage() {
     setSelectedUserId(userId);
   };
 
-
   const handleRemove = (ids: string[]) => {
     if (ids.includes(selectedUserId!)) {
-
       setSelectedUserId(undefined);
     }
     if (ids.includes(selectedFunctionId!)) {
@@ -89,12 +87,6 @@ export default function OrganigrammPage() {
       setSelectedUserId(undefined);
     }
     if (ids.includes(selectedOrgUnit?.id || '')) {
-      setSelectedOrgUnit(undefined);
-      setSelectedFunctionId(undefined);
-      setSelectedFunction(undefined);
-      setSelectedUserId(undefined);
-    }
-    if (orgUnitId === selectedOrgUnit?.id) {
       setSelectedOrgUnit(undefined);
       setSelectedFunctionId(undefined);
       setSelectedFunction(undefined);
