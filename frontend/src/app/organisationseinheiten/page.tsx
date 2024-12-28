@@ -14,13 +14,5 @@ export const metadata: Metadata = {
 
 // Server-Komponente zur Datenabfrage
 export default async function HKAPage() {
-  const logger = getLogger('HKAPage');
-  console.info('SERVER OrganigrammPage');
-  console.info('SERVER HKAPage');
-  logger.debug('HKAPage');
-  logger.debug(
-    'NEXT_PUBLIC_BACKEND_SERVER_URL=%s',
-    ENV.NEXT_PUBLIC_BACKEND_SERVER_URL,
-  );
   return <OrganigrammPage />;
 }

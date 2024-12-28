@@ -12,7 +12,6 @@ import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { fetchMitgliederIds } from './fetchkp';
 
 export default function OrganigrammPage() {
-  console.log('ORGANIGRAMM PAGE');
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<
     OrgUnitDTO | undefined
   >(undefined);
