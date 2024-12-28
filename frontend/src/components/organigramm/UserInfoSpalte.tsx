@@ -3,7 +3,6 @@ import {
   Box,
   Card,
   CardContent,
-  CircularProgress,
   Divider,
   Tooltip,
   Typography,
@@ -18,11 +17,11 @@ interface UserInfoColumnProps {
 
 export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
+  //   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
+    // setLoading(true);
     setError(null);
     try {
       const userDetails = await fetchUserDetails(userId);
@@ -32,7 +31,7 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
       console.error('Fehler beim Laden der Benutzerdetails:', err);
       setError('Fehler beim Laden der Benutzerdetails.');
     } finally {
-      setLoading(false);
+      //   setLoading(false);
     }
   }, [userId]);
 
@@ -53,12 +52,12 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
     });
   };
 
-  if (loading)
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
+  //   if (loading)
+  //     return (
+  //       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+  //         <CircularProgress />
+  //       </Box>
+  //     );
 
   if (error)
     return (

@@ -4,12 +4,12 @@ import { Box, Modal, Slider, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
+import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
 import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
 import { FunctionInfo } from '../../../types/function.type';
 import { OrgUnitDTO } from '../../../types/orgUnit.type';
 import { fetchMitgliederIds } from '../fetchkp';
-import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente

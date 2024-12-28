@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Box, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -28,11 +28,6 @@ export default function OrganigrammPage() {
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
   );
-
-  // Dynamische Breiten für die Spalten
-  const [orgUnitsWidth, setOrgUnitsWidth] = useState(300); // Standard: 300px
-  const [functionsWidth, setFunctionsWidth] = useState(600); // Standard: 600px
-  const [usersWidth, setUsersWidth] = useState(400); // Standard: 400px
 
   // Benutzerdaten
   const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
@@ -222,7 +217,7 @@ export default function OrganigrammPage() {
             selectedMitglieder={selectedFunction}
             onSelectUser={handleUserSelect}
             onRemove={handleRemove}
-            isImpliciteFunction={true}
+            isImpliciteFunction={isImpliciteFunction}
           />
         </Box>
       )}
