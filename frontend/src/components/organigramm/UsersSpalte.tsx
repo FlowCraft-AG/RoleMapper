@@ -139,14 +139,6 @@ export default function UsersSpalte({
     onSelectUser(userId);
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   if (error) {
     return (
       <Box sx={{ p: 2 }}>
@@ -215,8 +207,13 @@ export default function UsersSpalte({
         />
       </Box>
 
-      <List>
-        {filteredUsers.length > 0 ? (
+          <List>
+        {loading ? (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+        <CircularProgress />
+      </Box>
+    )
+        :filteredUsers.length > 0 ? (
           filteredUsers.map((userId: string) => (
             <ListItemButton
               key={userId}
