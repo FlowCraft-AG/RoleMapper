@@ -1,6 +1,6 @@
+import { Box, Button, Typography } from '@mui/material';
 import { Metadata } from 'next';
-import { ENV } from '../../utils/env';
-import { getLogger } from '../../utils/logger';
+import Link from 'next/link';
 import OrganigrammPage from './orgUnitPage';
 
 export const metadata: Metadata = {
@@ -14,13 +14,43 @@ export const metadata: Metadata = {
 
 // Server-Komponente zur Datenabfrage
 export default async function HKAPage() {
-  const logger = getLogger('HKAPage');
-  console.info('SERVER OrganigrammPage');
-  console.info('SERVER HKAPage');
-  logger.debug('HKAPage');
-  logger.debug(
-    'NEXT_PUBLIC_BACKEND_SERVER_URL=%s',
-    ENV.NEXT_PUBLIC_BACKEND_SERVER_URL,
+  return (
+    <Box sx={{ padding: 4 }}>
+      <Typography
+        variant="h4"
+        sx={{ textAlign: 'center', marginBottom: 4, fontWeight: 'bold' }}
+      >
+        Organisationseinheiten
+      </Typography>
+
+      {/* Buttons für die Navigation */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 2,
+          marginBottom: 4,
+        }}
+      >
+        <Link href="/organisationseinheiten/slider" passHref>
+          <Button variant="contained" color="primary">
+            Slider
+          </Button>
+        </Link>
+        <Link href="/organisationseinheiten/standard" passHref>
+          <Button variant="contained" color="secondary">
+            Standard
+          </Button>
+        </Link>
+        <Link href="/organisationseinheiten/breakpoint" passHref>
+          <Button variant="contained" color="success">
+            mit breakpoints
+          </Button>
+        </Link>
+      </Box>
+
+      {/* OrganigrammPage */}
+      <OrganigrammPage />
+    </Box>
   );
-  return <OrganigrammPage />;
 }

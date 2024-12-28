@@ -1,15 +1,15 @@
 'use client';
 
-import { Box, Modal, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
-import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
-import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
-import UsersSpalte from '../../components/organigramm/UsersSpalte';
-import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { FunctionInfo } from '../../types/function.type';
-import { OrgUnitDTO } from '../../types/orgUnit.type';
-import { fetchMitgliederIds } from './fetchkp';
+import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
+import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
+import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
+import UsersSpalte from '../../../components/organigramm/UsersSpalte';
+import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
+import { FunctionInfo } from '../../../types/function.type';
+import { OrgUnitDTO } from '../../../types/orgUnit.type';
+import { fetchMitgliederIds } from '../fetchkp';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -124,40 +124,32 @@ export default function OrganigrammPage() {
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        gap: 2, // Abstand zwischen den Spalten
+        gap: 2,
         padding: 2,
         backgroundColor: theme.palette.background.default,
-        overflowX: 'auto', // Horizontal scrollen, falls nötig
+        overflowY: 'auto', // Allgemeines Scrollen (horizontal und vertikal)
+        height: '100vh', // Volle Höhe des Viewports
+        width: '100vw', // Volle Breite des Viewports
       }}
     >
       {/* Erste Spalte: Organisationseinheiten */}
       <Box
         sx={{
-          flexGrow: 1, // Dynamische Breite
-          flexShrink: 0, // Verhindert, dass sich die Spalte verkleinert
+          flexShrink: 0, // Keine Verkleinerung
+          minWidth: 350, // Feste Breite
           borderRight: `1px solid ${theme.palette.divider}`,
-          padding: '0 2px 2px 2px', // Padding oben, rechts, unten, links
-          overflow: 'auto', // Ermöglicht Scrollen
-          maxHeight: 'calc(100vh - 64px)', // Begrenzung der maximalen Höhe
-          borderRadius: 4, // Abgerundete Ecken
-          boxShadow: `0px 4px 8px ${theme.palette.divider}`, // Sanfter Schatten
-          backgroundColor: theme.palette.background.paper, // Harmonische Hintergrundfarbe
+          paddingRight: 2,
+          marginRight: 2,
+          paddingTop: 2,
+          overflowX: 'auto', // Horizontales Scrollen für diese Spalte
         }}
       >
         <Typography
-          variant="h5"
+          variant="h6"
           sx={{
             textAlign: 'center',
             fontWeight: 'bold',
-            position: 'sticky',
-            top: 0,
-            backgroundColor: theme.palette.background.paper,
-            zIndex: 1,
-            padding: '12px 0',
             marginBottom: 2,
-            borderBottom: `2px solid`,
-            borderImage: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main}) 1`,
-            borderImageSlice: 1,
           }}
         >
           Organisationseinheiten
@@ -172,31 +164,21 @@ export default function OrganigrammPage() {
       {selectedOrgUnit && (
         <Box
           sx={{
-            flexShrink: 1,
-            width: 600,
+            flexShrink: 0, // Keine Verkleinerung
+            minWidth: 350, // Feste Breite
             borderRight: `1px solid ${theme.palette.divider}`,
-            padding: 2,
-            overflow: 'auto',
-            maxHeight: 'calc(100vh - 64px)',
-            borderRadius: 4,
-            boxShadow: `0px 4px 8px ${theme.palette.divider}`,
-            backgroundColor: theme.palette.background.paper,
+            paddingRight: 2,
+            marginRight: 2,
+            paddingTop: 2,
+            overflowX: 'auto', // Horizontales Scrollen für diese Spalte
           }}
         >
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{
               textAlign: 'center',
               fontWeight: 'bold',
-              position: 'sticky',
-              top: 0,
-              backgroundColor: theme.palette.background.paper,
-              zIndex: 1,
-              padding: '12px 0',
               marginBottom: 2,
-              borderBottom: `2px solid`,
-              borderImage: `linear-gradient(to right, ${theme.palette.primary.light}, ${theme.palette.secondary.dark}) 1`,
-              borderImageSlice: 1,
             }}
           >
             Funktionen
@@ -215,33 +197,35 @@ export default function OrganigrammPage() {
       {selectedFunctionId && (
         <Box
           sx={{
-            flexShrink: 1,
-            padding: '0 2px 2px 2px',
-            overflow: 'auto',
-            maxHeight: 'calc(100vh - 64px)',
-            borderRadius: 4,
-            boxShadow: `0px 4px 8px ${theme.palette.divider}`,
-            backgroundColor: theme.palette.background.paper,
+            flexShrink: 0, // Keine Verkleinerung
+            minWidth: 350, // Feste Breite
+            borderRight: `1px solid ${theme.palette.divider}`,
+            paddingRight: 2,
+            marginRight: 2,
+            //paddingTop: 2,
+            overflowX: 'auto', // Horizontales Scrollen für diese Spalte
           }}
         >
-          <Typography
-            variant="h5"
+          <Box
             sx={{
-              textAlign: 'center',
-              fontWeight: 'bold',
               position: 'sticky',
-              top: 0,
-              backgroundColor: theme.palette.background.paper,
+              top: 0, // Überschrift bleibt oben
+              backgroundColor: theme.palette.background.default,
               zIndex: 1,
-              padding: '12px 0',
-              marginBottom: 2,
-              borderBottom: `2px solid`,
-              borderImage: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.light}) 1`,
-              borderImageSlice: 1,
+              padding: 1,
             }}
           >
-            Benutzer
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                marginBottom: 2,
+              }}
+            >
+              Benutzer
+            </Typography>
+          </Box>
           <UsersSpalte
             selectedFunctionId={selectedFunctionId}
             selectedMitglieder={selectedFunction}
@@ -252,30 +236,28 @@ export default function OrganigrammPage() {
         </Box>
       )}
 
-      {/* Vierte Spalte: Benutzerinformationen als Modal */}
-      <Modal
-        open={Boolean(selectedUserId)}
-        onClose={() => handleUserSelect('')}
-        aria-labelledby="user-info-modal"
-        aria-describedby="user-info-details"
-      >
+      {/* Vierte Spalte: Benutzerinformationen */}
+      {selectedUserId && (
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '90%',
-            maxWidth: 500,
-            bgcolor: theme.palette.background.paper,
-            boxShadow: 24,
-            borderRadius: 4,
-            p: 4,
+            flexShrink: 0, // Keine Verkleinerung
+            minWidth: 250, // Feste Breite
+            paddingTop: 2,
           }}
         >
-          {selectedUserId && <UserInfoSpalte userId={selectedUserId} />}
+          <Typography
+            variant="h6"
+            sx={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+              marginBottom: 2,
+            }}
+          >
+            Benutzerinformationen
+          </Typography>
+          <UserInfoSpalte userId={selectedUserId} />
         </Box>
-      </Modal>
+      )}
     </Box>
   );
 }

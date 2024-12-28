@@ -1,15 +1,15 @@
 'use client';
 
-import { Box, Modal, Typography, useTheme } from '@mui/material';
+import { Box, Modal, Slider, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
-import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
-import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
-import UsersSpalte from '../../components/organigramm/UsersSpalte';
-import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { FunctionInfo } from '../../types/function.type';
-import { OrgUnitDTO } from '../../types/orgUnit.type';
-import { fetchMitgliederIds } from './fetchkp';
+import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
+import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
+import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
+import UsersSpalte from '../../../components/organigramm/UsersSpalte';
+import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
+import { FunctionInfo } from '../../../types/function.type';
+import { OrgUnitDTO } from '../../../types/orgUnit.type';
+import { fetchMitgliederIds } from '../fetchkp';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -28,6 +28,11 @@ export default function OrganigrammPage() {
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
   );
+
+  // Dynamische Breiten für die Spalten
+  const [orgUnitsWidth, setOrgUnitsWidth] = useState(600); // Standard: 300px
+  const [functionsWidth, setFunctionsWidth] = useState(400); // Standard: 600px
+  const [usersWidth, setUsersWidth] = useState(400); // Standard: 400px
 
   // Benutzerdaten
   const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
@@ -133,8 +138,8 @@ export default function OrganigrammPage() {
       {/* Erste Spalte: Organisationseinheiten */}
       <Box
         sx={{
-          flexGrow: 1, // Dynamische Breite
-          flexShrink: 0, // Verhindert, dass sich die Spalte verkleinert
+          flexShrink: 0,
+          width: orgUnitsWidth, // Dynamische Breite
           borderRight: `1px solid ${theme.palette.divider}`,
           padding: '0 2px 2px 2px', // Padding oben, rechts, unten, links
           overflow: 'auto', // Ermöglicht Scrollen
@@ -144,24 +149,28 @@ export default function OrganigrammPage() {
           backgroundColor: theme.palette.background.paper, // Harmonische Hintergrundfarbe
         }}
       >
-        <Typography
-          variant="h5"
+        <Box
           sx={{
             textAlign: 'center',
-            fontWeight: 'bold',
             position: 'sticky',
             top: 0,
-            backgroundColor: theme.palette.background.paper,
             zIndex: 1,
+            backgroundColor: theme.palette.background.paper,
             padding: '12px 0',
             marginBottom: 2,
-            borderBottom: `2px solid`,
-            borderImage: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main}) 1`,
-            borderImageSlice: 1,
           }}
         >
-          Organisationseinheiten
-        </Typography>
+          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+            Organisationseinheiten
+          </Typography>
+          <Slider
+            value={orgUnitsWidth}
+            onChange={(e, value) => setOrgUnitsWidth(value as number)}
+            min={200}
+            max={600}
+            sx={{ width: '80%', margin: '8px auto' }}
+          />
+        </Box>
         <OrgUnitsSpalte
           onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
           onRemove={handleRemove}
@@ -173,7 +182,7 @@ export default function OrganigrammPage() {
         <Box
           sx={{
             flexShrink: 1,
-            width: 600,
+            width: functionsWidth, // Dynamische Breite
             borderRight: `1px solid ${theme.palette.divider}`,
             padding: 2,
             overflow: 'auto',
@@ -183,24 +192,28 @@ export default function OrganigrammPage() {
             backgroundColor: theme.palette.background.paper,
           }}
         >
-          <Typography
-            variant="h5"
+          <Box
             sx={{
               textAlign: 'center',
-              fontWeight: 'bold',
               position: 'sticky',
               top: 0,
-              backgroundColor: theme.palette.background.paper,
               zIndex: 1,
+              backgroundColor: theme.palette.background.paper,
               padding: '12px 0',
               marginBottom: 2,
-              borderBottom: `2px solid`,
-              borderImage: `linear-gradient(to right, ${theme.palette.primary.light}, ${theme.palette.secondary.dark}) 1`,
-              borderImageSlice: 1,
             }}
           >
-            Funktionen
-          </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              Funktionen
+            </Typography>
+            <Slider
+              value={functionsWidth}
+              onChange={(e, value) => setFunctionsWidth(value as number)}
+              min={300}
+              max={800}
+              sx={{ width: '80%', margin: '8px auto' }}
+            />
+          </Box>
           <FunctionsSpalte
             orgUnit={selectedOrgUnit}
             onSelect={handleFunctionSelect}
@@ -216,6 +229,7 @@ export default function OrganigrammPage() {
         <Box
           sx={{
             flexShrink: 1,
+            width: usersWidth, // Dynamische Breite
             padding: '0 2px 2px 2px',
             overflow: 'auto',
             maxHeight: 'calc(100vh - 64px)',
@@ -224,24 +238,28 @@ export default function OrganigrammPage() {
             backgroundColor: theme.palette.background.paper,
           }}
         >
-          <Typography
-            variant="h5"
+          <Box
             sx={{
               textAlign: 'center',
-              fontWeight: 'bold',
               position: 'sticky',
               top: 0,
-              backgroundColor: theme.palette.background.paper,
               zIndex: 1,
+              backgroundColor: theme.palette.background.paper,
               padding: '12px 0',
               marginBottom: 2,
-              borderBottom: `2px solid`,
-              borderImage: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.light}) 1`,
-              borderImageSlice: 1,
             }}
           >
-            Benutzer
-          </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              Benutzer
+            </Typography>
+            <Slider
+              value={usersWidth}
+              onChange={(e, value) => setUsersWidth(value as number)}
+              min={300}
+              max={700}
+              sx={{ width: '80%', margin: '8px auto' }}
+            />
+          </Box>
           <UsersSpalte
             selectedFunctionId={selectedFunctionId}
             selectedMitglieder={selectedFunction}

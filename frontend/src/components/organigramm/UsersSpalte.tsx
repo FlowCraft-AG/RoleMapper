@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
@@ -60,11 +59,11 @@ export default function UsersSpalte({
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
-  const [loading, setLoading] = useState(false);
+  //   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const loadFunctions = useCallback(async () => {
-    setLoading(true);
+    // setLoading(true);
     setError(null);
     try {
       if (selectedFunctionId === 'mitglieder') {
@@ -80,7 +79,7 @@ export default function UsersSpalte({
       console.error('Fehler beim Laden der Benutzer:', err);
       setError('Fehler beim Laden der Benutzer');
     } finally {
-      setLoading(false);
+      //   setLoading(false);
     }
   }, [selectedFunctionId, selectedMitglieder, isImpliciteFunction]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
@@ -139,13 +138,13 @@ export default function UsersSpalte({
     onSelectUser(userId);
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
+  //   if (loading) {
+  //     return (
+  //       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+  //         <CircularProgress />
+  //       </Box>
+  //     );
+  //   }
 
   if (error) {
     return (
@@ -167,7 +166,7 @@ export default function UsersSpalte({
       <Box
         sx={{
           position: 'sticky',
-          top: 50, // Überschrift bleibt oben
+          top: 58, // Überschrift bleibt oben
           backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
           zIndex: 1,
           padding: 1,
