@@ -167,7 +167,7 @@ export default function UsersSpalte({
       <Box
         sx={{
           position: 'sticky',
-          top: 50, // Überschrift bleibt oben
+          top: 58, // Überschrift bleibt oben
           backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
           zIndex: 1,
           padding: 1,

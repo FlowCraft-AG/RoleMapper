@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import { Box, Modal, Slider, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
-import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
-import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
-import UsersSpalte from '../../components/organigramm/UsersSpalte';
-import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { FunctionInfo } from '../../types/function.type';
-import { OrgUnitDTO } from '../../types/orgUnit.type';
-import { fetchMitgliederIds } from './fetchkp';
+import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
+import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
+import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
+import UsersSpalte from '../../../components/organigramm/UsersSpalte';
+import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
+import { FunctionInfo } from '../../../types/function.type';
+import { OrgUnitDTO } from '../../../types/orgUnit.type';
+import { fetchMitgliederIds } from '../fetchkp';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -128,26 +128,24 @@ export default function OrganigrammPage() {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'row',
-        gap: 2, // Abstand zwischen den Spalten
+        flexDirection: { xs: 'column', md: 'row' }, // Spalten für Desktop, Reihen für Smartphones
+        gap: 2,
         padding: 2,
         backgroundColor: theme.palette.background.default,
-        overflowX: 'auto', // Horizontal scrollen, falls nötig
+        overflowX: { md: 'auto' }, // Horizontal scrollen für Desktop
+        overflowY: 'auto', // Vertikal scrollen immer erlaubt
+        height: { xs: 'auto', md: '100vh' }, // Höhe auf 100vh für Desktop, auto für Smartphones
       }}
     >
-
       {/* Erste Spalte: Organisationseinheiten */}
       <Box
         sx={{
-          flexGrow: 1, // Dynamische Breite
-          flexShrink: 0, // Verhindert, dass sich die Spalte verkleinert
-          borderRight: `1px solid ${theme.palette.divider}`,
-          padding: '0 2px 2px 2px', // Padding oben, rechts, unten, links
-          overflow: 'auto', // Ermöglicht Scrollen
-          maxHeight: 'calc(100vh - 64px)', // Begrenzung der maximalen Höhe
-          borderRadius: 4, // Abgerundete Ecken
-          boxShadow: `0px 4px 8px ${theme.palette.divider}`, // Sanfter Schatten
-          backgroundColor: theme.palette.background.paper, // Harmonische Hintergrundfarbe
+          flexShrink: 0,
+          width: { xs: '100%', md: 350 }, // 100% für Smartphones, feste Breite für Desktop
+          borderRight: { md: `1px solid ${theme.palette.divider}` },
+          padding: 2,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
         }}
       >
         <Typography
@@ -155,21 +153,13 @@ export default function OrganigrammPage() {
           sx={{
             textAlign: 'center',
             fontWeight: 'bold',
-            position: 'sticky',
-            top: 0,
-            backgroundColor: theme.palette.background.paper,
-            zIndex: 1,
-            padding: '12px 0',
             marginBottom: 2,
-            borderBottom: `2px solid`,
-            borderImage: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main}) 1`,
-            borderImageSlice: 1,
           }}
         >
           Organisationseinheiten
         </Typography>
         <OrgUnitsSpalte
-          onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
+          onSelect={handleOrgUnitSelect}
           onRemove={handleRemove}
         />
       </Box>
@@ -178,15 +168,12 @@ export default function OrganigrammPage() {
       {selectedOrgUnit && (
         <Box
           sx={{
-            flexShrink: 1,
-            width: 600,
-            borderRight: `1px solid ${theme.palette.divider}`,
+            flexShrink: 0,
+            width: { xs: '100%', md: 600 }, // 100% für Smartphones, feste Breite für Desktop
+            borderRight: { md: `1px solid ${theme.palette.divider}` },
             padding: 2,
-            overflow: 'auto',
-            maxHeight: 'calc(100vh - 64px)',
-            borderRadius: 4,
-            boxShadow: `0px 4px 8px ${theme.palette.divider}`,
             backgroundColor: theme.palette.background.paper,
+            boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
           }}
         >
           <Typography
@@ -194,15 +181,7 @@ export default function OrganigrammPage() {
             sx={{
               textAlign: 'center',
               fontWeight: 'bold',
-              position: 'sticky',
-              top: 0,
-              backgroundColor: theme.palette.background.paper,
-              zIndex: 1,
-              padding: '12px 0',
               marginBottom: 2,
-              borderBottom: `2px solid`,
-              borderImage: `linear-gradient(to right, ${theme.palette.primary.light}, ${theme.palette.secondary.dark}) 1`,
-              borderImageSlice: 1,
             }}
           >
             Funktionen
@@ -221,13 +200,11 @@ export default function OrganigrammPage() {
       {selectedFunctionId && (
         <Box
           sx={{
-            flexShrink: 1,
-            padding: '0 2px 2px 2px',
-            overflow: 'auto',
-            maxHeight: 'calc(100vh - 64px)',
-            borderRadius: 4,
-            boxShadow: `0px 4px 8px ${theme.palette.divider}`,
+            flexShrink: 0,
+            width: { xs: '100%', md: 400 }, // 100% für Smartphones, feste Breite für Desktop
+            padding: 2,
             backgroundColor: theme.palette.background.paper,
+            boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
           }}
         >
           <Typography
@@ -235,15 +212,7 @@ export default function OrganigrammPage() {
             sx={{
               textAlign: 'center',
               fontWeight: 'bold',
-              position: 'sticky',
-              top: 0,
-              backgroundColor: theme.palette.background.paper,
-              zIndex: 1,
-              padding: '12px 0',
               marginBottom: 2,
-              borderBottom: `2px solid`,
-              borderImage: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.light}) 1`,
-              borderImageSlice: 1,
             }}
           >
             Benutzer
@@ -253,35 +222,35 @@ export default function OrganigrammPage() {
             selectedMitglieder={selectedFunction}
             onSelectUser={handleUserSelect}
             onRemove={handleRemove}
-            isImpliciteFunction={isImpliciteFunction}
+            isImpliciteFunction={true}
           />
         </Box>
       )}
 
-      {/* Vierte Spalte: Benutzerinformationen als Modal */}
-      <Modal
-        open={Boolean(selectedUserId)}
-        onClose={() => handleUserSelect('')}
-        aria-labelledby="user-info-modal"
-        aria-describedby="user-info-details"
-      >
+      {/* Vierte Spalte: Benutzerinformationen */}
+      {selectedUserId && (
         <Box
           sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '90%',
-            maxWidth: 500,
-            bgcolor: theme.palette.background.paper,
-            boxShadow: 24,
-            borderRadius: 4,
-            p: 4,
+            flexShrink: 0,
+            width: { xs: '100%', md: 300 }, // 100% für Smartphones, feste Breite für Desktop
+            padding: 2,
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
           }}
         >
-          {selectedUserId && <UserInfoSpalte userId={selectedUserId} />}
+          <Typography
+            variant="h5"
+            sx={{
+              textAlign: 'center',
+              fontWeight: 'bold',
+              marginBottom: 2,
+            }}
+          >
+            Benutzerinformationen
+          </Typography>
+          <UserInfoSpalte userId={selectedUserId} />
         </Box>
-      </Modal>
+      )}
     </Box>
   );
 }
