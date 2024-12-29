@@ -64,11 +64,14 @@ export default function UsersSpalte({
     setError(null);
     try {
       if (selectedFunctionId === 'mitglieder') {
+        console.log('Fetching mitglieder');
         setSelectedFunction(selectedMitglieder);
       } else if (isImpliciteFunction) {
+        console.log('Fetching saved data');
         const data = await fetchSavedData(selectedFunctionId);
         setSelectedFunction(data);
       } else {
+        console.log('Fetching users by function');
         const data = await fetchUsersByFunction(selectedFunctionId);
         setSelectedFunction(data);
       }
@@ -102,7 +105,6 @@ export default function UsersSpalte({
   }, [selectedFunctionId, loadFunctions]);
 
   const refetch = (functionInfo: ShortFunction) => {
-    console.log('Refetching Functions');
     setSelectedFunction(functionInfo); // Aktualisiere den Zustand
     setFilteredUsers(functionInfo.users); // Aktualisiere die gefilterte Liste
     setSearchTerm(''); // Suchfeld zurücksetzen

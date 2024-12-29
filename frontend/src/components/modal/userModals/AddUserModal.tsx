@@ -14,12 +14,12 @@ import { addUserToFunction } from '../../../lib/api/function.api';
 import { fetchUserIds } from '../../../lib/api/user.api';
 import { ShortFunction } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
-import UserAutocomplete from '../../utils/UserAutocomplete';
+import UserAutocomplete from '../../UserAutocomplete';
 
 interface AddUserModalProps {
   open: boolean;
   onClose: () => void;
-  errors: { [key: string]: string | null };
+  errors: { [key: string]: string | undefined };
   newUserId: string;
   setNewUserId: React.Dispatch<React.SetStateAction<string>>;
   refetch: (FunctionInfo: ShortFunction) => void;
@@ -36,7 +36,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   functionName,
   functionId,
 }) => {
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
+    {},
+  );
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [userIds, setUserIds] = useState<ShortUser[]>([]);
   const [loading, setLoading] = useState(false);
@@ -64,7 +66,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   };
 
   const validateInput = () => {
-    const newErrors: { [key: string]: string | null } = {};
+    const newErrors: { [key: string]: string | undefined } = {};
     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 
     if (!newUserId.trim()) {
@@ -103,7 +105,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         open: true,
         message: 'Fehler beim Hinzufügen des Benutzers.',
       });
-      const newErrors: { [key: string]: string | null } = {};
+      const newErrors: { [key: string]: string | undefined } = {};
       if (err instanceof Error) {
         newErrors.userId = err.message;
       }
@@ -152,7 +154,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
           <UserAutocomplete
             options={userIds}
             loading={loading}
-            value={userIds.find((id) => id.userId === newUserId) || null}
+            value={userIds.find((id) => id.userId === newUserId) || undefined}
             onChange={(value) => {
               if (!Array.isArray(value)) {
                 setNewUserId(value?.userId || '');

@@ -32,8 +32,6 @@ const EditFunctionModal = ({
   refetch,
   onEdit,
 }: EditFunctionModalProps) => {
-  console.log('EDIT FUNCTION MODAL');
-  console.log('selectedFunction:', functionData);
   const [isSaving, setIsSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [formData, setFormData] = useState({

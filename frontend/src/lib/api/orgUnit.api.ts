@@ -1,13 +1,13 @@
 'use server';
 
-import { CREATE_ORG_UNIT } from '../../graphql/mutations/create-org-unit';
-import { DELETE_ORG_UNIT } from '../../graphql/mutations/delete-org-unit';
-import { UPDATE_ORG_UNIT } from '../../graphql/mutations/org-unit.mutation';
+import { CREATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/create-org-unit';
+import { DELETE_ORG_UNIT } from '../../graphql/orgUnits/mutation/delete-org-unit';
+import { UPDATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/org-unit.mutation';
 import {
-  ORG_UNIT_BY_ID,
-  ORG_UNITS,
-  ORG_UNITS_IDS,
-} from '../../graphql/queries/get-orgUnits';
+  GET_ALL_ORG_UNITS,
+  GET_ORG_UNIT_BY_ID,
+  GET_ORG_UNITS_SHORT,
+} from '../../graphql/orgUnits/query/get-orgUnits';
 import { OrgUnit, ShortOrgUnit } from '../../types/orgUnit.type';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
@@ -29,7 +29,7 @@ export async function fetchAllOrgUnits(): Promise<OrgUnit[]> {
 
     // Query zum Abrufen aller Organisationseinheiten
     const { data } = await client.query({
-      query: ORG_UNITS,
+      query: GET_ALL_ORG_UNITS,
     });
 
     return data.getData.data || [];
@@ -50,7 +50,7 @@ export async function getOrgUnitById(orgUnitId: string): Promise<OrgUnit> {
     logger.debug('Lade Organisationseinheit mit ID: %o', orgUnitId);
 
     const { data } = await client.query({
-      query: ORG_UNIT_BY_ID,
+      query: GET_ORG_UNIT_BY_ID,
       variables: { id: orgUnitId },
     });
 
@@ -84,7 +84,7 @@ export async function createOrgUnit(
     await client.mutate({
       mutation: CREATE_ORG_UNIT,
       variables: { name, supervisor, parentId },
-      refetchQueries: [{ query: ORG_UNITS }],
+      refetchQueries: [{ query: GET_ALL_ORG_UNITS }],
       awaitRefetchQueries: true,
     });
 
@@ -121,7 +121,7 @@ export async function updateOrgUnit(
     await client.mutate({
       mutation: UPDATE_ORG_UNIT,
       variables: { id: orgUnitId, name, supervisor },
-      refetchQueries: [{ query: ORG_UNITS }],
+      refetchQueries: [{ query: GET_ALL_ORG_UNITS }],
       awaitRefetchQueries: true,
     });
 
@@ -148,7 +148,7 @@ export async function removeOrgUnit(orgUnitId: string): Promise<OrgUnit[]> {
     await client.mutate({
       mutation: DELETE_ORG_UNIT,
       variables: { value: orgUnitId },
-      refetchQueries: [{ query: ORG_UNITS }],
+      refetchQueries: [{ query: GET_ALL_ORG_UNITS }],
       awaitRefetchQueries: true,
     });
 
@@ -169,7 +169,7 @@ export async function fetchOrgUnitsIds(): Promise<ShortOrgUnit[]> {
     logger.debug('Lade IDs aller Organisationseinheiten');
 
     const { data } = await client.query({
-      query: ORG_UNITS_IDS,
+      query: GET_ORG_UNITS_SHORT,
     });
 
     return data.getData.data;

@@ -2,19 +2,19 @@ import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import React from 'react';
-import { GroupHeader, GroupItems } from '../../styles/GroupStyles';
-import { UserCredetials } from '../../types/user.type';
+import { GroupHeader, GroupItems } from '../styles/GroupStyles';
+import { ShortUser } from '../types/user.type';
 
 interface UserAutocompleteProps {
-  options: UserCredetials[];
+  options: ShortUser[];
   loading: boolean;
-  value: UserCredetials | UserCredetials[] | null; // Einzelwert oder Mehrfachauswahl
-  onChange: (value: UserCredetials[] | UserCredetials | null) => void;
+  value: ShortUser | ShortUser[] | undefined; // Einzelwert oder Mehrfachauswahl
+  onChange: (value: ShortUser[] | ShortUser | undefined) => void;
   label?: string;
   placeholder?: string;
   displayFormat: 'full' | 'userId' | 'nameOnly'; // Definiert das Anzeigeformat
   multiple?: boolean; // Optionaler Prop für Mehrfachauswahl
-  helperText?: string | null | undefined; // Fehlerausgabe
+  helperText?: string | undefined; // Fehlerausgabe
 }
 
 const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
@@ -28,7 +28,7 @@ const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
   multiple = false,
   helperText = '',
 }) => {
-  const getLabel = (option: UserCredetials): string => {
+  const getLabel = (option: ShortUser): string => {
     switch (displayFormat) {
       case 'userId':
         return option.userId;
@@ -73,9 +73,9 @@ const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
       value={value}
       onChange={(_, newValue) => {
         if (multiple) {
-          onChange(newValue as UserCredetials[]); // Gibt ein Array zurück
+          onChange(newValue as ShortUser[]); // Gibt ein Array zurück
         } else {
-          onChange(newValue as UserCredetials | null); // Gibt einen Einzelwert zurück
+          onChange(newValue as ShortUser | undefined); // Gibt einen Einzelwert zurück
         }
       }}
       renderOption={(props, option, { inputValue }) => {

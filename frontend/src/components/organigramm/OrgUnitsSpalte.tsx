@@ -52,7 +52,6 @@ export default function OrgUnitsSpalte({
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const refetch = (orgUnitList: OrgUnit[]) => {
-    console.log('Refetching OrgUnits');
     setOrgUnits(orgUnitList);
   };
 
@@ -125,33 +124,17 @@ export default function OrgUnitsSpalte({
     }
 
     const isRoot = isRootOrgUnit(selectedOrgUnit);
-    console.log(
-      'ist die orgUnit %s ein rootOrgUnit',
-      selectedOrgUnit.name,
-      isRoot,
-    );
 
     // Prüfe, ob die ausgewählte Einheit Kinder hat
     const unitHasChildren = hasChildren(orgUnits, selectedOrgUnit._id);
-    console.log(
-      'hat die OrgUnit %s kinder: ',
-      selectedOrgUnit.name,
-      unitHasChildren,
-    );
 
     // Finde den Fakultäts-Parent
     const facultyParent = findFacultyParent(orgUnits, selectedOrgUnit);
-    console.log(
-      'die OrgUnit %s ist in der Fakultät :',
-      selectedOrgUnit.name,
-      facultyParent,
-    );
 
     if (!facultyParent) {
       console.error('Fakultät für %s nicht gefunden.', selectedOrgUnit.name);
       return;
     }
-    console.log('Fakultät gefunden:', facultyParent);
 
     // Dynamische Farbänderung basierend auf Fakultät
     const newTheme = getFacultyTheme(facultyParent.name);
@@ -163,7 +146,6 @@ export default function OrgUnitsSpalte({
         orgUnits,
         selectedOrgUnit._id,
       );
-      console.log('orgUnitHierarchy', orgUnitHierarchy);
 
       // Das Theme für die gesamte Hierarchie anwenden
       orgUnitHierarchy.forEach((unit) => applyThemeToOrgUnit(unit, newTheme));
@@ -210,8 +192,6 @@ export default function OrgUnitsSpalte({
 
     // Prüfe, ob der Parent "Fakultät" heißt
     if (parentUnit.name === 'Fakultät') {
-      console.log('Fakultät gefunden:', parentUnit);
-      console.log('Aktuelle Einheit:', currentUnit);
       return currentUnit;
     }
 

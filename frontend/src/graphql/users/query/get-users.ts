@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const USERS = gql`
+export const GET_ALL_USERS = gql`
   query GetData {
     getData(input: { entity: USERS }) {
       totalCount
@@ -37,7 +37,7 @@ export const USERS = gql`
   }
 `;
 
-export const USER_CREDENTIALS = gql`
+export const GET_ALL_USERS_SHORT = gql`
   query GetData {
     getData(input: { entity: USERS, sort: { field: userId, direction: ASC } }) {
       totalCount
@@ -76,7 +76,7 @@ export const GET_USERS_BY_FUNCTION = gql`
   }
 `;
 
-export const USER_DETAILS = gql`
+export const GET_USER_BY_USER_ID = gql`
   query GetData($userId: String) {
     getData(
       input: {
@@ -118,7 +118,7 @@ export const USER_DETAILS = gql`
   }
 `;
 
-export const MITGLIEDER = gql`
+export const GET_MEMBERS_BY_ALIAS_OR_COST_CENTER = gql`
   query GetData($alias: String, $kostenstelleNr: String) {
     getData(
       input: {
@@ -166,7 +166,7 @@ export const MITGLIEDER = gql`
   }
 `;
 
-export const GET_EMPLOYEES = gql`
+export const GET_USERS_BY_TYPE_EMPLOYEE = gql`
   query GetData {
     getData(
       input: {

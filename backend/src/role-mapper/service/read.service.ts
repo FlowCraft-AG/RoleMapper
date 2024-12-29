@@ -147,6 +147,8 @@ export class ReadService {
             _id: id,
         });
 
+        this.#logger.debug('executeSavedQuery: savedQuery=%o', savedQuery);
+
         if (savedQuery === undefined || savedQuery.query === undefined) {
             throw new Error('Keine gespeicherte Query gefunden');
         }

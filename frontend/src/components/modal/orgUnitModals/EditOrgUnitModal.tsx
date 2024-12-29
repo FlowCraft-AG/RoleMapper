@@ -13,7 +13,7 @@ import { getOrgUnitById, updateOrgUnit } from '../../../lib/api/orgUnit.api';
 import { fetchEmployees } from '../../../lib/api/user.api';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ShortUser } from '../../../types/user.type';
-import UserAutocomplete from '../../utils/UserAutocomplete';
+import UserAutocomplete from '../../UserAutocomplete';
 
 interface EditOrgUnitModalProps {
   open: boolean;
@@ -34,7 +34,9 @@ const EditOrgUnitModal = ({
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
   const [userData, setUserData] = useState<ShortUser[]>([]);
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
+    {},
+  );
 
   // Supervisor-ID muss ein gültiges MongoDB ObjectId sein
   const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
@@ -187,13 +189,18 @@ const EditOrgUnitModal = ({
               loading={loading}
               value={
                 userData.find((user) => user._id === formData.supervisor) ||
-                null
+                undefined
               }
               onChange={(value) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  supervisor: value?._id || '',
-                }));
+                setFormData((prev) => {
+                  if (value && !Array.isArray(value)) {
+                    return {
+                      ...prev,
+                      supervisor: value?._id || '',
+                    };
+                  }
+                  return prev;
+                });
               }}
               displayFormat="full" // Alternativ: "userId" oder "nameOnly"
               label="Supervisor"

@@ -8,7 +8,7 @@ import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
 import { fetchMitglieder } from '../../lib/api/user.api';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { ShortFunction } from '../../types/function.type';
+import { Function, ShortFunction } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { User } from '../../types/user.type';
 
@@ -69,9 +69,9 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: ShortFunction) => {
+    const handleFunctionSelect = (functionInfo: Function) => {
     setSelectedFunctionId(functionInfo._id);
-    setSelectedFunction(functionInfo);
+    //setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
   };

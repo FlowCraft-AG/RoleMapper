@@ -22,11 +22,11 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import { useCallback, useEffect, useState } from 'react';
 import {
+  fetchFunctionById,
   fetchFunctionsByOrgUnit,
-  fetchUsersByFunction,
   removeFunction,
 } from '../../lib/api/function.api';
-import { Function, ShortFunction } from '../../types/function.type';
+import { Function } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
 import EditFunctionModal from '../modal/functionModals/EditFunctionModal';
@@ -38,7 +38,7 @@ interface FunctionsColumnProps {
   orgUnit: OrgUnit;
   rootOrgUnit: OrgUnit | undefined;
   functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
-  onSelect: (functionInfo: ShortFunction) => void;
+  onSelect: (func: Function) => void;
   handleMitgliederClick: () => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
@@ -72,7 +72,6 @@ export default function FunctionsSpalte({
     try {
       setLoading(true);
       const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
-      console.log('Functions:', functionList);
       setFunctions(functionList);
     } catch (err) {
       if (err instanceof Error) {
@@ -121,7 +120,7 @@ export default function FunctionsSpalte({
       handleMitgliederClick();
     } else {
       setSelectedIndex(func._id);
-      const func2 = await fetchUsersByFunction(func._id);
+      const func2: Function = await fetchFunctionById(func._id);
       onSelect(func2);
     }
   };

@@ -99,7 +99,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
 
     // Falls keine Funktionen vorhanden sind, prüfen wir die Nachkommen
     if (childrenWithNames.length > 0) {
-      console.log('childrenWithNames', childrenWithNames);
       setChildrenToDelete(childrenWithNames); // Kinder speichern
       setOpenChildrenModal(true); // Modal für Kinder öffnen
       return;
@@ -140,10 +139,8 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     const results: { orgUnit: string; functions: Function[] }[] = [];
 
     for (const child of children) {
-      console.log('child', child);
       // Prüfe die Funktionen des aktuellen Kindes
       const functions = await fetchFunctionsByOrgUnit(child.itemId);
-      console.log('functions', functions);
       if (functions.length > 0) {
         results.push({ orgUnit: child.label, functions }); // Speichere label als Name
       }
@@ -153,7 +150,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
         results.push(...childResults); // Ergebnisse der Kinder hinzufügen
       }
     }
-    console.log('results', results);
     return results;
   };
 

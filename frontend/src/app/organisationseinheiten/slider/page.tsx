@@ -1,29 +1,28 @@
 'use client';
 
 import { Box, Modal, Slider, Typography, useTheme } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
 import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
-import { FunctionInfo } from '../../../types/function.type';
-import { OrgUnitDTO } from '../../../types/orgUnit.type';
-import { fetchMitgliederIds } from '../fetchkp';
+import { Function, ShortFunction } from '../../../types/function.type';
+import { OrgUnit } from '../../../types/orgUnit.type';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
-  const [selectedOrgUnit, setSelectedOrgUnit] = useState<
-    OrgUnitDTO | undefined
-  >(undefined);
+  const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | undefined>(
+    undefined,
+  );
   const [selectedRootOrgUnit, setSelectedRootOrgUnit] = useState<
-    OrgUnitDTO | undefined
+    OrgUnit | undefined
   >(undefined);
 
   const [selectedFunctionId, setSelectedFunctionId] = useState<
     string | undefined
   >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<FunctionInfo>();
+  const [selectedFunction, setSelectedFunction] = useState<ShortFunction>();
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
@@ -42,14 +41,10 @@ export default function OrganigrammPage() {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
-  useEffect(() => {
-    console.log('Aktualisiertes Theme:', theme.palette);
-  }, [setFacultyTheme, theme.palette]);
-
   // Mitglieder laden
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     try {
-      return await fetchMitgliederIds(alias, kostenstelleNr);
+      return await getMitgliederIds(alias, kostenstelleNr);
     } catch (error) {
       console.error('Fehler beim Laden der Mitglieder:', error);
       return [];
@@ -57,7 +52,7 @@ export default function OrganigrammPage() {
   };
 
   // Organisationseinheit auswählen
-  const handleOrgUnitSelect = async (orgUnitDTO: OrgUnitDTO) => {
+  const handleOrgUnitSelect = async (orgUnitDTO: OrgUnit) => {
     setSelectedOrgUnit(orgUnitDTO);
     setSelectedFunctionId(undefined); // Reset selection
     setSelectedUserId(undefined); // Reset selection
@@ -73,19 +68,17 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: FunctionInfo) => {
+  const handleFunctionSelect = (functionInfo: ShortFunction) => {
     setSelectedFunctionId(functionInfo._id);
     setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
-    console.log('selectedFunctionId: ', functionInfo._id);
-    console.log('selectedFunction: ', functionInfo);
     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
   };
 
   // Mitgliederansicht aktivieren
   const handleMitgliederClick = () => {
     setSelectedFunctionId('mitglieder'); // Reset functions
-    setSelectedFunction(mitglied(selectedRootOrgUnit?.id));
+    //setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
     setSelectedUserId(undefined); // Reset users
     setIsImpliciteFunction(false);
   };
@@ -105,7 +98,7 @@ export default function OrganigrammPage() {
       setSelectedFunction(undefined);
       setSelectedUserId(undefined);
     }
-    if (ids.includes(selectedOrgUnit?.id || '')) {
+    if (ids.includes(selectedOrgUnit?._id || '')) {
       setSelectedOrgUnit(undefined);
       setSelectedFunctionId(undefined);
       setSelectedFunction(undefined);
@@ -115,13 +108,15 @@ export default function OrganigrammPage() {
 
   // Mitgliederfunktion generieren
   const mitglied = (orgUnitId: string | undefined) => {
-    return {
+    const members: Function = {
       _id: 'mitglieder',
       functionName: 'Mitglieder',
-      orgUnit: orgUnitId,
+      orgUnit: orgUnitId ?? '',
       users: combinedUsers,
       isImpliciteFunction: false,
+      isSingleUser: false,
     };
+    return members;
   };
 
   return (

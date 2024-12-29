@@ -1,12 +1,7 @@
-export interface QueryParameter {
-  key: string;
-  value: string;
-}
-
-export interface LoginData {
+export type LoginData = {
   username: string;
   password: string;
-}
+};
 
 export type AuthToken = {
   accessToken: string;

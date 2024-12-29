@@ -2,11 +2,11 @@
 
 import { ApolloError } from '@apollo/client';
 import {
-  GET_EMPLOYEES,
-  MITGLIEDER,
-  USER_CREDENTIALS,
-  USER_DETAILS,
-} from '../../graphql/queries/get-users';
+  GET_ALL_USERS_SHORT,
+  GET_MEMBERS_BY_ALIAS_OR_COST_CENTER,
+  GET_USER_BY_USER_ID,
+  GET_USERS_BY_TYPE_EMPLOYEE,
+} from '../../graphql/users/query/get-users';
 import { ShortUser, User } from '../../types/user.type';
 import { getLogger } from '../../utils/logger';
 import client from '../apolloClient';
@@ -36,7 +36,7 @@ export async function fetchMitglieder(
     );
 
     const { data } = await client.query({
-      query: MITGLIEDER,
+      query: GET_MEMBERS_BY_ALIAS_OR_COST_CENTER,
       variables: { alias, kostenstelleNr },
     });
 
@@ -61,7 +61,7 @@ export async function fetchEmployees(): Promise<ShortUser[]> {
     logger.debug('Lade alle Mitarbeiter');
 
     const { data } = await client.query({
-      query: GET_EMPLOYEES,
+      query: GET_USERS_BY_TYPE_EMPLOYEE,
     });
 
     return data.getData.data as ShortUser[];
@@ -84,7 +84,7 @@ export async function fetchUserIds(): Promise<ShortUser[]> {
     logger.debug('Lade Benutzer-IDs');
 
     const { data } = await client.query({
-      query: USER_CREDENTIALS,
+      query: GET_ALL_USERS_SHORT,
     });
 
     return data.getData.data as ShortUser[];
@@ -108,7 +108,7 @@ export async function fetchUserDetails(userId: string): Promise<User> {
     logger.debug('Lade Benutzerdetails für Benutzer-ID: %o', userId);
 
     const { data } = await client.query({
-      query: USER_DETAILS,
+      query: GET_USER_BY_USER_ID,
       variables: { userId },
     });
 

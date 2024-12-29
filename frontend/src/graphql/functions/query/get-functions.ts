@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const FUNCTIONS = gql`
+export const GET_ALL_FUNCTIONS = gql`
   query GetData {
     getData(input: { entity: MANDATES }) {
       totalCount
@@ -10,27 +10,6 @@ export const FUNCTIONS = gql`
           functionName
           users
           orgUnit
-          isSingleUser
-          isImpliciteFunction
-        }
-      }
-    }
-  }
-`;
-
-export const USERS_BY_FUNCTION = gql`
-  query GetData($functionId: String) {
-    getData(
-      input: {
-        entity: MANDATES
-        filter: { field: _id, operator: EQ, value: $functionId }
-        sort: { field: functionName, direction: ASC }
-      }
-    ) {
-      data {
-        ... on Function {
-          users
-          functionName
           isSingleUser
           isImpliciteFunction
         }
@@ -78,6 +57,28 @@ export const GET_SAVED_DATA = gql`
         profile {
           firstName
           lastName
+        }
+      }
+    }
+  }
+`;
+
+export const GET_FUNCTION_BY_ID = gql`
+  query GetData($functionId: String) {
+    getData(
+      input: {
+        entity: MANDATES
+        filter: { field: _id, operator: EQ, value: $functionId }
+        sort: { field: functionName, direction: ASC }
+      }
+    ) {
+      data {
+        ... on Function {
+            _id
+          users
+          functionName
+          isSingleUser
+          isImpliciteFunction
         }
       }
     }

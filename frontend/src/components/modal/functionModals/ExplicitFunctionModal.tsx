@@ -16,7 +16,7 @@ import { createExplicitFunction } from '../../../lib/api/function.api';
 import { fetchUserIds } from '../../../lib/api/user.api';
 import { Function } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
-import UserAutocomplete from '../../utils/UserAutocomplete';
+import UserAutocomplete from '../../UserAutocomplete';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
@@ -35,7 +35,9 @@ const ExplicitFunctionModal = ({
 }: ExplicitFunctionModalProps) => {
   const [functionName, setFunctionName] = useState('');
   const [users, setUsers] = useState<ShortUser[]>([]);
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
+    {},
+  );
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [loading, setLoading] = useState(false);
@@ -60,7 +62,7 @@ const ExplicitFunctionModal = ({
   };
 
   const validateInput = () => {
-    const newErrors: { [key: string]: string | null } = {};
+    const newErrors: { [key: string]: string | undefined } = {};
     const functionNameRegex = /^[a-zA-Z ]+$/; // Funktionsname kann Leerzeichen enthalten, aber keine Sonderzeichen
     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 

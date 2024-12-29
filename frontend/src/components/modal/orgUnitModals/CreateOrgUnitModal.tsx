@@ -12,7 +12,7 @@ import { createOrgUnit } from '../../../lib/api/orgUnit.api';
 import { fetchEmployees } from '../../../lib/api/user.api';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ShortUser } from '../../../types/user.type';
-import UserAutocomplete from '../../utils/UserAutocomplete';
+import UserAutocomplete from '../../UserAutocomplete';
 
 interface CreateOrgUnitModalProps {
   open: boolean;
@@ -32,7 +32,9 @@ const CreateOrgUnitModal = ({
   const [userData, setUserData] = useState<ShortUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
+    {},
+  );
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = useCallback(async () => {
@@ -162,7 +164,7 @@ const CreateOrgUnitModal = ({
               loading={loading}
               value={
                 userData.find((user) => user._id === formData.supervisor) ||
-                null
+                undefined
               }
               onChange={(value) => {
                 if (value && !Array.isArray(value)) {
@@ -171,7 +173,7 @@ const CreateOrgUnitModal = ({
                     supervisor: value._id || '',
                   }));
                 }
-                setErrors((prev) => ({ ...prev, supervisor: null }));
+                setErrors((prev) => ({ ...prev, supervisor: undefined }));
               }}
               displayFormat="full" // Alternativ: "userId" oder "nameOnly"
               label="Supervisor"

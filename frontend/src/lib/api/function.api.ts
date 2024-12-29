@@ -1,20 +1,20 @@
 'use server';
 
-import { ADD_FUNCTIONS } from '../../graphql/mutations/add-to-function';
+import { ADD_FUNCTIONS } from '../../graphql/functions/mutation/add-to-function';
 import {
   CREATE_EXPLICITE_FUNCTIONS,
   CREATE_IMPLICITE_FUNCTIONS,
-} from '../../graphql/mutations/create-function';
-import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
-import { REMOVE_FUNCTIONS } from '../../graphql/mutations/remove-to-function';
-import { UPDATE_FUNCTIONS } from '../../graphql/mutations/update-function';
+} from '../../graphql/functions/mutation/create-function';
+import { DELETE_FUNCTIONS } from '../../graphql/functions/mutation/delete-function';
+import { REMOVE_FUNCTIONS } from '../../graphql/functions/mutation/remove-to-function';
+import { UPDATE_FUNCTIONS } from '../../graphql/functions/mutation/update-function';
 import {
   FUNCTIONS_BY_ORG_UNIT,
+  GET_FUNCTION_BY_ID,
   GET_SAVED_DATA,
-  USERS_BY_FUNCTION,
-} from '../../graphql/queries/get-functions';
-import { ORG_UNITS } from '../../graphql/queries/get-orgUnits';
-import { GET_USERS_BY_FUNCTION } from '../../graphql/queries/get-users';
+} from '../../graphql/functions/query/get-functions';
+import { GET_ALL_ORG_UNITS } from '../../graphql/orgUnits/query/get-orgUnits';
+import { GET_USERS_BY_FUNCTION } from '../../graphql/users/query/get-users';
 import { Function, ShortFunction } from '../../types/function.type';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
@@ -58,11 +58,30 @@ export async function fetchFunctionsByOrgUnit(
       query: FUNCTIONS_BY_ORG_UNIT,
       variables: { orgUnitId },
     });
+
     return data.getData.data || [];
   } catch (error) {
     handleGraphQLError(
       error,
       'Fehler beim Laden der Funktionen für die Organisationseinheit.',
+    );
+  }
+}
+
+export async function fetchFunctionById(functionId: string): Promise<Function> {
+  try {
+    logger.debug('Lade Funktion mit der id: %o', functionId);
+    const { data } = await client.query({
+      query: GET_FUNCTION_BY_ID,
+      variables: { functionId },
+    });
+
+    logger.debug('Funktion mit der id: %o', data.getData.data[0]);
+    return data.getData.data[0] || [];
+  } catch (error) {
+    handleGraphQLError(
+      error,
+      `Fehler beim Laden der Funktion mit der id ${functionId}.`,
     );
   }
 }
@@ -93,7 +112,7 @@ export async function createImpliciteFunction({
       variables: { functionName, field, value, orgUnitId },
       refetchQueries: [
         { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
-        { query: ORG_UNITS },
+        { query: GET_ALL_ORG_UNITS },
       ],
       awaitRefetchQueries: true,
     });
@@ -166,7 +185,9 @@ export async function addUserToFunction(
     await client.mutate({
       mutation: ADD_FUNCTIONS,
       variables: { functionName, userId },
-      refetchQueries: [{ query: USERS_BY_FUNCTION, variables: { functionId } }],
+      refetchQueries: [
+        { query: GET_FUNCTION_BY_ID, variables: { functionId } },
+      ],
       awaitRefetchQueries: true, // Wartet, bis Refetch abgeschlossen ist
     });
 
@@ -196,7 +217,14 @@ export async function fetchUsersByFunction(
       query: GET_USERS_BY_FUNCTION,
       variables: { id: functionId },
     });
-    return data.getUsersByFunction;
+
+    // Klone das empfangene Objekt, um es änderbar zu machen
+    const shortFunction: ShortFunction = {
+      ...data.getUsersByFunction,
+      _id: functionId, // Füge die `_id`-Eigenschaft hinzu
+    };
+
+    return shortFunction;
   } catch (error) {
     handleGraphQLError(
       error,
@@ -343,7 +371,9 @@ export async function removeUserFromFunction(
     const { data } = await client.mutate({
       mutation: REMOVE_FUNCTIONS,
       variables: { functionName, userId },
-      refetchQueries: [{ query: USERS_BY_FUNCTION, variables: { functionId } }],
+      refetchQueries: [
+        { query: GET_FUNCTION_BY_ID, variables: { functionId } },
+      ],
       awaitRefetchQueries: true, // Wartet auf Abschluss der Refetch-Abfragen
     });
 
