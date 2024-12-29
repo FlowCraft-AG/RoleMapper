@@ -47,7 +47,7 @@ export default function UsersSpalte({
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
-  const [errors] = useState<{ [key: string]: string | null }>({});
+  const [errors] = useState<{ [key: string]: string | undefined }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const [selectedFunction, setSelectedFunction] = useState<

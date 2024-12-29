@@ -84,7 +84,7 @@ const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
         const parts = parse(label, matches);
 
         return (
-          <li {...props} key={option._id}>
+          <li {...props} key={option.userId}>
             <div>
               {parts.map((part, index) => (
                 <span
