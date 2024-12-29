@@ -27,7 +27,7 @@ import { User } from '../../types/user.type';
 
 interface UsersColumnProps {
   selectedFunctionId: string;
-  selectedMitglieder: FunctionInfo | undefined;
+  selectedMitglieder: FunctionInfo2 | undefined;
   onSelectUser: (userId: string) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   isImpliciteFunction: boolean;
@@ -64,7 +64,7 @@ export default function UsersSpalte({
     setError(null);
     try {
       if (selectedFunctionId === 'mitglieder') {
-        //setSelectedFunction(selectedMitglieder);
+        setSelectedFunction(selectedMitglieder);
       } else if (isImpliciteFunction) {
         const data = await fetchSavedData(selectedFunctionId);
         setSelectedFunction(data);

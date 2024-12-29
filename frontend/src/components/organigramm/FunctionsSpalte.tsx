@@ -23,9 +23,10 @@ import Box from '@mui/material/Box';
 import { useCallback, useEffect, useState } from 'react';
 import {
   fetchFunctionsByOrgUnit,
+  fetchUsersByFunction2,
   removeFunction,
 } from '../../app/organisationseinheiten/fetchkp';
-import { Function, FunctionInfo } from '../../types/function.type';
+import { Function, FunctionInfo, FunctionInfo2 } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
 import EditFunctionModal from '../modal/functionModals/EditFunctionModal';
@@ -37,7 +38,7 @@ interface FunctionsColumnProps {
   orgUnit: OrgUnitDTO;
   rootOrgUnit: OrgUnitDTO | undefined;
   functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
-  onSelect: (functionInfo: FunctionInfo) => void;
+  onSelect: (functionInfo: FunctionInfo2) => void;
   handleMitgliederClick: () => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
@@ -114,13 +115,14 @@ export default function FunctionsSpalte({
     functions.filter((func: Function) => func.orgUnit === orgUnit.id) || [];
 
   // Klick-Handler für eine Funktion oder "Mitglieder"
-  const handleClick = (func: Function | string) => {
+  const handleClick = async (func: Function | string) => {
     if (typeof func === 'string') {
       setSelectedIndex(func);
       handleMitgliederClick();
     } else {
-      setSelectedIndex(func._id);
-      onSelect(func);
+        setSelectedIndex(func._id);
+        const func2 = await fetchUsersByFunction2(func._id);
+      onSelect(func2);
     }
   };
 

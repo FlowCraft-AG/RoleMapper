@@ -7,9 +7,10 @@ import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { FunctionInfo } from '../../types/function.type';
+import { FunctionInfo, FunctionInfo2 } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { fetchMitgliederIds } from './fetchkp';
+import { User } from '../../types/user.type';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -23,14 +24,14 @@ export default function OrganigrammPage() {
   const [selectedFunctionId, setSelectedFunctionId] = useState<
     string | undefined
   >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<FunctionInfo>();
+  const [selectedFunction, setSelectedFunction] = useState<FunctionInfo2>();
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
   );
 
   // Benutzerdaten
-  const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
+  const [combinedUsers, setCombinedUsers] = useState<User[]>([]);
   const [isImpliciteFunction, setIsImpliciteFunction] =
     useState<boolean>(false);
 
@@ -68,12 +69,10 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: FunctionInfo) => {
+  const handleFunctionSelect = (functionInfo: FunctionInfo2) => {
     setSelectedFunctionId(functionInfo._id);
     setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
-    console.log('selectedFunctionId: ', functionInfo._id);
-    console.log('selectedFunction: ', functionInfo);
     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
   };
 

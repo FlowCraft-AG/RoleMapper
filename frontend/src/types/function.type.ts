@@ -20,7 +20,7 @@ export type FunctionInfo2 = {
   _id?: string;
   functionName: string;
   users: User[];
-  isImpliciteFunction?: boolean;
+  isImpliciteFunction: boolean;
 };
 
 export type FunctionListProps = {

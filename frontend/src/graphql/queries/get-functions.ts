@@ -65,8 +65,21 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
 export const GET_SAVED_DATA = gql`
   query GetSavedData($id: ID!) {
     getSavedData(id: $id) {
-      users
       functionName
+      users {
+            _id
+            userId
+            userType
+            userRole
+            orgUnit
+            active
+            validFrom
+            validUntil
+            profile {
+            firstName
+            lastName
+          }
+        }
     }
   }
 `;

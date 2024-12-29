@@ -30,7 +30,7 @@ import {
   USER_IDS,
 } from '../../graphql/queries/get-users';
 import client from '../../lib/apolloClient';
-import { Function, FunctionInfo2 } from '../../types/function.type';
+import { Function, FunctionInfo, FunctionInfo2 } from '../../types/function.type';
 import { OrgUnit, OrgUnitInfo } from '../../types/orgUnit.type';
 import { User, UserCredetials } from '../../types/user.type';
 import { getLogger } from '../../utils/logger';
@@ -40,13 +40,13 @@ const logger = getLogger('fetchkp.tsx');
 export async function fetchMitgliederIds(
   alias: string | null,
   kostenstelleNr: string | null,
-) {
+): Promise<User[]> {
   try {
     const { data } = await client.query({
       query: MITGLIEDER,
       variables: { alias, kostenstelleNr },
     });
-    return data.getData.data.map((user: { userId: string }) => user.userId);
+    return data.getData.data;
   } catch (error) {
     console.error('Error fetching Mitglieder:', error);
     return [];
@@ -380,7 +380,7 @@ export async function fetchOrgUnitsIds(): Promise<OrgUnitInfo[]> {
   }
 }
 
-export async function fetchSavedData(functionId: string) {
+export async function fetchSavedData(functionId: string): Promise<FunctionInfo2> {
   try {
     const { data } = await client.query({
       query: GET_SAVED_DATA,
