@@ -15,9 +15,9 @@ import { useEffect, useState } from 'react';
 import {
   fetchOrgUnitsIds,
   updateFunction,
-} from '../../app/organisationseinheiten/fetchkp';
-import { Function } from '../../types/function.type';
-import { OrgUnitInfo } from '../../types/orgUnit.type';
+} from '../../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../../types/function.type';
+import { OrgUnitInfo } from '../../../types/orgUnit.type';
 
 interface EditFunctionModalProps {
   open: boolean;

@@ -17,12 +17,13 @@ import Tooltip from '@mui/material/Tooltip';
 import { useCallback, useEffect, useState } from 'react';
 import {
   fetchSavedData,
-  fetchUsersByFunction,
+  fetchUsersByFunction2,
   removeUserFromFunction,
 } from '../../app/organisationseinheiten/fetchkp';
-import { FunctionInfo } from '../../types/function.type';
+import { FunctionInfo, FunctionInfo2 } from '../../types/function.type';
 import { getListItemStyles } from '../../utils/styles';
-import AddUserModal from '../modal/AddUserModal';
+import AddUserModal from '../modal/userModals/AddUserModal';
+import { User } from '../../types/user.type';
 
 interface UsersColumnProps {
   selectedFunctionId: string;
@@ -39,22 +40,18 @@ export default function UsersSpalte({
   onRemove,
   isImpliciteFunction,
 }: UsersColumnProps) {
-  console.log('USERS SPALTE');
-  console.log('selectedFunctionId: ', selectedFunctionId);
-  console.log('selectedMitglieder: ', selectedMitglieder);
-  console.log('isImpliciteFunction: ', isImpliciteFunction);
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredUsers, setFilteredUsers] = useState<string[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const [newUserId, setNewUserId] = useState('');
   const [errors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const [selectedFunction, setSelectedFunction] = useState<
-    FunctionInfo | undefined
+    FunctionInfo2 | undefined
   >(undefined);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
@@ -67,12 +64,12 @@ export default function UsersSpalte({
     setError(null);
     try {
       if (selectedFunctionId === 'mitglieder') {
-        setSelectedFunction(selectedMitglieder);
+        //setSelectedFunction(selectedMitglieder);
       } else if (isImpliciteFunction) {
         const data = await fetchSavedData(selectedFunctionId);
         setSelectedFunction(data);
       } else {
-        const data = await fetchUsersByFunction(selectedFunctionId);
+          const data = await fetchUsersByFunction2(selectedFunctionId);
         setSelectedFunction(data);
       }
     } catch (err) {
@@ -88,7 +85,7 @@ export default function UsersSpalte({
     if (selectedFunction && selectedFunction.users) {
       const lowercasedTerm = searchTerm.toLowerCase();
       const filtered = selectedFunction.users.filter((user) =>
-        user.toLowerCase().includes(lowercasedTerm),
+        user.userId.toLowerCase().includes(lowercasedTerm),
       );
       setFilteredUsers(filtered);
     }
@@ -104,7 +101,7 @@ export default function UsersSpalte({
     }
   }, [selectedFunctionId, loadFunctions]);
 
-  const refetch = (functionInfo: FunctionInfo) => {
+  const refetch = (functionInfo: FunctionInfo2) => {
     console.log('Refetching Functions');
     setSelectedFunction(functionInfo); // Aktualisiere den Zustand
     setFilteredUsers(functionInfo.users); // Aktualisiere die gefilterte Liste
@@ -120,7 +117,7 @@ export default function UsersSpalte({
       );
       setSelectedFunction((prev) => ({
         ...prev!,
-        users: prev?.users.filter((id) => id !== userId) || [],
+        users: prev?.users.filter((id) => id.userId !== userId) || [],
       }));
       onRemove([userId]);
       setSnackbar({ open: true, message: 'Benutzer erfolgreich entfernt' });
@@ -216,13 +213,13 @@ export default function UsersSpalte({
 
       <List>
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((userId: string) => (
+          filteredUsers.map((user: User) => (
             <ListItemButton
-              key={userId}
-              sx={getListItemStyles(theme, selectedIndex === userId)}
-              onClick={() => handleViewUser(userId)}
+              key={user.userId}
+              sx={getListItemStyles(theme, selectedIndex === user.userId)}
+              onClick={() => handleViewUser(user.userId)}
             >
-              <ListItemText primary={userId} />
+                  <ListItemText primary={`${user.profile?.lastName} ${user.profile?.firstName} (${user.userId})`} />
               {/* Entfernen-Icon nur anzeigen, wenn die Funktion nicht implizit ist */}
               {!isImpliciteFunction && selectedFunctionId !== 'mitglieder' && (
                 <Tooltip title="Benutzer entfernen">
@@ -235,7 +232,7 @@ export default function UsersSpalte({
                         !isImpliciteFunction &&
                         selectedFunctionId !== 'mitglieder'
                       ) {
-                        handleRemoveUser(userId);
+                        handleRemoveUser(user.userId);
                       }
                     }}
                   >

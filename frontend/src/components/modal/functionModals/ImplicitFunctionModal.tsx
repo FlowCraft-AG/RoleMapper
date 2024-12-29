@@ -11,9 +11,9 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { createImpliciteFunction } from '../../app/organisationseinheiten/fetchkp';
-import { Function } from '../../types/function.type';
-import { getEnumValues } from '../../types/user.type';
+import { createImpliciteFunction } from '../../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../../types/function.type';
+import { getEnumValues } from '../../../types/user.type';
 
 interface ImplicitFunctionModalProps {
   open: boolean;

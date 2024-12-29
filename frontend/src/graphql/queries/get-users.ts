@@ -44,8 +44,34 @@ export const USER_IDS = gql`
       data {
         ... on User {
           userId
+          profile {
+            firstName
+            lastName
+          }
         }
       }
+    }
+  }
+`;
+
+export const GET_USERS_BY_FUNCTION = gql`
+  query GetUsersByFunction($id: ID!) {
+    getUsersByFunction(id: $id) {
+      users {
+            _id
+            userId
+            userType
+            userRole
+            orgUnit
+            active
+            validFrom
+            validUntil
+            profile {
+            firstName
+            lastName
+          }
+        }
+        functionName
     }
   }
 `;
@@ -154,6 +180,10 @@ export const GET_EMPLOYEES = gql`
         ... on User {
           userId
           _id
+          profile {
+            firstName
+            lastName
+          }
         }
       }
     }

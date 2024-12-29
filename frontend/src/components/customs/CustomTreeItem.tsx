@@ -15,12 +15,12 @@ import {
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
 import { Function } from '../../types/function.type';
 import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';
-import OrgUnitFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal1';
-import ConfirmDeleteModal from '../modal/ConfirmOrgUnitDeleteModal2';
-import ChildFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal3';
-import CreateOrgUnitModal from '../modal/CreateOrgUnitModal';
-import DeleteConfirmationModal from '../modal/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
-import EditOrgUnitModal from '../modal/EditOrgUnitModal';
+import OrgUnitFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal1';
+import ConfirmDeleteModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal2';
+import ChildFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal3';
+import CreateOrgUnitModal from '../modal/orgUnitModals/CreateOrgUnitModal';
+import DeleteConfirmationModal from '../modal/orgUnitModals/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
+import EditOrgUnitModal from '../modal/orgUnitModals/EditOrgUnitModal';
 
 export interface ItemToRender {
   label: string;

@@ -1,29 +1,24 @@
 'use client';
 
 import {
-  Autocomplete,
   Box,
   Button,
-  CircularProgress,
-  darken,
   FormControlLabel,
-  lighten,
   Modal,
   Radio,
   RadioGroup,
   Snackbar,
-  styled,
   TextField,
   Typography,
 } from '@mui/material';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   createExplicitFunction,
   fetchUserIds,
-} from '../../app/organisationseinheiten/fetchkp';
-import { Function } from '../../types/function.type';
+} from '../../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../../types/function.type';
+import { UserCredetials } from '../../../types/user.type';
+import UserAutocomplete from '../../utils/UserAutocomplete';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
@@ -41,19 +36,19 @@ const ExplicitFunctionModal = ({
   refetch,
 }: ExplicitFunctionModalProps) => {
   const [functionName, setFunctionName] = useState('');
-  const [users, setUsers] = useState<string[]>([]);
+  const [users, setUsers] = useState<UserCredetials[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [loading, setLoading] = useState(false);
   // Extrahieren der Benutzer-IDs aus der Serverseite
-  const [userIds, setUserIds] = useState<string[]>([]);
+  const [userIds, setUserIds] = useState<UserCredetials[]>([]);
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const users = await fetchUserIds(); // Funktion von der Serverseite verwenden
+      const users: UserCredetials[] = await fetchUserIds(); // Funktion von der Serverseite verwenden
       setUserIds(users);
     } catch (error) {
       console.error('Fehler beim Laden der Benutzer-IDs:', error);
@@ -65,19 +60,6 @@ const ExplicitFunctionModal = ({
       setLoading(false);
     }
   };
-
-  // Prepare options and group them by first letter
-  // const options = data?.getData.data.map((user: User) => user.userId) || [];
-  const options = userIds;
-
-  //   const groupedOptions = options.reduce((acc: any, userId: string) => {
-  //     const firstLetter = userId[0].toUpperCase();
-  //     if (!acc[firstLetter]) {
-  //       acc[firstLetter] = [];
-  //     }
-  //     acc[firstLetter].push(userId);
-  //     return acc;
-  //   }, {});
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | null } = {};
@@ -92,9 +74,8 @@ const ExplicitFunctionModal = ({
       newErrors.functionName =
         'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
     }
-    console.log('users:', users);
 
-    if (users.some((user) => !userIdRegex.test(user))) {
+    if (users.some((user) => !userIdRegex.test(user.userId))) {
       newErrors.users =
         'Benutzer müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
     }
@@ -110,7 +91,7 @@ const ExplicitFunctionModal = ({
       const newFunctionList = await createExplicitFunction({
         functionName,
         orgUnitId,
-        users,
+        users: users.map((user) => user.userId),
         isSingleUser,
       });
       refetch(newFunctionList); // Aktualisiere die Daten nach der Mutation
@@ -135,21 +116,6 @@ const ExplicitFunctionModal = ({
     setErrors({});
     setIsSingleUser(false); // Zustand für den RadioButton zurücksetzen
   };
-
-  const GroupHeader = styled('div')(({ theme }) => ({
-    position: 'sticky',
-    top: '-8px',
-    padding: '4px 10px',
-    color: theme.palette.primary.main,
-    backgroundColor: lighten(theme.palette.primary.light, 0.85),
-    ...theme.applyStyles('dark', {
-      backgroundColor: darken(theme.palette.primary.main, 0.8),
-    }),
-  }));
-
-  const GroupItems = styled('ul')({
-    padding: 0,
-  });
 
   useEffect(() => {
     if (open) {
@@ -192,67 +158,16 @@ const ExplicitFunctionModal = ({
             helperText={errors.functionName}
           />
 
-          <Autocomplete
-            options={options}
+          <UserAutocomplete
+            options={userIds}
             loading={loading}
-            groupBy={(option) => option[0].toUpperCase()}
-            getOptionLabel={(option) => option}
-            renderGroup={(params) => (
-              <li key={params.key}>
-                <GroupHeader>{params.group}</GroupHeader>
-                <GroupItems>{params.children}</GroupItems>
-              </li>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Benutzer (Kommagetrennt)"
-                placeholder="Benutzer-ID eingeben"
-                error={!!errors.users}
-                helperText={errors.users}
-                slotProps={{
-                  input: {
-                    ...params.InputProps,
-                    endAdornment: (
-                      <Fragment>
-                        {loading ?? (
-                          <CircularProgress color="inherit" size={20} />
-                        )}
-                        {params.InputProps.endAdornment}
-                      </Fragment>
-                    ),
-                  },
-                }}
-              />
-            )}
-            multiple
-            freeSolo
             value={users}
-            onChange={(_, value) => {
-              setUsers(value);
-            }}
-            renderOption={(props, option, { inputValue }) => {
-              const matches = match(option, inputValue, { insideWords: true });
-              const parts = parse(option, matches);
-
-              return (
-                <li {...props} key={props.key}>
-                  {/* <li key={props.key}></li> */}
-                  <div>
-                    {parts.map((part, index) => (
-                      <span
-                        key={index}
-                        style={{
-                          fontWeight: part.highlight ? 700 : 400,
-                        }}
-                      >
-                        {part.text}
-                      </span>
-                    ))}
-                  </div>
-                </li>
-              );
-            }}
+            onChange={(value) => setUsers(value as UserCredetials[])} // Konvertiere den Wert explizit in ein Array
+            displayFormat="userId" // Alternativ: "full" oder "nameOnly"
+            label="Benutzer auswählen"
+            placeholder="Benutzer auswählen"
+            helperText={errors.users}
+            multiple // Aktiviert die Mehrfachauswahl
           />
 
           <Typography variant="body1">

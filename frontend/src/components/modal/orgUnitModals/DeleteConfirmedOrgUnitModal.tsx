@@ -11,10 +11,10 @@ import { useState } from 'react';
 import {
   removeFunction,
   removeOrgUnit,
-} from '../../app/organisationseinheiten/fetchkp';
-import { Function } from '../../types/function.type';
-import { OrgUnit } from '../../types/orgUnit.type';
-import { ItemToRender } from '../customs/CustomTreeItem';
+} from '../../../app/organisationseinheiten/fetchkp';
+import { Function } from '../../../types/function.type';
+import { OrgUnit } from '../../../types/orgUnit.type';
+import { ItemToRender } from '../../customs/CustomTreeItem';
 
 interface DeleteConfirmationModalProps {
   open: boolean;

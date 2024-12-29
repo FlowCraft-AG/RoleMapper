@@ -1,3 +1,5 @@
+import { User } from './user.type';
+
 export type Function = {
   _id: string;
   functionName: string;
@@ -12,6 +14,13 @@ export type FunctionInfo = {
   functionName: string;
   users: string[];
   isImpliciteFunction: boolean;
+};
+
+export type FunctionInfo2 = {
+  _id?: string;
+  functionName: string;
+  users: User[];
+  isImpliciteFunction?: boolean;
 };
 
 export type FunctionListProps = {

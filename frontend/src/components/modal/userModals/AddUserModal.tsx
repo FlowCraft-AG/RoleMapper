@@ -1,25 +1,22 @@
 // src/components/modals/AddUserModal.tsx
 
 import {
-  Autocomplete,
   Box,
   Button,
-  CircularProgress,
   darken,
   lighten,
   Modal,
   Snackbar,
   styled,
-  TextField,
 } from '@mui/material';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
 import React, { useEffect, useState } from 'react';
 import {
   addUserToFunction,
   fetchUserIds,
-} from '../../app/organisationseinheiten/fetchkp';
-import { FunctionInfo } from '../../types/function.type';
+} from '../../../app/organisationseinheiten/fetchkp';
+import { FunctionInfo2 } from '../../../types/function.type';
+import { UserCredetials } from '../../../types/user.type';
+import UserAutocomplete from '../../utils/UserAutocomplete';
 
 interface AddUserModalProps {
   open: boolean;
@@ -27,7 +24,7 @@ interface AddUserModalProps {
   errors: { [key: string]: string | null };
   newUserId: string;
   setNewUserId: React.Dispatch<React.SetStateAction<string>>;
-  refetch: (FunctionInfo: FunctionInfo) => void;
+  refetch: (FunctionInfo: FunctionInfo2) => void;
   functionName: string | undefined;
   functionId: string;
 }
@@ -43,7 +40,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
 }) => {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const [userIds, setUserIds] = useState<string[]>([]);
+  const [userIds, setUserIds] = useState<UserCredetials[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -55,7 +52,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const fetchedUserIds = await fetchUserIds();
+      const fetchedUserIds: UserCredetials[] = await fetchUserIds();
       setUserIds(fetchedUserIds);
     } catch (error) {
       console.error('Fehler beim Laden der Benutzer-IDs:', error);
@@ -117,8 +114,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   };
 
-  const options: string[] = userIds;
-
   const GroupHeader = styled('div')(({ theme }) => ({
     position: 'sticky',
     top: '-8px',
@@ -156,65 +151,19 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
             p: 4,
           }}
         >
-          <Autocomplete
-            options={options}
+          <UserAutocomplete
+            options={userIds}
             loading={loading}
-            groupBy={(option) => option[0].toUpperCase()}
-            getOptionLabel={(option) => option}
-            renderGroup={(params) => (
-              <li key={params.key}>
-                <GroupHeader>{params.group}</GroupHeader>
-                <GroupItems>{params.children}</GroupItems>
-              </li>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Supervisor"
-                placeholder="Supervisor auswählen"
-                error={!!errors.supervisor}
-                helperText={errors.supervisor || ''}
-                slotProps={{
-                  input: {
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {loading && (
-                          <CircularProgress color="inherit" size={20} />
-                        )}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
-                  },
-                }}
-              />
-            )}
-            value={newUserId}
-            onChange={(_, newValue) => setNewUserId(newValue || '')}
-            renderOption={(props, option, { inputValue }) => {
-              const matches = match(option, inputValue, {
-                insideWords: true,
-              });
-              const parts = parse(option, matches);
-
-              return (
-                <li {...props} key={props.key}>
-                  {/* <li key={props.key}></li> */}
-                  <div>
-                    {parts.map((part, index) => (
-                      <span
-                        key={index}
-                        style={{
-                          fontWeight: part.highlight ? 700 : 400,
-                        }}
-                      >
-                        {part.text}
-                      </span>
-                    ))}
-                  </div>
-                </li>
-              );
+            value={userIds.find((id) => id.userId === newUserId) || null}
+            onChange={(value) => {
+              if (!Array.isArray(value)) {
+                setNewUserId(value?.userId || '');
+              }
             }}
+            displayFormat="full"
+            label="Benutzer auswählen"
+            placeholder="Benutzer-ID suchen..."
+            helperText={errors.userId}
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Button variant="contained" color="primary" onClick={handleAddUser}>

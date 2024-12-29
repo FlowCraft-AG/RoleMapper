@@ -7,6 +7,7 @@ import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
+import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
 
@@ -109,11 +110,31 @@ export class QueryResolver {
         const { functionName, data } = await this.#service.executeSavedQuery(id);
 
         // Stelle sicher, dass die Daten den Typ User haben und extrahiere die userId
-        const users = data.map((user) => {
-            const userTyped = user as User; // Typisiere das user-Objekt als User
-            return userTyped.userId; // Extrahiere userId
-        });
-        this.#logger.debug('Users %o:', users);
+        // const users = data.map((user) => {
+        //     const userTyped = user as User; // Typisiere das user-Objekt als User
+        //     return userTyped.userId; // Extrahiere userId
+        // });
+        const users = data as User[];
         return { functionName, users };
+    }
+
+    @Public()
+    @Query('getUsersByFunction')
+    async getUsersByFunction(@Args('id') id: string): Promise<GetUsersByFunctionResult> {
+        this.#logger.debug('getUsersByFunction: id=%s', id);
+
+        const result = await this.#service.findUsersByFunction(id);
+
+        if (!result) {
+            this.#logger.warn('Keine Daten gefunden für die Anfrage.');
+            return {
+                functionName: '',
+                users: [],
+                isImpliciteFunction: false,
+            };
+        }
+
+        const { functionName, users, isImpliciteFunction } = result;
+        return { functionName, users, isImpliciteFunction };
     }
 }

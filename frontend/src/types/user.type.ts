@@ -43,6 +43,7 @@ export type UserListProps = {
 export type UserCredetials = {
   userId: string;
   _id: string;
+  profile: Profile;
 };
 
 // Beispiel für das User Enum

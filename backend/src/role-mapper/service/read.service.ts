@@ -1,4 +1,5 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -20,6 +21,7 @@ import { User, UserDocument } from '../model/entity/user.entity.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { PaginationParameters } from '../model/input/pagination-parameters.js';
 import { SortInput } from '../model/input/sort.input.js';
+import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
 import { RoleResult } from '../model/payload/role-payload.type.js';
 import { FilterField, FilterFields } from '../model/types/filter.type.js';
 import { operatorMap } from '../model/types/map.type.js';
@@ -169,12 +171,12 @@ export class ReadService {
      * @returns {Promise} Eine Liste der gefilterten Daten.
      * @throws {BadRequestException} Wenn die Entität nicht unterstützt wird.
      */
-    async findData(
+    async findData<T extends EntityType>(
         entity: EntityCategoryType,
         filter?: FilterInput,
         pagination?: PaginationParameters,
         orderBy?: SortInput,
-    ) {
+    ): Promise<T[]> {
         this.#logger.debug(
             'findData: entity=%s, filter=%o, pagination=%o, orderBy=%o',
             entity,
@@ -212,7 +214,7 @@ export class ReadService {
             pagination?.limit,
             pagination?.offset,
         );
-        return paginatedData;
+        return paginatedData as T[];
     }
 
     /**
@@ -295,6 +297,53 @@ export class ReadService {
 
         this.#logger.debug('buildSortQuery: sortQuery=%o', sortQuery);
         return sortQuery;
+    }
+
+    async findUsersByFunction(id: string): Promise<GetUsersByFunctionResult | undefined> {
+        this.#logger.debug('findUsersByFunction: id=%s', id);
+
+        const mandateFilter: FilterInput = { field: '_id', value: id, operator: 'EQ' };
+        const sort: SortInput = { field: 'userId', direction: 'ASC' };
+
+        const mandates: Mandates[] = await this.findData<Mandates>(
+            'MANDATES',
+            mandateFilter,
+            undefined,
+            sort,
+        );
+
+        if (mandates.length === 0) {
+            this.#logger.warn('Kein Mandat gefunden für id=%s', id);
+            return undefined;
+        }
+
+        const mandate = mandates[0];
+        if (!mandate) {
+            this.#logger.warn('Kein Mandat gefunden für id=%s', id);
+            return undefined;
+        }
+
+        if (!(mandate._id instanceof Types.ObjectId)) {
+            throw new TypeError('Ungültige ObjectId im Mandat.');
+        }
+
+        this.#logger.debug('findUsersByFunction: mandate=%o', mandate);
+
+        const { users, functionName, isImpliciteFunction } = mandate;
+        this.#logger.debug('findUsersByFunction: users=%o', isImpliciteFunction);
+
+        if (!users || users.length === 0) {
+            this.#logger.warn('Keine Benutzer im Mandat gefunden.');
+            return undefined;
+        }
+
+        const userFilter: FilterInput = {
+            OR: users.map((u) => ({ field: 'userId', operator: 'EQ', value: u })),
+        };
+
+        const userList: User[] = await this.findData('USERS', userFilter, undefined, sort);
+
+        return { functionName, users: userList, isImpliciteFunction };
     }
 
     /**

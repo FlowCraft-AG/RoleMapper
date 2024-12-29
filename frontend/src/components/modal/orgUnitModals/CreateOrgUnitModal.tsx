@@ -1,26 +1,20 @@
 import {
-  Autocomplete,
   Box,
   Button,
-  CircularProgress,
-  darken,
   Fade,
-  lighten,
   Modal,
   Snackbar,
-  styled,
   TextField,
   Typography,
 } from '@mui/material';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
 import { useCallback, useEffect, useState } from 'react';
 import {
   createOrgUnit,
   fetchEmployees,
-} from '../../app/organisationseinheiten/fetchkp';
-import { OrgUnit } from '../../types/orgUnit.type';
-import { UserCredetials } from '../../types/user.type';
+} from '../../../app/organisationseinheiten/fetchkp';
+import { OrgUnit } from '../../../types/orgUnit.type';
+import { UserCredetials } from '../../../types/user.type';
+import UserAutocomplete from '../../utils/UserAutocomplete';
 
 interface CreateOrgUnitModalProps {
   open: boolean;
@@ -37,7 +31,7 @@ const CreateOrgUnitModal = ({
 }: CreateOrgUnitModalProps) => {
   const [formData, setFormData] = useState({ name: '', supervisor: '' });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState<UserCredetials[]>([]);
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
@@ -46,7 +40,7 @@ const CreateOrgUnitModal = ({
   const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
+      const employees: UserCredetials[] = await fetchEmployees(); // Serverseitige Funktion aufrufen
       setUserData(employees);
     } catch (error) {
       if (error instanceof Error) {
@@ -120,23 +114,6 @@ const CreateOrgUnitModal = ({
     }
   }, [open, loadUsers]);
 
-  const options: UserCredetials[] = userData;
-
-  const GroupHeader = styled('div')(({ theme }) => ({
-    position: 'sticky',
-    top: '-8px',
-    padding: '4px 10px',
-    color: theme.palette.primary.main,
-    backgroundColor: lighten(theme.palette.primary.light, 0.85),
-    ...theme.applyStyles('dark', {
-      backgroundColor: darken(theme.palette.primary.main, 0.8),
-    }),
-  }));
-
-  const GroupItems = styled('ul')({
-    padding: 0,
-  });
-
   return (
     <>
       <Snackbar
@@ -182,74 +159,25 @@ const CreateOrgUnitModal = ({
               }
               required
             />
-            <Autocomplete
-              options={options}
+            <UserAutocomplete
+              options={userData}
               loading={loading}
-              groupBy={(option) => option.userId[0].toUpperCase()}
-              getOptionLabel={(option) => option.userId}
-              renderGroup={(params) => (
-                <li key={params.key}>
-                  <GroupHeader>{params.group}</GroupHeader>
-                  <GroupItems>{params.children}</GroupItems>
-                </li>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Supervisor"
-                  placeholder="Supervisor auswählen"
-                  error={!!errors.supervisor}
-                  helperText={errors.supervisor || ''}
-                  slotProps={{
-                    input: {
-                      ...params.InputProps,
-                      endAdornment: (
-                        <>
-                          {loading && (
-                            <CircularProgress color="inherit" size={20} />
-                          )}
-                          {params.InputProps.endAdornment}
-                        </>
-                      ),
-                    },
-                  }}
-                />
-              )}
               value={
-                options.find((user) => user._id === formData.supervisor) || null
-              } // Supervisor über _id suchen
-              onChange={(_, value) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  supervisor: value?._id || '',
-                }));
-                // Fehler zurücksetzen, wenn eine Auswahl getroffen wird
+                userData.find((user) => user._id === formData.supervisor) ||
+                null
+              }
+              onChange={(value) => {
+                if (value && !Array.isArray(value)) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    supervisor: value._id || '',
+                  }));
+                }
                 setErrors((prev) => ({ ...prev, supervisor: null }));
               }}
-              renderOption={(props, option, { inputValue }) => {
-                const matches = match(option.userId, inputValue, {
-                  insideWords: true,
-                });
-                const parts = parse(option.userId, matches);
-
-                return (
-                  <li {...props} key={props.key}>
-                    {/* <li key={props.key}></li> */}
-                    <div>
-                      {parts.map((part, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            fontWeight: part.highlight ? 700 : 400,
-                          }}
-                        >
-                          {part.text}
-                        </span>
-                      ))}
-                    </div>
-                  </li>
-                );
-              }}
+              displayFormat="full" // Alternativ: "userId" oder "nameOnly"
+              label="Supervisor"
+              placeholder="Supervisor auswählen"
             />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button variant="outlined" onClick={onClose}>

@@ -24,14 +24,15 @@ import {
 } from '../../graphql/queries/get-orgUnits';
 import {
   GET_EMPLOYEES,
+  GET_USERS_BY_FUNCTION,
   MITGLIEDER,
   USER_DETAILS,
   USER_IDS,
 } from '../../graphql/queries/get-users';
 import client from '../../lib/apolloClient';
-import { Function } from '../../types/function.type';
+import { Function, FunctionInfo2 } from '../../types/function.type';
 import { OrgUnit, OrgUnitInfo } from '../../types/orgUnit.type';
-import { User } from '../../types/user.type';
+import { User, UserCredetials } from '../../types/user.type';
 import { getLogger } from '../../utils/logger';
 
 const logger = getLogger('fetchkp.tsx');
@@ -67,12 +68,12 @@ export async function fetchOrgUnits(): Promise<OrgUnit[]> {
 }
 
 // Funktion zum Abrufen der Benutzer
-export async function fetchEmployees() {
+export async function fetchEmployees(): Promise<UserCredetials[]> {
   try {
     const { data } = await client.query({
       query: GET_EMPLOYEES,
     });
-    return data.getData.data; // Rückgabe der Benutzerliste
+    return data.getData.data as UserCredetials[]; // Rückgabe der Benutzerliste
   } catch (error) {
     console.error('Fehler beim Laden der Benutzer:', error);
     throw new ApolloError({ errorMessage: 'Fehler beim Laden der Benutzer' });
@@ -412,6 +413,25 @@ export async function fetchUsersByFunction(functionId: string) {
   }
 }
 
+export async function fetchUsersByFunction2(
+  id: string,
+): Promise<FunctionInfo2> {
+  try {
+    const { data } = await client.query({
+      query: GET_USERS_BY_FUNCTION,
+      variables: { id },
+    });
+
+    // Die Funktion wird aus den Daten extrahiert
+    return data.getUsersByFunction;
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Benutzer für die Funktion:', error);
+    throw new ApolloError({
+      errorMessage: `Fehler beim Abrufen der Benutzer für die Funktion. ${error?.message}`,
+    });
+  }
+}
+
 export async function removeUserFromFunction(
   functionName: string,
   userId: string,
@@ -445,14 +465,12 @@ export async function removeUserFromFunction(
   }
 }
 
-export async function fetchUserIds(): Promise<string[]> {
+export async function fetchUserIds(): Promise<UserCredetials[]> {
   try {
     const response = await client.query({
       query: USER_IDS,
     });
-    return response.data.getData.data.map(
-      (user: { userId: string }) => user.userId,
-    );
+    return response.data.getData.data as UserCredetials[];
   } catch (error) {
     console.error('Fehler beim Laden der Benutzer-IDs:', error);
     throw new Error('Fehler beim Laden der Benutzer-IDs');

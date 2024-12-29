@@ -28,10 +28,10 @@ import {
 import { Function, FunctionInfo } from '../../types/function.type';
 import { OrgUnitDTO } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
-import EditFunctionModal from '../modal/EditFunctionModal';
-import ExplicitFunctionModal from '../modal/ExplicitFunctionModal';
-import ImplicitFunctionModal from '../modal/ImplicitFunctionModal';
-import SelectFunctionTypeModal from '../modal/SelectFunctionTypeModal';
+import EditFunctionModal from '../modal/functionModals/EditFunctionModal';
+import ExplicitFunctionModal from '../modal/functionModals/ExplicitFunctionModal';
+import ImplicitFunctionModal from '../modal/functionModals/ImplicitFunctionModal';
+import SelectFunctionTypeModal from '../modal/functionModals/SelectFunctionTypeModal';
 
 interface FunctionsColumnProps {
   orgUnit: OrgUnitDTO;
