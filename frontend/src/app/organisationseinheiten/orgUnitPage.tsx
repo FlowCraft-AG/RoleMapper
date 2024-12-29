@@ -6,25 +6,25 @@ import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
+import { fetchMitglieder } from '../../lib/api/user.api';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { FunctionInfo, FunctionInfo2 } from '../../types/function.type';
-import { OrgUnitDTO } from '../../types/orgUnit.type';
-import { fetchMitgliederIds } from './fetchkp';
+import { ShortFunction } from '../../types/function.type';
+import { OrgUnit } from '../../types/orgUnit.type';
 import { User } from '../../types/user.type';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
-  const [selectedOrgUnit, setSelectedOrgUnit] = useState<
-    OrgUnitDTO | undefined
-  >(undefined);
+  const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | undefined>(
+    undefined,
+  );
   const [selectedRootOrgUnit, setSelectedRootOrgUnit] = useState<
-    OrgUnitDTO | undefined
+    OrgUnit | undefined
   >(undefined);
 
   const [selectedFunctionId, setSelectedFunctionId] = useState<
     string | undefined
   >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<FunctionInfo2>();
+  const [selectedFunction, setSelectedFunction] = useState<ShortFunction>();
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
@@ -45,7 +45,7 @@ export default function OrganigrammPage() {
   // Mitglieder laden
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     try {
-      return await fetchMitgliederIds(alias, kostenstelleNr);
+      return await fetchMitglieder(alias, kostenstelleNr);
     } catch (error) {
       console.error('Fehler beim Laden der Mitglieder:', error);
       return [];
@@ -53,23 +53,23 @@ export default function OrganigrammPage() {
   };
 
   // Organisationseinheit auswählen
-  const handleOrgUnitSelect = async (orgUnitDTO: OrgUnitDTO) => {
-    setSelectedOrgUnit(orgUnitDTO);
+  const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
+    setSelectedOrgUnit(orgUnit);
     setSelectedFunctionId(undefined); // Reset selection
     setSelectedUserId(undefined); // Reset selection
     setSelectedRootOrgUnit(undefined);
 
-    if (orgUnitDTO.alias || orgUnitDTO.kostenstelleNr) {
-      orgUnitDTO.hasMitglieder = true;
-      setSelectedRootOrgUnit(orgUnitDTO);
+    if (orgUnit.alias || orgUnit.kostenstelleNr) {
+      orgUnit.hasMitglieder = true;
+      setSelectedRootOrgUnit(orgUnit);
       setCombinedUsers(
-        await getMitgliederIds(orgUnitDTO.alias!, orgUnitDTO.kostenstelleNr!),
+        await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
       );
     }
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: FunctionInfo2) => {
+  const handleFunctionSelect = (functionInfo: ShortFunction) => {
     setSelectedFunctionId(functionInfo._id);
     setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
@@ -79,7 +79,7 @@ export default function OrganigrammPage() {
   // Mitgliederansicht aktivieren
   const handleMitgliederClick = () => {
     setSelectedFunctionId('mitglieder'); // Reset functions
-    setSelectedFunction(mitglied(selectedRootOrgUnit?.id));
+    setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
     setSelectedUserId(undefined); // Reset users
     setIsImpliciteFunction(false);
   };
@@ -99,7 +99,7 @@ export default function OrganigrammPage() {
       setSelectedFunction(undefined);
       setSelectedUserId(undefined);
     }
-    if (ids.includes(selectedOrgUnit?.id || '')) {
+    if (ids.includes(selectedOrgUnit?._id || '')) {
       setSelectedOrgUnit(undefined);
       setSelectedFunctionId(undefined);
       setSelectedFunction(undefined);
@@ -162,7 +162,7 @@ export default function OrganigrammPage() {
           Organisationseinheiten
         </Typography>
         <OrgUnitsSpalte
-          onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
+          onSelect={async (orgUnit) => handleOrgUnitSelect(orgUnit)}
           onRemove={handleRemove}
         />
       </Box>

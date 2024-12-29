@@ -37,7 +37,7 @@ export const USERS = gql`
   }
 `;
 
-export const USER_IDS = gql`
+export const USER_CREDENTIALS = gql`
   query GetData {
     getData(input: { entity: USERS, sort: { field: userId, direction: ASC } }) {
       totalCount
@@ -58,20 +58,20 @@ export const GET_USERS_BY_FUNCTION = gql`
   query GetUsersByFunction($id: ID!) {
     getUsersByFunction(id: $id) {
       users {
-            _id
-            userId
-            userType
-            userRole
-            orgUnit
-            active
-            validFrom
-            validUntil
-            profile {
-            firstName
-            lastName
-          }
+        _id
+        userId
+        userType
+        userRole
+        orgUnit
+        active
+        validFrom
+        validUntil
+        profile {
+          firstName
+          lastName
         }
-        functionName
+      }
+      functionName
     }
   }
 `;

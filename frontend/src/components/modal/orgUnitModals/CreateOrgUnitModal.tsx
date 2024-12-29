@@ -8,12 +8,10 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  createOrgUnit,
-  fetchEmployees,
-} from '../../../app/organisationseinheiten/fetchkp';
+import { createOrgUnit } from '../../../lib/api/orgUnit.api';
+import { fetchEmployees } from '../../../lib/api/user.api';
 import { OrgUnit } from '../../../types/orgUnit.type';
-import { UserCredetials } from '../../../types/user.type';
+import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../utils/UserAutocomplete';
 
 interface CreateOrgUnitModalProps {
@@ -31,7 +29,7 @@ const CreateOrgUnitModal = ({
 }: CreateOrgUnitModalProps) => {
   const [formData, setFormData] = useState({ name: '', supervisor: '' });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const [userData, setUserData] = useState<UserCredetials[]>([]);
+  const [userData, setUserData] = useState<ShortUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
@@ -40,7 +38,7 @@ const CreateOrgUnitModal = ({
   const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const employees: UserCredetials[] = await fetchEmployees(); // Serverseitige Funktion aufrufen
+      const employees: ShortUser[] = await fetchEmployees(); // Serverseitige Funktion aufrufen
       setUserData(employees);
     } catch (error) {
       if (error instanceof Error) {
@@ -91,7 +89,7 @@ const CreateOrgUnitModal = ({
       );
       const updatedOrgUnits = await createOrgUnit(
         formData.name,
-        formData.supervisor || null,
+        formData.supervisor || undefined,
         parentId,
       ); // Serverseitige Funktion zum Erstellen der Organisationseinheit
       refetch(updatedOrgUnits); // Aktualisiere die Liste

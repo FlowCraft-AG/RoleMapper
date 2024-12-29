@@ -10,12 +10,10 @@ import {
   styled,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import {
-  addUserToFunction,
-  fetchUserIds,
-} from '../../../app/organisationseinheiten/fetchkp';
-import { FunctionInfo2 } from '../../../types/function.type';
-import { UserCredetials } from '../../../types/user.type';
+import { addUserToFunction } from '../../../lib/api/function.api';
+import { fetchUserIds } from '../../../lib/api/user.api';
+import { ShortFunction } from '../../../types/function.type';
+import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../utils/UserAutocomplete';
 
 interface AddUserModalProps {
@@ -24,7 +22,7 @@ interface AddUserModalProps {
   errors: { [key: string]: string | null };
   newUserId: string;
   setNewUserId: React.Dispatch<React.SetStateAction<string>>;
-  refetch: (FunctionInfo: FunctionInfo2) => void;
+  refetch: (FunctionInfo: ShortFunction) => void;
   functionName: string | undefined;
   functionId: string;
 }
@@ -40,7 +38,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
 }) => {
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const [userIds, setUserIds] = useState<UserCredetials[]>([]);
+  const [userIds, setUserIds] = useState<ShortUser[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -52,7 +50,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const fetchedUserIds: UserCredetials[] = await fetchUserIds();
+      const fetchedUserIds: ShortUser[] = await fetchUserIds();
       setUserIds(fetchedUserIds);
     } catch (error) {
       console.error('Fehler beim Laden der Benutzer-IDs:', error);

@@ -7,9 +7,6 @@ import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte2';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
 import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
-import { FunctionInfo } from '../../../types/function.type';
-import { OrgUnitDTO } from '../../../types/orgUnit.type';
-import { fetchMitgliederIds } from '../fetchkp';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente

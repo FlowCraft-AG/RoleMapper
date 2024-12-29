@@ -11,7 +11,7 @@ import {
 import {
   checkForFunctions,
   fetchFunctionsByOrgUnit,
-} from '../../app/organisationseinheiten/fetchkp';
+} from '../../lib/api/function.api';
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
 import { Function } from '../../types/function.type';
 import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';

@@ -67,19 +67,19 @@ export const GET_SAVED_DATA = gql`
     getSavedData(id: $id) {
       functionName
       users {
-            _id
-            userId
-            userType
-            userRole
-            orgUnit
-            active
-            validFrom
-            validUntil
-            profile {
-            firstName
-            lastName
-          }
+        _id
+        userId
+        userType
+        userRole
+        orgUnit
+        active
+        validFrom
+        validUntil
+        profile {
+          firstName
+          lastName
         }
+      }
     }
   }
 `;

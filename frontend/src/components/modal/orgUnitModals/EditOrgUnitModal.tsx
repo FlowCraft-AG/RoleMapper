@@ -9,13 +9,10 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  fetchEmployees,
-  getOrgUnitById,
-  updateOrgUnit,
-} from '../../../app/organisationseinheiten/fetchkp';
+import { getOrgUnitById, updateOrgUnit } from '../../../lib/api/orgUnit.api';
+import { fetchEmployees } from '../../../lib/api/user.api';
 import { OrgUnit } from '../../../types/orgUnit.type';
-import { UserCredetials } from '../../../types/user.type';
+import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../utils/UserAutocomplete';
 
 interface EditOrgUnitModalProps {
@@ -36,7 +33,7 @@ const EditOrgUnitModal = ({
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
-  const [userData, setUserData] = useState<UserCredetials[]>([]);
+  const [userData, setUserData] = useState<ShortUser[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
   // Supervisor-ID muss ein gültiges MongoDB ObjectId sein

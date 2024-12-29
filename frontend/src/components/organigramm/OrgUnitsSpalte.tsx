@@ -10,17 +10,17 @@ import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import { JSXElementConstructor, useCallback, useEffect, useState } from 'react';
-import { fetchOrgUnits } from '../../app/organisationseinheiten/fetchkp';
 import { FacultyTheme } from '../../interfaces/facultyTheme';
+import { fetchAllOrgUnits } from '../../lib/api/orgUnit.api';
 import getFacultyTheme from '../../theme/fakultäten';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
+import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
 import CustomTreeItem from '../customs/CustomTreeItem';
 import TransitionComponent from './TransitionComponent';
 
 interface OrgUnitRichTreeViewProps {
-  onSelect: (orgUnit: OrgUnitDTO) => void;
+  onSelect: (orgUnit: OrgUnit) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
@@ -38,7 +38,7 @@ export default function OrgUnitsSpalte({
   const loadOrgUnits = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchOrgUnits(); // Serverseitige Funktion aufrufen
+      const data = await fetchAllOrgUnits(); // Serverseitige Funktion aufrufen
       setOrgUnits(data);
     } catch (err) {
       if (err instanceof Error) {
@@ -174,7 +174,7 @@ export default function OrgUnitsSpalte({
 
     // Weitergabe der Auswahl an die Parent-Komponente
     onSelect({
-      id: selectedOrgUnit._id,
+      _id: selectedOrgUnit._id,
       alias: selectedOrgUnit.alias || '',
       kostenstelleNr: selectedOrgUnit.kostenstelleNr || '',
       name: selectedOrgUnit.name,

@@ -17,17 +17,17 @@ import Tooltip from '@mui/material/Tooltip';
 import { useCallback, useEffect, useState } from 'react';
 import {
   fetchSavedData,
-  fetchUsersByFunction2,
+  fetchUsersByFunction,
   removeUserFromFunction,
-} from '../../app/organisationseinheiten/fetchkp';
-import { FunctionInfo, FunctionInfo2 } from '../../types/function.type';
+} from '../../lib/api/function.api';
+import { ShortFunction } from '../../types/function.type';
+import { User } from '../../types/user.type';
 import { getListItemStyles } from '../../utils/styles';
 import AddUserModal from '../modal/userModals/AddUserModal';
-import { User } from '../../types/user.type';
 
 interface UsersColumnProps {
   selectedFunctionId: string;
-  selectedMitglieder: FunctionInfo2 | undefined;
+  selectedMitglieder: ShortFunction | undefined;
   onSelectUser: (userId: string) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   isImpliciteFunction: boolean;
@@ -51,7 +51,7 @@ export default function UsersSpalte({
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const [selectedFunction, setSelectedFunction] = useState<
-    FunctionInfo2 | undefined
+    ShortFunction | undefined
   >(undefined);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
@@ -69,7 +69,7 @@ export default function UsersSpalte({
         const data = await fetchSavedData(selectedFunctionId);
         setSelectedFunction(data);
       } else {
-          const data = await fetchUsersByFunction2(selectedFunctionId);
+        const data = await fetchUsersByFunction(selectedFunctionId);
         setSelectedFunction(data);
       }
     } catch (err) {
@@ -101,7 +101,7 @@ export default function UsersSpalte({
     }
   }, [selectedFunctionId, loadFunctions]);
 
-  const refetch = (functionInfo: FunctionInfo2) => {
+  const refetch = (functionInfo: ShortFunction) => {
     console.log('Refetching Functions');
     setSelectedFunction(functionInfo); // Aktualisiere den Zustand
     setFilteredUsers(functionInfo.users); // Aktualisiere die gefilterte Liste
@@ -219,7 +219,9 @@ export default function UsersSpalte({
               sx={getListItemStyles(theme, selectedIndex === user.userId)}
               onClick={() => handleViewUser(user.userId)}
             >
-                  <ListItemText primary={`${user.profile?.lastName} ${user.profile?.firstName} (${user.userId})`} />
+              <ListItemText
+                primary={`${user.profile?.lastName} ${user.profile?.firstName} (${user.userId})`}
+              />
               {/* Entfernen-Icon nur anzeigen, wenn die Funktion nicht implizit ist */}
               {!isImpliciteFunction && selectedFunctionId !== 'mitglieder' && (
                 <Tooltip title="Benutzer entfernen">

@@ -12,12 +12,10 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import {
-  createExplicitFunction,
-  fetchUserIds,
-} from '../../../app/organisationseinheiten/fetchkp';
+import { createExplicitFunction } from '../../../lib/api/function.api';
+import { fetchUserIds } from '../../../lib/api/user.api';
 import { Function } from '../../../types/function.type';
-import { UserCredetials } from '../../../types/user.type';
+import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../utils/UserAutocomplete';
 
 interface ExplicitFunctionModalProps {
@@ -36,19 +34,19 @@ const ExplicitFunctionModal = ({
   refetch,
 }: ExplicitFunctionModalProps) => {
   const [functionName, setFunctionName] = useState('');
-  const [users, setUsers] = useState<UserCredetials[]>([]);
+  const [users, setUsers] = useState<ShortUser[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [loading, setLoading] = useState(false);
   // Extrahieren der Benutzer-IDs aus der Serverseite
-  const [userIds, setUserIds] = useState<UserCredetials[]>([]);
+  const [userIds, setUserIds] = useState<ShortUser[]>([]);
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const users: UserCredetials[] = await fetchUserIds(); // Funktion von der Serverseite verwenden
+      const users: ShortUser[] = await fetchUserIds(); // Funktion von der Serverseite verwenden
       setUserIds(users);
     } catch (error) {
       console.error('Fehler beim Laden der Benutzer-IDs:', error);
@@ -162,7 +160,7 @@ const ExplicitFunctionModal = ({
             options={userIds}
             loading={loading}
             value={users}
-            onChange={(value) => setUsers(value as UserCredetials[])} // Konvertiere den Wert explizit in ein Array
+            onChange={(value) => setUsers(value as ShortUser[])} // Konvertiere den Wert explizit in ein Array
             displayFormat="userId" // Alternativ: "full" oder "nameOnly"
             label="Benutzer auswählen"
             placeholder="Benutzer auswählen"

@@ -8,10 +8,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import {
-  removeFunction,
-  removeOrgUnit,
-} from '../../../app/organisationseinheiten/fetchkp';
+import { removeFunction } from '../../../lib/api/function.api';
+import { removeOrgUnit } from '../../../lib/api/orgUnit.api';
 import { Function } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ItemToRender } from '../../customs/CustomTreeItem';

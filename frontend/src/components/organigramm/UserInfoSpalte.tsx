@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchUserDetails } from '../../app/organisationseinheiten/fetchkp';
+import { fetchUserDetails } from '../../lib/api/user.api';
 import { User } from '../../types/user.type';
 
 interface UserInfoColumnProps {

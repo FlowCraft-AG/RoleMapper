@@ -12,12 +12,10 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import {
-  fetchOrgUnitsIds,
-  updateFunction,
-} from '../../../app/organisationseinheiten/fetchkp';
+import { updateFunction } from '../../../lib/api/function.api';
+import { fetchOrgUnitsIds } from '../../../lib/api/orgUnit.api';
 import { Function } from '../../../types/function.type';
-import { OrgUnitInfo } from '../../../types/orgUnit.type';
+import { ShortOrgUnit } from '../../../types/orgUnit.type';
 
 interface EditFunctionModalProps {
   open: boolean;
@@ -43,7 +41,7 @@ const EditFunctionModal = ({
     orgUnitId: functionData?.orgUnit,
     isSingleUser: functionData?.isSingleUser,
   });
-  const [orgUnits, setOrgUnits] = useState<OrgUnitInfo[]>([]);
+  const [orgUnits, setOrgUnits] = useState<ShortOrgUnit[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Update state wenn `functionData`  sich ändert
@@ -72,7 +70,7 @@ const EditFunctionModal = ({
   };
 
   //   const orgUnitsMap = new Map(
-  //     orgUnits.map((unit: OrgUnitInfo | undefined) => [unit?._id, unit?.name]),
+  //     orgUnits.map((unit: ShortOrgUnit | undefined) => [unit?._id, unit?.name]),
   //   );
 
   const validateFunctionName = (name: string) => /^[a-zA-Z\s]+$/.test(name);
@@ -86,7 +84,7 @@ const EditFunctionModal = ({
     setIsSaving(true);
 
     try {
-      const updatedFunction = await updateFunction({
+      const updatedFunction: Function[] = await updateFunction({
         functionName: formData.functionName!,
         newOrgUnitId: formData.orgUnitId!,
         isSingleUser: formData.isSingleUser!,
