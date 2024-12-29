@@ -177,6 +177,10 @@ type User {
   """
   active: Boolean
   """
+  Profil des Benutzers.
+  """
+  profile: Profile
+  """
   Details zum Studenten (optional).
   """
   student: Student
@@ -201,7 +205,7 @@ type Student {
   """
   Eindeutige ID des Studenten.
   """
-  _id: ID!
+  _id: ID
   """
   Studiengang des Studenten.
   """
@@ -240,6 +244,20 @@ type Employee {
   Abteilung, in der der Mitarbeiter tätig ist.
   """
   department: String!
+}
+
+"""
+Profilinformationen eines Benutzers.
+"""
+type Profile {
+  """
+  Vorname des Benutzers.
+  """
+  firstName: String
+  """
+  Nachname des Benutzers.
+  """
+  lastName: String
 }
 
 # Organisationseinheiten

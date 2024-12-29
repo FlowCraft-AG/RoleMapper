@@ -14,6 +14,10 @@ export const USERS = gql`
           active
           validFrom
           validUntil
+          profile {
+            firstName
+            lastName
+          }
           employee {
             costCenter
             department
@@ -65,6 +69,10 @@ export const USER_DETAILS = gql`
           active
           validFrom
           validUntil
+          profile {
+            firstName
+            lastName
+          }
           employee {
             costCenter
             department
@@ -109,6 +117,10 @@ export const MITGLIEDER = gql`
           active
           validFrom
           validUntil
+          profile {
+            firstName
+            lastName
+          }
           employee {
             costCenter
             department

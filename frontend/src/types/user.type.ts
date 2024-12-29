@@ -7,19 +7,28 @@ export type User = {
   active: boolean;
   validFrom: string;
   validUntil: string;
-  employee?: {
-    costCenter: string;
-    department: string;
-  };
-  student?: {
-    _id: string;
-    courseOfStudy: string;
-    courseOfStudyUnique: string;
-    courseOfStudyShort: string;
-    courseOfStudyName: string;
-    level: string;
-    examRegulation: string;
-  };
+  profile?: Profile;
+  employee?: Employee;
+  student?: Student;
+};
+
+type Profile = {
+  firstName: string;
+  lastName: string;
+};
+type Employee = {
+  costCenter: string;
+  department: string;
+};
+
+type Student = {
+  _id?: string;
+  courseOfStudy: string;
+  courseOfStudyUnique: string;
+  courseOfStudyShort: string;
+  courseOfStudyName: string;
+  level: string;
+  examRegulation: string;
 };
 
 export type UserDetailsProps = {
