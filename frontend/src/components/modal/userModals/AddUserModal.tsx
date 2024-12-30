@@ -1,14 +1,6 @@
 // src/components/modals/AddUserModal.tsx
 
-import {
-  Box,
-  Button,
-  darken,
-  lighten,
-  Modal,
-  Snackbar,
-  styled,
-} from '@mui/material';
+import { Box, Button, Modal, Snackbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { addUserToFunction } from '../../../lib/api/function.api';
 import { fetchUserIds } from '../../../lib/api/user.api';
@@ -94,8 +86,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
         newUserId,
         functionId,
       );
-      console.log('newUserList:', newUserList);
-      console.log('Benutzer erfolgreich hinzugefügt');
       refetch(newUserList); // Aktualisiere die Daten nach der Mutation
       setNewUserId('');
       onClose();
@@ -113,21 +103,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       setNewUserId('');
     }
   };
-
-  const GroupHeader = styled('div')(({ theme }) => ({
-    position: 'sticky',
-    top: '-8px',
-    padding: '4px 10px',
-    color: theme.palette.primary.main,
-    backgroundColor: lighten(theme.palette.primary.light, 0.85),
-    ...theme.applyStyles('dark', {
-      backgroundColor: darken(theme.palette.primary.main, 0.8),
-    }),
-  }));
-
-  const GroupItems = styled('ul')({
-    padding: 0,
-  });
 
   return (
     <>

@@ -1,4 +1,5 @@
 import {
+    Backdrop,
   Box,
   Button,
   Fade,
@@ -27,14 +28,11 @@ const CreateOrgUnitModal = ({
   parentId,
   refetch, // Callback zur Aktualisierung der Liste
 }: CreateOrgUnitModalProps) => {
-  const [formData, setFormData] = useState({ name: '', supervisor: '' });
+const [formData, setFormData] = useState({ name: '', supervisor: '' });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [userData, setUserData] = useState<ShortUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
-  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
-    {},
-  );
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = useCallback(async () => {
@@ -48,7 +46,7 @@ const CreateOrgUnitModal = ({
         setSnackbar({ open: true, message: error.message });
         console.error('Fehler beim Laden der Benutzer:', userError);
       } else {
-        setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer.' });
+        logError('Fehler beim Laden der Benutzer:', error);
       }
     } finally {
       setLoading(false);
@@ -75,26 +73,22 @@ const CreateOrgUnitModal = ({
       setSnackbar({
         open: true,
         message:
-          'Supervisor-ID muss aus genau 8 Zeichen bestehen: 4 Kleinbuchstaben gefolgt von 4 Ziffern.',
+          'Die Supervisor-ID muss eine gültige ObjectId (24 Zeichen aus Hexadezimalzahlen) sein.',
       });
       return;
     }
 
     try {
-      console.log(
-        'Erstelle Organisationseinheit...  mit Name:',
-        formData.name,
-        'Supervisor:',
-        formData.supervisor,
-        'ParentId:',
-        parentId,
-      );
       const updatedOrgUnits = await createOrgUnit(
         formData.name,
         formData.supervisor || undefined,
         parentId,
       ); // Serverseitige Funktion zum Erstellen der Organisationseinheit
-      refetch(updatedOrgUnits); // Aktualisiere die Liste
+        refetch(updatedOrgUnits); // Aktualisiere die Liste
+        setSnackbar({
+          open: true,
+          message: 'Organisationseinheit erfolgreich erstellt!',
+        });
       onClose();
       setFormData({ name: '', supervisor: '' });
     } catch (err) {
@@ -114,23 +108,31 @@ const CreateOrgUnitModal = ({
     }
   }, [open, loadUsers]);
 
+    const logError = (message: string, error: unknown) => {
+      console.error(message, error);
+      setSnackbar({ open: true, message });
+    };
+
   return (
     <>
       <Snackbar
+        key={snackbar.message}
         open={snackbar.open}
         message={snackbar.message}
         autoHideDuration={3000}
         onClose={() => setSnackbar({ open: false, message: '' })}
       />
 
-      <Modal
-        open={open}
-        onClose={onClose}
-        disableEscapeKeyDown={false}
-        closeAfterTransition
-        BackdropProps={{
-          timeout: 500,
-        }}
+          <Modal
+              open={open}
+              onClose={onClose}
+              disableEscapeKeyDown={false}
+              closeAfterTransition
+              slotProps={{
+                  backdrop: {
+                      timeout: 500,
+                  }
+              }}
       >
         <Fade in={open}>
           <Box
@@ -173,7 +175,6 @@ const CreateOrgUnitModal = ({
                     supervisor: value._id || '',
                   }));
                 }
-                setErrors((prev) => ({ ...prev, supervisor: undefined }));
               }}
               displayFormat="full" // Alternativ: "userId" oder "nameOnly"
               label="Supervisor"

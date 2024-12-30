@@ -34,9 +34,15 @@ const EditOrgUnitModal = ({
   const [loading, setLoading] = useState(false);
   const [userError, setUserError] = useState<string>('');
   const [userData, setUserData] = useState<ShortUser[]>([]);
-  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
-    {},
-  );
+
+const handleError = (message: string, error: unknown) => {
+      console.error(message, error);
+      setSnackbar({
+        open: true,
+        message: message,
+      });
+    };
+
 
   // Supervisor-ID muss ein gültiges MongoDB ObjectId sein
   const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
@@ -51,11 +57,7 @@ const EditOrgUnitModal = ({
         supervisor: orgUnit.supervisor || '', // Supervisor-ID laden
       });
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: 'Fehler beim Laden der Organisationseinheit.',
-      });
-      console.error('Fehler beim Laden der Organisationseinheit:', error);
+      handleError('Fehler beim Laden der Benutzer:', error);
     } finally {
       setLoading(false);
     }
@@ -129,16 +131,11 @@ const EditOrgUnitModal = ({
       setLoading(false);
     }
   };
-  if (loading)
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
 
   return (
     <>
       <Snackbar
+        key={snackbar.message}
         open={snackbar.open}
         message={snackbar.message}
         autoHideDuration={3000}
@@ -150,8 +147,10 @@ const EditOrgUnitModal = ({
         onClose={onClose}
         disableEscapeKeyDown={false}
         closeAfterTransition
-        BackdropProps={{
-          timeout: 500,
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
         }}
       >
         <Fade in={open}>

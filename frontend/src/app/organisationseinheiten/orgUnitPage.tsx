@@ -69,7 +69,7 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-    const handleFunctionSelect = (functionInfo: Function) => {
+  const handleFunctionSelect = (functionInfo: Function) => {
     setSelectedFunctionId(functionInfo._id);
     //setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
@@ -221,6 +221,7 @@ export default function OrganigrammPage() {
             borderRadius: 4,
             boxShadow: `0px 4px 8px ${theme.palette.divider}`,
             backgroundColor: theme.palette.background.paper,
+            minWidth: 250,
           }}
         >
           <Typography

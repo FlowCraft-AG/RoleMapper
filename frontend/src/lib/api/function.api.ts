@@ -359,7 +359,7 @@ export async function removeUserFromFunction(
   functionName: string,
   userId: string,
   functionId: string,
-): Promise<any> {
+): Promise<void> {
   try {
     logger.debug('Entferne Benutzer aus Funktion: %o', {
       functionName,

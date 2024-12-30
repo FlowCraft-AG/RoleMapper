@@ -75,9 +75,6 @@ export default function OrgUnitsSpalte({
       </Box>
     );
 
-  // Prüfe, ob die Organisationseinheit ein Root-Knoten ist (z. B. IWI, EI, WW)
-  const isRootOrgUnit = (orgUnit: OrgUnit) =>
-    orgUnit?.alias || orgUnit?.kostenstelleNr;
   const orgUnitList: OrgUnit[] = orgUnits;
   const treeData = buildTree(orgUnitList, null);
 
@@ -122,11 +119,6 @@ export default function OrgUnitsSpalte({
       console.error(`Organisationseinheit mit ID ${nodeId} nicht gefunden.`);
       return;
     }
-
-    const isRoot = isRootOrgUnit(selectedOrgUnit);
-
-    // Prüfe, ob die ausgewählte Einheit Kinder hat
-    const unitHasChildren = hasChildren(orgUnits, selectedOrgUnit._id);
 
     // Finde den Fakultäts-Parent
     const facultyParent = findFacultyParent(orgUnits, selectedOrgUnit);

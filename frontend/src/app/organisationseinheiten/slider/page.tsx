@@ -6,7 +6,6 @@ import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
-import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
 import { Function, ShortFunction } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 
@@ -39,7 +38,6 @@ export default function OrganigrammPage() {
     useState<boolean>(false);
 
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
-  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
   // Mitglieder laden
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
@@ -78,7 +76,7 @@ export default function OrganigrammPage() {
   // Mitgliederansicht aktivieren
   const handleMitgliederClick = () => {
     setSelectedFunctionId('mitglieder'); // Reset functions
-    //setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
+    setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
     setSelectedUserId(undefined); // Reset users
     setIsImpliciteFunction(false);
   };

@@ -42,11 +42,6 @@ export default async function HKAPage() {
             Standard
           </Button>
         </Link>
-        <Link href="/organisationseinheiten/breakpoint" passHref>
-          <Button variant="contained" color="success">
-            mit breakpoints
-          </Button>
-        </Link>
       </Box>
 
       {/* OrganigrammPage */}

@@ -1,10 +1,12 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { HttpStatus } from '@nestjs/common';
 import axios, { type AxiosInstance } from 'axios';
+import type { User } from '../../src/role-mapper/model/entity/user.entity.js';
 import { host, httpsAgent, port, shutdownServer, startServer } from '../testserver.js';
 import { type GraphQLResponseBody } from './query-resolver.test.js';
 
@@ -89,7 +91,20 @@ describe('saveQuery and getSavedData GraphQL Mutation and Query', () => {
             query GetSavedData {
                 getSavedData(id: "${newSavedDataId}") {
                     functionName
-                    users
+                    users {
+            _id
+            userId
+            userType
+            userRole
+            orgUnit
+            active
+            validFrom
+            validUntil
+            profile {
+                firstName
+                lastName
+            }
+        }
                 }
             }
         `;
@@ -105,7 +120,18 @@ describe('saveQuery and getSavedData GraphQL Mutation and Query', () => {
         const { getSavedData } = data.data!;
 
         expect(getSavedData.functionName).toBe('alle IWI studenten');
-        expect(getSavedData.users).toContain('gyca1011');
+
+        // Überprüfen der User-Daten
+        expect(getSavedData.users).toBeInstanceOf(Array); // Sicherstellen, dass es ein Array ist
+        expect(getSavedData.users.length).toBeGreaterThan(0); // Mindestens ein Benutzer vorhanden
+
+        // Überprüfen eines spezifischen Benutzer-Elements
+        const targetUser: User = getSavedData.users.find(
+            (user: User) => user.userId === 'gyca1011',
+        );
+
+        expect(targetUser).toBeDefined(); // Benutzer sollte existieren
+        expect(targetUser.userId).toBe('gyca1011');
     });
 
     // Test 3: Create a Duplicate Query (Expect Error)

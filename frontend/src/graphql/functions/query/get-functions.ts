@@ -74,7 +74,7 @@ export const GET_FUNCTION_BY_ID = gql`
     ) {
       data {
         ... on Function {
-            _id
+          _id
           users
           functionName
           isSingleUser

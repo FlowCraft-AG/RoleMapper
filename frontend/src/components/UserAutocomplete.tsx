@@ -59,14 +59,16 @@ const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
           {...params}
           label={label}
           placeholder={placeholder}
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {loading && <CircularProgress color="inherit" size={20} />}
-                {params.InputProps.endAdornment}
-              </>
-            ),
+          slotProps={{
+            input: {
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loading && <CircularProgress color="inherit" size={20} />}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            },
           }}
         />
       )}
