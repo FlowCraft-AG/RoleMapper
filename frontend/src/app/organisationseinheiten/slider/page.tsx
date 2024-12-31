@@ -1,4 +1,10 @@
-import { Box, Button, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Typography,
+} from '@mui/material';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import OrganigrammPage from './orgUnitPage';
@@ -18,29 +24,72 @@ export default async function HKAPage() {
     <Box sx={{ padding: 4 }}>
       <Typography
         variant="h4"
-        sx={{ textAlign: 'center', marginBottom: 4, fontWeight: 'bold' }}
+        sx={{
+          textAlign: 'center',
+          marginBottom: 4,
+          fontWeight: 'bold',
+          letterSpacing: 1,
+        }}
       >
         Organisationseinheiten
       </Typography>
 
-      {/* Buttons für die Navigation */}
+      {/* Navigation als Karten */}
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 2,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 3,
           marginBottom: 4,
         }}
       >
         <Link href="/organisationseinheiten/" passHref>
-          <Button variant="contained" color="primary">
-            Box
-          </Button>
+          <Card
+            sx={{
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
+            }}
+          >
+            <CardActionArea>
+              <CardContent>
+                <Typography variant="h6" align="center" gutterBottom>
+                  Box
+                </Typography>
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  Übersicht der Organisationseinheiten in einer modernen
+                  Box-Darstellung.
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
         </Link>
+
         <Link href="/organisationseinheiten/standard" passHref>
-          <Button variant="contained" color="secondary">
-            Standard
-          </Button>
+          <Card
+            sx={{
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
+            }}
+          >
+            <CardActionArea>
+              <CardContent>
+                <Typography variant="h6" align="center" gutterBottom>
+                  Standard
+                </Typography>
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  Klassische Ansicht der Organisationseinheiten.
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
         </Link>
       </Box>
 
