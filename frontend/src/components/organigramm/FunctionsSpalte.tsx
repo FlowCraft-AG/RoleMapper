@@ -71,7 +71,7 @@ export default function FunctionsSpalte({
   const loadFunctions = useCallback(async (orgUnitId: string) => {
     try {
       setLoading(true);
-      const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
+        const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
       setFunctions(functionList);
     } catch (err) {
       if (err instanceof Error) {
