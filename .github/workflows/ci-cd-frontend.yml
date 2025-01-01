@@ -42,6 +42,8 @@ jobs:
 
       - name: Build project
         run: npm run build
+        env:
+          NEXT_PUBLIC_BACKEND_SERVER_URL: https://localhost:3000/graphql
 
       - name: Compile TypeScript
         run: npx tsc
