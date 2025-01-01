@@ -42,8 +42,6 @@ jobs:
 
       - name: Build project
         run: npm run build
-        env:
-          NEXT_PUBLIC_BACKEND_SERVER_URL: https://localhost:3000/graphql
 
       - name: Compile TypeScript
         run: npx tsc
@@ -163,9 +161,6 @@ jobs:
             --build-arg NEXTAUTH_SECRET=secret \
             -t flowcraft/role-mapper-frontend:2024.12.24 \
             .
-        env:
-          NEXT_PUBLIC_BACKEND_SERVER_URL: https://localhost:3000/graphql
-
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

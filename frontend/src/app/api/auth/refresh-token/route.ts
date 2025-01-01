@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-// import { REFRESH_TOKEN } from '../../../../graphql/auth/auth';
-// import client from '../../../../lib/apolloClient';
+import { REFRESH_TOKEN } from '../../../../graphql/auth/auth';
+import client from '../../../../lib/apolloClient';
 
 export async function POST(req: Request) {
   try {
@@ -14,13 +14,12 @@ export async function POST(req: Request) {
       );
     }
 
-    // const { data } = await client.mutate({
-    //   mutation: REFRESH_TOKEN,
-    //   variables: { refreshToken },
-    // });
+    const { data } = await client.mutate({
+      mutation: REFRESH_TOKEN,
+      variables: { refreshToken },
+    });
 
-    // return NextResponse.json(data.refreshToken);
-    return NextResponse.json({ message: 'Refresh token' });
+    return NextResponse.json(data.refreshToken);
   } catch (error) {
     console.error('Error refreshing token:', error);
     return NextResponse.json(
