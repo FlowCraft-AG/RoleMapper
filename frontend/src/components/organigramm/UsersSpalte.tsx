@@ -1,6 +1,6 @@
 'use client';
 
-import { Add, Delete, Search } from '@mui/icons-material';
+import { Add, Delete, Search, SwapHoriz } from '@mui/icons-material';
 import {
   Button,
   ListItemButton,
@@ -20,17 +20,18 @@ import {
   fetchUsersByFunction,
   removeUserFromFunction,
 } from '../../lib/api/function.api';
-import { ShortFunction } from '../../types/function.type';
+import { FunctionUser } from '../../types/function.type';
 import { User } from '../../types/user.type';
 import { getListItemStyles } from '../../utils/styles';
 import AddUserModal from '../modal/userModals/AddUserModal';
 
 interface UsersColumnProps {
   selectedFunctionId: string;
-  selectedMitglieder: ShortFunction | undefined;
+  selectedMitglieder: FunctionUser | undefined;
   onSelectUser: (userId: string) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   isImpliciteFunction: boolean;
+  isSingleUser: boolean;
 }
 
 export default function UsersSpalte({
@@ -39,6 +40,7 @@ export default function UsersSpalte({
   onSelectUser,
   onRemove,
   isImpliciteFunction,
+  isSingleUser,
 }: UsersColumnProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
@@ -46,22 +48,19 @@ export default function UsersSpalte({
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [open, setOpen] = useState(false);
-  const [newUserId, setNewUserId] = useState('');
-  const [errors] = useState<{ [key: string]: string | undefined }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const [selectedFunction, setSelectedFunction] = useState<
-    ShortFunction | undefined
+    FunctionUser | undefined
   >(undefined);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
-  //   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const loadFunctions = useCallback(async () => {
     // setLoading(true);
-    setError(null);
+    setError(undefined);
     try {
       if (selectedFunctionId === 'mitglieder') {
         console.log('Fetching mitglieder');
@@ -72,7 +71,9 @@ export default function UsersSpalte({
         setSelectedFunction(data);
       } else {
         console.log('Fetching users by function');
-        const data = await fetchUsersByFunction(selectedFunctionId);
+        const data: FunctionUser =
+            await fetchUsersByFunction(selectedFunctionId);
+          console.log('Data:', selectedFunctionId);
         setSelectedFunction(data);
       }
     } catch (err) {
@@ -104,7 +105,7 @@ export default function UsersSpalte({
     }
   }, [selectedFunctionId, loadFunctions]);
 
-  const refetch = (functionInfo: ShortFunction) => {
+  const refetch = (functionInfo: FunctionUser) => {
     setSelectedFunction(functionInfo); // Aktualisiere den Zustand
     setFilteredUsers(functionInfo.users); // Aktualisiere die gefilterte Liste
     setSearchTerm(''); // Suchfeld zurücksetzen
@@ -136,14 +137,6 @@ export default function UsersSpalte({
     setSelectedIndex(userId);
     onSelectUser(userId);
   };
-
-  //   if (loading) {
-  //     return (
-  //       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-  //         <CircularProgress />
-  //       </Box>
-  //     );
-  //   }
 
   if (error) {
     return (
@@ -179,14 +172,14 @@ export default function UsersSpalte({
             variant="contained"
             color="primary"
             onClick={() => setOpen(true)}
-            startIcon={<Add />}
+            startIcon={isSingleUser ? <SwapHoriz /> : <Add />}
             sx={{
               width: '100%', // Vollbreite
               marginBottom: 2, // Abstand zum Textfeld
               height: 40, // Einheitliche Höhe
             }}
           >
-            Benutzer hinzufügen
+            {isSingleUser ? 'Benutzer ersetzen' : 'Benutzer hinzufügen'}
           </Button>
         )}
 
@@ -257,12 +250,9 @@ export default function UsersSpalte({
         <AddUserModal
           open={open}
           onClose={() => setOpen(false)}
-          errors={errors}
-          newUserId={newUserId}
-          setNewUserId={setNewUserId}
           refetch={refetch}
-          functionName={selectedFunction?.functionName}
-          functionId={selectedFunctionId}
+          selectedFunction={selectedFunction}
+          isSingleUser={isSingleUser}
         />
       )}
     </Box>

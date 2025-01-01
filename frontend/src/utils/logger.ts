@@ -5,7 +5,7 @@ import pretty from 'pino-pretty';
 import { ENV } from './env';
 
 // Singleton Logger-Instanz
-let loggerInstance: pino.Logger | null = null;
+let loggerInstance: pino.Logger | undefined = undefined;
 
 /**
  * Initialisiert den Logger und erstellt eine Singleton-Instanz.

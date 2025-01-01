@@ -32,20 +32,18 @@ export default function OrgUnitsSpalte({
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>();
 
   // Funktion zum Abrufen der Organisationseinheiten
   const loadOrgUnits = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchAllOrgUnits(); // Serverseitige Funktion aufrufen
+      const data = await fetchAllOrgUnits();
       setOrgUnits(data);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Ein unbekannter Fehler ist aufgetreten.');
-      }
+      const errorMessage =
+        err instanceof Error ? err.message : 'Unbekannter Fehler.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -75,8 +73,8 @@ export default function OrgUnitsSpalte({
       </Box>
     );
 
-  const orgUnitList: OrgUnit[] = orgUnits;
-  const treeData = buildTree(orgUnitList, null);
+  // Baumstruktur für TreeView vorbereiten
+  const treeData = buildTree(orgUnits, null);
 
   // Baue die Tree-Datenstruktur
   function buildTree(
@@ -95,7 +93,7 @@ export default function OrgUnitsSpalte({
   // Funktion, um alle Kinder und Enkelkinder einer OrgUnit zu finden
   const getOrgUnitHierarchy = (
     orgUnits: OrgUnit[],
-    parentId: string | null,
+    parentId: string | undefined,
   ) => {
     // Finde alle OrgUnits, deren parentId mit der aktuellen parentId übereinstimmt
     const children = orgUnits.filter((unit) => unit.parentId === parentId);
@@ -114,23 +112,18 @@ export default function OrgUnitsSpalte({
 
   const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
     const selectedOrgUnit = orgUnits.find((unit) => unit._id === nodeId);
-
-    if (!selectedOrgUnit) {
-      console.error(`Organisationseinheit mit ID ${nodeId} nicht gefunden.`);
-      return;
-    }
+    if (!selectedOrgUnit)
+      return console.error(`Unit mit ID ${nodeId} nicht gefunden.`);
 
     // Finde den Fakultäts-Parent
-    const facultyParent = findFacultyParent(orgUnits, selectedOrgUnit);
-
-    if (!facultyParent) {
-      console.error('Fakultät für %s nicht gefunden.', selectedOrgUnit.name);
-      return;
-    }
+    const facultyParent = findFacultyParent(selectedOrgUnit);
+    if (!facultyParent)
+      return console.error(
+        `Keine Fakultät für ${selectedOrgUnit.name} gefunden.`,
+      );
 
     // Dynamische Farbänderung basierend auf Fakultät
     const newTheme = getFacultyTheme(facultyParent.name);
-    //const newTheme = getFacultyTheme(selectedOrgUnit.name);
 
     if (hasChildren(orgUnits, selectedOrgUnit._id)) {
       // Finde alle Kinder und Enkelkinder der ausgewählten Organisationseinheit
@@ -147,13 +140,7 @@ export default function OrgUnitsSpalte({
     }
 
     // Weitergabe der Auswahl an die Parent-Komponente
-    onSelect({
-      _id: selectedOrgUnit._id,
-      alias: selectedOrgUnit.alias || '',
-      kostenstelleNr: selectedOrgUnit.kostenstelleNr || '',
-      name: selectedOrgUnit.name,
-      type: selectedOrgUnit.type,
-    });
+    onSelect(selectedOrgUnit);
   };
 
   // Funktion, um das Theme rekursiv auf alle Knoten anzuwenden
@@ -164,32 +151,20 @@ export default function OrgUnitsSpalte({
     unit.children?.forEach((child) => applyThemeToOrgUnit(child, theme));
   };
 
-  const findFacultyParent = (
-    orgUnits: OrgUnit[],
-    currentUnit: OrgUnit,
-  ): OrgUnit | null => {
+  const findFacultyParent = (unit: OrgUnit): OrgUnit | undefined => {
     // Wenn die aktuelle Einheit keine übergeordnete Einheit hat, ist sie selbst eine Fakultät
-    if (!currentUnit.parentId) {
-      return currentUnit;
-    }
+    if (!unit.parentId) return unit;
 
     // Finde die übergeordnete Einheit
-    const parentUnit = orgUnits.find(
-      (unit) => unit._id === currentUnit.parentId,
-    );
-
-    if (!parentUnit) {
-      return null;
-    }
+    const parent = orgUnits.find((u) => u._id === unit.parentId);
 
     // Prüfe, ob der Parent "Fakultät" heißt
-    if (parentUnit.name === 'Fakultät') {
-      return currentUnit;
-    }
-
     // Rekursiv nach oben gehen bis zur Wurzel-Fakultät
-    return findFacultyParent(orgUnits, parentUnit);
+    return parent?.name === 'Fakultät'
+      ? parent
+      : parent && findFacultyParent(parent);
   };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250 }}>
       <RichTreeView

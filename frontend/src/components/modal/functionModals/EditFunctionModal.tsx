@@ -11,17 +11,20 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { updateFunction } from '../../../lib/api/function.api';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  fetchFunctionById,
+  updateFunction,
+} from '../../../lib/api/function.api';
 import { fetchOrgUnitsIds } from '../../../lib/api/orgUnit.api';
-import { Function } from '../../../types/function.type';
+import { FunctionString } from '../../../types/function.type';
 import { ShortOrgUnit } from '../../../types/orgUnit.type';
 
 interface EditFunctionModalProps {
   open: boolean;
   onClose: () => void;
-  functionData: Function | undefined;
-  refetch: (functionList: Function[]) => void; // Callback zur Aktualisierung der Funktionliste
+  functionData: FunctionString | undefined;
+  refetch: (functionList: FunctionString[]) => void; // Callback zur Aktualisierung der Funktionliste
   onEdit: (functionId: string) => void;
 }
 
@@ -42,20 +45,38 @@ const EditFunctionModal = ({
   const [orgUnits, setOrgUnits] = useState<ShortOrgUnit[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const handleError = (message: string, error: unknown) => {
+    console.error(message, error);
+    setSnackbar({
+      open: true,
+      message: message,
+    });
+  };
+
+  // Funktion zum Laden der Organisationseinheit
+  const loadFunctionData = useCallback(async () => {
+    try {
+        const func = await fetchFunctionById(functionData?._id!); // API-Aufruf zum Laden der Organisationseinheit
+        console.log(func);
+      setFormData({
+        functionName: func.functionName,
+        orgUnitId: func.orgUnit,
+        isSingleUser: func.isSingleUser,
+      });
+    } catch (error) {
+      handleError('Fehler beim Laden der Benutzer:', error);
+    }
+  }, [functionData]); // Die Funktion wird nur beim ersten Laden ausgeführt
+
   // Update state wenn `functionData`  sich ändert
   useEffect(() => {
     if (open && functionData) {
-      setFormData({
-        functionName: functionData.functionName,
-        orgUnitId: functionData.orgUnit,
-        isSingleUser: functionData.isSingleUser,
-      });
-      // Fetch org units only when modal opens
+      loadFunctionData();
       fetchOrgUnits();
     }
   }, [open, functionData]);
 
-  const fetchOrgUnits = async () => {
+  const fetchOrgUnits = useCallback(async () => {
     setLoading(true);
     try {
       const orgUnitsResponse = await fetchOrgUnitsIds(); // Fetch data from the server
@@ -65,11 +86,7 @@ const EditFunctionModal = ({
     } finally {
       setLoading(false);
     }
-  };
-
-  //   const orgUnitsMap = new Map(
-  //     orgUnits.map((unit: ShortOrgUnit | undefined) => [unit?._id, unit?.name]),
-  //   );
+  }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const validateFunctionName = (name: string) => /^[a-zA-Z\s]+$/.test(name);
 
@@ -82,7 +99,8 @@ const EditFunctionModal = ({
     setIsSaving(true);
 
     try {
-      const updatedFunction: Function[] = await updateFunction({
+        const updatedFunction: FunctionString[] = await updateFunction({
+          functionId: functionData?._id!,
         functionName: formData.functionName!,
         newOrgUnitId: formData.orgUnitId!,
         isSingleUser: formData.isSingleUser!,
@@ -118,10 +136,10 @@ const EditFunctionModal = ({
     unit: { name: string; parentId?: string },
     orgUnitsMap: Map<string, { name: string; parentId?: string }>,
   ): string => {
-    const parent = unit.parentId ? orgUnitsMap.get(unit.parentId) : null;
+    const parent = unit.parentId ? orgUnitsMap.get(unit.parentId) : undefined;
     const grandParent = parent?.parentId
       ? orgUnitsMap.get(parent.parentId)
-      : null;
+      : undefined;
 
     // Sonderfall: Wenn der Parent "Hochschule" ist, zeige nur den Namen des Kindes
     if (parent?.name === 'Hochschule') {
@@ -150,13 +168,6 @@ const EditFunctionModal = ({
       new Map(orgUnits.map((u) => [u._id, u])),
     ),
   }));
-
-  //   const options = orgUnits.map(
-  //     (unit: { _id: string; name: string; parentId?: string }) => ({
-  //       ...unit,
-  //       displayName: `${unit.name} (${orgUnitsMap.get(unit?.parentId)})`,
-  //     }),
-  //   );
 
   return (
     <>
@@ -209,7 +220,9 @@ const EditFunctionModal = ({
                 {option.displayName}
               </li>
             )}
-            value={options.find((ou) => ou._id === formData.orgUnitId) || null}
+            value={
+              options.find((ou) => ou._id === formData.orgUnitId) || undefined
+            }
             onChange={(_, newValue) =>
               setFormData((prev) => ({
                 ...prev,
@@ -220,20 +233,45 @@ const EditFunctionModal = ({
               <TextField {...params} label="Organisationseinheit" />
             )}
           />
-          <Typography>Einzelnutzer?</Typography>
-          <RadioGroup
-            row
-            value={formData.isSingleUser ? 'true' : 'false'}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                isSingleUser: e.target.value === 'true',
-              }))
-            }
-          >
-            <FormControlLabel value="true" control={<Radio />} label="Ja" />
-            <FormControlLabel value="false" control={<Radio />} label="Nein" />
-          </RadioGroup>
+
+          {!functionData?.isImpliciteFunction && (
+            <>
+              <Typography>Einzelnutzer?</Typography>
+              <RadioGroup
+                row
+                value={formData.isSingleUser ? 'true' : 'false'}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    isSingleUser: e.target.value === 'true',
+                  }))
+                }
+              >
+                <FormControlLabel
+                  value="true"
+                  control={<Radio />}
+                  label="Ja"
+                  disabled={
+                    functionData?.users && functionData.users.length > 1
+                  } // Deaktiviert, wenn mehr als ein Benutzer zugewiesen ist
+                />
+                <FormControlLabel
+                  value="false"
+                  control={<Radio />}
+                  label="Nein"
+                />
+              </RadioGroup>
+              {functionData?.users &&
+                functionData.users.length > 1 &&
+                formData.isSingleUser && (
+                  <Typography variant="caption" color="error">
+                    Die Option "Einzelnutzer" kann nicht aktiviert werden, da
+                    mehrere Benutzer zugewiesen sind.
+                  </Typography>
+                )}
+            </>
+          )}
+
           <Box sx={{ mt: 2 }}>
             <Tooltip title="Funktion speichern">
               <Button

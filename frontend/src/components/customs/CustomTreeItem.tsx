@@ -13,7 +13,7 @@ import {
   fetchFunctionsByOrgUnit,
 } from '../../lib/api/function.api';
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
-import { Function } from '../../types/function.type';
+import { FunctionString } from '../../types/function.type';
 import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';
 import OrgUnitFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal1';
 import ConfirmDeleteModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal2';
@@ -53,9 +53,11 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
   const [childrenToDelete, setChildrenToDelete] = useState<ItemToRender[]>([]);
   const [openEditModal, setOpenEditModal] = useState(false);
 
-  const [orgUnitFunctions, setOrgUnitFunctions] = useState<Function[]>([]); // Funktionen der Organisationseinheit
+  const [orgUnitFunctions, setOrgUnitFunctions] = useState<FunctionString[]>(
+    [],
+  ); // Funktionen der Organisationseinheit
   const [childFunctions, setChildFunctions] = useState<
-    { orgUnit: string; functions: Function[] }[]
+    { orgUnit: string; functions: FunctionString[] }[]
   >([]); // Funktionen der Kinder
 
   const handleAdd = () => {
@@ -136,7 +138,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
 
   // Prüfe, ob Kinder oder deren Nachkommen Funktionen haben
   const checkChildrenForFunctions = async (children: ItemToRender[]) => {
-    const results: { orgUnit: string; functions: Function[] }[] = [];
+    const results: { orgUnit: string; functions: FunctionString[] }[] = [];
 
     for (const child of children) {
       // Prüfe die Funktionen des aktuellen Kindes

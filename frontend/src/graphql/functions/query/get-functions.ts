@@ -79,8 +79,40 @@ export const GET_FUNCTION_BY_ID = gql`
           functionName
           isSingleUser
           isImpliciteFunction
+          orgUnit
         }
       }
+    }
+  }
+`;
+
+export const HAS_SINGLE_USERS = gql`
+  query GetData {
+    getData(
+      input: {
+        entity: MANDATES
+        filter: { field: isSingleUser, operator: EQ, value: "true" }
+      }
+    ) {
+      data {
+        ... on Function {
+          functionName
+          users
+          isSingleUser
+          orgUnit
+          _id
+        }
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_ANCESTORS = gql`
+  query GetAncestors($id: ID) {
+    getAncestors(id: $id) {
+      _id
+      name
     }
   }
 `;

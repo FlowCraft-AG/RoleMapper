@@ -18,11 +18,11 @@ interface UserInfoColumnProps {
 export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   //   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const fetchData = useCallback(async () => {
     // setLoading(true);
-    setError(null);
+    setError(undefined);
     try {
       const userDetails = await fetchUserDetails(userId);
       console.log('userDetails: ', userDetails);

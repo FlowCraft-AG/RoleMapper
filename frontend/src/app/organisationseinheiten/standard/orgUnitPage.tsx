@@ -1,122 +1,122 @@
 'use client';
 
 import { Box, Typography, useTheme } from '@mui/material';
+import { User } from 'next-auth';
 import { useEffect, useState } from 'react';
 import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte2';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
-import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
-import { OrgUnit } from '../../../types/orgUnit.type';
-import { ShortFunction } from '../../../types/function.type';
 import { fetchMitglieder } from '../../../lib/api/user.api';
-import { User } from 'next-auth';
+import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
+import { FunctionUser } from '../../../types/function.type';
+import { OrgUnit } from '../../../types/orgUnit.type';
 
 export default function OrganigrammPage() {
-   // Zustände für ausgewählte Elemente
-   const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | undefined>(
-     undefined,
-   );
-   const [selectedRootOrgUnit, setSelectedRootOrgUnit] = useState<
-     OrgUnit | undefined
-   >(undefined);
+  // Zustände für ausgewählte Elemente
+  const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | undefined>(
+    undefined,
+  );
+  const [selectedRootOrgUnit, setSelectedRootOrgUnit] = useState<
+    OrgUnit | undefined
+  >(undefined);
 
-   const [selectedFunctionId, setSelectedFunctionId] = useState<
-     string | undefined
-   >(undefined);
-   const [selectedFunction, setSelectedFunction] = useState<ShortFunction>();
+  const [selectedFunctionId, setSelectedFunctionId] = useState<
+    string | undefined
+  >(undefined);
+  const [selectedFunction, setSelectedFunction] = useState<FunctionUser>();
 
-   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
-     undefined,
-   );
+  const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
+    undefined,
+  );
 
-   // Benutzerdaten
-   const [combinedUsers, setCombinedUsers] = useState<User[]>([]);
-   const [isImpliciteFunction, setIsImpliciteFunction] =
-     useState<boolean>(false);
+  // Benutzerdaten
+  const [combinedUsers, setCombinedUsers] = useState<User[]>([]);
+  const [isImpliciteFunction, setIsImpliciteFunction] =
+    useState<boolean>(false);
 
-   const theme = useTheme(); // Dynamisches Theme aus Material-UI
-   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
-   useEffect(() => {
-     console.log('Aktualisiertes Theme:', theme.palette);
-   }, [setFacultyTheme, theme.palette]);
+  useEffect(() => {
+    console.log('Aktualisiertes Theme:', theme.palette);
+  }, [setFacultyTheme, theme.palette]);
 
-   // Mitglieder laden
-   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
-     try {
-       return await fetchMitglieder(alias, kostenstelleNr);
-     } catch (error) {
-       console.error('Fehler beim Laden der Mitglieder:', error);
-       return [];
-     }
-   };
+  // Mitglieder laden
+  const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
+    try {
+      return await fetchMitglieder(alias, kostenstelleNr);
+    } catch (error) {
+      console.error('Fehler beim Laden der Mitglieder:', error);
+      return [];
+    }
+  };
 
-   // Organisationseinheit auswählen
-   const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
-     setSelectedOrgUnit(orgUnit);
-     setSelectedFunctionId(undefined); // Reset selection
-     setSelectedUserId(undefined); // Reset selection
-     setSelectedRootOrgUnit(undefined);
+  // Organisationseinheit auswählen
+  const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
+    setSelectedOrgUnit(orgUnit);
+    setSelectedFunctionId(undefined); // Reset selection
+    setSelectedUserId(undefined); // Reset selection
+    setSelectedRootOrgUnit(undefined);
 
-     if (orgUnit.alias || orgUnit.kostenstelleNr) {
-       orgUnit.hasMitglieder = true;
-       setSelectedRootOrgUnit(orgUnit);
-       setCombinedUsers(
-         await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
-       );
-     }
-   };
+    if (orgUnit.alias || orgUnit.kostenstelleNr) {
+      orgUnit.hasMitglieder = true;
+      setSelectedRootOrgUnit(orgUnit);
+      setCombinedUsers(
+        await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
+      );
+    }
+  };
 
-   // Funktion auswählen
-   const handleFunctionSelect = (functionInfo: Function) => {
-     setSelectedFunctionId(functionInfo._id);
-     //setSelectedFunction(functionInfo);
-     setSelectedUserId(undefined); // Reset selection
-     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
-   };
+  // Funktion auswählen
+  const handleFunctionSelect = (functionInfo: Function) => {
+    setSelectedFunctionId(functionInfo._id);
+    //setSelectedFunction(functionInfo);
+    setSelectedUserId(undefined); // Reset selection
+    setIsImpliciteFunction(functionInfo.isImpliciteFunction);
+  };
 
-   // Mitgliederansicht aktivieren
-   const handleMitgliederClick = () => {
-     setSelectedFunctionId('mitglieder'); // Reset functions
-     setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
-     setSelectedUserId(undefined); // Reset users
-     setIsImpliciteFunction(false);
-   };
+  // Mitgliederansicht aktivieren
+  const handleMitgliederClick = () => {
+    setSelectedFunctionId('mitglieder'); // Reset functions
+    setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
+    setSelectedUserId(undefined); // Reset users
+    setIsImpliciteFunction(false);
+  };
 
-   // Benutzer auswählen
-   const handleUserSelect = (userId: string) => {
-     setSelectedUserId(userId);
-   };
+  // Benutzer auswählen
+  const handleUserSelect = (userId: string) => {
+    setSelectedUserId(userId);
+  };
 
-   // Benutzer oder Funktion entfernen
-   const handleRemove = (ids: string[]) => {
-     if (ids.includes(selectedUserId!)) {
-       setSelectedUserId(undefined);
-     }
-     if (ids.includes(selectedFunctionId!)) {
-       setSelectedFunctionId(undefined);
-       setSelectedFunction(undefined);
-       setSelectedUserId(undefined);
-     }
-     if (ids.includes(selectedOrgUnit?._id || '')) {
-       setSelectedOrgUnit(undefined);
-       setSelectedFunctionId(undefined);
-       setSelectedFunction(undefined);
-       setSelectedUserId(undefined);
-     }
-   };
+  // Benutzer oder Funktion entfernen
+  const handleRemove = (ids: string[]) => {
+    if (ids.includes(selectedUserId!)) {
+      setSelectedUserId(undefined);
+    }
+    if (ids.includes(selectedFunctionId!)) {
+      setSelectedFunctionId(undefined);
+      setSelectedFunction(undefined);
+      setSelectedUserId(undefined);
+    }
+    if (ids.includes(selectedOrgUnit?._id || '')) {
+      setSelectedOrgUnit(undefined);
+      setSelectedFunctionId(undefined);
+      setSelectedFunction(undefined);
+      setSelectedUserId(undefined);
+    }
+  };
 
-   // Mitgliederfunktion generieren
-   const mitglied = (orgUnitId: string | undefined) => {
-     return {
-       _id: 'mitglieder',
-       functionName: 'Mitglieder',
-       orgUnit: orgUnitId,
-       users: combinedUsers,
-       isImpliciteFunction: false,
-     };
-   };
+  // Mitgliederfunktion generieren
+  const mitglied = (orgUnitId: string | undefined) => {
+    return {
+      _id: 'mitglieder',
+      functionName: 'Mitglieder',
+      orgUnit: orgUnitId,
+      users: combinedUsers,
+      isImpliciteFunction: false,
+    };
+  };
 
   return (
     <Box

@@ -8,7 +8,7 @@ import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
 import { fetchMitglieder } from '../../lib/api/user.api';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { Function, ShortFunction } from '../../types/function.type';
+import { FunctionString, FunctionUser } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { User } from '../../types/user.type';
 
@@ -24,11 +24,12 @@ export default function OrganigrammPage() {
   const [selectedFunctionId, setSelectedFunctionId] = useState<
     string | undefined
   >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<ShortFunction>();
+  const [selectedFunction, setSelectedFunction] = useState<FunctionUser>();
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
   );
+  const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
 
   // Benutzerdaten
   const [combinedUsers, setCombinedUsers] = useState<User[]>([]);
@@ -69,11 +70,13 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: Function) => {
+  const handleFunctionSelect = (functionInfo: FunctionString) => {
+    console.log('Selected function:', functionInfo);
     setSelectedFunctionId(functionInfo._id);
     //setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
+    setIsSingleUser(functionInfo.isSingleUser);
   };
 
   // Mitgliederansicht aktivieren
@@ -248,6 +251,7 @@ export default function OrganigrammPage() {
             onSelectUser={handleUserSelect}
             onRemove={handleRemove}
             isImpliciteFunction={isImpliciteFunction}
+            isSingleUser={isSingleUser}
           />
         </Box>
       )}

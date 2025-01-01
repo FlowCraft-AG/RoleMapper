@@ -18,15 +18,15 @@ const logger = getLogger('user.api.ts');
  * Diese Funktion führt eine GraphQL-Abfrage aus, um eine Liste von Mitgliedern basierend
  * auf den bereitgestellten Parametern abzurufen.
  *
- * @param {string | null} alias - Alias des Mitglieds, optional (kann `null` sein).
- * @param {string | null} kostenstelleNr - Kostenstellen-Nummer des Mitglieds, optional (kann `null` sein).
+ * @param {string | undefined} alias - Alias des Mitglieds, optional (kann `undefined` sein).
+ * @param {string | undefined} kostenstelleNr - Kostenstellen-Nummer des Mitglieds, optional (kann `undefined` sein).
  * @returns {Promise<User[]>} - Eine Promise, die ein Array von Benutzern (Mitgliedern) zurückgibt.
  * @throws {ApolloError} - Wird geworfen, wenn die Abfrage fehlschlägt und die Ursache GraphQL-bezogen ist.
  * @throws {Error} - Wird geworfen, wenn ein allgemeiner Fehler auftritt.
  */
 export async function fetchMitglieder(
-  alias: string | null,
-  kostenstelleNr: string | null,
+  alias: string | undefined,
+  kostenstelleNr: string | undefined,
 ): Promise<User[]> {
   try {
     logger.debug(
@@ -56,12 +56,14 @@ export async function fetchMitglieder(
  * @returns {Promise<ShortUser[]>} - Eine Promise, die ein Array von Benutzeranmeldedaten zurückgibt.
  * @throws {ApolloError} - Wird geworfen, wenn die Abfrage fehlschlägt.
  */
-export async function fetchEmployees(): Promise<ShortUser[]> {
+export async function fetchEmployees(field: string): Promise<ShortUser[]> {
+  logger.debug('Lade alle Mitarbeiter es wird nach %o sortiert', field);
   try {
     logger.debug('Lade alle Mitarbeiter');
 
     const { data } = await client.query({
       query: GET_USERS_BY_TYPE_EMPLOYEE,
+      variables: { field },
     });
 
     return data.getData.data as ShortUser[];
@@ -79,12 +81,13 @@ export async function fetchEmployees(): Promise<ShortUser[]> {
  * @returns {Promise<ShortUser[]>} - Eine Promise, die ein Array von Benutzer-IDs zurückgibt.
  * @throws {ApolloError} - Wird geworfen, wenn die GraphQL-Abfrage fehlschlägt.
  */
-export async function fetchUserIds(): Promise<ShortUser[]> {
+export async function fetchUserIds(field: string): Promise<ShortUser[]> {
   try {
     logger.debug('Lade Benutzer-IDs');
 
     const { data } = await client.query({
       query: GET_ALL_USERS_SHORT,
+      variables: { field },
     });
 
     return data.getData.data as ShortUser[];

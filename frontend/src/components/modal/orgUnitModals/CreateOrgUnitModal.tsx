@@ -1,8 +1,9 @@
+import { SwapHoriz } from '@mui/icons-material';
 import {
-    Backdrop,
   Box,
   Button,
   Fade,
+  IconButton,
   Modal,
   Snackbar,
   TextField,
@@ -14,6 +15,11 @@ import { fetchEmployees } from '../../../lib/api/user.api';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
+
+// Separate Ladezustände für Benutzer und Erstellung.
+// Direktes Feedback bei Validierung.
+// Deaktivierter Button bei ungültigen Eingaben.
+// Verbessertes Fehlerhandling mit konsistenter Logik.
 
 interface CreateOrgUnitModalProps {
   open: boolean;
@@ -28,34 +34,42 @@ const CreateOrgUnitModal = ({
   parentId,
   refetch, // Callback zur Aktualisierung der Liste
 }: CreateOrgUnitModalProps) => {
-const [formData, setFormData] = useState({ name: '', supervisor: '' });
+  const [formData, setFormData] = useState<{
+    name: string;
+    supervisor?: string;
+  }>({
+    name: '',
+    supervisor: undefined,
+  });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [userData, setUserData] = useState<ShortUser[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [userError, setUserError] = useState<string>('');
+  const [userLoading, setUserLoading] = useState(false);
+  const [creationLoading, setCreationLoading] = useState(false);
+  const [displayFormat, setDisplayFormat] = useState<'userId' | 'nameOnly'>(
+    'userId',
+  ); // Zustand für die Anzeige
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = useCallback(async () => {
-    setLoading(true);
+    setUserLoading(true);
     try {
-      const employees: ShortUser[] = await fetchEmployees(); // Serverseitige Funktion aufrufen
+      // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
+      const fetchFormat = displayFormat === 'nameOnly' ? 'lastName' : 'userId';
+      const employees: ShortUser[] = await fetchEmployees(fetchFormat); // Serverseitige Funktion aufrufen
       setUserData(employees);
     } catch (error) {
-      if (error instanceof Error) {
-        setUserError(error.message);
-        setSnackbar({ open: true, message: error.message });
-        console.error('Fehler beim Laden der Benutzer:', userError);
-      } else {
-        logError('Fehler beim Laden der Benutzer:', error);
-      }
+      logError('Fehler beim Laden der Benutzer:', error);
     } finally {
-      setLoading(false);
+      setUserLoading(false);
     }
-  }, [userError]); // Die Funktion wird nur beim ersten Laden ausgeführt
+  }, [displayFormat]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const handleCreate = async () => {
     // Name-Validierung: keine Sonderzeichen oder Zahlen, nur Buchstaben erlaubt
     const nameRegex = /^[a-zA-ZäöüÄÖÜß]+$/; // Optional: deutsche Umlaute zulassen
+    // Regular Expression für ObjectId Validierung
+    const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
+
     if (!formData.name || !nameRegex.test(formData.name)) {
       setSnackbar({
         open: true,
@@ -67,8 +81,7 @@ const [formData, setFormData] = useState({ name: '', supervisor: '' });
 
     // Supervisor-Validierung: genau 8 Zeichen, erste 4 Kleinbuchstaben, letzte 4 Ziffern
     //const supervisorRegex = /^[a-z]{4}[0-9]{4}$/;
-    // Regular Expression für ObjectId Validierung
-    const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
+
     if (formData.supervisor && !isValidObjectId(formData.supervisor)) {
       setSnackbar({
         open: true,
@@ -78,27 +91,35 @@ const [formData, setFormData] = useState({ name: '', supervisor: '' });
       return;
     }
 
+    setCreationLoading(true);
     try {
       const updatedOrgUnits = await createOrgUnit(
         formData.name,
-        formData.supervisor || undefined,
+        formData.supervisor,
         parentId,
       ); // Serverseitige Funktion zum Erstellen der Organisationseinheit
-        refetch(updatedOrgUnits); // Aktualisiere die Liste
-        setSnackbar({
-          open: true,
-          message: 'Organisationseinheit erfolgreich erstellt!',
-        });
-      onClose();
-      setFormData({ name: '', supervisor: '' });
-    } catch (err) {
-      console.error(err);
+      refetch(updatedOrgUnits); // Aktualisiere die Liste
       setSnackbar({
         open: true,
-        message: 'Fehler beim Erstellen der Einheit.',
+        message: 'Organisationseinheit erfolgreich erstellt!',
       });
+      handleClose();
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err.message);
+        setSnackbar({
+          open: true,
+          message: err.message,
+        });
+      } else {
+        console.error('Unknown error', err);
+        setSnackbar({
+          open: true,
+          message: 'Ein unbekannter Fehler ist aufgetreten.',
+        });
+      }
     } finally {
-      setLoading(false);
+      setCreationLoading(false);
     }
   };
 
@@ -108,11 +129,22 @@ const [formData, setFormData] = useState({ name: '', supervisor: '' });
     }
   }, [open, loadUsers]);
 
-    const logError = (message: string, error: unknown) => {
-      console.error(message, error);
-      setSnackbar({ open: true, message });
-    };
+  const logError = (message: string, error: unknown) => {
+    console.error(message, error);
+    setSnackbar({
+      open: true,
+      message: typeof error === 'string' ? error : message,
+    });
+  };
 
+  const toggleDisplayFormat = () => {
+    setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
+  };
+
+  const handleClose = () => {
+    setFormData({ name: '', supervisor: undefined });
+    onClose();
+  };
   return (
     <>
       <Snackbar
@@ -123,16 +155,16 @@ const [formData, setFormData] = useState({ name: '', supervisor: '' });
         onClose={() => setSnackbar({ open: false, message: '' })}
       />
 
-          <Modal
-              open={open}
-              onClose={onClose}
-              disableEscapeKeyDown={false}
-              closeAfterTransition
-              slotProps={{
-                  backdrop: {
-                      timeout: 500,
-                  }
-              }}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        disableEscapeKeyDown={false}
+        closeAfterTransition
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
       >
         <Fade in={open}>
           <Box
@@ -156,32 +188,64 @@ const [formData, setFormData] = useState({ name: '', supervisor: '' });
             <TextField
               label="Name"
               value={formData.name}
+              error={
+                !/^[a-zA-ZäöüÄÖÜß]+$/.test(formData.name) &&
+                formData.name !== ''
+              }
+              helperText={
+                !/^[a-zA-ZäöüÄÖÜß]+$/.test(formData.name) &&
+                formData.name !== ''
+                  ? 'Name darf nur Buchstaben enthalten.'
+                  : ''
+              }
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, name: e.target.value }))
               }
               required
             />
-            <UserAutocomplete
-              options={userData}
-              loading={loading}
-              value={
-                userData.find((user) => user._id === formData.supervisor) ||
-                undefined
-              }
-              onChange={(value) => {
-                if (value && !Array.isArray(value)) {
-                  setFormData((prev) => ({
-                    ...prev,
-                    supervisor: value._id || '',
-                  }));
-                }
-              }}
-              displayFormat="full" // Alternativ: "userId" oder "nameOnly"
-              label="Supervisor"
-              placeholder="Supervisor auswählen"
-            />
+            <Box display="flex" alignItems="center">
+              <Box sx={{ flexGrow: 1 }}>
+                <UserAutocomplete
+                  options={userData}
+                  loading={userLoading}
+                  value={
+                    userData.find((user) => user._id === formData.supervisor) ||
+                    null
+                  }
+                  onChange={(value) => {
+                    if (value && typeof value === 'object' && '_id' in value) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        supervisor: value._id,
+                      }));
+                    } else {
+                      setFormData((prev) => ({
+                        ...prev,
+                        supervisor: null,
+                      }));
+                    }
+                  }}
+                  displayFormat={displayFormat} // Alternativ: "userId" oder "nameOnly" oder "full"
+                  label={
+                    displayFormat === 'userId'
+                      ? 'Supervisor-ID auswählen'
+                      : 'Supervisor-Name auswählen'
+                  } // Dynamisches Label
+                  placeholder={
+                    displayFormat === 'userId'
+                      ? 'Supervisor-ID auswählen'
+                      : 'Supervisor-Name auswählen'
+                  } // Dynamischer Placeholder
+                />
+              </Box>
+              <Box sx={{ flexShrink: 1 }}>
+                <IconButton onClick={toggleDisplayFormat}>
+                  <SwapHoriz />
+                </IconButton>
+              </Box>
+            </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button variant="outlined" onClick={onClose}>
+              <Button variant="outlined" onClick={handleClose}>
                 Abbrechen
               </Button>
               <Button
@@ -189,7 +253,7 @@ const [formData, setFormData] = useState({ name: '', supervisor: '' });
                 color="primary"
                 onClick={handleCreate}
               >
-                Erstellen
+                {creationLoading ? 'Erstellen...' : 'Erstellen'}
               </Button>
             </Box>
           </Box>

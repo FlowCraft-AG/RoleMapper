@@ -26,7 +26,7 @@ import {
   fetchFunctionsByOrgUnit,
   removeFunction,
 } from '../../lib/api/function.api';
-import { Function } from '../../types/function.type';
+import { FunctionString } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
 import EditFunctionModal from '../modal/functionModals/EditFunctionModal';
@@ -37,8 +37,8 @@ import SelectFunctionTypeModal from '../modal/functionModals/SelectFunctionTypeM
 interface FunctionsColumnProps {
   orgUnit: OrgUnit;
   rootOrgUnit: OrgUnit | undefined;
-  functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
-  onSelect: (func: Function) => void;
+  functions?: FunctionString[]; // Alle Funktionen, zentral von `page.tsx` übergeben
+  onSelect: (func: FunctionString) => void;
   handleMitgliederClick: () => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
@@ -52,26 +52,26 @@ export default function FunctionsSpalte({
 }: FunctionsColumnProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
-  const [functions, setFunctions] = useState<Function[]>([]);
+  const [functions, setFunctions] = useState<FunctionString[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const [openSelectType, setOpenSelectType] = useState(false);
   const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
   const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
 
   const [openEditFunction, setOpenEditFunction] = useState(false); // State für Edit Modal
-  const [currentFunction, setCurrentFunction] = useState<Function | undefined>(
-    undefined,
-  ); // Funktion, die bearbeitet wird
+  const [currentFunction, setCurrentFunction] = useState<
+    FunctionString | undefined
+  >(undefined); // Funktion, die bearbeitet wird
 
   const loadFunctions = useCallback(async (orgUnitId: string) => {
     try {
       setLoading(true);
-        const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
+      const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
       setFunctions(functionList);
     } catch (err) {
       if (err instanceof Error) {
@@ -84,7 +84,7 @@ export default function FunctionsSpalte({
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
-  const refetch = (functionList: Function[]) => {
+  const refetch = (functionList: FunctionString[]) => {
     setFunctions(functionList);
   };
 
@@ -110,22 +110,22 @@ export default function FunctionsSpalte({
     );
 
   // Funktionen filtern
-  const filteredFunctions: Function[] =
-    functions.filter((func: Function) => func.orgUnit === orgUnit._id) || [];
+  //   const filteredFunctions: Function[] =
+  //     functions.filter((func: Function) => func.orgUnit === orgUnit._id) || [];
 
   // Klick-Handler für eine Funktion oder "Mitglieder"
-  const handleClick = async (func: Function | string) => {
+  const handleClick = async (func: FunctionString | string) => {
     if (typeof func === 'string') {
       setSelectedIndex(func);
       handleMitgliederClick();
     } else {
       setSelectedIndex(func._id);
-      const func2: Function = await fetchFunctionById(func._id);
+      const func2: FunctionString = await fetchFunctionById(func._id);
       onSelect(func2);
     }
   };
 
-  const handleRemoveFunction = async (func: Function) => {
+  const handleRemoveFunction = async (func: FunctionString) => {
     const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
     if (success) {
       setFunctions((prev) => prev.filter((f) => f._id !== func._id)); // Update den lokalen Zustand
@@ -135,7 +135,7 @@ export default function FunctionsSpalte({
     }
   };
 
-  const handleViewUser = (func: Function) => {
+  const handleViewUser = (func: FunctionString) => {
     setSelectedIndex(func._id);
     handleClick(func);
   };
@@ -159,8 +159,9 @@ export default function FunctionsSpalte({
     setOpenExplicitFunction(false);
   };
 
-  const handleEditFunction = (func: Function) => {
-    setCurrentFunction(func);
+  const handleEditFunction = async (func: FunctionString) => {
+    const func2 = await fetchFunctionById(func._id); // API-Aufruf zum Laden der Organisationseinheit
+    setCurrentFunction(func2);
     setOpenEditFunction(true); // Öffne das Edit-Modal
   };
 
@@ -226,7 +227,7 @@ export default function FunctionsSpalte({
         </List>
       )}
       <List>
-        {filteredFunctions.map((func) => (
+        {functions.map((func) => (
           <ListItemButton
             key={func._id} // Eindeutiger Schlüssel für jedes Element
             selected={selectedIndex === func._id}

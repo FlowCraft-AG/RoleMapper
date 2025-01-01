@@ -1,8 +1,9 @@
+import { SwapHoriz } from '@mui/icons-material';
 import {
   Box,
   Button,
-  CircularProgress,
   Fade,
+  IconButton,
   Modal,
   Snackbar,
   TextField,
@@ -14,6 +15,11 @@ import { fetchEmployees } from '../../../lib/api/user.api';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
+
+// Ladeindikator wurde aufgeteilt, um Benutzerfreundlichkeit zu verbessern.
+// Fehlerhandling wurde konsolidiert.
+// Snackbar und UX optimiert.
+// Mehrfachauswahl vorbereitet, falls erforderlich.
 
 interface EditOrgUnitModalProps {
   open: boolean;
@@ -29,58 +35,59 @@ const EditOrgUnitModal = ({
 
   refetch,
 }: EditOrgUnitModalProps) => {
-  const [formData, setFormData] = useState({ name: '', supervisor: '' });
+  const [formData, setFormData] = useState<{
+    name: string;
+    supervisor?: string;
+  }>({
+    name: '',
+    supervisor: undefined,
+  });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const [loading, setLoading] = useState(false);
-  const [userError, setUserError] = useState<string>('');
   const [userData, setUserData] = useState<ShortUser[]>([]);
+  const [userLoading, setUserLoading] = useState(false);
+  const [displayFormat, setDisplayFormat] = useState<'userId' | 'nameOnly'>(
+    'userId',
+  ); // Zustand für die Anzeige
 
-const handleError = (message: string, error: unknown) => {
-      console.error(message, error);
-      setSnackbar({
-        open: true,
-        message: message,
-      });
-    };
-
+  const handleError = (message: string, error: unknown) => {
+    console.error(message, error);
+    setSnackbar({
+      open: true,
+      message: message,
+    });
+  };
 
   // Supervisor-ID muss ein gültiges MongoDB ObjectId sein
   const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
 
   // Funktion zum Laden der Organisationseinheit
   const loadOrgUnitData = useCallback(async () => {
-    setLoading(true);
     try {
       const orgUnit = await getOrgUnitById(itemId); // API-Aufruf zum Laden der Organisationseinheit
+      console.log(orgUnit);
       setFormData({
         name: orgUnit.name || '',
-        supervisor: orgUnit.supervisor || '', // Supervisor-ID laden
+        supervisor: orgUnit.supervisor, // Supervisor-ID laden
       });
     } catch (error) {
       handleError('Fehler beim Laden der Benutzer:', error);
-    } finally {
-      setLoading(false);
     }
   }, [itemId]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = useCallback(async () => {
-    setLoading(true);
+    setUserLoading(true);
     try {
-      const employees = await fetchEmployees(); // Serverseitige Funktion aufrufen
+      // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
+      const fetchFormat = displayFormat === 'nameOnly' ? 'lastName' : 'userId';
+      const employees: ShortUser[] = await fetchEmployees(fetchFormat); // Serverseitige Funktion aufrufen
       setUserData(employees);
     } catch (error) {
-      if (error instanceof Error) {
-        setUserError(error.message);
-        setSnackbar({ open: true, message: error.message });
-        console.error('Fehler beim Laden der Benutzer:', userError);
-      } else {
-        setSnackbar({ open: true, message: 'Fehler beim Laden der Benutzer.' });
-      }
+      handleError('Fehler beim Laden der Benutzer:', error);
     } finally {
-      setLoading(false);
+      setUserLoading(false);
     }
-  }, [userError]); // Die Funktion wird nur beim ersten Laden ausgeführt
+  }, [displayFormat]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   useEffect(() => {
     if (open) {
@@ -106,7 +113,6 @@ const handleError = (message: string, error: unknown) => {
       return;
     }
 
-    setLoading(true);
     try {
       const newOrgUnitList = await updateOrgUnit(
         itemId,
@@ -127,9 +133,11 @@ const handleError = (message: string, error: unknown) => {
           message: 'Ein Fehler ist aufgetreten.',
         });
       }
-    } finally {
-      setLoading(false);
     }
+  };
+
+  const toggleDisplayFormat = () => {
+    setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
   };
 
   return (
@@ -183,28 +191,48 @@ const handleError = (message: string, error: unknown) => {
               fullWidth
             />
 
-            <UserAutocomplete
-              options={userData}
-              loading={loading}
-              value={
-                userData.find((user) => user._id === formData.supervisor) ||
-                undefined
-              }
-              onChange={(value) => {
-                setFormData((prev) => {
-                  if (value && !Array.isArray(value)) {
-                    return {
-                      ...prev,
-                      supervisor: value?._id || '',
-                    };
+            <Box display="flex" alignItems="center">
+              <Box sx={{ flexGrow: 1 }}>
+                <UserAutocomplete
+                  options={userData}
+                  loading={userLoading}
+                  multiple={false} // Kann auf `true` gesetzt werden
+                  value={
+                    userData.find((user) => user._id === formData.supervisor) ||
+                    null
                   }
-                  return prev;
-                });
-              }}
-              displayFormat="full" // Alternativ: "userId" oder "nameOnly"
-              label="Supervisor"
-              placeholder="Supervisor auswählen"
-            />
+                  onChange={(value) => {
+                    if (value && typeof value === 'object' && '_id' in value) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        supervisor: value._id,
+                      }));
+                    } else {
+                      setFormData((prev) => ({
+                        ...prev,
+                        supervisor: null,
+                      }));
+                    }
+                  }}
+                  displayFormat={displayFormat} // Alternativ: "userId" oder "nameOnly" oder "full"
+                  label={
+                    displayFormat === 'userId'
+                      ? 'Supervisor-ID auswählen'
+                      : 'Supervisor-Name auswählen'
+                  } // Dynamisches Label
+                  placeholder={
+                    displayFormat === 'userId'
+                      ? 'Supervisor-ID auswählen'
+                      : 'Supervisor-Name auswählen'
+                  } // Dynamischer Placeholder
+                />
+              </Box>
+              <Box sx={{ flexShrink: 1 }}>
+                <IconButton onClick={toggleDisplayFormat}>
+                  <SwapHoriz />
+                </IconButton>
+              </Box>
+            </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button variant="outlined" onClick={onClose}>

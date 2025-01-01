@@ -10,7 +10,7 @@ import {
 import { useState } from 'react';
 import { removeFunction } from '../../../lib/api/function.api';
 import { removeOrgUnit } from '../../../lib/api/orgUnit.api';
-import { Function } from '../../../types/function.type';
+import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ItemToRender } from '../../customs/CustomTreeItem';
 
@@ -20,7 +20,7 @@ interface DeleteConfirmationModalProps {
   itemId: string;
   childrenToDelete: ItemToRender[];
   refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
-  functionList: Function[];
+  functionList: FunctionString[];
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
@@ -36,7 +36,7 @@ const DeleteConfirmationModal = ({
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
-  const handleRemoveFunction = async (func: Function) => {
+  const handleRemoveFunction = async (func: FunctionString) => {
     const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
     if (success) {
       return success;

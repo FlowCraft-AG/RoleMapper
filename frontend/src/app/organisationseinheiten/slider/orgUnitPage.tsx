@@ -6,7 +6,7 @@ import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
-import { Function, ShortFunction } from '../../../types/function.type';
+import { FunctionString, FunctionUser } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 
 export default function OrganigrammPage() {
@@ -21,7 +21,7 @@ export default function OrganigrammPage() {
   const [selectedFunctionId, setSelectedFunctionId] = useState<
     string | undefined
   >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<ShortFunction>();
+  const [selectedFunction, setSelectedFunction] = useState<FunctionUser>();
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
@@ -66,7 +66,7 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: ShortFunction) => {
+  const handleFunctionSelect = (functionInfo: FunctionUser) => {
     setSelectedFunctionId(functionInfo._id);
     setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
@@ -106,7 +106,7 @@ export default function OrganigrammPage() {
 
   // Mitgliederfunktion generieren
   const mitglied = (orgUnitId: string | undefined) => {
-    const members: Function = {
+    const members: FunctionString = {
       _id: 'mitglieder',
       functionName: 'Mitglieder',
       orgUnit: orgUnitId ?? '',

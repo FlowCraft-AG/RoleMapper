@@ -1,4 +1,5 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @stylistic/operator-linebreak */
 /* eslint-disable security/detect-object-injection */
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -70,51 +71,50 @@ export class MutationResolver {
 
             // Dynamische Fehlermeldungen basierend auf der Entity
             let errorMessage = 'An error occurred during the operation.';
-            switch (entity) {
-                case 'USERS': {
-                    errorMessage = 'Ein Fehler ist beim Erstellen eines Benutzers aufgetreten.';
 
-                    break;
+            // Spezifische Nachrichten für Duplikatfehler
+            if (error instanceof Error && (error as any).code === DUPLICATE_KEY_ERROR_CODE) {
+                switch (entity) {
+                    case 'MANDATES': {
+                        errorMessage = `Die Funktion "${functionData?.functionName}" existiert bereits oder konnte nicht erstellt werden.`;
+                        break;
+                    }
+                    case 'PROCESSES': {
+                        errorMessage = `Der Prozess "${processData?.name}" existiert bereits.`;
+                        break;
+                    }
+                    case 'ORG_UNITS': {
+                        errorMessage = `Die Organisationseinheit "${orgUnitData?.name}" existiert bereits.`;
+                        break;
+                    }
+                    case 'ROLES': {
+                        errorMessage = `Die Rolle "${roleData?.roleId}" existiert bereits.`;
+                        break;
+                    }
+                    case 'USERS': {
+                        throw new Error('Not implemented yet: "USERS" case');
+                    }
                 }
-                case 'MANDATES': {
-                    errorMessage = `Die Funktion "${functionData?.functionName}" existiert bereits oder konnte nicht erstellt werden.`;
-
-                    break;
-                }
-                case 'PROCESSES': {
-                    errorMessage = 'Ein Fehler ist beim Erstellen eines Prozesses aufgetreten.';
-
-                    break;
-                }
-                case 'ORG_UNITS': {
-                    errorMessage =
-                        'Ein Fehler ist beim Erstellen einer Organisationseinheit aufgetreten.';
-
-                    break;
-                }
-                case 'ROLES': {
-                    errorMessage = 'Ein Fehler ist beim Erstellen einer Rolle aufgetreten.';
-
-                    break;
-                }
-                // No default
+                throw new ConflictException(errorMessage);
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            // Behandlung anderer spezifischer Fehler
             if ((error as any).name === 'ValidationError') {
                 throw new BadRequestException((error as Error).message); // Gibt die Validierungsfehlermeldung zurück
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            if (error instanceof Error && (error as any).code === DUPLICATE_KEY_ERROR_CODE) {
-                throw new ConflictException(errorMessage); // Duplikatsfehler
+            if (error instanceof Error) {
+                errorMessage = `${errorMessage} Technische Details: ${error.message}`;
             }
 
             return {
                 success: false,
-                message: (error as Error).message,
+                message: errorMessage,
                 result: undefined,
             };
+
+            // Rückgabe für unbekannte Fehler
+            // throw new InternalServerErrorException(errorMessage);
         }
     }
 

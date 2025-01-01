@@ -15,7 +15,7 @@ import { getLogger } from '../../utils/logger';
 
 export interface ConfigData {
   key: string;
-  value: string | null;
+  value: string | undefined;
 }
 
 const ConfigPage = () => {
@@ -25,47 +25,47 @@ const ConfigPage = () => {
   const configData: ConfigData[] = [
     {
       key: 'NODE_TLS_REJECT_UNAUTHORIZED',
-      value: ENV.NODE_TLS_REJECT_UNAUTHORIZED || null,
+      value: ENV.NODE_TLS_REJECT_UNAUTHORIZED || undefined,
     },
     {
       key: 'NEXT_PUBLIC_KEYCLOAK_CLIENT_ID',
-      value: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || null,
+      value: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || undefined,
     },
     {
       key: 'NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET',
-      value: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET || null,
+      value: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET || undefined,
     },
     {
       key: 'NEXT_PUBLIC_KEYCLOAK_ISSUER',
-      value: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER || null,
+      value: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER || undefined,
     },
     {
       key: 'NEXT_PUBLIC_BACKEND_SERVER_URL',
-      value: ENV.NEXT_PUBLIC_BACKEND_SERVER_URL || null,
+      value: ENV.NEXT_PUBLIC_BACKEND_SERVER_URL || undefined,
     },
     {
       key: 'NEXT_PUBLIC_BACKEND_SERVER_URL',
-      value: ENV.NEXT_PUBLIC_BACKEND_SERVER_URL || null,
+      value: ENV.NEXT_PUBLIC_BACKEND_SERVER_URL || undefined,
     },
     {
       key: 'NEXTAUTH_URL',
-      value: ENV.NEXTAUTH_URL || null,
+      value: ENV.NEXTAUTH_URL || undefined,
     },
     {
       key: 'NEXT_PUBLIC_LOG_LEVEL',
-      value: ENV.NEXT_PUBLIC_LOG_LEVEL || null,
+      value: ENV.NEXT_PUBLIC_LOG_LEVEL || undefined,
     },
     {
       key: 'NEXT_PUBLIC_NODE_ENV',
-      value: ENV.NEXT_PUBLIC_NODE_ENV || null,
+      value: ENV.NEXT_PUBLIC_NODE_ENV || undefined,
     },
     {
       key: 'NEXT_PUBLIC_PINO_PRETTY',
-      value: ENV.NEXT_PUBLIC_PINO_PRETTY || null,
+      value: ENV.NEXT_PUBLIC_PINO_PRETTY || undefined,
     },
     {
       key: 'NEXT_PUBLIC_LOG_DIR',
-      value: ENV.NEXT_PUBLIC_LOG_DIR || null,
+      value: ENV.NEXT_PUBLIC_LOG_DIR || undefined,
     },
   ];
 

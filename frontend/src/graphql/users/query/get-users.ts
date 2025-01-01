@@ -38,8 +38,8 @@ export const GET_ALL_USERS = gql`
 `;
 
 export const GET_ALL_USERS_SHORT = gql`
-  query GetData {
-    getData(input: { entity: USERS, sort: { field: userId, direction: ASC } }) {
+  query GetData($field: FilterOptions) {
+    getData(input: { entity: USERS, sort: { field: $field, direction: ASC } }) {
       totalCount
       data {
         ... on User {
@@ -72,6 +72,7 @@ export const GET_USERS_BY_FUNCTION = gql`
         }
       }
       functionName
+      orgUnit
     }
   }
 `;
@@ -167,12 +168,12 @@ export const GET_MEMBERS_BY_ALIAS_OR_COST_CENTER = gql`
 `;
 
 export const GET_USERS_BY_TYPE_EMPLOYEE = gql`
-  query GetData {
+  query GetData($field: FilterOptions) {
     getData(
       input: {
         entity: USERS
         filter: { field: userType, operator: EQ, value: "employee" }
-        sort: { field: userId, direction: ASC }
+        sort: { field: $field, direction: ASC }
       }
     ) {
       totalCount

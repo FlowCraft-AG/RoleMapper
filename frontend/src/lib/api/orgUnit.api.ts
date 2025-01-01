@@ -1,5 +1,6 @@
 'use server';
 
+import { ApolloError } from '@apollo/client';
 import { CREATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/create-org-unit';
 import { DELETE_ORG_UNIT } from '../../graphql/orgUnits/mutation/delete-org-unit';
 import { UPDATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/org-unit.mutation';
@@ -102,14 +103,14 @@ export async function createOrgUnit(
  *
  * @param {string} orgUnitId - Die ID der Organisationseinheit.
  * @param {string} name - Der neue Name der Organisationseinheit.
- * @param {string | null} supervisor - Der neue Supervisor der Organisationseinheit.
+ * @param {string | undefined} supervisor - Der neue Supervisor der Organisationseinheit.
  * @returns {Promise<OrgUnit[]>} - Die aktualisierte Liste der Organisationseinheiten.
  * @throws {ApolloError} - Wird geworfen, wenn die Mutation fehlschlägt.
  */
 export async function updateOrgUnit(
   orgUnitId: string,
   name: string,
-  supervisor: string | null,
+  supervisor: string | undefined,
 ): Promise<OrgUnit[]> {
   try {
     logger.debug('Aktualisiere Organisationseinheit: %o', {

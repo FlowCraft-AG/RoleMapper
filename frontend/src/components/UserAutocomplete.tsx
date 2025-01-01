@@ -5,18 +5,25 @@ import React from 'react';
 import { GroupHeader, GroupItems } from '../styles/GroupStyles';
 import { ShortUser } from '../types/user.type';
 
+/**
+ * Props für die UserAutocomplete-Komponente.
+ */
 interface UserAutocompleteProps {
-  options: ShortUser[];
-  loading: boolean;
-  value: ShortUser | ShortUser[] | undefined; // Einzelwert oder Mehrfachauswahl
-  onChange: (value: ShortUser[] | ShortUser | undefined) => void;
-  label?: string;
-  placeholder?: string;
-  displayFormat: 'full' | 'userId' | 'nameOnly'; // Definiert das Anzeigeformat
-  multiple?: boolean; // Optionaler Prop für Mehrfachauswahl
-  helperText?: string | undefined; // Fehlerausgabe
+  options: ShortUser[]; // Optionen, die im Autocomplete angezeigt werden
+  loading: boolean; // Zeigt an, ob die Daten noch geladen werden
+  value: ShortUser | ShortUser[] | null; // Aktuelle Auswahl (Einzelwert oder Mehrfachauswahl) (hier null da React zwischen kontrolliert (nicht undefined) und unkontrolliert Komponenten unterscheidet)
+  onChange: (value: ShortUser[] | ShortUser | undefined) => void; // Callback bei Auswahländerung
+  label?: string; // Label für das Eingabefeld
+  placeholder?: string; // Platzhaltertext
+  displayFormat?: 'full' | 'userId' | 'nameOnly'; // Anzeigeformat der Benutzerdaten (Standard: 'full')
+  multiple?: boolean; // Aktiviert Mehrfachauswahl
+  helperText?: string; // Text für Fehler oder Hinweise
 }
 
+/**
+ * `UserAutocomplete` ist eine wiederverwendbare Komponente für die Benutzerauswahl.
+ * Unterstützt Einzel- und Mehrfachauswahl sowie benutzerdefinierte Anzeigeformate.
+ */
 const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
   options,
   loading,
@@ -31,22 +38,27 @@ const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
   const getLabel = (option: ShortUser): string => {
     switch (displayFormat) {
       case 'userId':
-        return option.userId;
+        return option.userId; // Nur Benutzer-ID anzeigen
       case 'nameOnly':
-        return `${option.profile.lastName} ${option.profile.firstName}`;
+        return `${option.profile?.lastName} ${option.profile?.firstName}`; // Nur Vor- und Nachname anzeigen
       case 'full':
       default:
-        return `${option.profile.lastName} ${option.profile.firstName} (${option.userId})`;
+        return `${option.profile?.lastName} ${option.profile?.firstName} (${option.userId})`; // Vollständige Anzeige
     }
   };
 
   return (
     <Autocomplete
       multiple={multiple} // Aktiviert Mehrfachauswahl
-      options={options}
-      loading={loading}
-      groupBy={(option) => option.profile.lastName[0].toUpperCase()}
-      getOptionLabel={getLabel}
+      options={options} // Benutzeroptionen
+      loading={loading} // Zeigt Ladeindikator an, wenn true
+      groupBy={
+        (option) =>
+          displayFormat === 'userId'
+            ? option.userId[0].toUpperCase() // Gruppiert basierend auf dem ersten Zeichen der userId
+            : option.profile?.lastName[0].toUpperCase() // Gruppiert basierend auf dem ersten Buchstaben des Nachnamens
+      }
+      getOptionLabel={getLabel} // Bestimmt die Anzeige der Optionen
       renderGroup={(params) => (
         <li key={params.key}>
           <GroupHeader>{params.group}</GroupHeader>
@@ -55,10 +67,10 @@ const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
       )}
       renderInput={(params) => (
         <TextField
-          helperText={helperText} // Fehlerausgabe
           {...params}
-          label={label}
-          placeholder={placeholder}
+          label={label} // Label des Eingabefelds
+          placeholder={placeholder} // Platzhalter
+          helperText={helperText} // Fehlerausgabe oder zusätzliche Hinweise
           slotProps={{
             input: {
               ...params.InputProps,
@@ -72,12 +84,12 @@ const UserAutocomplete: React.FC<UserAutocompleteProps> = ({
           }}
         />
       )}
-      value={value}
+      value={value} // Der aktuelle Wert der Auswahl
       onChange={(_, newValue) => {
         if (multiple) {
-          onChange(newValue as ShortUser[]); // Gibt ein Array zurück
+          onChange(newValue as ShortUser[]); // Mehrfachauswahl
         } else {
-          onChange(newValue as ShortUser | undefined); // Gibt einen Einzelwert zurück
+          onChange(newValue as ShortUser | undefined); // Einzelwert
         }
       }}
       renderOption={(props, option, { inputValue }) => {

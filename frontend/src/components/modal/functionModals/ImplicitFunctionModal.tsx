@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { createImpliciteFunction } from '../../../lib/api/function.api';
-import { Function } from '../../../types/function.type';
+import { FunctionString } from '../../../types/function.type';
 import { getEnumValues } from '../../../types/user.type';
 
 interface ImplicitFunctionModalProps {
@@ -20,7 +20,7 @@ interface ImplicitFunctionModalProps {
   onClose: () => void;
   onBack: () => void;
   orgUnitId: string;
-  refetch: (functionList: Function[]) => void; // Callback zur Aktualisierung der Funktionliste
+  refetch: (functionList: FunctionString[]) => void; // Callback zur Aktualisierung der Funktionliste
 }
 
 const ImplicitFunctionModal = ({
@@ -33,7 +33,9 @@ const ImplicitFunctionModal = ({
   const [functionName, setFunctionName] = useState('');
   const [field, setField] = useState('');
   const [value, setValue] = useState('');
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
+    {},
+  );
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   // Extrahieren der Enum-Werte des UserAttributes
@@ -47,7 +49,7 @@ const ImplicitFunctionModal = ({
   };
 
   const handleSave = async () => {
-    const newErrors: { [key: string]: string | null } = {};
+    const newErrors: { [key: string]: string | undefined } = {};
     const functionNameRegex = /^[a-zA-Z\s]+$/; // Nur Buchstaben und Leerzeichen erlaubt
 
     if (!functionName.trim()) {

@@ -2,9 +2,11 @@
 /* eslint-disable @stylistic/indent */
 import { UseFilters, UseInterceptors } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
+import { OrgUnit } from '../model/entity/org-unit.entity.js';
 import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
 import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
@@ -134,7 +136,17 @@ export class QueryResolver {
             };
         }
 
-        const { functionName, users, isImpliciteFunction } = result;
-        return { functionName, users, isImpliciteFunction };
+        const { functionName, users, isImpliciteFunction, orgUnit } = result;
+        return { functionName, users, isImpliciteFunction, orgUnit };
+    }
+
+    @Public()
+    @Query('getAncestors')
+    async getAncestors(@Args('id') id: Types.ObjectId): Promise<OrgUnit[]> {
+        this.#logger.debug('getAncestors: id=%s', id);
+
+        const ancestors = await this.#service.findAncestors(id);
+        this.#logger.debug('getAncestors: Ancestors:', ancestors);
+        return ancestors;
     }
 }

@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   FormControlLabel,
+  IconButton,
   Modal,
   Radio,
   RadioGroup,
@@ -11,19 +12,20 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createExplicitFunction } from '../../../lib/api/function.api';
 import { fetchUserIds } from '../../../lib/api/user.api';
-import { Function } from '../../../types/function.type';
+import { FunctionString } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
+import { SwapHoriz } from '@mui/icons-material';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
   onClose: () => void;
   onBack: () => void;
   orgUnitId: string;
-  refetch: (functionList: Function[]) => void;
+  refetch: (functionList: FunctionString[]) => void;
 }
 
 const ExplicitFunctionModal = ({
@@ -43,14 +45,20 @@ const ExplicitFunctionModal = ({
   const [loading, setLoading] = useState(false);
   // Extrahieren der Benutzer-IDs aus der Serverseite
   const [userIds, setUserIds] = useState<ShortUser[]>([]);
+  const [displayFormat, setDisplayFormat] = useState<'userId' | 'nameOnly'>(
+    'userId',
+  ); // Zustand für die Anzeige
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
-    try {
-      const users: ShortUser[] = await fetchUserIds(); // Funktion von der Serverseite verwenden
-      setUserIds(users);
-    } catch (error) {
+      try {
+        // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
+        const fetchFormat =
+          displayFormat === 'nameOnly' ? 'lastName' : 'userId';
+        const users: ShortUser[] = await fetchUserIds(fetchFormat); // Funktion von der Serverseite verwenden
+        setUserIds(users);
+      } catch (error) {
       console.error('Fehler beim Laden der Benutzer-IDs:', error);
       setSnackbar({
         open: true,
@@ -59,7 +67,7 @@ const ExplicitFunctionModal = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [displayFormat]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | undefined } = {};
@@ -123,6 +131,10 @@ const ExplicitFunctionModal = ({
     }
   }, [open]);
 
+      const toggleDisplayFormat = () => {
+        setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
+      };
+
   return (
     <>
       <Snackbar
@@ -157,18 +169,34 @@ const ExplicitFunctionModal = ({
             error={!!errors.functionName}
             helperText={errors.functionName}
           />
-
-          <UserAutocomplete
-            options={userIds}
-            loading={loading}
-            value={users}
-            onChange={(value) => setUsers(value as ShortUser[])} // Konvertiere den Wert explizit in ein Array
-            displayFormat="userId" // Alternativ: "full" oder "nameOnly"
-            label="Benutzer auswählen"
-            placeholder="Benutzer auswählen"
-            helperText={errors.users}
-            multiple // Aktiviert die Mehrfachauswahl
-          />
+          <Box display="flex" alignItems="center">
+            <Box sx={{ flexGrow: 1 }}>
+              <UserAutocomplete
+                options={userIds}
+                loading={loading}
+                value={users}
+                onChange={(value) => setUsers(value as ShortUser[])} // Konvertiere den Wert explizit in ein Array
+                displayFormat={displayFormat} // Alternativ: "userId" oder "nameOnly" oder "full"
+                label={
+                  displayFormat === 'userId'
+                    ? 'Benutzer-ID auswählen'
+                    : 'Benutzer-Name auswählen'
+                } // Dynamisches Label
+                placeholder={
+                  displayFormat === 'userId'
+                    ? 'Benutzer-ID auswählen'
+                    : 'Benutzer-Name auswählen'
+                } // Dynamischer Placeholder
+                helperText={errors.users}
+                multiple // Aktiviert die Mehrfachauswahl
+              />
+            </Box>
+            <Box sx={{ flexShrink: 1 }}>
+              <IconButton onClick={toggleDisplayFormat}>
+                <SwapHoriz />
+              </IconButton>
+            </Box>
+          </Box>
 
           <Typography variant="body1">
             Kann diese Funktion nur von einem Benutzer besetzt werden?
@@ -177,10 +205,26 @@ const ExplicitFunctionModal = ({
             row
             value={isSingleUser ? 'true' : 'false'}
             onChange={(e) => setIsSingleUser(e.target.value === 'true')}
+            disabled={users.length > 1} // Deaktiviert die RadioGroup, wenn mehr als ein Benutzer ausgewählt ist
           >
-            <FormControlLabel value="true" control={<Radio />} label="Ja" />
-            <FormControlLabel value="false" control={<Radio />} label="Nein" />
+            <FormControlLabel
+              value="true"
+              control={<Radio />}
+              label="Ja"
+              disabled={users.length > 1} // Deaktiviert die einzelne Option
+            />
+            <FormControlLabel
+              value="false"
+              control={<Radio />}
+              label="Nein"
+              disabled={users.length > 1} // Deaktiviert die einzelne Option
+            />
           </RadioGroup>
+          {users.length > 1 && (
+            <Typography variant="caption" color="error">
+              Diese Option ist deaktiviert, da mehrere Benutzer ausgewählt sind.
+            </Typography>
+          )}
 
           <Button variant="contained" color="primary" onClick={handleSave}>
             Speichern

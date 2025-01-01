@@ -10,12 +10,14 @@ import { REMOVE_FUNCTIONS } from '../../graphql/functions/mutation/remove-to-fun
 import { UPDATE_FUNCTIONS } from '../../graphql/functions/mutation/update-function';
 import {
   FUNCTIONS_BY_ORG_UNIT,
+  GET_ANCESTORS,
   GET_FUNCTION_BY_ID,
   GET_SAVED_DATA,
+  HAS_SINGLE_USERS,
 } from '../../graphql/functions/query/get-functions';
 import { GET_ALL_ORG_UNITS } from '../../graphql/orgUnits/query/get-orgUnits';
 import { GET_USERS_BY_FUNCTION } from '../../graphql/users/query/get-users';
-import { Function, ShortFunction } from '../../types/function.type';
+import { FunctionString, FunctionUser } from '../../types/function.type';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
 import client from '../apolloClient';
@@ -47,11 +49,11 @@ export async function checkForFunctions(orgUnitId: string): Promise<boolean> {
 /**
  * Ruft Funktionen für eine Organisationseinheit ab.
  * @param orgUnitId Die ID der Organisationseinheit
- * @returns {Promise<Function[]>} Liste der Funktionen
+ * @returns {Promise<FunctionString[]>} Liste der Funktionen
  */
 export async function fetchFunctionsByOrgUnit(
   orgUnitId: string,
-): Promise<Function[]> {
+): Promise<FunctionString[]> {
   try {
     logger.debug('Lade Funktionen für Organisationseinheit: %o', orgUnitId);
     const { data } = await client.query({
@@ -68,7 +70,9 @@ export async function fetchFunctionsByOrgUnit(
   }
 }
 
-export async function fetchFunctionById(functionId: string): Promise<Function> {
+export async function fetchFunctionById(
+  functionId: string,
+): Promise<FunctionString> {
   try {
     logger.debug('Lade Funktion mit der id: %o', functionId);
     const { data } = await client.query({
@@ -89,7 +93,7 @@ export async function fetchFunctionById(functionId: string): Promise<Function> {
 /**
  * Erstellt eine implizite Funktion.
  * @param params Parameter für die Funktionserstellung
- * @returns {Promise<Function[]>} Liste der aktualisierten Funktionen
+ * @returns {Promise<FunctionString[]>} Liste der aktualisierten Funktionen
  */
 export async function createImpliciteFunction({
   functionName,
@@ -101,7 +105,7 @@ export async function createImpliciteFunction({
   field: string;
   value: string;
   orgUnitId: string;
-}): Promise<Function[]> {
+}): Promise<FunctionString[]> {
   try {
     logger.debug('Erstelle implizite Funktion: %o', {
       functionName,
@@ -126,7 +130,7 @@ export async function createImpliciteFunction({
  * Erstellt eine explizite Funktion.
  *
  * @param params Parameter für die Funktionserstellung
- * @returns {Promise<Function[]>} Liste der aktualisierten Funktionen
+ * @returns {Promise<FunctionString[]>} Liste der aktualisierten Funktionen
  */
 export async function createExplicitFunction({
   functionName,
@@ -138,7 +142,7 @@ export async function createExplicitFunction({
   orgUnitId: string;
   users: string[];
   isSingleUser: boolean;
-}): Promise<Function[]> {
+}): Promise<FunctionString[]> {
   try {
     logger.debug('Erstelle explizite Funktion: %o', {
       functionName,
@@ -159,58 +163,14 @@ export async function createExplicitFunction({
 }
 
 /**
- * Fügt einen Benutzer zu einer Funktion hinzu.
- * Diese Funktion führt eine Mutation aus, um einen Benutzer einer Funktion zuzuordnen,
- * und aktualisiert anschließend die Daten durch Refetch der zugehörigen Queries.
- *
- * @param {string} functionName - Der Name der Funktion, zu der der Benutzer hinzugefügt wird.
- * @param {string} userId - Die ID des Benutzers, der hinzugefügt werden soll.
- * @param {string} functionId - Die ID der Funktion, die aktualisiert wird.
- * @returns {Promise<ShortFunction>} - Die aktualisierten Informationen der Funktion.
- * @throws {ApolloError} - Wird geworfen, wenn die Mutation fehlschlägt.
- */
-export async function addUserToFunction(
-  functionName: string,
-  userId: string,
-  functionId: string,
-): Promise<ShortFunction> {
-  try {
-    logger.debug('Füge Benutzer zu Funktion hinzu: %o', {
-      functionName,
-      userId,
-      functionId,
-    });
-
-    // Mutation zum Hinzufügen eines Benutzers zu einer Funktion
-    await client.mutate({
-      mutation: ADD_FUNCTIONS,
-      variables: { functionName, userId },
-      refetchQueries: [
-        { query: GET_FUNCTION_BY_ID, variables: { functionId } },
-      ],
-      awaitRefetchQueries: true, // Wartet, bis Refetch abgeschlossen ist
-    });
-
-    // Abrufen der aktualisierten Funktionsdaten nach der Mutation
-    const updatedFunction = await fetchUsersByFunction(functionId);
-    return updatedFunction;
-  } catch (error) {
-    handleGraphQLError(
-      error,
-      'Fehler beim Hinzufügen eines Benutzers zur Funktion.',
-    );
-  }
-}
-
-/**
  * Ruft Benutzer einer Funktion ab.
  *
  * @param functionId Die ID der Funktion
- * @returns {Promise<ShortFunction>} Informationen über die Benutzer in der Funktion
+ * @returns {Promise<FunctionUser>} Informationen über die Benutzer in der Funktion
  */
 export async function fetchUsersByFunction(
   functionId: string,
-): Promise<ShortFunction> {
+): Promise<FunctionUser> {
   try {
     logger.debug('Lade Benutzer für Funktion: %o', functionId);
     const { data } = await client.query({
@@ -219,10 +179,12 @@ export async function fetchUsersByFunction(
     });
 
     // Klone das empfangene Objekt, um es änderbar zu machen
-    const shortFunction: ShortFunction = {
+    const shortFunction: FunctionUser = {
       ...data.getUsersByFunction,
       _id: functionId, // Füge die `_id`-Eigenschaft hinzu
     };
+
+    logger.debug('Benutzer für Funktion: %o', shortFunction);
 
     return shortFunction;
   } catch (error) {
@@ -273,22 +235,24 @@ export async function removeFunction(
  * @param { boolean } params.isSingleUser - Gibt an, ob die Funktion auf einen Benutzer beschränkt ist.
  * @param { string } params.oldFunctionName - Der alte Name der Funktion.
  * @param { string } params.orgUnitId - Die ID der aktuellen Organisationseinheit.
- * @returns { Promise<Function[]> } - Die aktualisierte Liste der Funktionen.
+ * @returns { Promise<FunctionString[]> } - Die aktualisierte Liste der Funktionen.
  * @throws { ApolloError } - Wird geworfen, wenn die Mutation fehlschlägt.
  */
 export async function updateFunction({
+    functionId,
   functionName,
   newOrgUnitId,
   isSingleUser,
   oldFunctionName,
   orgUnitId,
 }: {
+    functionId: string;
   functionName: string;
   newOrgUnitId: string;
   isSingleUser: boolean;
   oldFunctionName: string;
   orgUnitId: string;
-}): Promise<Function[]> {
+}): Promise<FunctionString[]> {
   try {
     logger.debug('Aktualisiere Funktion: %o', {
       oldFunctionName,
@@ -307,6 +271,11 @@ export async function updateFunction({
       },
       refetchQueries: [
         { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+          { query: GET_ALL_ORG_UNITS },
+          {
+              query: GET_USERS_BY_FUNCTION,
+              variables: { id: functionId },
+          }
       ],
       awaitRefetchQueries: true, // Wartet auf Abschluss der Refetch-Abfragen
     });
@@ -322,12 +291,12 @@ export async function updateFunction({
  * Ruft die gespeicherten Daten einer Funktion ab.
  *
  * @param {string} functionId - Die ID der Funktion, deren Daten abgerufen werden sollen.
- * @returns {Promise<ShortFunction>} - Die gespeicherten Informationen der Funktion.
+ * @returns {Promise<FunctionUser>} - Die gespeicherten Informationen der Funktion.
  * @throws {ApolloError} - Wird geworfen, wenn die Query fehlschlägt.
  */
 export async function fetchSavedData(
   functionId: string,
-): Promise<ShortFunction> {
+): Promise<FunctionUser> {
   try {
     logger.debug('Lade gespeicherte Daten für Funktion: %o', functionId);
 
@@ -342,6 +311,57 @@ export async function fetchSavedData(
     handleGraphQLError(
       error,
       'Fehler beim Abrufen der gespeicherten Daten der Funktion.',
+    );
+  }
+}
+
+/**
+ * Fügt einen Benutzer zu einer Funktion hinzu.
+ * Diese Funktion führt eine Mutation aus, um einen Benutzer einer Funktion zuzuordnen,
+ * und aktualisiert anschließend die Daten durch Refetch der zugehörigen Queries.
+ *
+ * @param {string} functionName - Der Name der Funktion, zu der der Benutzer hinzugefügt wird.
+ * @param {string} userId - Die ID des Benutzers, der hinzugefügt werden soll.
+ * @param {string} functionId - Die ID der Funktion, die aktualisiert wird.
+ * @returns {Promise<FunctionUser>} - Die aktualisierten Informationen der Funktion.
+ * @throws {ApolloError} - Wird geworfen, wenn die Mutation fehlschlägt.
+ */
+export async function addUserToFunction(
+  functionName: string,
+  userId: string,
+  functionId: string,
+  orgUnitId: string,
+): Promise<FunctionUser> {
+  try {
+    logger.debug('Füge Benutzer zu Funktion hinzu: %o', {
+      functionName,
+      userId,
+      functionId,
+      orgUnitId,
+    });
+
+    // Mutation zum Hinzufügen eines Benutzers zu einer Funktion
+    await client.mutate({
+      mutation: ADD_FUNCTIONS,
+      variables: { functionName, userId },
+      refetchQueries: [
+        { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
+        {
+          query: GET_USERS_BY_FUNCTION,
+          variables: { id: functionId },
+        },
+      ],
+      awaitRefetchQueries: true, // Wartet, bis Refetch abgeschlossen ist
+    });
+
+    // Abrufen der aktualisierten Funktionsdaten nach der Mutation
+    const updatedFunction = await fetchUsersByFunction(functionId);
+    logger.debug('Aktualisierte Funktion: %o', updatedFunction.users);
+    return updatedFunction;
+  } catch (error) {
+    handleGraphQLError(
+      error,
+      'Fehler beim Hinzufügen eines Benutzers zur Funktion.',
     );
   }
 }
@@ -376,12 +396,79 @@ export async function removeUserFromFunction(
       ],
       awaitRefetchQueries: true, // Wartet auf Abschluss der Refetch-Abfragen
     });
-
-    return data;
   } catch (error) {
     handleGraphQLError(
       error,
       'Fehler beim Entfernen des Benutzers aus der Funktion.',
     );
   }
+}
+
+/**
+ * Überprüft, welche SingleUser-Funktionen keine Benutzer haben.
+ * @returns Promise<{ id: string; functionName: string }[]> - Liste der Funktionen ohne Benutzer mit Name und ID.
+ */
+export async function getFunctionsWithoutUsers(): Promise<
+  { id: string; functionName: string, orgUnit: string }[]
+> {
+  try {
+    logger.debug('Prüfe, welche SingleUser-Funktionen keine Benutzer haben');
+
+    // GraphQL-Abfrage
+    const { data } = await client.query({
+      query: HAS_SINGLE_USERS,
+    });
+
+    // Validierung der API-Antwort
+    const functions = data?.getData?.data;
+    if (!Array.isArray(functions)) {
+      throw new Error('Unerwartetes Datenformat von der API');
+    }
+
+    // Filtern der Funktionen ohne Benutzer
+    const noUserFunctions = functions
+      .filter(
+        (func: { isSingleUser: boolean; users: any[] }) =>
+          func.isSingleUser && func.users.length === 0,
+      )
+      .map((func: FunctionString) => ({
+        id: func._id,
+          functionName: func.functionName,
+        orgUnit: func.orgUnit,
+      }));
+
+    // Logging, wenn keine Benutzer vorhanden sind
+    if (noUserFunctions.length > 0) {
+      logger.warn(
+        `Folgende SingleUser-Funktionen haben keine Benutzer: ${noUserFunctions
+          .map((func) => func.functionName)
+          .join(', ')}`,
+      );
+    } else {
+      logger.info('Alle SingleUser-Funktionen haben Benutzer.');
+    }
+
+      logger.debug('Funktionen ohne Benutzer: %o', noUserFunctions);
+    return noUserFunctions; // Liste der Funktionen ohne Benutzer (Name und ID)
+  } catch (error) {
+    handleGraphQLError(
+      error,
+      'Fehler beim Prüfen, welche SingleUser-Funktionen keine Benutzer haben.',
+    );
+  }
+}
+
+// Funktion zum Abrufen der Ancestors
+export async function fetchAncestors(nodeId: string) {
+    try {
+        const { data } = await client.query({
+            query: GET_ANCESTORS,
+            variables: { id: nodeId },
+        });
+
+        return data.getAncestors;
+    } catch (error) {
+        console.error('Fehler beim Abrufen der Ancestors:', error);
+        throw error;
+    }
 }
