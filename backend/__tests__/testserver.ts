@@ -16,7 +16,7 @@ export type GraphQLQuery = Pick<GraphQLRequest, 'query'>;
 const { httpsOptions } = nodeConfig;
 
 // MongoDB Cloud-Verbindungs-URI
-const mongoUri = process.env.TEST_MONGODB_URI!;
+const mongoUri = process.env.MONGODB_URI!;
 
 // -----------------------------------------------------------------------------
 // MongoDB-Verbindung prüfen
