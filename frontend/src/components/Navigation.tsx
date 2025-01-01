@@ -35,7 +35,6 @@ export default function Navigation() {
   const theme = useTheme();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [openNodes, setOpenNodes] = useState<string[]>([]);
   const { setFacultyTheme } = useFacultyTheme();
   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
 
@@ -54,7 +53,7 @@ export default function Navigation() {
             nodeId: func.id,
             orgUnit: func.orgUnit,
           }));
-            setNotifications(newNotifications);
+          setNotifications(newNotifications);
         }
       } catch (error) {
         console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
@@ -65,10 +64,6 @@ export default function Navigation() {
     const interval = setInterval(fetchNotifications, 10000); // Alle 10 Sekunden aktualisieren HIER ÄNDERN SIE DIE ZEIT
     return () => clearInterval(interval);
   }, []);
-
-  const openNodesInTree = (nodeIds: string[]) => {
-    setOpenNodes((prev) => Array.from(new Set([...prev, ...nodeIds])));
-  };
 
   const handleNotificationClick = async (notification: Notification) => {
     handleCloseMenu();
@@ -82,8 +77,6 @@ export default function Navigation() {
           ancestorIds.join(','),
         )}&selectedNode=${notification.nodeId}&parentOrgUnitId=${notification.orgUnit}`,
       );
-
-      openNodesInTree(ancestors.map((ancestor) => ancestor._id));
     } catch (error) {
       console.error('Fehler beim Laden der Ancestors:', error);
     }
@@ -144,17 +137,17 @@ export default function Navigation() {
                   : undefined,
               }}
               onMouseEnter={(e) => {
-                !useCustomStyles
-                  ? (e.currentTarget.style.color = theme.palette.primary.dark)
-                  : null;
+                if (!useCustomStyles) {
+                  e.currentTarget.style.color = theme.palette.primary.dark;
+                }
               }}
               onMouseLeave={(e) => {
-                !useCustomStyles
-                  ? (e.currentTarget.style.color =
-                      pathname === link.href
-                        ? theme.palette.primary.main
-                        : theme.palette.text.secondary)
-                  : null;
+                if (!useCustomStyles) {
+                  e.currentTarget.style.color =
+                    pathname === link.href
+                      ? theme.palette.primary.main
+                      : theme.palette.text.secondary;
+                }
               }}
             >
               {link.label}

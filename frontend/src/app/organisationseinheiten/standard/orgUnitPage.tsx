@@ -1,7 +1,6 @@
 'use client';
 
 import { Box, Typography, useTheme } from '@mui/material';
-import { User } from 'next-auth';
 import { useEffect, useState } from 'react';
 import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
@@ -9,8 +8,9 @@ import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte2';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
 import { fetchMitglieder } from '../../../lib/api/user.api';
 import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
-import { FunctionUser } from '../../../types/function.type';
+import { FunctionString, FunctionUser } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
+import { User } from '../../../types/user.type';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -37,6 +37,7 @@ export default function OrganigrammPage() {
 
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
 
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
@@ -69,11 +70,12 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: Function) => {
-    setSelectedFunctionId(functionInfo._id);
+  const handleFunctionSelect = (func: FunctionString) => {
+    setSelectedFunctionId(func._id);
     //setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
-    setIsImpliciteFunction(functionInfo.isImpliciteFunction);
+    setIsImpliciteFunction(func.isImpliciteFunction);
+    setIsSingleUser(func.isSingleUser);
   };
 
   // Mitgliederansicht aktivieren
@@ -112,10 +114,11 @@ export default function OrganigrammPage() {
     return {
       _id: 'mitglieder',
       functionName: 'Mitglieder',
-      orgUnit: orgUnitId,
+      orgUnit: orgUnitId ?? '',
       users: combinedUsers,
       isImpliciteFunction: false,
-    };
+      isSingleUser: false,
+    } as FunctionUser;
   };
 
   return (
@@ -231,6 +234,7 @@ export default function OrganigrammPage() {
             onSelectUser={handleUserSelect}
             onRemove={handleRemove}
             isImpliciteFunction={isImpliciteFunction}
+            isSingleUser={isSingleUser}
           />
         </Box>
       )}

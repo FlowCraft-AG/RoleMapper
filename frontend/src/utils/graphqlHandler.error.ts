@@ -70,7 +70,7 @@ interface GraphQLResponseError {
 /**
  * Typ für vollständige GraphQL-Antworten
  */
-interface GraphQLResponse {
-  errors?: GraphQLResponseError[];
-  data?: unknown;
-}
+// interface GraphQLResponse {
+//   errors?: GraphQLResponseError[];
+//   data?: unknown;
+// }

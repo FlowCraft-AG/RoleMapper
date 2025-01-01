@@ -56,7 +56,7 @@ const EditFunctionModal = ({
   // Funktion zum Laden der Organisationseinheit
   const loadFunctionData = useCallback(async () => {
     try {
-      const func = await fetchFunctionById(functionData?._id!); // API-Aufruf zum Laden der Organisationseinheit
+      const func = await fetchFunctionById(functionData?._id ?? ''); // API-Aufruf zum Laden der Organisationseinheit
       setFormData({
         functionName: func.functionName,
         orgUnitId: func.orgUnit,
@@ -66,14 +66,6 @@ const EditFunctionModal = ({
       handleError('Fehler beim Laden der Benutzer:', error);
     }
   }, [functionData]); // Die Funktion wird nur beim ersten Laden ausgeführt
-
-  // Update state wenn `functionData`  sich ändert
-  useEffect(() => {
-    if (open && functionData) {
-      loadFunctionData();
-      fetchOrgUnits();
-    }
-  }, [open, functionData]);
 
   const fetchOrgUnits = useCallback(async () => {
     setLoading(true);
@@ -87,6 +79,14 @@ const EditFunctionModal = ({
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
+  // Update state wenn `functionData`  sich ändert
+  useEffect(() => {
+    if (open && functionData) {
+      loadFunctionData();
+      fetchOrgUnits();
+    }
+  }, [open, functionData, loadFunctionData, fetchOrgUnits]);
+
   const validateFunctionName = (name: string) => /^[a-zA-Z\s]+$/.test(name);
 
   const handleSave = async () => {
@@ -99,10 +99,10 @@ const EditFunctionModal = ({
 
     try {
       const updatedFunction: FunctionString[] = await updateFunction({
-        functionId: functionData?._id!,
-        functionName: formData.functionName!,
-        newOrgUnitId: formData.orgUnitId!,
-        isSingleUser: formData.isSingleUser!,
+        functionId: functionData?._id ?? '',
+        functionName: formData.functionName ?? '',
+        newOrgUnitId: formData.orgUnitId ?? '',
+        isSingleUser: formData.isSingleUser ?? false,
         oldFunctionName: functionData?.functionName || '',
         orgUnitId: functionData?.orgUnit || '',
       });
@@ -262,8 +262,8 @@ const EditFunctionModal = ({
                 functionData.users.length > 1 &&
                 formData.isSingleUser && (
                   <Typography variant="caption" color="error">
-                    Die Option "Einzelnutzer" kann nicht aktiviert werden, da
-                    mehrere Benutzer zugewiesen sind.
+                    Die Option &quot;Einzelnutzer&quot; kann nicht aktiviert
+                    werden, da mehrere Benutzer zugewiesen sind.
                   </Typography>
                 )}
             </>

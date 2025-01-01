@@ -1,6 +1,5 @@
 'use server';
 
-import { ApolloError } from '@apollo/client';
 import { CREATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/create-org-unit';
 import { DELETE_ORG_UNIT } from '../../graphql/orgUnits/mutation/delete-org-unit';
 import { UPDATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/org-unit.mutation';

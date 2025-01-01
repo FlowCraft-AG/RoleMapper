@@ -89,10 +89,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     try {
       console.log('hgfhgfj: ', selectedFunction);
       const newUserList = await addUserToFunction(
-        selectedFunction?.functionName!,
+        selectedFunction?.functionName ?? '',
         newUserId,
-        selectedFunction?._id!,
-        selectedFunction?.orgUnit!,
+        selectedFunction?._id ?? '',
+        selectedFunction?.orgUnit ?? '',
       );
       refetch(newUserList);
       setNewUserId('');

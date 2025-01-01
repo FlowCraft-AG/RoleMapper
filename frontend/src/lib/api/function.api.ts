@@ -277,9 +277,8 @@ export async function updateFunction({
         {
           query: GET_USERS_BY_FUNCTION,
           variables: { id: functionId },
-          },
-          {query: GET_ANCESTORS,
-          variables: { id: newOrgUnitId}},
+        },
+        { query: GET_ANCESTORS, variables: { id: newOrgUnitId } },
       ],
       awaitRefetchQueries: true, // Wartet auf Abschluss der Refetch-Abfragen
     });
@@ -353,11 +352,11 @@ export async function addUserToFunction(
         {
           query: GET_USERS_BY_FUNCTION,
           variables: { id: functionId },
-          },
-          {
-              query: GET_ANCESTORS,
-              variables: { id: orgUnitId }
-          },
+        },
+        {
+          query: GET_ANCESTORS,
+          variables: { id: orgUnitId },
+        },
       ],
       awaitRefetchQueries: true, // Wartet, bis Refetch abgeschlossen ist
     });
@@ -396,7 +395,7 @@ export async function removeUserFromFunction(
     });
 
     // Mutation zum Entfernen eines Benutzers aus der Funktion
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: REMOVE_FUNCTIONS,
       variables: { functionName, userId },
       refetchQueries: [
@@ -437,7 +436,7 @@ export async function getFunctionsWithoutUsers(): Promise<
     // Filtern der Funktionen ohne Benutzer
     const noUserFunctions = functions
       .filter(
-        (func: { isSingleUser: boolean; users: any[] }) =>
+        (func: { isSingleUser: boolean; users: string[] }) =>
           func.isSingleUser &&
           (func.users.length === 0 || func.users === undefined),
       )

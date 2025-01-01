@@ -63,10 +63,10 @@ export default function OrganigrammPage() {
 
       if (parentOrgUnitIdParam) {
         const orgUnit = await getOrgUnitById(parentOrgUnitIdParam);
-          if (orgUnit) setSelectedOrgUnit(orgUnit);
+        if (orgUnit) setSelectedOrgUnit(orgUnit);
       }
 
-         setSelectedFunctionId(undefined);
+      setSelectedFunctionId(undefined);
     } catch (error) {
       console.error('Fehler beim Initialisieren der Daten:', error);
     }
@@ -155,10 +155,11 @@ export default function OrganigrammPage() {
     return {
       _id: 'mitglieder',
       functionName: 'Mitglieder',
-      orgUnit: orgUnitId,
+      orgUnit: orgUnitId ?? '',
       users: combinedUsers,
       isImpliciteFunction: false,
-    };
+      isSingleUser: false,
+    } as FunctionUser;
   };
 
   return (

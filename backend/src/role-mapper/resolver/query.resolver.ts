@@ -127,7 +127,7 @@ export class QueryResolver {
 
         const result = await this.#service.findUsersByFunction(id);
 
-        if (!result) {
+        if (result === undefined) {
             this.#logger.warn('Keine Daten gefunden für die Anfrage.');
             return {
                 functionName: '',

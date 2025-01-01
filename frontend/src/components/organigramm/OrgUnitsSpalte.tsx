@@ -22,7 +22,7 @@ import TransitionComponent from './TransitionComponent';
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnit) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
-  expandedNodes: string[] | undefined;
+  expandedNodes?: string[] | undefined;
 }
 
 export default function OrgUnitsSpalte({

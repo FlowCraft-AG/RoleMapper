@@ -8,6 +8,7 @@ import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
 import { FunctionString, FunctionUser } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
+import { User } from '../../../types/user.type';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -33,11 +34,12 @@ export default function OrganigrammPage() {
   const [usersWidth, setUsersWidth] = useState(400); // Standard: 400px
 
   // Benutzerdaten
-  const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
+  const [combinedUsers, setCombinedUsers] = useState<User[]>([]);
   const [isImpliciteFunction, setIsImpliciteFunction] =
     useState<boolean>(false);
 
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
 
   // Mitglieder laden
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
@@ -66,11 +68,11 @@ export default function OrganigrammPage() {
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: FunctionUser) => {
+  const handleFunctionSelect = (functionInfo: FunctionString) => {
     setSelectedFunctionId(functionInfo._id);
-    setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
     setIsImpliciteFunction(functionInfo.isImpliciteFunction);
+    setIsSingleUser(functionInfo.isSingleUser);
   };
 
   // Mitgliederansicht aktivieren
@@ -105,16 +107,16 @@ export default function OrganigrammPage() {
   };
 
   // Mitgliederfunktion generieren
+  // Mitgliederfunktion generieren
   const mitglied = (orgUnitId: string | undefined) => {
-    const members: FunctionString = {
+    return {
       _id: 'mitglieder',
       functionName: 'Mitglieder',
       orgUnit: orgUnitId ?? '',
       users: combinedUsers,
       isImpliciteFunction: false,
       isSingleUser: false,
-    };
-    return members;
+    } as FunctionUser;
   };
 
   return (
@@ -259,6 +261,7 @@ export default function OrganigrammPage() {
             onSelectUser={handleUserSelect}
             onRemove={handleRemove}
             isImpliciteFunction={isImpliciteFunction}
+            isSingleUser={isSingleUser}
           />
         </Box>
       )}

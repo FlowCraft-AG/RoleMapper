@@ -8,6 +8,7 @@ import {
 import { Metadata } from 'next';
 import Link from 'next/link';
 import OrganigrammPage from './orgUnitPage';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Organisationseinheiten',
@@ -92,8 +93,10 @@ export default async function HKAPage() {
         </Link>
       </Box>
 
-      {/* Organigramm-Ansicht */}
-      <OrganigrammPage />
+      <Suspense fallback={<div>Laden...</div>}>
+        {/* Organigramm-Ansicht */}
+        <OrganigrammPage />
+      </Suspense>
     </Box>
   );
 }

@@ -128,7 +128,7 @@ const ExplicitFunctionModal = ({
     if (open) {
       loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
     }
-  }, [open]);
+  }, [open, loadUsers]);
 
   const toggleDisplayFormat = () => {
     setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
@@ -200,25 +200,30 @@ const ExplicitFunctionModal = ({
           <Typography variant="body1">
             Kann diese Funktion nur von einem Benutzer besetzt werden?
           </Typography>
-          <RadioGroup
-            row
-            value={isSingleUser ? 'true' : 'false'}
-            onChange={(e) => setIsSingleUser(e.target.value === 'true')}
-            disabled={users.length > 1} // Deaktiviert die RadioGroup, wenn mehr als ein Benutzer ausgewählt ist
+          <fieldset
+            disabled={users.length > 1}
+            style={{ border: 'none', margin: 0, padding: 0 }}
           >
-            <FormControlLabel
-              value="true"
-              control={<Radio />}
-              label="Ja"
-              disabled={users.length > 1} // Deaktiviert die einzelne Option
-            />
-            <FormControlLabel
-              value="false"
-              control={<Radio />}
-              label="Nein"
-              disabled={users.length > 1} // Deaktiviert die einzelne Option
-            />
-          </RadioGroup>
+            <RadioGroup
+              row
+              value={isSingleUser ? 'true' : 'false'}
+              onChange={(e) => setIsSingleUser(e.target.value === 'true')}
+            >
+              <FormControlLabel
+                value="true"
+                control={<Radio />}
+                label="Ja"
+                disabled={users.length > 1} // Deaktiviert die einzelne Option
+              />
+              <FormControlLabel
+                value="false"
+                control={<Radio />}
+                label="Nein"
+                disabled={users.length > 1} // Deaktiviert die einzelne Option
+              />
+            </RadioGroup>
+          </fieldset>
+
           {users.length > 1 && (
             <Typography variant="caption" color="error">
               Diese Option ist deaktiviert, da mehrere Benutzer ausgewählt sind.
