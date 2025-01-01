@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { REFRESH_TOKEN } from '../../../../graphql/auth/auth';
+// import { REFRESH_TOKEN } from '../../../../graphql/auth/auth';
 // import client from '../../../../lib/apolloClient';
 
 export async function POST(req: Request) {
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     //   variables: { refreshToken },
     // });
 
-      // return NextResponse.json(data.refreshToken);
+    // return NextResponse.json(data.refreshToken);
     return NextResponse.json({ message: 'Refresh token' });
   } catch (error) {
     console.error('Error refreshing token:', error);
