@@ -1,7 +1,8 @@
 'use client';
 
 import { Box, Modal, Typography, useTheme } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
@@ -11,6 +12,8 @@ import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { FunctionString, FunctionUser } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { User } from '../../types/user.type';
+import { getOrgUnitById } from '../../lib/api/orgUnit.api';
+import { fetchFunctionById } from '../../lib/api/function.api';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -39,6 +42,40 @@ export default function OrganigrammPage() {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
+  const searchParams = useSearchParams();
+  const openNodesParam = searchParams.get('openNodes') || '';
+  const parentOrgUnitIdParam = searchParams.get('parentOrgUnitId') || '';
+    const [expandedNodes, setExpandedNodes] = useState<string[] | undefined>([]);
+
+    const resetUrlParams = () => {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.delete('openNodes');
+      currentUrl.searchParams.delete('parentOrgUnitId');
+      currentUrl.searchParams.delete('selectedNode');
+      window.history.replaceState(null, '', currentUrl.toString());
+    };
+
+   const loadS = useCallback(async () => {
+     try {
+       if (openNodesParam) {
+         const openNodes = openNodesParam.split(',').filter((id) => id);
+         setExpandedNodes(openNodes);
+       }
+
+       if (parentOrgUnitIdParam) {
+         const orgUnit = await getOrgUnitById(parentOrgUnitIdParam);
+         if (orgUnit) setSelectedOrgUnit(orgUnit);
+       }
+     } catch (error) {
+       console.error('Fehler beim Initialisieren der Daten:', error);
+     }
+   }, [openNodesParam, parentOrgUnitIdParam]);
+
+  // URL-Parameter verarbeiten und Zustände aktualisieren
+  useEffect(() => {
+    loadS();
+  }, [loadS, openNodesParam, parentOrgUnitIdParam]);
+
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
   }, [setFacultyTheme, theme.palette]);
@@ -54,24 +91,26 @@ export default function OrganigrammPage() {
   };
 
   // Organisationseinheit auswählen
-  const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
-    setSelectedOrgUnit(orgUnit);
-    setSelectedFunctionId(undefined); // Reset selection
-    setSelectedUserId(undefined); // Reset selection
-    setSelectedRootOrgUnit(undefined);
+    const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
+      setSelectedOrgUnit(orgUnit);
+      setSelectedFunctionId(undefined); // Reset selection
+      setSelectedUserId(undefined); // Reset selection
+      setSelectedRootOrgUnit(undefined);
+      setExpandedNodes(undefined)
 
-    if (orgUnit.alias || orgUnit.kostenstelleNr) {
-      orgUnit.hasMitglieder = true;
-      setSelectedRootOrgUnit(orgUnit);
-      setCombinedUsers(
-        await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
-      );
-    }
-  };
+      if (orgUnit.alias || orgUnit.kostenstelleNr) {
+        orgUnit.hasMitglieder = true;
+        setSelectedRootOrgUnit(orgUnit);
+        setCombinedUsers(
+          await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
+        );
+      }
+
+      resetUrlParams(); // URL-Parameter zurücksetzen
+    };
 
   // Funktion auswählen
   const handleFunctionSelect = (functionInfo: FunctionString) => {
-    console.log('Selected function:', functionInfo);
     setSelectedFunctionId(functionInfo._id);
     //setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
@@ -167,6 +206,7 @@ export default function OrganigrammPage() {
         <OrgUnitsSpalte
           onSelect={async (orgUnit) => handleOrgUnitSelect(orgUnit)}
           onRemove={handleRemove}
+         expandedNodes={expandedNodes}
         />
       </Box>
 

@@ -18,9 +18,11 @@ import {
 import { GET_ALL_ORG_UNITS } from '../../graphql/orgUnits/query/get-orgUnits';
 import { GET_USERS_BY_FUNCTION } from '../../graphql/users/query/get-users';
 import { FunctionString, FunctionUser } from '../../types/function.type';
+import { OrgUnit } from '../../types/orgUnit.type';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
 import client from '../apolloClient';
+import { getOrgUnitById } from './orgUnit.api';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'
 const logger = getLogger('function.api.ts');
@@ -239,14 +241,14 @@ export async function removeFunction(
  * @throws { ApolloError } - Wird geworfen, wenn die Mutation fehlschlägt.
  */
 export async function updateFunction({
-    functionId,
+  functionId,
   functionName,
   newOrgUnitId,
   isSingleUser,
   oldFunctionName,
   orgUnitId,
 }: {
-    functionId: string;
+  functionId: string;
   functionName: string;
   newOrgUnitId: string;
   isSingleUser: boolean;
@@ -271,11 +273,13 @@ export async function updateFunction({
       },
       refetchQueries: [
         { query: FUNCTIONS_BY_ORG_UNIT, variables: { orgUnitId } },
-          { query: GET_ALL_ORG_UNITS },
-          {
-              query: GET_USERS_BY_FUNCTION,
-              variables: { id: functionId },
-          }
+        { query: GET_ALL_ORG_UNITS },
+        {
+          query: GET_USERS_BY_FUNCTION,
+          variables: { id: functionId },
+          },
+          {query: GET_ANCESTORS,
+          variables: { id: newOrgUnitId}},
       ],
       awaitRefetchQueries: true, // Wartet auf Abschluss der Refetch-Abfragen
     });
@@ -349,7 +353,11 @@ export async function addUserToFunction(
         {
           query: GET_USERS_BY_FUNCTION,
           variables: { id: functionId },
-        },
+          },
+          {
+              query: GET_ANCESTORS,
+              variables: { id: orgUnitId }
+          },
       ],
       awaitRefetchQueries: true, // Wartet, bis Refetch abgeschlossen ist
     });
@@ -392,7 +400,7 @@ export async function removeUserFromFunction(
       mutation: REMOVE_FUNCTIONS,
       variables: { functionName, userId },
       refetchQueries: [
-        { query: GET_FUNCTION_BY_ID, variables: { functionId } },
+          { query: GET_FUNCTION_BY_ID, variables: { functionId } },
       ],
       awaitRefetchQueries: true, // Wartet auf Abschluss der Refetch-Abfragen
     });
@@ -409,7 +417,7 @@ export async function removeUserFromFunction(
  * @returns Promise<{ id: string; functionName: string }[]> - Liste der Funktionen ohne Benutzer mit Name und ID.
  */
 export async function getFunctionsWithoutUsers(): Promise<
-  { id: string; functionName: string, orgUnit: string }[]
+  { id: string; functionName: string; orgUnit: string }[]
 > {
   try {
     logger.debug('Prüfe, welche SingleUser-Funktionen keine Benutzer haben');
@@ -424,16 +432,18 @@ export async function getFunctionsWithoutUsers(): Promise<
     if (!Array.isArray(functions)) {
       throw new Error('Unerwartetes Datenformat von der API');
     }
+    console.log(functions);
 
     // Filtern der Funktionen ohne Benutzer
     const noUserFunctions = functions
       .filter(
         (func: { isSingleUser: boolean; users: any[] }) =>
-          func.isSingleUser && func.users.length === 0,
+          func.isSingleUser &&
+          (func.users.length === 0 || func.users === undefined),
       )
       .map((func: FunctionString) => ({
         id: func._id,
-          functionName: func.functionName,
+        functionName: func.functionName,
         orgUnit: func.orgUnit,
       }));
 
@@ -448,7 +458,7 @@ export async function getFunctionsWithoutUsers(): Promise<
       logger.info('Alle SingleUser-Funktionen haben Benutzer.');
     }
 
-      logger.debug('Funktionen ohne Benutzer: %o', noUserFunctions);
+    logger.debug('Funktionen ohne Benutzer: %o', noUserFunctions);
     return noUserFunctions; // Liste der Funktionen ohne Benutzer (Name und ID)
   } catch (error) {
     handleGraphQLError(
@@ -460,15 +470,26 @@ export async function getFunctionsWithoutUsers(): Promise<
 
 // Funktion zum Abrufen der Ancestors
 export async function fetchAncestors(nodeId: string) {
-    try {
-        const { data } = await client.query({
-            query: GET_ANCESTORS,
-            variables: { id: nodeId },
-        });
+  try {
+    const { data } = await client.query({
+      query: GET_ANCESTORS,
+      variables: { id: nodeId },
+    });
 
-        return data.getAncestors;
-    } catch (error) {
-        console.error('Fehler beim Abrufen der Ancestors:', error);
-        throw error;
+    const ancestors: OrgUnit[] = data?.getAncestors;
+
+    // Validierung der Daten
+    if (!Array.isArray(ancestors)) {
+      throw new Error('Unerwartetes Datenformat für Ancestors.');
     }
+
+    // Abrufen der aktuellen Organisationseinheit
+    const currentOrgUnit: OrgUnit = await getOrgUnitById(nodeId);
+
+    // Kombinieren von Ancestors und der aktuellen Organisationseinheit
+    return [...ancestors, currentOrgUnit];
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Ancestors:', error);
+    throw error;
+  }
 }

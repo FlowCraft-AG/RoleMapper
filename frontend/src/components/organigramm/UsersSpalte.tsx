@@ -72,8 +72,8 @@ export default function UsersSpalte({
       } else {
         console.log('Fetching users by function');
         const data: FunctionUser =
-            await fetchUsersByFunction(selectedFunctionId);
-          console.log('Data:', selectedFunctionId);
+          await fetchUsersByFunction(selectedFunctionId);
+        console.log('Data:', selectedFunctionId);
         setSelectedFunction(data);
       }
     } catch (err) {

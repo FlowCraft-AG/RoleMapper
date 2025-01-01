@@ -192,12 +192,6 @@ export default function FunctionsSpalte({
         </Button>
       </Box>
 
-      {functions.length === 0 && (
-        <Box sx={{ p: 2 }}>
-          <Alert severity="info">Keine Funktionen verfügbar</Alert>
-        </Box>
-      )}
-
       {rootOrgUnit && rootOrgUnit.hasMitglieder && (
         <List>
           <ListItemButton
@@ -226,6 +220,13 @@ export default function FunctionsSpalte({
           </ListItemButton>
         </List>
       )}
+
+      {functions.length === 0 && (
+        <Box sx={{ p: 2 }}>
+          <Alert severity="info">Keine Funktionen verfügbar</Alert>
+        </Box>
+      )}
+
       <List>
         {functions.map((func) => (
           <ListItemButton

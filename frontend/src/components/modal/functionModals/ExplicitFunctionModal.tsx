@@ -1,5 +1,6 @@
 'use client';
 
+import { SwapHoriz } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -18,7 +19,6 @@ import { fetchUserIds } from '../../../lib/api/user.api';
 import { FunctionString } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
-import { SwapHoriz } from '@mui/icons-material';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
@@ -52,13 +52,12 @@ const ExplicitFunctionModal = ({
   // Funktion zum Abrufen der Benutzer von der Serverseite
   const loadUsers = useCallback(async () => {
     setLoading(true);
-      try {
-        // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
-        const fetchFormat =
-          displayFormat === 'nameOnly' ? 'lastName' : 'userId';
-        const users: ShortUser[] = await fetchUserIds(fetchFormat); // Funktion von der Serverseite verwenden
-        setUserIds(users);
-      } catch (error) {
+    try {
+      // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
+      const fetchFormat = displayFormat === 'nameOnly' ? 'lastName' : 'userId';
+      const users: ShortUser[] = await fetchUserIds(fetchFormat); // Funktion von der Serverseite verwenden
+      setUserIds(users);
+    } catch (error) {
       console.error('Fehler beim Laden der Benutzer-IDs:', error);
       setSnackbar({
         open: true,
@@ -131,9 +130,9 @@ const ExplicitFunctionModal = ({
     }
   }, [open]);
 
-      const toggleDisplayFormat = () => {
-        setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
-      };
+  const toggleDisplayFormat = () => {
+    setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
+  };
 
   return (
     <>

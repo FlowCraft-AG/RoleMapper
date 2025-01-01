@@ -3,19 +3,17 @@ import {
   Alert,
   Box,
   Button,
-  CircularProgress,
   IconButton,
   Modal,
   Snackbar,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { addUserToFunction } from '../../../lib/api/function.api';
 import { fetchUserIds } from '../../../lib/api/user.api';
 import { FunctionUser } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
-import { useCallback } from 'react';
 
 interface AddUserModalProps {
   open: boolean;
@@ -44,8 +42,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     'userId',
   ); // Zustand für die Anzeige
 
-
-
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -64,11 +60,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   }, [displayFormat]);
 
-      useEffect(() => {
-        if (open) {
-          fetchUsers();
-        }
-      }, [open, fetchUsers]);
+  useEffect(() => {
+    if (open) {
+      fetchUsers();
+    }
+  }, [open, fetchUsers]);
 
   const validateInput = () => {
     const newErrors: { [key: string]: string | undefined } = {};
@@ -90,8 +86,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
       return;
     }
 
-      try {
-        console.log('hgfhgfj: ',selectedFunction);
+    try {
+      console.log('hgfhgfj: ', selectedFunction);
       const newUserList = await addUserToFunction(
         selectedFunction?.functionName!,
         newUserId,

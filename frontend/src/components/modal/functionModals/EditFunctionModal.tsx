@@ -56,8 +56,7 @@ const EditFunctionModal = ({
   // Funktion zum Laden der Organisationseinheit
   const loadFunctionData = useCallback(async () => {
     try {
-        const func = await fetchFunctionById(functionData?._id!); // API-Aufruf zum Laden der Organisationseinheit
-        console.log(func);
+      const func = await fetchFunctionById(functionData?._id!); // API-Aufruf zum Laden der Organisationseinheit
       setFormData({
         functionName: func.functionName,
         orgUnitId: func.orgUnit,
@@ -99,8 +98,8 @@ const EditFunctionModal = ({
     setIsSaving(true);
 
     try {
-        const updatedFunction: FunctionString[] = await updateFunction({
-          functionId: functionData?._id!,
+      const updatedFunction: FunctionString[] = await updateFunction({
+        functionId: functionData?._id!,
         functionName: formData.functionName!,
         newOrgUnitId: formData.orgUnitId!,
         isSingleUser: formData.isSingleUser!,
@@ -221,7 +220,7 @@ const EditFunctionModal = ({
               </li>
             )}
             value={
-              options.find((ou) => ou._id === formData.orgUnitId) || undefined
+              options.find((ou) => ou._id === formData.orgUnitId) || null
             }
             onChange={(_, newValue) =>
               setFormData((prev) => ({

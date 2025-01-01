@@ -5,37 +5,49 @@ import {
   AppBar,
   Badge,
   Box,
+  CircularProgress,
   IconButton,
-  List,
-  ListItem,
   Menu,
   MenuItem,
+  Switch,
   Toolbar,
   Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { fetchAncestors, getFunctionsWithoutUsers } from '../lib/api/function.api';
+import {
+  fetchAncestors,
+  getFunctionsWithoutUsers,
+} from '../lib/api/function.api';
+import { useFacultyTheme } from '../theme/ThemeProviderWrapper';
 
 interface Notification {
   message: string;
-    nodeId: string;
-    orgUnit: string;
+  nodeId: string;
+  orgUnit: string;
 }
 
 export default function Navigation() {
+  const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [openNodes, setOpenNodes] = useState<string[]>([]); // Baumstatus
+  const [openNodes, setOpenNodes] = useState<string[]>([]);
+  const { setFacultyTheme } = useFacultyTheme();
+  const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
+  useEffect(() => {
+    console.log('Aktualisiertes Theme:', theme.palette);
+  }, [setFacultyTheme, theme.palette]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
+      setLoadingNotifications(true);
       try {
         const functionsWithoutUsers = await getFunctionsWithoutUsers();
 
@@ -43,10 +55,9 @@ export default function Navigation() {
           const newNotifications = functionsWithoutUsers.map((func) => ({
             message: `Die Funktion "${func.functionName}" hat keinen zugewiesenen Benutzer.`,
             nodeId: func.id,
-            orgUnit: func.orgUnit, // Organisationseinheit
+            orgUnit: func.orgUnit,
           }));
 
-          // Vermeide doppelte Benachrichtigungen
           setNotifications((prev) => {
             const existingIds = new Set(prev.map((notif) => notif.nodeId));
             const uniqueNotifications = newNotifications.filter(
@@ -57,31 +68,49 @@ export default function Navigation() {
         }
       } catch (error) {
         console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
+      } finally {
+        setLoadingNotifications(false);
       }
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000);
+    const interval = setInterval(fetchNotifications, 10000);
     return () => clearInterval(interval);
   }, []);
 
-    const openNodesInTree = (nodeIds: string[]) => {
-      setOpenNodes((prev) => Array.from(new Set([...prev, ...nodeIds])));
-    };
+  const openNodesInTree = (nodeIds: string[]) => {
+    setOpenNodes((prev) => Array.from(new Set([...prev, ...nodeIds])));
+  };
 
-     const handleNotificationClick = async (notification: Notification) => {
-       handleCloseMenu();
-       try {
-         console.log('Lade Ancestors für:', notification);
-         const ancestors = await fetchAncestors(notification.orgUnit);
+  const handleNotificationClick = async (notification: Notification) => {
+    handleCloseMenu();
+    try {
+      const ancestors = await fetchAncestors(notification.orgUnit);
+      const ancestorIds = ancestors.map((ancestor) => ancestor._id);
 
-         // Öffne die relevanten Knoten im Baum
-         openNodesInTree(ancestors.map((ancestor) => ancestor._id));
-       } catch (error) {
-         console.error('Fehler beim Laden der Ancestors:', error);
-       }
-     };
+      // Navigiere zu /organisationseinheiten mit den geöffneten Knoten
+      router.push(
+        `/organisationseinheiten?openNodes=${encodeURIComponent(
+          ancestorIds.join(','),
+        )}&selectedNode=${notification.nodeId}&parentOrgUnitId=${notification.orgUnit}`,
+      );
 
+      openNodesInTree(ancestors.map((ancestor) => ancestor._id));
+    } catch (error) {
+      console.error('Fehler beim Laden der Ancestors:', error);
+    }
+  };
+
+  const dynamicStyles = useCustomStyles
+    ? {
+        backgroundColor:
+          theme.palette.custom?.selected || theme.palette.primary.main,
+        color: theme.palette.custom?.navbar?.secondary || '#fff',
+      }
+    : {
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+      };
 
   const navLinks = [
     { href: '/startseite', label: 'Startseite' },
@@ -98,48 +127,53 @@ export default function Navigation() {
     setAnchorEl(null);
   };
 
-
   return (
     <AppBar
       position="sticky"
       sx={{
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.text.primary,
+        ...dynamicStyles,
         boxShadow: theme.shadows[2],
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between', padding: '0 16px' }}>
-        {/* Links */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               style={{
-                color:
-                  pathname === link.href
+                color: useCustomStyles
+                  ? pathname === link.href
+                    ? theme.palette.custom?.navbar?.primary || '#000'
+                    : theme.palette.custom?.navbar?.secondary || '#fff'
+                  : pathname === link.href
                     ? theme.palette.primary.main
                     : theme.palette.text.secondary,
                 textDecoration: 'none',
                 fontWeight: pathname === link.href ? 'bold' : 'normal',
-                transition: 'color 0.3s ease-in-out',
+                transition: !useCustomStyles
+                  ? 'color 0.3s ease-in-out'
+                  : undefined,
               }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = theme.palette.primary.dark)
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color =
-                  pathname === link.href
-                    ? theme.palette.primary.main
-                    : theme.palette.text.secondary)
-              }
+              onMouseEnter={(e) => {
+                !useCustomStyles
+                  ? (e.currentTarget.style.color = theme.palette.primary.dark)
+                  : null;
+              }}
+              onMouseLeave={(e) => {
+                !useCustomStyles
+                  ? (e.currentTarget.style.color =
+                      pathname === link.href
+                        ? theme.palette.primary.main
+                        : theme.palette.text.secondary)
+                  : null;
+              }}
             >
               {link.label}
             </Link>
           ))}
         </Box>
 
-        {/* Benachrichtigungen */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Tooltip title="Benachrichtigungen">
             <IconButton
@@ -147,9 +181,13 @@ export default function Navigation() {
               onClick={handleOpenMenu}
               aria-label="notifications"
             >
-              <Badge badgeContent={notifications.length} color="error">
-                <Notifications />
-              </Badge>
+              {loadingNotifications ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                <Badge badgeContent={notifications.length} color="error">
+                  <Notifications />
+                </Badge>
+              )}
             </IconButton>
           </Tooltip>
 
@@ -163,24 +201,7 @@ export default function Navigation() {
               notifications.map((notification, index) => (
                 <MenuItem
                   key={index}
-                  onClick={async () => {
-                    handleCloseMenu();
-
-                    try {
-                      console.log('Lade Ancestors für:', notification);
-                      const ancestors = await fetchAncestors(
-                        notification.orgUnit,
-                      );
-
-                      // Beispiel: Ancestors anzeigen
-                      console.log('Ancestors:', ancestors);
-
-                      // Hier kannst du den Baum dynamisch öffnen
-                      openNodesInTree(ancestors.map((ancestor) => ancestor._id));
-                    } catch (error) {
-                      console.error('Fehler beim Laden der Ancestors:', error);
-                    }
-                  }}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   {notification.message}
                 </MenuItem>
@@ -190,13 +211,34 @@ export default function Navigation() {
             )}
           </Menu>
 
-          {/* Login */}
+          <Tooltip title="Toggle Styles">
+            <Switch
+              checked={useCustomStyles}
+              onChange={() => setUseCustomStyles(!useCustomStyles)}
+              sx={{
+                '& .MuiSwitch-thumb': {
+                  backgroundColor: useCustomStyles
+                    ? theme.palette.custom?.navbar.secondary
+                    : theme.palette.custom?.primary,
+                },
+                '& .MuiSwitch-track': {
+                  backgroundColor: useCustomStyles
+                    ? theme.palette.custom?.navbar.secondary
+                    : theme.palette.custom?.primary,
+                },
+              }}
+            />
+          </Tooltip>
+
           <Tooltip title="Login">
             <Link
               href="/login"
               style={{
-                color:
-                  pathname === '/login'
+                color: useCustomStyles
+                  ? pathname === '/login'
+                    ? theme.palette.custom?.navbar?.primary || '#000'
+                    : theme.palette.custom?.navbar?.secondary || '#fff'
+                  : pathname === '/login'
                     ? theme.palette.primary.main
                     : theme.palette.text.secondary,
                 textDecoration: 'none',
@@ -204,7 +246,9 @@ export default function Navigation() {
                 alignItems: 'center',
                 gap: 4,
                 fontWeight: pathname === '/login' ? 'bold' : 'normal',
-                transition: 'color 0.3s ease-in-out',
+                transition: !useCustomStyles
+                  ? 'color 0.3s ease-in-out'
+                  : undefined,
               }}
             >
               <Login />

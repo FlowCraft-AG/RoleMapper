@@ -22,11 +22,13 @@ import TransitionComponent from './TransitionComponent';
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnit) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
+  expandedNodes: string[] | undefined;
 }
 
 export default function OrgUnitsSpalte({
   onSelect,
   onRemove,
+  expandedNodes,
 }: OrgUnitRichTreeViewProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
@@ -158,17 +160,39 @@ export default function OrgUnitsSpalte({
     // Finde die übergeordnete Einheit
     const parent = orgUnits.find((u) => u._id === unit.parentId);
 
+    if (!parent) {
+      return undefined;
+    }
+
     // Prüfe, ob der Parent "Fakultät" heißt
     // Rekursiv nach oben gehen bis zur Wurzel-Fakultät
-    return parent?.name === 'Fakultät'
-      ? parent
-      : parent && findFacultyParent(parent);
+    return parent?.name === 'Fakultät' ? unit : findFacultyParent(parent);
   };
 
   return (
     <Box sx={{ minHeight: 352, minWidth: 250 }}>
       <RichTreeView
         items={treeData}
+        {...(expandedNodes &&
+          expandedNodes.length > 0 && {
+            expandedItems: expandedNodes, // Die offenen Knoten aus den Props
+          })}
+        {...(expandedNodes &&
+          expandedNodes.length > 0 && {
+            selectedItems: expandedNodes[expandedNodes.length - 1], // Der letzte offene Knoten
+          })}
+        // Wenn `expandedNodes` definiert ist, wird der Zustand kontrolliert
+        // {...(expandedNodes && {
+        //   expandedItems: expandedNodes.length > 0 ? expandedNodes : [],
+        //   selectedItems:
+        //     expandedNodes.length > 0
+        //       ? [expandedNodes[expandedNodes.length - 1]]
+        //       : [],
+              // })}
+
+        // // Unkontrollierter Zustand, wenn keine initialen `expandedNodes` vorhanden sind
+        // defaultExpandedItems={!expandedNodes ? [] : undefined}
+        // defaultSelectedItems={!expandedNodes ? [] : undefined}
         slots={{
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
