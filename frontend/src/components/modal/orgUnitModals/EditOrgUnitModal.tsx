@@ -1,38 +1,34 @@
-import { SwapHoriz } from '@mui/icons-material';
 import {
   Box,
   Button,
   Fade,
-  IconButton,
   Modal,
   Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { getOrgUnitById, updateOrgUnit } from '../../../lib/api/orgUnit.api';
-import { fetchEmployees } from '../../../lib/api/user.api';
+import { fetchAllFunctions } from '../../../lib/api/function.api';
+import {
+  fetchAllOrgUnits,
+  getOrgUnitById,
+  updateOrgUnit,
+} from '../../../lib/api/orgUnit.api';
+import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
-import { ShortUser } from '../../../types/user.type';
-import UserAutocomplete from '../../UserAutocomplete';
-
-// Ladeindikator wurde aufgeteilt, um Benutzerfreundlichkeit zu verbessern.
-// Fehlerhandling wurde konsolidiert.
-// Snackbar und UX optimiert.
-// Mehrfachauswahl vorbereitet, falls erforderlich.
+import FunctionAutocomplete from '../../FunctionAutocomplete';
 
 interface EditOrgUnitModalProps {
   open: boolean;
   onClose: () => void;
   itemId: string;
-  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
+  refetch: (orgUnitList: OrgUnit[]) => void;
 }
 
 const EditOrgUnitModal = ({
   open,
   onClose,
   itemId,
-
   refetch,
 }: EditOrgUnitModalProps) => {
   const [formData, setFormData] = useState<{
@@ -43,65 +39,47 @@ const EditOrgUnitModal = ({
     supervisor: undefined,
   });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const [userData, setUserData] = useState<ShortUser[]>([]);
-  const [userLoading, setUserLoading] = useState(false);
-  const [displayFormat, setDisplayFormat] = useState<'userId' | 'nameOnly'>(
-    'userId',
-  ); // Zustand für die Anzeige
+  const [functionData, setFunctionData] = useState<FunctionString[]>([]);
+  const [functionLoading, setFunctionLoading] = useState(false);
+  const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
 
-  const handleError = (message: string, error: unknown) => {
+  const logError = (message: string, error: unknown) => {
     console.error(message, error);
     setSnackbar({
       open: true,
-      message: message,
+      message: typeof error === 'string' ? error : message,
     });
   };
 
-  // Supervisor-ID muss ein gültiges MongoDB ObjectId sein
   const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
 
-  // Funktion zum Laden der Organisationseinheit
-  const loadOrgUnitData = useCallback(async () => {
+  const loadData = useCallback(async () => {
     try {
-      const orgUnit = await getOrgUnitById(itemId); // API-Aufruf zum Laden der Organisationseinheit
-      console.log(orgUnit);
+      const [orgUnit, functions, orgUnitList] = await Promise.all([
+        getOrgUnitById(itemId),
+        fetchAllFunctions(),
+        fetchAllOrgUnits(),
+      ]);
       setFormData({
         name: orgUnit.name || '',
-        supervisor: orgUnit.supervisor, // Supervisor-ID laden
+        supervisor: orgUnit.supervisor,
       });
+      setFunctionData(functions);
+      setOrgUnits(orgUnitList);
     } catch (error) {
-      handleError('Fehler beim Laden der Benutzer:', error);
+      logError('Fehler beim Laden der Daten:', error);
     }
-  }, [itemId]); // Die Funktion wird nur beim ersten Laden ausgeführt
-
-  // Funktion zum Abrufen der Benutzer von der Serverseite
-  const loadUsers = useCallback(async () => {
-    setUserLoading(true);
-    try {
-      // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
-      const fetchFormat = displayFormat === 'nameOnly' ? 'lastName' : 'userId';
-      const employees: ShortUser[] = await fetchEmployees(fetchFormat); // Serverseitige Funktion aufrufen
-      setUserData(employees);
-    } catch (error) {
-      handleError('Fehler beim Laden der Benutzer:', error);
-    } finally {
-      setUserLoading(false);
-    }
-  }, [displayFormat]); // Die Funktion wird nur beim ersten Laden ausgeführt
+  }, [itemId]);
 
   useEffect(() => {
     if (open) {
-      loadOrgUnitData(); // Lade Daten der Organisationseinheit
-      loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
+      loadData();
     }
-  }, [open, itemId, loadOrgUnitData, loadUsers]);
+  }, [open, loadData]);
 
   const handleSave = async () => {
     if (!formData.name) {
-      setSnackbar({
-        open: true,
-        message: 'Name darf nicht leer sein.',
-      });
+      setSnackbar({ open: true, message: 'Name darf nicht leer sein.' });
       return;
     }
 
@@ -118,26 +96,37 @@ const EditOrgUnitModal = ({
         itemId,
         formData.name,
         formData.supervisor,
-      ); // Bearbeite die Organisationseinheit
-      await refetch(newOrgUnitList); // Lade die neuesten Daten
-      onClose(); // Schließe das Modal
+      );
+      refetch(newOrgUnitList);
+      onClose();
     } catch (error) {
-      if (error instanceof Error) {
-        setSnackbar({
-          open: true,
-          message: error.message,
-        });
-      } else {
-        setSnackbar({
-          open: true,
-          message: 'Ein Fehler ist aufgetreten.',
-        });
-      }
+      logError('Fehler beim Speichern der Organisationseinheit:', error);
     }
   };
 
-  const toggleDisplayFormat = () => {
-    setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
+  const handleClose = () => {
+    setFormData({ name: '', supervisor: undefined });
+    onClose();
+  };
+
+  const orgUnitLookup = (id: string) => {
+    const orgUnit = orgUnits.find((unit) => unit._id === id);
+    return orgUnit ? orgUnit.name : 'Unbekannt';
+  };
+
+  const orgUnitPathLookup = (id: string): string => {
+    const path: string[] = [];
+    let currentId = id;
+
+    while (currentId) {
+      const orgUnit = orgUnits.find((unit) => unit._id === currentId);
+      if (!orgUnit) break;
+
+      path.unshift(orgUnit.name);
+      currentId = orgUnit.parentId || '';
+    }
+
+    return path.join(' > ');
   };
 
   return (
@@ -152,8 +141,7 @@ const EditOrgUnitModal = ({
 
       <Modal
         open={open}
-        onClose={onClose}
-        disableEscapeKeyDown={false}
+        onClose={handleClose}
         closeAfterTransition
         slotProps={{
           backdrop: {
@@ -168,18 +156,17 @@ const EditOrgUnitModal = ({
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              bgcolor: 'background.paper',
-              borderRadius: 2,
+              bgcolor: 'background.default',
+              borderRadius: 3,
               p: 4,
               display: 'flex',
               flexDirection: 'column',
-              gap: 2,
-              width: 400,
-              boxShadow: 24,
-              height: 300,
+              gap: 3,
+              width: 480,
+              boxShadow: 10,
             }}
           >
-            <Typography variant="h6">
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
               Organisationseinheit bearbeiten
             </Typography>
             <TextField
@@ -189,57 +176,66 @@ const EditOrgUnitModal = ({
                 setFormData((prev) => ({ ...prev, name: e.target.value }))
               }
               fullWidth
+              sx={{
+                bgcolor: 'background.paper',
+                borderRadius: 2,
+              }}
+            />
+            <FunctionAutocomplete
+              options={functionData}
+              loading={functionLoading}
+              value={
+                functionData.find((func) => func._id === formData.supervisor) ||
+                null
+              }
+              onChange={(value) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  supervisor: value ? value._id : undefined,
+                }));
+              }}
+              label="Supervisor auswählen"
+              placeholder="Supervisor suchen..."
+              orgUnitLookup={orgUnitLookup}
+              orgUnitPathLookup={orgUnitPathLookup}
             />
 
-            <Box display="flex" alignItems="center">
-              <Box sx={{ flexGrow: 1 }}>
-                <UserAutocomplete
-                  options={userData}
-                  loading={userLoading}
-                  multiple={false} // Kann auf `true` gesetzt werden
-                  value={
-                    userData.find((user) => user._id === formData.supervisor) ||
-                    null
-                  }
-                  onChange={(value) => {
-                    if (value && typeof value === 'object' && '_id' in value) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        supervisor: value._id,
-                      }));
-                    } else {
-                      setFormData((prev) => ({
-                        ...prev,
-                        supervisor: null,
-                      }));
-                    }
-                  }}
-                  displayFormat={displayFormat} // Alternativ: "userId" oder "nameOnly" oder "full"
-                  label={
-                    displayFormat === 'userId'
-                      ? 'Supervisor-ID auswählen'
-                      : 'Supervisor-Name auswählen'
-                  } // Dynamisches Label
-                  placeholder={
-                    displayFormat === 'userId'
-                      ? 'Supervisor-ID auswählen'
-                      : 'Supervisor-Name auswählen'
-                  } // Dynamischer Placeholder
-                />
-              </Box>
-              <Box sx={{ flexShrink: 1 }}>
-                <IconButton onClick={toggleDisplayFormat}>
-                  <SwapHoriz />
-                </IconButton>
-              </Box>
-            </Box>
-
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button variant="outlined" onClick={onClose}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: 2,
+                mt: 2,
+              }}
+            >
+              <Button
+                variant="outlined"
+                onClick={handleClose}
+                sx={{
+                  flex: 1,
+                  borderColor: 'secondary.main',
+                  color: 'secondary.main',
+                  '&:hover': {
+                    borderColor: 'secondary.dark',
+                    backgroundColor: 'secondary.light',
+                  },
+                }}
+              >
                 Abbrechen
               </Button>
-              <Button variant="contained" color="primary" onClick={handleSave}>
-                Erstellen
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                sx={{
+                  flex: 1,
+                  bgcolor: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  },
+                }}
+              >
+                Speichern
               </Button>
             </Box>
           </Box>

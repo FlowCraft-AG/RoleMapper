@@ -10,6 +10,7 @@ import { REMOVE_FUNCTIONS } from '../../graphql/functions/mutation/remove-to-fun
 import { UPDATE_FUNCTIONS } from '../../graphql/functions/mutation/update-function';
 import {
   FUNCTIONS_BY_ORG_UNIT,
+  GET_ALL_FUNCTIONS,
   GET_ANCESTORS,
   GET_FUNCTION_BY_ID,
   GET_SAVED_DATA,
@@ -26,6 +27,18 @@ import { getOrgUnitById } from './orgUnit.api';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'
 const logger = getLogger('function.api.ts');
+
+export async function fetchAllFunctions(): Promise<FunctionString[]> {
+  try {
+    logger.debug('Lade alle Funktionen');
+    const { data } = await client.query({
+      query: GET_ALL_FUNCTIONS,
+    });
+    return data.getData.data;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden aller Funktionen.');
+  }
+}
 
 /**
  * Prüft, ob Funktionen für eine Organisationseinheit existieren.

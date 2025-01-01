@@ -7,8 +7,8 @@ import {
 } from '@mui/material';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import OrganigrammPage from './orgUnitPage';
 import { Suspense } from 'react';
+import OrganigrammPage from './orgUnitPage';
 
 export const metadata: Metadata = {
   title: 'Organisationseinheiten',

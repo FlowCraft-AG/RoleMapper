@@ -2,16 +2,17 @@ import { gql } from '@apollo/client';
 
 export const GET_ALL_FUNCTIONS = gql`
   query GetData {
-    getData(input: { entity: MANDATES }) {
+    getData(
+      input: { entity: MANDATES, sort: { field: functionName, direction: ASC } }
+    ) {
       totalCount
       data {
         ... on Function {
           _id
           functionName
           users
-          orgUnit
-          isSingleUser
           isImpliciteFunction
+          orgUnit
         }
       }
     }

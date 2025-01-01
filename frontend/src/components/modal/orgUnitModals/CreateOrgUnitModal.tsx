@@ -1,38 +1,31 @@
-import { SwapHoriz } from '@mui/icons-material';
 import {
   Box,
   Button,
   Fade,
-  IconButton,
   Modal,
   Snackbar,
   TextField,
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { createOrgUnit } from '../../../lib/api/orgUnit.api';
-import { fetchEmployees } from '../../../lib/api/user.api';
+import { fetchAllFunctions } from '../../../lib/api/function.api';
+import { createOrgUnit, fetchAllOrgUnits } from '../../../lib/api/orgUnit.api';
+import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
-import { ShortUser } from '../../../types/user.type';
-import UserAutocomplete from '../../UserAutocomplete';
-
-// Separate Ladezustände für Benutzer und Erstellung.
-// Direktes Feedback bei Validierung.
-// Deaktivierter Button bei ungültigen Eingaben.
-// Verbessertes Fehlerhandling mit konsistenter Logik.
+import FunctionAutocomplete from '../../FunctionAutocomplete';
 
 interface CreateOrgUnitModalProps {
   open: boolean;
   onClose: () => void;
   parentId: string;
-  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
+  refetch: (orgUnitList: OrgUnit[]) => void;
 }
 
 const CreateOrgUnitModal = ({
   open,
   onClose,
   parentId,
-  refetch, // Callback zur Aktualisierung der Liste
+  refetch,
 }: CreateOrgUnitModalProps) => {
   const [formData, setFormData] = useState<{
     name: string;
@@ -42,51 +35,36 @@ const CreateOrgUnitModal = ({
     supervisor: undefined,
   });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-  const [userData, setUserData] = useState<ShortUser[]>([]);
-  const [userLoading, setUserLoading] = useState(false);
+  const [functionData, setFunctionData] = useState<FunctionString[]>([]);
+  const [functionLoading, setFunctionLoading] = useState(false);
   const [creationLoading, setCreationLoading] = useState(false);
-  const [displayFormat, setDisplayFormat] = useState<'userId' | 'nameOnly'>(
-    'userId',
-  ); // Zustand für die Anzeige
+  const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
 
-  // Funktion zum Abrufen der Benutzer von der Serverseite
-  const loadUsers = useCallback(async () => {
-    setUserLoading(true);
+  const loadFunctons = useCallback(async () => {
+    setFunctionLoading(true);
     try {
-      // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
-      const fetchFormat = displayFormat === 'nameOnly' ? 'lastName' : 'userId';
-      const employees: ShortUser[] = await fetchEmployees(fetchFormat); // Serverseitige Funktion aufrufen
-      setUserData(employees);
+      const [functionList, orgUnitList] = await Promise.all([
+        fetchAllFunctions(),
+        fetchAllOrgUnits(),
+      ]);
+      setOrgUnits(orgUnitList);
+      setFunctionData(functionList);
     } catch (error) {
-      logError('Fehler beim Laden der Benutzer:', error);
+      console.error('Fehler beim Laden der Funktionen:', error);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Laden der Daten.',
+      });
     } finally {
-      setUserLoading(false);
+      setFunctionLoading(false);
     }
-  }, [displayFormat]); // Die Funktion wird nur beim ersten Laden ausgeführt
+  }, []);
 
   const handleCreate = async () => {
-    // Name-Validierung: keine Sonderzeichen oder Zahlen, nur Buchstaben erlaubt
-    const nameRegex = /^[a-zA-ZäöüÄÖÜß]+$/; // Optional: deutsche Umlaute zulassen
-    // Regular Expression für ObjectId Validierung
-    const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
-
-    if (!formData.name || !nameRegex.test(formData.name)) {
+    if (!formData.name || !/^[a-zA-ZäöüÄÖÜß]+$/.test(formData.name)) {
       setSnackbar({
         open: true,
-        message:
-          'Name darf nur Buchstaben enthalten und keine Sonderzeichen oder Zahlen.',
-      });
-      return;
-    }
-
-    // Supervisor-Validierung: genau 8 Zeichen, erste 4 Kleinbuchstaben, letzte 4 Ziffern
-    //const supervisorRegex = /^[a-z]{4}[0-9]{4}$/;
-
-    if (formData.supervisor && !isValidObjectId(formData.supervisor)) {
-      setSnackbar({
-        open: true,
-        message:
-          'Die Supervisor-ID muss eine gültige ObjectId (24 Zeichen aus Hexadezimalzahlen) sein.',
+        message: 'Name darf nur Buchstaben enthalten.',
       });
       return;
     }
@@ -97,27 +75,19 @@ const CreateOrgUnitModal = ({
         formData.name,
         formData.supervisor,
         parentId,
-      ); // Serverseitige Funktion zum Erstellen der Organisationseinheit
-      refetch(updatedOrgUnits); // Aktualisiere die Liste
+      );
+      refetch(updatedOrgUnits);
       setSnackbar({
         open: true,
         message: 'Organisationseinheit erfolgreich erstellt!',
       });
       handleClose();
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error(err.message);
-        setSnackbar({
-          open: true,
-          message: err.message,
-        });
-      } else {
-        console.error('Unknown error', err);
-        setSnackbar({
-          open: true,
-          message: 'Ein unbekannter Fehler ist aufgetreten.',
-        });
-      }
+    } catch (error) {
+      console.error('Fehler beim Erstellen:', error);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Erstellen der Organisationseinheit.',
+      });
     } finally {
       setCreationLoading(false);
     }
@@ -125,26 +95,36 @@ const CreateOrgUnitModal = ({
 
   useEffect(() => {
     if (open) {
-      loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
+      loadFunctons();
     }
-  }, [open, loadUsers]);
-
-  const logError = (message: string, error: unknown) => {
-    console.error(message, error);
-    setSnackbar({
-      open: true,
-      message: typeof error === 'string' ? error : message,
-    });
-  };
-
-  const toggleDisplayFormat = () => {
-    setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
-  };
+  }, [open, loadFunctons]);
 
   const handleClose = () => {
     setFormData({ name: '', supervisor: undefined });
     onClose();
   };
+
+     const orgUnitLookup = (id: string) => {
+       const orgUnit = orgUnits.find((unit) => unit._id === id);
+       return orgUnit ? orgUnit.name : 'Unbekannt';
+     };
+
+
+  const orgUnitPathLookup = (id: string): string => {
+    const path: string[] = [];
+    let currentId = id;
+
+    while (currentId) {
+      const orgUnit = orgUnits.find((unit) => unit._id === currentId);
+      if (!orgUnit) break;
+
+      path.unshift(orgUnit.name);
+      currentId = orgUnit.parentId || '';
+    }
+
+    return path.join(' > ');
+  };
+
   return (
     <>
       <Snackbar
@@ -158,7 +138,6 @@ const CreateOrgUnitModal = ({
       <Modal
         open={open}
         onClose={handleClose}
-        disableEscapeKeyDown={false}
         closeAfterTransition
         slotProps={{
           backdrop: {
@@ -174,19 +153,21 @@ const CreateOrgUnitModal = ({
               left: '50%',
               transform: 'translate(-50%, -50%)',
               bgcolor: 'background.paper',
-              borderRadius: 2,
+              borderRadius: 3,
               p: 4,
               display: 'flex',
               flexDirection: 'column',
-              gap: 2,
-              width: 400,
-              boxShadow: 24,
-              height: 300,
+              gap: 3,
+              width: '90%',
+              maxWidth: 500,
+              boxShadow: 8,
             }}
           >
-            <Typography variant="h6">Neue Organisationseinheit</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
+              Neue Organisationseinheit
+            </Typography>
             <TextField
-              label="Name"
+              label="Name der Organisationseinheit"
               value={formData.name}
               error={
                 !/^[a-zA-ZäöüÄÖÜß]+$/.test(formData.name) &&
@@ -201,50 +182,34 @@ const CreateOrgUnitModal = ({
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, name: e.target.value }))
               }
+              fullWidth
               required
             />
-            <Box display="flex" alignItems="center">
-              <Box sx={{ flexGrow: 1 }}>
-                <UserAutocomplete
-                  options={userData}
-                  loading={userLoading}
-                  value={
-                    userData.find((user) => user._id === formData.supervisor) ||
-                    null
-                  }
-                  onChange={(value) => {
-                    if (value && typeof value === 'object' && '_id' in value) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        supervisor: value._id,
-                      }));
-                    } else {
-                      setFormData((prev) => ({
-                        ...prev,
-                        supervisor: null,
-                      }));
-                    }
-                  }}
-                  displayFormat={displayFormat} // Alternativ: "userId" oder "nameOnly" oder "full"
-                  label={
-                    displayFormat === 'userId'
-                      ? 'Supervisor-ID auswählen'
-                      : 'Supervisor-Name auswählen'
-                  } // Dynamisches Label
-                  placeholder={
-                    displayFormat === 'userId'
-                      ? 'Supervisor-ID auswählen'
-                      : 'Supervisor-Name auswählen'
-                  } // Dynamischer Placeholder
-                />
-              </Box>
-              <Box sx={{ flexShrink: 1 }}>
-                <IconButton onClick={toggleDisplayFormat}>
-                  <SwapHoriz />
-                </IconButton>
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <FunctionAutocomplete
+              options={functionData}
+              loading={functionLoading}
+              value={
+                functionData.find((func) => func._id === formData.supervisor) ||
+                null
+              }
+              onChange={(value) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  supervisor: value?._id,
+                }));
+              }}
+              label="Supervisor auswählen"
+              placeholder="Supervisor suchen..."
+              orgUnitPathLookup={orgUnitPathLookup}
+              orgUnitLookup={orgUnitLookup}
+            />
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                mt: 2,
+              }}
+            >
               <Button variant="outlined" onClick={handleClose}>
                 Abbrechen
               </Button>
@@ -252,6 +217,7 @@ const CreateOrgUnitModal = ({
                 variant="contained"
                 color="primary"
                 onClick={handleCreate}
+                disabled={creationLoading}
               >
                 {creationLoading ? 'Erstellen...' : 'Erstellen'}
               </Button>
