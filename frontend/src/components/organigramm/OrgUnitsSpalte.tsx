@@ -188,7 +188,7 @@ export default function OrgUnitsSpalte({
         //     expandedNodes.length > 0
         //       ? [expandedNodes[expandedNodes.length - 1]]
         //       : [],
-              // })}
+        // })}
 
         // // Unkontrollierter Zustand, wenn keine initialen `expandedNodes` vorhanden sind
         // defaultExpandedItems={!expandedNodes ? [] : undefined}

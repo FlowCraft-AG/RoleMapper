@@ -5,7 +5,6 @@ import {
   AppBar,
   Badge,
   Box,
-  CircularProgress,
   IconButton,
   Menu,
   MenuItem,
@@ -39,7 +38,6 @@ export default function Navigation() {
   const [openNodes, setOpenNodes] = useState<string[]>([]);
   const { setFacultyTheme } = useFacultyTheme();
   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
-  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
@@ -47,7 +45,6 @@ export default function Navigation() {
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      setLoadingNotifications(true);
       try {
         const functionsWithoutUsers = await getFunctionsWithoutUsers();
 
@@ -57,24 +54,15 @@ export default function Navigation() {
             nodeId: func.id,
             orgUnit: func.orgUnit,
           }));
-
-          setNotifications((prev) => {
-            const existingIds = new Set(prev.map((notif) => notif.nodeId));
-            const uniqueNotifications = newNotifications.filter(
-              (notif) => !existingIds.has(notif.nodeId),
-            );
-            return [...prev, ...uniqueNotifications];
-          });
+            setNotifications(newNotifications);
         }
       } catch (error) {
         console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
-      } finally {
-        setLoadingNotifications(false);
       }
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000);
+    const interval = setInterval(fetchNotifications, 10000); // Alle 10 Sekunden aktualisieren HIER ÄNDERN SIE DIE ZEIT
     return () => clearInterval(interval);
   }, []);
 
@@ -181,13 +169,9 @@ export default function Navigation() {
               onClick={handleOpenMenu}
               aria-label="notifications"
             >
-              {loadingNotifications ? (
-                <CircularProgress size={20} color="inherit" />
-              ) : (
-                <Badge badgeContent={notifications.length} color="error">
-                  <Notifications />
-                </Badge>
-              )}
+              <Badge badgeContent={notifications.length} color="error">
+                <Notifications />
+              </Badge>
             </IconButton>
           </Tooltip>
 

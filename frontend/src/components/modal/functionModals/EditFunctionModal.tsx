@@ -219,9 +219,7 @@ const EditFunctionModal = ({
                 {option.displayName}
               </li>
             )}
-            value={
-              options.find((ou) => ou._id === formData.orgUnitId) || null
-            }
+            value={options.find((ou) => ou._id === formData.orgUnitId) || null}
             onChange={(_, newValue) =>
               setFormData((prev) => ({
                 ...prev,

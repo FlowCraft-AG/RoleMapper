@@ -400,7 +400,7 @@ export async function removeUserFromFunction(
       mutation: REMOVE_FUNCTIONS,
       variables: { functionName, userId },
       refetchQueries: [
-          { query: GET_FUNCTION_BY_ID, variables: { functionId } },
+        { query: GET_FUNCTION_BY_ID, variables: { functionId } },
       ],
       awaitRefetchQueries: true, // Wartet auf Abschluss der Refetch-Abfragen
     });

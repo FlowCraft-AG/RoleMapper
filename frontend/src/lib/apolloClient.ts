@@ -27,12 +27,21 @@ const serverHttpLink = createHttpLink({
 
 /**
  * Apollo Client-Instanz.
- * Verwendet `InMemoryCache` für die lokale Datenverwaltung und
+ * `InMemoryCache` für die lokale Datenverwaltung
  * `createHttpLink` für die Verbindung zum Server.
  */
 const client = new ApolloClient({
   link: serverHttpLink, // Verbindung zum GraphQL-Server
-  cache: new InMemoryCache(), // Cache-Implementierung
+  //cache: new InMemoryCache(), // Cache-Implementierung
+  cache: new InMemoryCache({ addTypename: false }), // Minimal konfiguriert
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'no-cache', // Verhindert, dass Anfragen gecached werden
+    },
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+  },
 });
 
 export default client;

@@ -7,13 +7,12 @@ import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
+import { getOrgUnitById } from '../../lib/api/orgUnit.api';
 import { fetchMitglieder } from '../../lib/api/user.api';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { FunctionString, FunctionUser } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { User } from '../../types/user.type';
-import { getOrgUnitById } from '../../lib/api/orgUnit.api';
-import { fetchFunctionById } from '../../lib/api/function.api';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
@@ -45,31 +44,33 @@ export default function OrganigrammPage() {
   const searchParams = useSearchParams();
   const openNodesParam = searchParams.get('openNodes') || '';
   const parentOrgUnitIdParam = searchParams.get('parentOrgUnitId') || '';
-    const [expandedNodes, setExpandedNodes] = useState<string[] | undefined>([]);
+  const [expandedNodes, setExpandedNodes] = useState<string[] | undefined>([]);
 
-    const resetUrlParams = () => {
-      const currentUrl = new URL(window.location.href);
-      currentUrl.searchParams.delete('openNodes');
-      currentUrl.searchParams.delete('parentOrgUnitId');
-      currentUrl.searchParams.delete('selectedNode');
-      window.history.replaceState(null, '', currentUrl.toString());
-    };
+  const resetUrlParams = () => {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete('openNodes');
+    currentUrl.searchParams.delete('parentOrgUnitId');
+    currentUrl.searchParams.delete('selectedNode');
+    window.history.replaceState(null, '', currentUrl.toString());
+  };
 
-   const loadS = useCallback(async () => {
-     try {
-       if (openNodesParam) {
-         const openNodes = openNodesParam.split(',').filter((id) => id);
-         setExpandedNodes(openNodes);
-       }
+  const loadS = useCallback(async () => {
+    try {
+      if (openNodesParam) {
+        const openNodes = openNodesParam.split(',').filter((id) => id);
+        setExpandedNodes(openNodes);
+      }
 
-       if (parentOrgUnitIdParam) {
-         const orgUnit = await getOrgUnitById(parentOrgUnitIdParam);
-         if (orgUnit) setSelectedOrgUnit(orgUnit);
-       }
-     } catch (error) {
-       console.error('Fehler beim Initialisieren der Daten:', error);
-     }
-   }, [openNodesParam, parentOrgUnitIdParam]);
+      if (parentOrgUnitIdParam) {
+        const orgUnit = await getOrgUnitById(parentOrgUnitIdParam);
+          if (orgUnit) setSelectedOrgUnit(orgUnit);
+      }
+
+         setSelectedFunctionId(undefined);
+    } catch (error) {
+      console.error('Fehler beim Initialisieren der Daten:', error);
+    }
+  }, [openNodesParam, parentOrgUnitIdParam]);
 
   // URL-Parameter verarbeiten und Zustände aktualisieren
   useEffect(() => {
@@ -91,23 +92,23 @@ export default function OrganigrammPage() {
   };
 
   // Organisationseinheit auswählen
-    const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
-      setSelectedOrgUnit(orgUnit);
-      setSelectedFunctionId(undefined); // Reset selection
-      setSelectedUserId(undefined); // Reset selection
-      setSelectedRootOrgUnit(undefined);
-      setExpandedNodes(undefined)
+  const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
+    setSelectedOrgUnit(orgUnit);
+    setSelectedFunctionId(undefined); // Reset selection
+    setSelectedUserId(undefined); // Reset selection
+    setSelectedRootOrgUnit(undefined);
+    setExpandedNodes(undefined);
 
-      if (orgUnit.alias || orgUnit.kostenstelleNr) {
-        orgUnit.hasMitglieder = true;
-        setSelectedRootOrgUnit(orgUnit);
-        setCombinedUsers(
-          await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
-        );
-      }
+    if (orgUnit.alias || orgUnit.kostenstelleNr) {
+      orgUnit.hasMitglieder = true;
+      setSelectedRootOrgUnit(orgUnit);
+      setCombinedUsers(
+        await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
+      );
+    }
 
-      resetUrlParams(); // URL-Parameter zurücksetzen
-    };
+    resetUrlParams(); // URL-Parameter zurücksetzen
+  };
 
   // Funktion auswählen
   const handleFunctionSelect = (functionInfo: FunctionString) => {
@@ -206,7 +207,7 @@ export default function OrganigrammPage() {
         <OrgUnitsSpalte
           onSelect={async (orgUnit) => handleOrgUnitSelect(orgUnit)}
           onRemove={handleRemove}
-         expandedNodes={expandedNodes}
+          expandedNodes={expandedNodes}
         />
       </Box>
 
