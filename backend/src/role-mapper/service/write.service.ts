@@ -166,16 +166,13 @@ export class WriteService {
         if ((mandate as MandateDocument).isSingleUser) {
             // Einzelbenutzer-Mandant: Ersetze den Benutzer
             this.#logger.debug('Einzelbenutzer-Mandant erkannt. Ersetze den Benutzer.');
-            throw new Error(
-                'Einzelbenutzer-Funktion erkannt! Diese Funktion kann nur einem User zugewiesen werden.',
-            );
-            // updatedMandate = await this.#modelMap
-            //     .MANDATES!.findByIdAndUpdate(
-            //         mandate._id, // ID des Mandanten
-            //         { $set: { users: [userId] } }, // Ersetze den gesamten Benutzer-Array
-            //         { new: true }, // Gibt das aktualisierte Dokument zurück
-            //     )
-            //     .exec();
+            updatedMandate = await this.#modelMap
+                .MANDATES!.findByIdAndUpdate(
+                    mandate._id, // ID des Mandanten
+                    { $set: { users: [userId] } }, // Ersetze den gesamten Benutzer-Array
+                    { new: true }, // Gibt das aktualisierte Dokument zurück
+                )
+                .exec();
         } else {
             // Mehrbenutzer-Mandant: Füge Benutzer hinzu, falls noch nicht vorhanden
             this.#logger.debug('Mehrbenutzer-Mandant erkannt. Füge Benutzer hinzu.');

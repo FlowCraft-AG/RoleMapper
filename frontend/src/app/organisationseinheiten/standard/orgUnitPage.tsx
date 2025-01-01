@@ -4,38 +4,40 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
-import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
+import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte2';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
+import { fetchMitglieder } from '../../../lib/api/user.api';
 import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
-import { FunctionInfo } from '../../../types/function.type';
-import { OrgUnitDTO } from '../../../types/orgUnit.type';
-import { fetchMitgliederIds } from '../fetchkp';
+import { FunctionString, FunctionUser } from '../../../types/function.type';
+import { OrgUnit } from '../../../types/orgUnit.type';
+import { User } from '../../../types/user.type';
 
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
-  const [selectedOrgUnit, setSelectedOrgUnit] = useState<
-    OrgUnitDTO | undefined
-  >(undefined);
+  const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | undefined>(
+    undefined,
+  );
   const [selectedRootOrgUnit, setSelectedRootOrgUnit] = useState<
-    OrgUnitDTO | undefined
+    OrgUnit | undefined
   >(undefined);
 
   const [selectedFunctionId, setSelectedFunctionId] = useState<
     string | undefined
   >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<FunctionInfo>();
+  const [selectedFunction, setSelectedFunction] = useState<FunctionUser>();
 
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
     undefined,
   );
 
   // Benutzerdaten
-  const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
+  const [combinedUsers, setCombinedUsers] = useState<User[]>([]);
   const [isImpliciteFunction, setIsImpliciteFunction] =
     useState<boolean>(false);
 
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
 
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
@@ -44,7 +46,7 @@ export default function OrganigrammPage() {
   // Mitglieder laden
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     try {
-      return await fetchMitgliederIds(alias, kostenstelleNr);
+      return await fetchMitglieder(alias, kostenstelleNr);
     } catch (error) {
       console.error('Fehler beim Laden der Mitglieder:', error);
       return [];
@@ -52,35 +54,34 @@ export default function OrganigrammPage() {
   };
 
   // Organisationseinheit auswählen
-  const handleOrgUnitSelect = async (orgUnitDTO: OrgUnitDTO) => {
-    setSelectedOrgUnit(orgUnitDTO);
+  const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
+    setSelectedOrgUnit(orgUnit);
     setSelectedFunctionId(undefined); // Reset selection
     setSelectedUserId(undefined); // Reset selection
     setSelectedRootOrgUnit(undefined);
 
-    if (orgUnitDTO.alias || orgUnitDTO.kostenstelleNr) {
-      orgUnitDTO.hasMitglieder = true;
-      setSelectedRootOrgUnit(orgUnitDTO);
+    if (orgUnit.alias || orgUnit.kostenstelleNr) {
+      orgUnit.hasMitglieder = true;
+      setSelectedRootOrgUnit(orgUnit);
       setCombinedUsers(
-        await getMitgliederIds(orgUnitDTO.alias!, orgUnitDTO.kostenstelleNr!),
+        await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
       );
     }
   };
 
   // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: FunctionInfo) => {
-    setSelectedFunctionId(functionInfo._id);
-    setSelectedFunction(functionInfo);
+  const handleFunctionSelect = (func: FunctionString) => {
+    setSelectedFunctionId(func._id);
+    //setSelectedFunction(functionInfo);
     setSelectedUserId(undefined); // Reset selection
-    console.log('selectedFunctionId: ', functionInfo._id);
-    console.log('selectedFunction: ', functionInfo);
-    setIsImpliciteFunction(functionInfo.isImpliciteFunction);
+    setIsImpliciteFunction(func.isImpliciteFunction);
+    setIsSingleUser(func.isSingleUser);
   };
 
   // Mitgliederansicht aktivieren
   const handleMitgliederClick = () => {
     setSelectedFunctionId('mitglieder'); // Reset functions
-    setSelectedFunction(mitglied(selectedRootOrgUnit?.id));
+    setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
     setSelectedUserId(undefined); // Reset users
     setIsImpliciteFunction(false);
   };
@@ -100,7 +101,7 @@ export default function OrganigrammPage() {
       setSelectedFunction(undefined);
       setSelectedUserId(undefined);
     }
-    if (ids.includes(selectedOrgUnit?.id || '')) {
+    if (ids.includes(selectedOrgUnit?._id || '')) {
       setSelectedOrgUnit(undefined);
       setSelectedFunctionId(undefined);
       setSelectedFunction(undefined);
@@ -113,38 +114,40 @@ export default function OrganigrammPage() {
     return {
       _id: 'mitglieder',
       functionName: 'Mitglieder',
-      orgUnit: orgUnitId,
+      orgUnit: orgUnitId ?? '',
       users: combinedUsers,
       isImpliciteFunction: false,
-    };
+      isSingleUser: false,
+    } as FunctionUser;
   };
 
   return (
     <Box
       sx={{
         display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' }, // Spalten für Desktop, Reihen für Smartphones
+        flexDirection: 'row',
         gap: 2,
         padding: 2,
         backgroundColor: theme.palette.background.default,
-        overflowX: { md: 'auto' }, // Horizontal scrollen für Desktop
-        overflowY: 'auto', // Vertikal scrollen immer erlaubt
-        height: { xs: 'auto', md: '100vh' }, // Höhe auf 100vh für Desktop, auto für Smartphones
+        overflowY: 'auto', // Allgemeines Scrollen (horizontal und vertikal)
+        height: '100vh', // Volle Höhe des Viewports
+        width: '100vw', // Volle Breite des Viewports
       }}
     >
       {/* Erste Spalte: Organisationseinheiten */}
       <Box
         sx={{
-          flexShrink: 0,
-          width: { xs: '100%', md: 350 }, // 100% für Smartphones, feste Breite für Desktop
-          borderRight: { md: `1px solid ${theme.palette.divider}` },
-          padding: 2,
-          backgroundColor: theme.palette.background.paper,
-          boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
+          flexShrink: 0, // Keine Verkleinerung
+          minWidth: 350, // Feste Breite
+          borderRight: `1px solid ${theme.palette.divider}`,
+          paddingRight: 2,
+          marginRight: 2,
+          paddingTop: 2,
+          overflowX: 'auto', // Horizontales Scrollen für diese Spalte
         }}
       >
         <Typography
-          variant="h5"
+          variant="h6"
           sx={{
             textAlign: 'center',
             fontWeight: 'bold',
@@ -154,7 +157,7 @@ export default function OrganigrammPage() {
           Organisationseinheiten
         </Typography>
         <OrgUnitsSpalte
-          onSelect={handleOrgUnitSelect}
+          onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
           onRemove={handleRemove}
         />
       </Box>
@@ -163,16 +166,17 @@ export default function OrganigrammPage() {
       {selectedOrgUnit && (
         <Box
           sx={{
-            flexShrink: 0,
-            width: { xs: '100%', md: 600 }, // 100% für Smartphones, feste Breite für Desktop
-            borderRight: { md: `1px solid ${theme.palette.divider}` },
-            padding: 2,
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
+            flexShrink: 0, // Keine Verkleinerung
+            minWidth: 350, // Feste Breite
+            borderRight: `1px solid ${theme.palette.divider}`,
+            paddingRight: 2,
+            marginRight: 2,
+            paddingTop: 2,
+            overflowX: 'auto', // Horizontales Scrollen für diese Spalte
           }}
         >
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{
               textAlign: 'center',
               fontWeight: 'bold',
@@ -195,29 +199,42 @@ export default function OrganigrammPage() {
       {selectedFunctionId && (
         <Box
           sx={{
-            flexShrink: 0,
-            width: { xs: '100%', md: 400 }, // 100% für Smartphones, feste Breite für Desktop
-            padding: 2,
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
+            flexShrink: 0, // Keine Verkleinerung
+            minWidth: 350, // Feste Breite
+            borderRight: `1px solid ${theme.palette.divider}`,
+            paddingRight: 2,
+            marginRight: 2,
+            //paddingTop: 2,
+            overflowX: 'auto', // Horizontales Scrollen für diese Spalte
           }}
         >
-          <Typography
-            variant="h5"
+          <Box
             sx={{
-              textAlign: 'center',
-              fontWeight: 'bold',
-              marginBottom: 2,
+              position: 'sticky',
+              top: 0, // Überschrift bleibt oben
+              backgroundColor: theme.palette.background.default,
+              zIndex: 1,
+              padding: 1,
             }}
           >
-            Benutzer
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                marginBottom: 2,
+              }}
+            >
+              Benutzer
+            </Typography>
+          </Box>
           <UsersSpalte
             selectedFunctionId={selectedFunctionId}
             selectedMitglieder={selectedFunction}
             onSelectUser={handleUserSelect}
             onRemove={handleRemove}
             isImpliciteFunction={isImpliciteFunction}
+            isSingleUser={isSingleUser}
           />
         </Box>
       )}
@@ -226,15 +243,13 @@ export default function OrganigrammPage() {
       {selectedUserId && (
         <Box
           sx={{
-            flexShrink: 0,
-            width: { xs: '100%', md: 300 }, // 100% für Smartphones, feste Breite für Desktop
-            padding: 2,
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: { md: `0px 4px 8px ${theme.palette.divider}` },
+            flexShrink: 0, // Keine Verkleinerung
+            minWidth: 250, // Feste Breite
+            paddingTop: 2,
           }}
         >
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{
               textAlign: 'center',
               fontWeight: 'bold',

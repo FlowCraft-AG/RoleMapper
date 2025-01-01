@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const USERS = gql`
+export const GET_ALL_USERS = gql`
   query GetData {
     getData(input: { entity: USERS }) {
       totalCount
@@ -14,6 +14,10 @@ export const USERS = gql`
           active
           validFrom
           validUntil
+          profile {
+            firstName
+            lastName
+          }
           employee {
             costCenter
             department
@@ -33,20 +37,47 @@ export const USERS = gql`
   }
 `;
 
-export const USER_IDS = gql`
-  query GetData {
-    getData(input: { entity: USERS, sort: { field: userId, direction: ASC } }) {
+export const GET_ALL_USERS_SHORT = gql`
+  query GetData($field: FilterOptions) {
+    getData(input: { entity: USERS, sort: { field: $field, direction: ASC } }) {
       totalCount
       data {
         ... on User {
           userId
+          profile {
+            firstName
+            lastName
+          }
         }
       }
     }
   }
 `;
 
-export const USER_DETAILS = gql`
+export const GET_USERS_BY_FUNCTION = gql`
+  query GetUsersByFunction($id: ID!) {
+    getUsersByFunction(id: $id) {
+      users {
+        _id
+        userId
+        userType
+        userRole
+        orgUnit
+        active
+        validFrom
+        validUntil
+        profile {
+          firstName
+          lastName
+        }
+      }
+      functionName
+      orgUnit
+    }
+  }
+`;
+
+export const GET_USER_BY_USER_ID = gql`
   query GetData($userId: String) {
     getData(
       input: {
@@ -65,6 +96,10 @@ export const USER_DETAILS = gql`
           active
           validFrom
           validUntil
+          profile {
+            firstName
+            lastName
+          }
           employee {
             costCenter
             department
@@ -84,7 +119,7 @@ export const USER_DETAILS = gql`
   }
 `;
 
-export const MITGLIEDER = gql`
+export const GET_MEMBERS_BY_ALIAS_OR_COST_CENTER = gql`
   query GetData($alias: String, $kostenstelleNr: String) {
     getData(
       input: {
@@ -109,6 +144,10 @@ export const MITGLIEDER = gql`
           active
           validFrom
           validUntil
+          profile {
+            firstName
+            lastName
+          }
           employee {
             costCenter
             department
@@ -128,13 +167,13 @@ export const MITGLIEDER = gql`
   }
 `;
 
-export const GET_EMPLOYEES = gql`
-  query GetData {
+export const GET_USERS_BY_TYPE_EMPLOYEE = gql`
+  query GetData($field: FilterOptions) {
     getData(
       input: {
         entity: USERS
         filter: { field: userType, operator: EQ, value: "employee" }
-        sort: { field: userId, direction: ASC }
+        sort: { field: $field, direction: ASC }
       }
     ) {
       totalCount
@@ -142,6 +181,10 @@ export const GET_EMPLOYEES = gql`
         ... on User {
           userId
           _id
+          profile {
+            firstName
+            lastName
+          }
         }
       }
     }

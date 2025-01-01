@@ -1,6 +1,6 @@
 'use client';
 
-import { Add, Delete, Search } from '@mui/icons-material';
+import { Add, Delete, Search, SwapHoriz } from '@mui/icons-material';
 import {
   Button,
   ListItemButton,
@@ -19,17 +19,19 @@ import {
   fetchSavedData,
   fetchUsersByFunction,
   removeUserFromFunction,
-} from '../../app/organisationseinheiten/fetchkp';
-import { FunctionInfo } from '../../types/function.type';
+} from '../../lib/api/function.api';
+import { FunctionUser } from '../../types/function.type';
+import { User } from '../../types/user.type';
 import { getListItemStyles } from '../../utils/styles';
-import AddUserModal from '../modal/AddUserModal';
+import AddUserModal from '../modal/userModals/AddUserModal';
 
 interface UsersColumnProps {
   selectedFunctionId: string;
-  selectedMitglieder: FunctionInfo | undefined;
+  selectedMitglieder: FunctionUser | undefined;
   onSelectUser: (userId: string) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   isImpliciteFunction: boolean;
+  isSingleUser: boolean;
 }
 
 export default function UsersSpalte({
@@ -38,41 +40,40 @@ export default function UsersSpalte({
   onSelectUser,
   onRemove,
   isImpliciteFunction,
+  isSingleUser,
 }: UsersColumnProps) {
-  console.log('USERS SPALTE');
-  console.log('selectedFunctionId: ', selectedFunctionId);
-  console.log('selectedMitglieder: ', selectedMitglieder);
-  console.log('isImpliciteFunction: ', isImpliciteFunction);
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredUsers, setFilteredUsers] = useState<string[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [open, setOpen] = useState(false);
-  const [newUserId, setNewUserId] = useState('');
-  const [errors] = useState<{ [key: string]: string | null }>({});
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
   const [selectedFunction, setSelectedFunction] = useState<
-    FunctionInfo | undefined
+    FunctionUser | undefined
   >(undefined);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
-  //   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const loadFunctions = useCallback(async () => {
     // setLoading(true);
-    setError(null);
+    setError(undefined);
     try {
       if (selectedFunctionId === 'mitglieder') {
+        console.log('Fetching mitglieder');
         setSelectedFunction(selectedMitglieder);
       } else if (isImpliciteFunction) {
+        console.log('Fetching saved data');
         const data = await fetchSavedData(selectedFunctionId);
         setSelectedFunction(data);
       } else {
-        const data = await fetchUsersByFunction(selectedFunctionId);
+        console.log('Fetching users by function');
+        const data: FunctionUser =
+          await fetchUsersByFunction(selectedFunctionId);
+        console.log('Data:', selectedFunctionId);
         setSelectedFunction(data);
       }
     } catch (err) {
@@ -88,7 +89,7 @@ export default function UsersSpalte({
     if (selectedFunction && selectedFunction.users) {
       const lowercasedTerm = searchTerm.toLowerCase();
       const filtered = selectedFunction.users.filter((user) =>
-        user.toLowerCase().includes(lowercasedTerm),
+        user.userId.toLowerCase().includes(lowercasedTerm),
       );
       setFilteredUsers(filtered);
     }
@@ -104,8 +105,7 @@ export default function UsersSpalte({
     }
   }, [selectedFunctionId, loadFunctions]);
 
-  const refetch = (functionInfo: FunctionInfo) => {
-    console.log('Refetching Functions');
+  const refetch = (functionInfo: FunctionUser) => {
     setSelectedFunction(functionInfo); // Aktualisiere den Zustand
     setFilteredUsers(functionInfo.users); // Aktualisiere die gefilterte Liste
     setSearchTerm(''); // Suchfeld zurücksetzen
@@ -120,7 +120,7 @@ export default function UsersSpalte({
       );
       setSelectedFunction((prev) => ({
         ...prev!,
-        users: prev?.users.filter((id) => id !== userId) || [],
+        users: prev?.users.filter((id) => id.userId !== userId) || [],
       }));
       onRemove([userId]);
       setSnackbar({ open: true, message: 'Benutzer erfolgreich entfernt' });
@@ -137,14 +137,6 @@ export default function UsersSpalte({
     setSelectedIndex(userId);
     onSelectUser(userId);
   };
-
-  //   if (loading) {
-  //     return (
-  //       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-  //         <CircularProgress />
-  //       </Box>
-  //     );
-  //   }
 
   if (error) {
     return (
@@ -180,14 +172,14 @@ export default function UsersSpalte({
             variant="contained"
             color="primary"
             onClick={() => setOpen(true)}
-            startIcon={<Add />}
+            startIcon={isSingleUser ? <SwapHoriz /> : <Add />}
             sx={{
               width: '100%', // Vollbreite
               marginBottom: 2, // Abstand zum Textfeld
               height: 40, // Einheitliche Höhe
             }}
           >
-            Benutzer hinzufügen
+            {isSingleUser ? 'Benutzer ersetzen' : 'Benutzer hinzufügen'}
           </Button>
         )}
 
@@ -216,13 +208,15 @@ export default function UsersSpalte({
 
       <List>
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((userId: string) => (
+          filteredUsers.map((user: User) => (
             <ListItemButton
-              key={userId}
-              sx={getListItemStyles(theme, selectedIndex === userId)}
-              onClick={() => handleViewUser(userId)}
+              key={user.userId}
+              sx={getListItemStyles(theme, selectedIndex === user.userId)}
+              onClick={() => handleViewUser(user.userId)}
             >
-              <ListItemText primary={userId} />
+              <ListItemText
+                primary={`${user.profile?.lastName} ${user.profile?.firstName} (${user.userId})`}
+              />
               {/* Entfernen-Icon nur anzeigen, wenn die Funktion nicht implizit ist */}
               {!isImpliciteFunction && selectedFunctionId !== 'mitglieder' && (
                 <Tooltip title="Benutzer entfernen">
@@ -235,7 +229,7 @@ export default function UsersSpalte({
                         !isImpliciteFunction &&
                         selectedFunctionId !== 'mitglieder'
                       ) {
-                        handleRemoveUser(userId);
+                        handleRemoveUser(user.userId);
                       }
                     }}
                   >
@@ -256,12 +250,9 @@ export default function UsersSpalte({
         <AddUserModal
           open={open}
           onClose={() => setOpen(false)}
-          errors={errors}
-          newUserId={newUserId}
-          setNewUserId={setNewUserId}
           refetch={refetch}
-          functionName={selectedFunction?.functionName}
-          functionId={selectedFunctionId}
+          selectedFunction={selectedFunction}
+          isSingleUser={isSingleUser}
         />
       )}
     </Box>

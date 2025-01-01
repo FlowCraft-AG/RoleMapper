@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const ORG_UNITS = gql`
+export const GET_ALL_ORG_UNITS = gql`
   query GetData {
     getData(
       input: { entity: ORG_UNITS, sort: { field: name, direction: ASC } }
@@ -21,7 +21,7 @@ export const ORG_UNITS = gql`
   }
 `;
 
-export const ORG_UNITS_IDS = gql`
+export const GET_ORG_UNITS_SHORT = gql`
   query GetData {
     getData(
       input: { entity: ORG_UNITS, sort: { field: name, direction: ASC } }
@@ -38,7 +38,7 @@ export const ORG_UNITS_IDS = gql`
   }
 `;
 
-export const ORG_UNIT_BY_ID = gql`
+export const GET_ORG_UNIT_BY_ID = gql`
   query GetData($id: String!) {
     getData(
       input: {

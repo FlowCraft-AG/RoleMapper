@@ -1,38 +1,25 @@
-import { Function } from './function.type';
-
+/**
+ * Typdefinition für eine Organisationseinheit (OrgUnit).
+ * Beschreibt die Eigenschaften einer Organisationseinheit im System.
+ */
 export type OrgUnit = {
-  _id: string;
-  name: string;
-  parentId: string | null;
-  supervisor: string | null;
-  alias: string | null;
-  kostenstelleNr: string | null;
-  type: string | null;
-  children?: OrgUnit[];
+  _id: string; // Eindeutige ID der Organisationseinheit
+  name: string; // Name der Organisationseinheit
+  parentId?: string; // Optionale ID der übergeordneten Organisationseinheit
+  supervisor?: string; // Optionale ID des Supervisors der Organisationseinheit
+  alias?: string; // Optionale Aliasbezeichnung der Organisationseinheit
+  kostenstelleNr?: string; // Optionale Kostenstellen-Nummer der Organisationseinheit
+  type?: string; // Typ der Organisationseinheit (z. B. Abteilung, Team)
+  children?: OrgUnit[]; // Optionale Liste von untergeordneten Organisationseinheiten (rekursiv)
+  hasMitglieder?: boolean; // Gibt an, ob die Organisationseinheit Mitglieder hat
 };
 
-export type OrgUnitDTO = {
-  id: string;
-  name?: string;
-  parentId?: string | null;
-  supervisor?: string | null;
-  alias?: string | null;
-  kostenstelleNr?: string | null;
-  type?: string | null;
-  hasMitglieder?: boolean;
-};
-
-export type OrgUnitInfo = {
-  _id: string;
-  name: string;
-  parentId: string | undefined;
-};
-
-export type OrgUnitListProps = {
-  orgUnits: OrgUnit[];
-  functionsByOrgUnit: Record<string, Function[]>;
-  expandedOrgUnits: Record<string, boolean>;
-  toggleExpandOrgUnit: (id: string) => void;
-  toggleCircle: (mandate: Function) => void;
-  filledCircles: Set<string>;
+/**
+ * Typdefinition für eine vereinfachte Organisationseinheit (ShortOrgUnit).
+ * Wird verwendet, wenn nur grundlegende Informationen einer Organisationseinheit benötigt werden.
+ */
+export type ShortOrgUnit = {
+  _id: string; // Eindeutige ID der Organisationseinheit
+  name: string; // Name der Organisationseinheit
+  parentId: string | undefined; // ID der übergeordneten Organisationseinheit oder undefined
 };

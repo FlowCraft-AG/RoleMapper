@@ -11,16 +11,16 @@ import {
 import {
   checkForFunctions,
   fetchFunctionsByOrgUnit,
-} from '../../app/organisationseinheiten/fetchkp';
+} from '../../lib/api/function.api';
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
-import { Function } from '../../types/function.type';
+import { FunctionString } from '../../types/function.type';
 import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';
-import OrgUnitFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal1';
-import ConfirmDeleteModal from '../modal/ConfirmOrgUnitDeleteModal2';
-import ChildFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal3';
-import CreateOrgUnitModal from '../modal/CreateOrgUnitModal';
-import DeleteConfirmationModal from '../modal/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
-import EditOrgUnitModal from '../modal/EditOrgUnitModal';
+import OrgUnitFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal1';
+import ConfirmDeleteModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal2';
+import ChildFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal3';
+import CreateOrgUnitModal from '../modal/orgUnitModals/CreateOrgUnitModal';
+import DeleteConfirmationModal from '../modal/orgUnitModals/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
+import EditOrgUnitModal from '../modal/orgUnitModals/EditOrgUnitModal';
 
 export interface ItemToRender {
   label: string;
@@ -53,9 +53,11 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
   const [childrenToDelete, setChildrenToDelete] = useState<ItemToRender[]>([]);
   const [openEditModal, setOpenEditModal] = useState(false);
 
-  const [orgUnitFunctions, setOrgUnitFunctions] = useState<Function[]>([]); // Funktionen der Organisationseinheit
+  const [orgUnitFunctions, setOrgUnitFunctions] = useState<FunctionString[]>(
+    [],
+  ); // Funktionen der Organisationseinheit
   const [childFunctions, setChildFunctions] = useState<
-    { orgUnit: string; functions: Function[] }[]
+    { orgUnit: string; functions: FunctionString[] }[]
   >([]); // Funktionen der Kinder
 
   const handleAdd = () => {
@@ -99,7 +101,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
 
     // Falls keine Funktionen vorhanden sind, prüfen wir die Nachkommen
     if (childrenWithNames.length > 0) {
-      console.log('childrenWithNames', childrenWithNames);
       setChildrenToDelete(childrenWithNames); // Kinder speichern
       setOpenChildrenModal(true); // Modal für Kinder öffnen
       return;
@@ -137,13 +138,11 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
 
   // Prüfe, ob Kinder oder deren Nachkommen Funktionen haben
   const checkChildrenForFunctions = async (children: ItemToRender[]) => {
-    const results: { orgUnit: string; functions: Function[] }[] = [];
+    const results: { orgUnit: string; functions: FunctionString[] }[] = [];
 
     for (const child of children) {
-      console.log('child', child);
       // Prüfe die Funktionen des aktuellen Kindes
       const functions = await fetchFunctionsByOrgUnit(child.itemId);
-      console.log('functions', functions);
       if (functions.length > 0) {
         results.push({ orgUnit: child.label, functions }); // Speichere label als Name
       }
@@ -153,7 +152,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
         results.push(...childResults); // Ergebnisse der Kinder hinzufügen
       }
     }
-    console.log('results', results);
     return results;
   };
 

@@ -1,36 +1,31 @@
 'use client';
 
+import { SwapHoriz } from '@mui/icons-material';
 import {
-  Autocomplete,
   Box,
   Button,
-  CircularProgress,
-  darken,
   FormControlLabel,
-  lighten,
+  IconButton,
   Modal,
   Radio,
   RadioGroup,
   Snackbar,
-  styled,
   TextField,
   Typography,
 } from '@mui/material';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
-import { Fragment, useEffect, useState } from 'react';
-import {
-  createExplicitFunction,
-  fetchUserIds,
-} from '../../app/organisationseinheiten/fetchkp';
-import { Function } from '../../types/function.type';
+import { useCallback, useEffect, useState } from 'react';
+import { createExplicitFunction } from '../../../lib/api/function.api';
+import { fetchUserIds } from '../../../lib/api/user.api';
+import { FunctionString } from '../../../types/function.type';
+import { ShortUser } from '../../../types/user.type';
+import UserAutocomplete from '../../UserAutocomplete';
 
 interface ExplicitFunctionModalProps {
   open: boolean;
   onClose: () => void;
   onBack: () => void;
   orgUnitId: string;
-  refetch: (functionList: Function[]) => void;
+  refetch: (functionList: FunctionString[]) => void;
 }
 
 const ExplicitFunctionModal = ({
@@ -41,19 +36,26 @@ const ExplicitFunctionModal = ({
   refetch,
 }: ExplicitFunctionModalProps) => {
   const [functionName, setFunctionName] = useState('');
-  const [users, setUsers] = useState<string[]>([]);
-  const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
+  const [users, setUsers] = useState<ShortUser[]>([]);
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
+    {},
+  );
   const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [loading, setLoading] = useState(false);
   // Extrahieren der Benutzer-IDs aus der Serverseite
-  const [userIds, setUserIds] = useState<string[]>([]);
+  const [userIds, setUserIds] = useState<ShortUser[]>([]);
+  const [displayFormat, setDisplayFormat] = useState<'userId' | 'nameOnly'>(
+    'userId',
+  ); // Zustand für die Anzeige
 
   // Funktion zum Abrufen der Benutzer von der Serverseite
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const users = await fetchUserIds(); // Funktion von der Serverseite verwenden
+      // Mappe displayFormat zu den unterstützten Werten für fetchEmployees
+      const fetchFormat = displayFormat === 'nameOnly' ? 'lastName' : 'userId';
+      const users: ShortUser[] = await fetchUserIds(fetchFormat); // Funktion von der Serverseite verwenden
       setUserIds(users);
     } catch (error) {
       console.error('Fehler beim Laden der Benutzer-IDs:', error);
@@ -64,23 +66,10 @@ const ExplicitFunctionModal = ({
     } finally {
       setLoading(false);
     }
-  };
-
-  // Prepare options and group them by first letter
-  // const options = data?.getData.data.map((user: User) => user.userId) || [];
-  const options = userIds;
-
-  //   const groupedOptions = options.reduce((acc: any, userId: string) => {
-  //     const firstLetter = userId[0].toUpperCase();
-  //     if (!acc[firstLetter]) {
-  //       acc[firstLetter] = [];
-  //     }
-  //     acc[firstLetter].push(userId);
-  //     return acc;
-  //   }, {});
+  }, [displayFormat]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const validateInput = () => {
-    const newErrors: { [key: string]: string | null } = {};
+    const newErrors: { [key: string]: string | undefined } = {};
     const functionNameRegex = /^[a-zA-Z ]+$/; // Funktionsname kann Leerzeichen enthalten, aber keine Sonderzeichen
     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/; // 4 Buchstaben + 4 Zahlen
 
@@ -92,9 +81,8 @@ const ExplicitFunctionModal = ({
       newErrors.functionName =
         'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
     }
-    console.log('users:', users);
 
-    if (users.some((user) => !userIdRegex.test(user))) {
+    if (users.some((user) => !userIdRegex.test(user.userId))) {
       newErrors.users =
         'Benutzer müssen 4 Buchstaben gefolgt von 4 Zahlen enthalten (z. B. gyca1011).';
     }
@@ -110,7 +98,7 @@ const ExplicitFunctionModal = ({
       const newFunctionList = await createExplicitFunction({
         functionName,
         orgUnitId,
-        users,
+        users: users.map((user) => user.userId),
         isSingleUser,
       });
       refetch(newFunctionList); // Aktualisiere die Daten nach der Mutation
@@ -136,26 +124,15 @@ const ExplicitFunctionModal = ({
     setIsSingleUser(false); // Zustand für den RadioButton zurücksetzen
   };
 
-  const GroupHeader = styled('div')(({ theme }) => ({
-    position: 'sticky',
-    top: '-8px',
-    padding: '4px 10px',
-    color: theme.palette.primary.main,
-    backgroundColor: lighten(theme.palette.primary.light, 0.85),
-    ...theme.applyStyles('dark', {
-      backgroundColor: darken(theme.palette.primary.main, 0.8),
-    }),
-  }));
-
-  const GroupItems = styled('ul')({
-    padding: 0,
-  });
-
   useEffect(() => {
     if (open) {
       loadUsers(); // Abrufen der Benutzer beim Öffnen des Modals
     }
-  }, [open]);
+  }, [open, loadUsers]);
+
+  const toggleDisplayFormat = () => {
+    setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
+  };
 
   return (
     <>
@@ -191,81 +168,67 @@ const ExplicitFunctionModal = ({
             error={!!errors.functionName}
             helperText={errors.functionName}
           />
-
-          <Autocomplete
-            options={options}
-            loading={loading}
-            groupBy={(option) => option[0].toUpperCase()}
-            getOptionLabel={(option) => option}
-            renderGroup={(params) => (
-              <li key={params.key}>
-                <GroupHeader>{params.group}</GroupHeader>
-                <GroupItems>{params.children}</GroupItems>
-              </li>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Benutzer (Kommagetrennt)"
-                placeholder="Benutzer-ID eingeben"
-                error={!!errors.users}
+          <Box display="flex" alignItems="center">
+            <Box sx={{ flexGrow: 1 }}>
+              <UserAutocomplete
+                options={userIds}
+                loading={loading}
+                value={users}
+                onChange={(value) => setUsers(value as ShortUser[])} // Konvertiere den Wert explizit in ein Array
+                displayFormat={displayFormat} // Alternativ: "userId" oder "nameOnly" oder "full"
+                label={
+                  displayFormat === 'userId'
+                    ? 'Benutzer-ID auswählen'
+                    : 'Benutzer-Name auswählen'
+                } // Dynamisches Label
+                placeholder={
+                  displayFormat === 'userId'
+                    ? 'Benutzer-ID auswählen'
+                    : 'Benutzer-Name auswählen'
+                } // Dynamischer Placeholder
                 helperText={errors.users}
-                slotProps={{
-                  input: {
-                    ...params.InputProps,
-                    endAdornment: (
-                      <Fragment>
-                        {loading ?? (
-                          <CircularProgress color="inherit" size={20} />
-                        )}
-                        {params.InputProps.endAdornment}
-                      </Fragment>
-                    ),
-                  },
-                }}
+                multiple // Aktiviert die Mehrfachauswahl
               />
-            )}
-            multiple
-            freeSolo
-            value={users}
-            onChange={(_, value) => {
-              setUsers(value);
-            }}
-            renderOption={(props, option, { inputValue }) => {
-              const matches = match(option, inputValue, { insideWords: true });
-              const parts = parse(option, matches);
-
-              return (
-                <li {...props} key={props.key}>
-                  {/* <li key={props.key}></li> */}
-                  <div>
-                    {parts.map((part, index) => (
-                      <span
-                        key={index}
-                        style={{
-                          fontWeight: part.highlight ? 700 : 400,
-                        }}
-                      >
-                        {part.text}
-                      </span>
-                    ))}
-                  </div>
-                </li>
-              );
-            }}
-          />
+            </Box>
+            <Box sx={{ flexShrink: 1 }}>
+              <IconButton onClick={toggleDisplayFormat}>
+                <SwapHoriz />
+              </IconButton>
+            </Box>
+          </Box>
 
           <Typography variant="body1">
             Kann diese Funktion nur von einem Benutzer besetzt werden?
           </Typography>
-          <RadioGroup
-            row
-            value={isSingleUser ? 'true' : 'false'}
-            onChange={(e) => setIsSingleUser(e.target.value === 'true')}
+          <fieldset
+            disabled={users.length > 1}
+            style={{ border: 'none', margin: 0, padding: 0 }}
           >
-            <FormControlLabel value="true" control={<Radio />} label="Ja" />
-            <FormControlLabel value="false" control={<Radio />} label="Nein" />
-          </RadioGroup>
+            <RadioGroup
+              row
+              value={isSingleUser ? 'true' : 'false'}
+              onChange={(e) => setIsSingleUser(e.target.value === 'true')}
+            >
+              <FormControlLabel
+                value="true"
+                control={<Radio />}
+                label="Ja"
+                disabled={users.length > 1} // Deaktiviert die einzelne Option
+              />
+              <FormControlLabel
+                value="false"
+                control={<Radio />}
+                label="Nein"
+                disabled={users.length > 1} // Deaktiviert die einzelne Option
+              />
+            </RadioGroup>
+          </fieldset>
+
+          {users.length > 1 && (
+            <Typography variant="caption" color="error">
+              Diese Option ist deaktiviert, da mehrere Benutzer ausgewählt sind.
+            </Typography>
+          )}
 
           <Button variant="contained" color="primary" onClick={handleSave}>
             Speichern

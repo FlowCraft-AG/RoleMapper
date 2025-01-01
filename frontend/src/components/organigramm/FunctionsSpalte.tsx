@@ -22,22 +22,23 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import { useCallback, useEffect, useState } from 'react';
 import {
+  fetchFunctionById,
   fetchFunctionsByOrgUnit,
   removeFunction,
-} from '../../app/organisationseinheiten/fetchkp';
-import { Function, FunctionInfo } from '../../types/function.type';
-import { OrgUnitDTO } from '../../types/orgUnit.type';
+} from '../../lib/api/function.api';
+import { FunctionString } from '../../types/function.type';
+import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
-import EditFunctionModal from '../modal/EditFunctionModal';
-import ExplicitFunctionModal from '../modal/ExplicitFunctionModal';
-import ImplicitFunctionModal from '../modal/ImplicitFunctionModal';
-import SelectFunctionTypeModal from '../modal/SelectFunctionTypeModal';
+import EditFunctionModal from '../modal/functionModals/EditFunctionModal';
+import ExplicitFunctionModal from '../modal/functionModals/ExplicitFunctionModal';
+import ImplicitFunctionModal from '../modal/functionModals/ImplicitFunctionModal';
+import SelectFunctionTypeModal from '../modal/functionModals/SelectFunctionTypeModal';
 
 interface FunctionsColumnProps {
-  orgUnit: OrgUnitDTO;
-  rootOrgUnit: OrgUnitDTO | undefined;
-  functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
-  onSelect: (functionInfo: FunctionInfo) => void;
+  orgUnit: OrgUnit;
+  rootOrgUnit: OrgUnit | undefined;
+  functions?: FunctionString[]; // Alle Funktionen, zentral von `page.tsx` übergeben
+  onSelect: (func: FunctionString) => void;
   handleMitgliederClick: () => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
@@ -51,27 +52,26 @@ export default function FunctionsSpalte({
 }: FunctionsColumnProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
-  const [functions, setFunctions] = useState<Function[]>([]);
+  const [functions, setFunctions] = useState<FunctionString[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const [openSelectType, setOpenSelectType] = useState(false);
   const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
   const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
 
   const [openEditFunction, setOpenEditFunction] = useState(false); // State für Edit Modal
-  const [currentFunction, setCurrentFunction] = useState<Function | undefined>(
-    undefined,
-  ); // Funktion, die bearbeitet wird
+  const [currentFunction, setCurrentFunction] = useState<
+    FunctionString | undefined
+  >(undefined); // Funktion, die bearbeitet wird
 
   const loadFunctions = useCallback(async (orgUnitId: string) => {
     try {
       setLoading(true);
       const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
-      console.log('Functions:', functionList);
       setFunctions(functionList);
     } catch (err) {
       if (err instanceof Error) {
@@ -84,13 +84,13 @@ export default function FunctionsSpalte({
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
-  const refetch = (functionList: Function[]) => {
+  const refetch = (functionList: FunctionString[]) => {
     setFunctions(functionList);
   };
 
   useEffect(() => {
-    if (orgUnit && orgUnit.id) {
-      loadFunctions(orgUnit.id); // Hier wird `orgUnit.id` als Parameter übergeben
+    if (orgUnit && orgUnit._id) {
+      loadFunctions(orgUnit._id); // Hier wird `orgUnit.id` als Parameter übergeben
     }
   }, [orgUnit, loadFunctions]); // Reagiert auf Änderungen der `orgUnit.id`
   // Der Effekt wird nur beim ersten Laden der Komponente ausgeführt.
@@ -110,21 +110,22 @@ export default function FunctionsSpalte({
     );
 
   // Funktionen filtern
-  const filteredFunctions: Function[] =
-    functions.filter((func: Function) => func.orgUnit === orgUnit.id) || [];
+  //   const filteredFunctions: Function[] =
+  //     functions.filter((func: Function) => func.orgUnit === orgUnit._id) || [];
 
   // Klick-Handler für eine Funktion oder "Mitglieder"
-  const handleClick = (func: Function | string) => {
+  const handleClick = async (func: FunctionString | string) => {
     if (typeof func === 'string') {
       setSelectedIndex(func);
       handleMitgliederClick();
     } else {
       setSelectedIndex(func._id);
-      onSelect(func);
+      const func2: FunctionString = await fetchFunctionById(func._id);
+      onSelect(func2);
     }
   };
 
-  const handleRemoveFunction = async (func: Function) => {
+  const handleRemoveFunction = async (func: FunctionString) => {
     const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
     if (success) {
       setFunctions((prev) => prev.filter((f) => f._id !== func._id)); // Update den lokalen Zustand
@@ -134,7 +135,7 @@ export default function FunctionsSpalte({
     }
   };
 
-  const handleViewUser = (func: Function) => {
+  const handleViewUser = (func: FunctionString) => {
     setSelectedIndex(func._id);
     handleClick(func);
   };
@@ -158,8 +159,9 @@ export default function FunctionsSpalte({
     setOpenExplicitFunction(false);
   };
 
-  const handleEditFunction = (func: Function) => {
-    setCurrentFunction(func);
+  const handleEditFunction = async (func: FunctionString) => {
+    const func2 = await fetchFunctionById(func._id); // API-Aufruf zum Laden der Organisationseinheit
+    setCurrentFunction(func2);
     setOpenEditFunction(true); // Öffne das Edit-Modal
   };
 
@@ -190,12 +192,6 @@ export default function FunctionsSpalte({
         </Button>
       </Box>
 
-      {functions.length === 0 && (
-        <Box sx={{ p: 2 }}>
-          <Alert severity="info">Keine Funktionen verfügbar</Alert>
-        </Box>
-      )}
-
       {rootOrgUnit && rootOrgUnit.hasMitglieder && (
         <List>
           <ListItemButton
@@ -224,8 +220,15 @@ export default function FunctionsSpalte({
           </ListItemButton>
         </List>
       )}
+
+      {functions.length === 0 && (
+        <Box sx={{ p: 2 }}>
+          <Alert severity="info">Keine Funktionen verfügbar</Alert>
+        </Box>
+      )}
+
       <List>
-        {filteredFunctions.map((func) => (
+        {functions.map((func) => (
           <ListItemButton
             key={func._id} // Eindeutiger Schlüssel für jedes Element
             selected={selectedIndex === func._id}
@@ -300,7 +303,7 @@ export default function FunctionsSpalte({
       <ImplicitFunctionModal
         open={openImplicitFunction}
         onClose={() => setOpenImplicitFunction(false)}
-        orgUnitId={orgUnit.id}
+        orgUnitId={orgUnit._id}
         refetch={refetch}
         onBack={handleBackToSelectType}
       />
@@ -308,7 +311,7 @@ export default function FunctionsSpalte({
         open={openExplicitFunction}
         onClose={() => setOpenExplicitFunction(false)}
         onBack={handleBackToSelectType}
-        orgUnitId={orgUnit.id}
+        orgUnitId={orgUnit._id}
         refetch={refetch}
       />
 

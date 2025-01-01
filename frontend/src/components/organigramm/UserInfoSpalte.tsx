@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchUserDetails } from '../../app/organisationseinheiten/fetchkp';
+import { fetchUserDetails } from '../../lib/api/user.api';
 import { User } from '../../types/user.type';
 
 interface UserInfoColumnProps {
@@ -17,21 +17,17 @@ interface UserInfoColumnProps {
 
 export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
-  //   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
+  // Benutzerinformationen abrufen
   const fetchData = useCallback(async () => {
-    // setLoading(true);
-    setError(null);
+    setError(undefined);
     try {
       const userDetails = await fetchUserDetails(userId);
-      console.log('userDetails: ', userDetails);
       setSelectedUser(userDetails);
     } catch (err) {
       console.error('Fehler beim Laden der Benutzerdetails:', err);
       setError('Fehler beim Laden der Benutzerdetails.');
-    } finally {
-      //   setLoading(false);
     }
   }, [userId]);
 
@@ -41,30 +37,27 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
     }
   }, [userId, fetchData]);
 
-  const formatDate = (timestamp: string | undefined) => {
+  // Datum formatieren
+  const formatDate = (timestamp?: string) => {
     if (!timestamp) return 'Nicht verfügbar';
     const numericTimestamp = parseInt(timestamp, 10);
-    if (isNaN(numericTimestamp)) return 'Ungültiges Datum';
-    return new Date(numericTimestamp).toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    return isNaN(numericTimestamp)
+      ? 'Ungültiges Datum'
+      : new Date(numericTimestamp).toLocaleDateString('de-DE', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
   };
 
-  //   if (loading)
-  //     return (
-  //       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-  //         <CircularProgress />
-  //       </Box>
-  //     );
-
-  if (error)
+  // Fehleranzeige
+  if (error) {
     return (
       <Box sx={{ p: 2 }}>
-        <Alert severity="error">Fehler: {error}</Alert>
+        <Alert severity="error">{error}</Alert>
       </Box>
     );
+  }
 
   return (
     <Box
@@ -72,7 +65,7 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
         minHeight: 352,
         minWidth: 300,
         p: 2,
-        paddingTop: 4,
+        pt: 4,
         backgroundColor: 'background.default',
         borderRadius: 4,
         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
@@ -107,9 +100,18 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
             <Typography variant="subtitle1" gutterBottom>
               <strong>UserID:</strong> {selectedUser.userId}
             </Typography>
-
             <Divider sx={{ mb: 2 }} />
-
+            {selectedUser.profile && (
+              <>
+                <Typography variant="body1" gutterBottom>
+                  <strong>Vorname:</strong> {selectedUser.profile.firstName}
+                </Typography>
+                <Typography variant="body1" gutterBottom>
+                  <strong>Nachname:</strong> {selectedUser.profile.lastName}
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+              </>
+            )}
             <Typography variant="body1" gutterBottom>
               <strong>Rolle:</strong> {selectedUser.userRole}
             </Typography>
@@ -128,7 +130,6 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
                 </Tooltip>
               )}
             </Typography>
-
             <Typography variant="body1" gutterBottom>
               <strong>Gültig von:</strong> {formatDate(selectedUser.validFrom)}
             </Typography>

@@ -1,6 +1,13 @@
-import { Box, Button, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Typography,
+} from '@mui/material';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import OrganigrammPage from './orgUnitPage';
 
 export const metadata: Metadata = {
@@ -8,49 +15,88 @@ export const metadata: Metadata = {
   description:
     'Organigramm der Hochschule Karlsruhe (HSKA) zur Darstellung der Fakultäten, Institute und Rollen.',
   icons: {
-    icon: '/favicon.ico', // Favicon im public-Ordner referenzieren
+    icon: '/favicon.ico',
   },
 };
 
-// Server-Komponente zur Datenabfrage
 export default async function HKAPage() {
   return (
     <Box sx={{ padding: 4 }}>
       <Typography
         variant="h4"
-        sx={{ textAlign: 'center', marginBottom: 4, fontWeight: 'bold' }}
+        sx={{
+          textAlign: 'center',
+          marginBottom: 4,
+          fontWeight: 'bold',
+          letterSpacing: 1,
+        }}
       >
         Organisationseinheiten
       </Typography>
 
-      {/* Buttons für die Navigation */}
+      {/* Navigation als Karten */}
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 2,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 3,
           marginBottom: 4,
         }}
       >
         <Link href="/organisationseinheiten/slider" passHref>
-          <Button variant="contained" color="primary">
-            Slider
-          </Button>
+          <Card
+            sx={{
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
+            }}
+          >
+            <CardActionArea>
+              <CardContent>
+                <Typography variant="h6" align="center" gutterBottom>
+                  Slider
+                </Typography>
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  Entdecken Sie das Organigramm in einer interaktiven
+                  Slider-Darstellung.
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
         </Link>
+
         <Link href="/organisationseinheiten/standard" passHref>
-          <Button variant="contained" color="secondary">
-            Standard
-          </Button>
-        </Link>
-        <Link href="/organisationseinheiten/breakpoint" passHref>
-          <Button variant="contained" color="success">
-            mit breakpoints
-          </Button>
+          <Card
+            sx={{
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
+            }}
+          >
+            <CardActionArea>
+              <CardContent>
+                <Typography variant="h6" align="center" gutterBottom>
+                  Standard
+                </Typography>
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  Klassische Ansicht des Organigramms mit Fokus auf Einfachheit.
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
         </Link>
       </Box>
 
-      {/* OrganigrammPage */}
-      <OrganigrammPage />
+      <Suspense fallback={<div>Laden...</div>}>
+        {/* Organigramm-Ansicht */}
+        <OrganigrammPage />
+      </Suspense>
     </Box>
   );
 }

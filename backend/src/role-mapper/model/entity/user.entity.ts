@@ -37,7 +37,23 @@ class Student {
 
     @Prop({ type: mongoose.Schema.Types.ObjectId })
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    _id!: mongoose.Types.ObjectId;
+    _id?: mongoose.Types.ObjectId;
+}
+
+/**
+ * Definiert das Subschema für das Profil des Benutzers.
+ * Das Profil enthält Informationen wie Vorname und Nachname.
+ * Diese Informationen sind für alle Benutzer verfügbar.
+ *
+ * @property {string} firstName - Der Vorname des Benutzers.
+ * @property {string} lastName - Der Nachname des Benutzers.
+ */
+class Profile {
+    @Prop({ required: true })
+    firstName!: string;
+
+    @Prop({ required: true })
+    lastName!: string;
 }
 
 /**
@@ -117,6 +133,13 @@ export class User extends Document {
      * @required
      */
     validUntil!: Date;
+
+    /**
+     * Profil des Benutzers.
+     * @type {Profile}
+     * @required
+     */
+    profile!: Profile;
 
     /**
      * Optionales Studentenobjekt, falls der Benutzer ein Student ist.

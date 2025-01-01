@@ -10,49 +10,48 @@ import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import { JSXElementConstructor, useCallback, useEffect, useState } from 'react';
-import { fetchOrgUnits } from '../../app/organisationseinheiten/fetchkp';
 import { FacultyTheme } from '../../interfaces/facultyTheme';
+import { fetchAllOrgUnits } from '../../lib/api/orgUnit.api';
 import getFacultyTheme from '../../theme/fakultäten';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
-import { OrgUnit, OrgUnitDTO } from '../../types/orgUnit.type';
+import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
 import CustomTreeItem from '../customs/CustomTreeItem';
 import TransitionComponent from './TransitionComponent';
 
 interface OrgUnitRichTreeViewProps {
-  onSelect: (orgUnit: OrgUnitDTO) => void;
+  onSelect: (orgUnit: OrgUnit) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
+  expandedNodes?: string[] | undefined;
 }
 
 export default function OrgUnitsSpalte({
   onSelect,
   onRemove,
+  expandedNodes,
 }: OrgUnitRichTreeViewProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>();
 
   // Funktion zum Abrufen der Organisationseinheiten
   const loadOrgUnits = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await fetchOrgUnits(); // Serverseitige Funktion aufrufen
+      const data = await fetchAllOrgUnits();
       setOrgUnits(data);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Ein unbekannter Fehler ist aufgetreten.');
-      }
+      const errorMessage =
+        err instanceof Error ? err.message : 'Unbekannter Fehler.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
   const refetch = (orgUnitList: OrgUnit[]) => {
-    console.log('Refetching OrgUnits');
     setOrgUnits(orgUnitList);
   };
 
@@ -76,11 +75,8 @@ export default function OrgUnitsSpalte({
       </Box>
     );
 
-  // Prüfe, ob die Organisationseinheit ein Root-Knoten ist (z. B. IWI, EI, WW)
-  const isRootOrgUnit = (orgUnit: OrgUnit) =>
-    orgUnit?.alias || orgUnit?.kostenstelleNr;
-  const orgUnitList: OrgUnit[] = orgUnits;
-  const treeData = buildTree(orgUnitList, null);
+  // Baumstruktur für TreeView vorbereiten
+  const treeData = buildTree(orgUnits, null);
 
   // Baue die Tree-Datenstruktur
   function buildTree(
@@ -99,7 +95,7 @@ export default function OrgUnitsSpalte({
   // Funktion, um alle Kinder und Enkelkinder einer OrgUnit zu finden
   const getOrgUnitHierarchy = (
     orgUnits: OrgUnit[],
-    parentId: string | null,
+    parentId: string | undefined,
   ) => {
     // Finde alle OrgUnits, deren parentId mit der aktuellen parentId übereinstimmt
     const children = orgUnits.filter((unit) => unit.parentId === parentId);
@@ -118,44 +114,18 @@ export default function OrgUnitsSpalte({
 
   const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
     const selectedOrgUnit = orgUnits.find((unit) => unit._id === nodeId);
-
-    if (!selectedOrgUnit) {
-      console.error(`Organisationseinheit mit ID ${nodeId} nicht gefunden.`);
-      return;
-    }
-
-    const isRoot = isRootOrgUnit(selectedOrgUnit);
-    console.log(
-      'ist die orgUnit %s ein rootOrgUnit',
-      selectedOrgUnit.name,
-      isRoot,
-    );
-
-    // Prüfe, ob die ausgewählte Einheit Kinder hat
-    const unitHasChildren = hasChildren(orgUnits, selectedOrgUnit._id);
-    console.log(
-      'hat die OrgUnit %s kinder: ',
-      selectedOrgUnit.name,
-      unitHasChildren,
-    );
+    if (!selectedOrgUnit)
+      return console.error(`Unit mit ID ${nodeId} nicht gefunden.`);
 
     // Finde den Fakultäts-Parent
-    const facultyParent = findFacultyParent(orgUnits, selectedOrgUnit);
-    console.log(
-      'die OrgUnit %s ist in der Fakultät :',
-      selectedOrgUnit.name,
-      facultyParent,
-    );
-
-    if (!facultyParent) {
-      console.error('Fakultät für %s nicht gefunden.', selectedOrgUnit.name);
-      return;
-    }
-    console.log('Fakultät gefunden:', facultyParent);
+    const facultyParent = findFacultyParent(selectedOrgUnit);
+    if (!facultyParent)
+      return console.error(
+        `Keine Fakultät für ${selectedOrgUnit.name} gefunden.`,
+      );
 
     // Dynamische Farbänderung basierend auf Fakultät
     const newTheme = getFacultyTheme(facultyParent.name);
-    //const newTheme = getFacultyTheme(selectedOrgUnit.name);
 
     if (hasChildren(orgUnits, selectedOrgUnit._id)) {
       // Finde alle Kinder und Enkelkinder der ausgewählten Organisationseinheit
@@ -163,7 +133,6 @@ export default function OrgUnitsSpalte({
         orgUnits,
         selectedOrgUnit._id,
       );
-      console.log('orgUnitHierarchy', orgUnitHierarchy);
 
       // Das Theme für die gesamte Hierarchie anwenden
       orgUnitHierarchy.forEach((unit) => applyThemeToOrgUnit(unit, newTheme));
@@ -173,13 +142,7 @@ export default function OrgUnitsSpalte({
     }
 
     // Weitergabe der Auswahl an die Parent-Komponente
-    onSelect({
-      id: selectedOrgUnit._id,
-      alias: selectedOrgUnit.alias || '',
-      kostenstelleNr: selectedOrgUnit.kostenstelleNr || '',
-      name: selectedOrgUnit.name,
-      type: selectedOrgUnit.type,
-    });
+    onSelect(selectedOrgUnit);
   };
 
   // Funktion, um das Theme rekursiv auf alle Knoten anzuwenden
@@ -190,38 +153,46 @@ export default function OrgUnitsSpalte({
     unit.children?.forEach((child) => applyThemeToOrgUnit(child, theme));
   };
 
-  const findFacultyParent = (
-    orgUnits: OrgUnit[],
-    currentUnit: OrgUnit,
-  ): OrgUnit | null => {
+  const findFacultyParent = (unit: OrgUnit): OrgUnit | undefined => {
     // Wenn die aktuelle Einheit keine übergeordnete Einheit hat, ist sie selbst eine Fakultät
-    if (!currentUnit.parentId) {
-      return currentUnit;
-    }
+    if (!unit.parentId) return unit;
 
     // Finde die übergeordnete Einheit
-    const parentUnit = orgUnits.find(
-      (unit) => unit._id === currentUnit.parentId,
-    );
+    const parent = orgUnits.find((u) => u._id === unit.parentId);
 
-    if (!parentUnit) {
-      return null;
+    if (!parent) {
+      return undefined;
     }
 
     // Prüfe, ob der Parent "Fakultät" heißt
-    if (parentUnit.name === 'Fakultät') {
-      console.log('Fakultät gefunden:', parentUnit);
-      console.log('Aktuelle Einheit:', currentUnit);
-      return currentUnit;
-    }
-
     // Rekursiv nach oben gehen bis zur Wurzel-Fakultät
-    return findFacultyParent(orgUnits, parentUnit);
+    return parent?.name === 'Fakultät' ? unit : findFacultyParent(parent);
   };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250 }}>
       <RichTreeView
         items={treeData}
+        {...(expandedNodes &&
+          expandedNodes.length > 0 && {
+            expandedItems: expandedNodes, // Die offenen Knoten aus den Props
+          })}
+        {...(expandedNodes &&
+          expandedNodes.length > 0 && {
+            selectedItems: expandedNodes[expandedNodes.length - 1], // Der letzte offene Knoten
+          })}
+        // Wenn `expandedNodes` definiert ist, wird der Zustand kontrolliert
+        // {...(expandedNodes && {
+        //   expandedItems: expandedNodes.length > 0 ? expandedNodes : [],
+        //   selectedItems:
+        //     expandedNodes.length > 0
+        //       ? [expandedNodes[expandedNodes.length - 1]]
+        //       : [],
+        // })}
+
+        // // Unkontrollierter Zustand, wenn keine initialen `expandedNodes` vorhanden sind
+        // defaultExpandedItems={!expandedNodes ? [] : undefined}
+        // defaultSelectedItems={!expandedNodes ? [] : undefined}
         slots={{
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,

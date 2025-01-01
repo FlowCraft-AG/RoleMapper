@@ -12,11 +12,16 @@ type Query {
   getData(input: DataInput!): DataPayload!
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
   getSavedData(id: ID!): MandatePayload
+  getUsersByFunction(id: ID!): MandatePayload
+  getAncestors(id: ID): [OrgUnit]
 }
 
 type MandatePayload {
-  users: [String!]!
+  users: [User!]
   functionName: String
+  isImpliciteFunction: Boolean
+  _id: ID
+  orgUnit: String
 }
 
 # Abfrageparameter
@@ -177,6 +182,10 @@ type User {
   """
   active: Boolean
   """
+  Profil des Benutzers.
+  """
+  profile: Profile
+  """
   Details zum Studenten (optional).
   """
   student: Student
@@ -201,7 +210,7 @@ type Student {
   """
   Eindeutige ID des Studenten.
   """
-  _id: ID!
+  _id: ID
   """
   Studiengang des Studenten.
   """
@@ -240,6 +249,20 @@ type Employee {
   Abteilung, in der der Mitarbeiter tätig ist.
   """
   department: String!
+}
+
+"""
+Profilinformationen eines Benutzers.
+"""
+type Profile {
+  """
+  Vorname des Benutzers.
+  """
+  firstName: String
+  """
+  Nachname des Benutzers.
+  """
+  lastName: String
 }
 
 # Organisationseinheiten
@@ -503,6 +526,9 @@ enum FilterOptions {
   courseOfStudyName
   alias
   kostenstelleNr
+
+  firstName
+  lastName
 }
 
 type Mutation {
