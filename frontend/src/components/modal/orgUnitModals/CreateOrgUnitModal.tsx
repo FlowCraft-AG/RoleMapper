@@ -104,11 +104,10 @@ const CreateOrgUnitModal = ({
     onClose();
   };
 
-     const orgUnitLookup = (id: string) => {
-       const orgUnit = orgUnits.find((unit) => unit._id === id);
-       return orgUnit ? orgUnit.name : 'Unbekannt';
-     };
-
+  const orgUnitLookup = (id: string) => {
+    const orgUnit = orgUnits.find((unit) => unit._id === id);
+    return orgUnit ? orgUnit.name : 'Unbekannt';
+  };
 
   const orgUnitPathLookup = (id: string): string => {
     const path: string[] = [];

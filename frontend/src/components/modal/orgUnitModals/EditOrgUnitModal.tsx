@@ -40,7 +40,6 @@ const EditOrgUnitModal = ({
   });
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const [functionData, setFunctionData] = useState<FunctionString[]>([]);
-  const [functionLoading, setFunctionLoading] = useState(false);
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
 
   const logError = (message: string, error: unknown) => {
@@ -183,7 +182,6 @@ const EditOrgUnitModal = ({
             />
             <FunctionAutocomplete
               options={functionData}
-              loading={functionLoading}
               value={
                 functionData.find((func) => func._id === formData.supervisor) ||
                 null
