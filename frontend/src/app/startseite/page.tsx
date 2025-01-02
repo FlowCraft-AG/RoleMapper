@@ -7,20 +7,22 @@ import { useCallback, useEffect, useState } from 'react';
 
 export default function Startseite() {
   const { data: session, update, status } = useSession();
-  const [remainingTime, setRemainingTime] = useState<number | null>(null);
+  const [remainingTime, setRemainingTime] = useState<number | undefined>(
+    undefined,
+  );
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const router = useRouter();
 
   // Manuelle Token-Aktualisierung
   const handleRefreshToken = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setError(undefined);
 
     try {
       await update();
-      setError(null);
+      setError(undefined);
     } catch (err) {
       console.error('Fehler beim Aktualisieren des Tokens:', err);
       setError('Fehler beim Aktualisieren des Tokens');
@@ -38,7 +40,7 @@ export default function Startseite() {
 
   // Automatische Aktualisierung bei Ablauf
   useEffect(() => {
-    if (remainingTime !== null && remainingTime <= 10) {
+    if (remainingTime !== undefined && remainingTime <= 10) {
       handleRefreshToken();
     }
   }, [remainingTime, handleRefreshToken]);
@@ -50,7 +52,7 @@ export default function Startseite() {
       setRemainingTime(session.expires_in - now);
 
       const interval = setInterval(() => {
-        setRemainingTime((prev) => (prev !== null ? prev - 1 : null));
+        setRemainingTime((prev) => (prev !== undefined ? prev - 1 : undefined));
       }, 1000);
 
       return () => clearInterval(interval);
@@ -75,7 +77,8 @@ export default function Startseite() {
           </Typography>
           <Typography variant="body1" align="center" sx={{ mb: 2 }}>
             Dein Token läuft in{' '}
-            {remainingTime !== null ? `${remainingTime} Sekunden` : '...'} ab.
+            {remainingTime !== undefined ? `${remainingTime} Sekunden` : '...'}{' '}
+            ab.
           </Typography>
           {error && (
             <Typography color="error" align="center" sx={{ mb: 2 }}>

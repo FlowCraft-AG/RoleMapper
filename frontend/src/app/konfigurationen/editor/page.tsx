@@ -20,8 +20,8 @@ const defaultEnvVars = {
 
 export default function EnvEditorPage() {
   const [envVars, setEnvVars] = useState(defaultEnvVars);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const handleChange = (key: string, value: string) => {
     setEnvVars((prev) => ({ ...prev, [key]: value }));
@@ -37,14 +37,14 @@ export default function EnvEditorPage() {
 
       if (response.ok) {
         setMessage('Umgebungsvariablen erfolgreich gespeichert.');
-        setError(null);
+        setError(undefined);
       } else {
         const result = await response.json();
-        setMessage(null);
+        setMessage(undefined);
         setError(result.message || 'Fehler beim Speichern.');
       }
     } catch (err) {
-      setMessage(null);
+      setMessage(undefined);
       setError('Netzwerkfehler: ' + err);
     }
   };

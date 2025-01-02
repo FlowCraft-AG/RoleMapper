@@ -1,5 +1,3 @@
-// components/Item.tsx
-
 import React from 'react';
 
 interface ItemProps {

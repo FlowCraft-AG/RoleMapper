@@ -162,7 +162,6 @@ jobs:
             -t flowcraft/role-mapper-frontend:2024.12.24 \
             .
 
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:

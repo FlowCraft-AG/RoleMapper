@@ -9,6 +9,10 @@ export const GET_ROLES = gql`
           functionName
           user {
             userId
+            profile {
+              firstName
+              lastName
+            }
           }
         }
       }

@@ -1,3 +1,10 @@
+/**
+ * @file ConfirmDeleteModal.tsx
+ * @description Modal zur Bestätigung der Löschung einer Organisationseinheit und ihrer Untereinheiten.
+ *
+ * @module ConfirmDeleteModal
+ */
+
 import {
   Box,
   Button,
@@ -11,15 +18,35 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { ItemToRender } from '../customs/CustomTreeItem';
+import { ItemToRender } from '../../customs/CustomTreeItem';
 
+/**
+ * Props für die `ConfirmDeleteModal`-Komponente.
+ */
 interface ConfirmDeleteModalProps {
-  open: boolean;
-  onClose: () => void;
-  childrenToDelete: ItemToRender[];
-  onConfirm: () => void;
+  open: boolean; // Gibt an, ob das Modal geöffnet ist.
+  onClose: () => void; // Funktion zum Schließen des Modals.
+  childrenToDelete: ItemToRender[]; // Liste der untergeordneten Elemente, die gelöscht werden.
+  onConfirm: () => void; // Funktion, die aufgerufen wird, wenn der "Weiter"-Button geklickt wird.
 }
 
+/**
+ * Modal zur Bestätigung der Löschung einer Organisationseinheit und ihrer Untereinheiten.
+ *
+ * @component
+ * @param {ConfirmDeleteModalProps} props - Die Eigenschaften der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <ConfirmDeleteModal
+ *   open={true}
+ *   onClose={() => console.log('Modal geschlossen')}
+ *   onConfirm={() => console.log('Löschung bestätigt')}
+ *   childrenToDelete={[
+ *     { itemId: '1', label: 'Untereinheit 1', children: [{ itemId: '2', label: 'Untereinheit 2' }] },
+ *   ]}
+ * />
+ */
 function ConfirmDeleteModal({
   open,
   onClose,
@@ -29,7 +56,11 @@ function ConfirmDeleteModal({
   // Zustand, um die expandierten Kinder zu verfolgen
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
-  // Toggle-Funktion für das Auf- und Zuklappen der Kinder
+  /**
+   * Toggle-Funktion zum Erweitern oder Reduzieren von Einträgen.
+   *
+   * @param {string} itemId - Die ID des Eintrags.
+   */
   const handleToggle = (itemId: string) => {
     setExpandedItems((prev) =>
       prev.includes(itemId)
