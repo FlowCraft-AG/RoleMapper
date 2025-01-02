@@ -1,3 +1,10 @@
+/**
+ * @file DeleteConfirmationModal.tsx
+ * @description Modal zur Bestätigung der Löschung einer Organisationseinheit und ihrer Untereinheiten.
+ *
+ * @module DeleteConfirmationModal
+ */
+
 import {
   Box,
   Button,
@@ -7,7 +14,7 @@ import {
   Snackbar,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import { removeFunction } from '../../../lib/api/function.api';
 import { removeOrgUnit } from '../../../lib/api/orgUnit.api';
 import { FunctionString } from '../../../types/function.type';
@@ -15,15 +22,20 @@ import { OrgUnit } from '../../../types/orgUnit.type';
 import { ItemToRender } from '../../customs/CustomTreeItem';
 
 interface DeleteConfirmationModalProps {
-  open: boolean;
-  onClose: () => void;
-  itemId: string;
-  childrenToDelete: ItemToRender[];
-  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste
-  functionList: FunctionString[];
-  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
+  open: boolean; // Ob das Modal geöffnet ist.
+  onClose: () => void; // Funktion zum Schließen des Modals.
+  itemId: string; // ID der Organisationseinheit, die gelöscht werden soll.
+  childrenToDelete: ItemToRender[]; // Untergeordnete Organisationseinheiten.
+  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheitenliste.
+  functionList: FunctionString[]; // Liste der zugehörigen Funktionen.
+  onRemove: (ids: string[]) => void; // Callback mit allen gelöschten IDs.
 }
 
+/**
+ * Modal zur Bestätigung der Löschung einer Organisationseinheit und ihrer Untereinheiten.
+ *
+ * @component
+ */
 const DeleteConfirmationModal = ({
   open,
   onClose,
@@ -32,26 +44,38 @@ const DeleteConfirmationModal = ({
   refetch,
   functionList,
   onRemove,
-}: DeleteConfirmationModalProps) => {
+}: DeleteConfirmationModalProps): JSX.Element => {
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
+  /**
+   * Funktion zum Entfernen einer Funktion.
+   * @param func Die zu entfernende Funktion.
+   */
   const handleRemoveFunction = async (func: FunctionString) => {
-    const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
-    if (success) {
-      return success;
-    } else {
+    try {
+      const success = await removeFunction(func._id, func.orgUnit);
+      if (!success) {
+        throw new Error('Fehler beim Entfernen der Funktion.');
+      }
+    } catch (error) {
       setSnackbar({
         open: true,
-        message: 'Fehler beim Entfernen der Funktion.',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Fehler beim Entfernen der Funktion.',
       });
     }
   };
 
-  // Rekursive Funktion, um alle IDs (inkl. Kinder) zu sammeln
+  /**
+   * Rekursive Funktion zum Sammeln aller IDs (inkl. Kinder).
+   * @param item Das aktuelle Element.
+   */
   const collectAllIds = (item: ItemToRender): string[] => {
     let ids = [item.itemId];
-    if (item.children && item.children.length > 0) {
+    if (item.children) {
       for (const child of item.children) {
         ids = ids.concat(collectAllIds(child));
       }
@@ -59,64 +83,51 @@ const DeleteConfirmationModal = ({
     return ids;
   };
 
+  /**
+   * Rekursive Funktion zum Entfernen einer Organisationseinheit und ihrer Kinder.
+   * @param item Das aktuelle Element.
+   */
   const removeOrgUnitRecursively = async (item: ItemToRender) => {
-    // Lösche alle Kinder rekursiv
-    if (item.children && item.children.length > 0) {
+    if (item.children) {
       for (const child of item.children) {
-        await removeOrgUnitRecursively(child); // Rekursiver Aufruf für jedes Kind
+        await removeOrgUnitRecursively(child);
       }
     }
-
-    // Lösche das aktuelle Element
     await removeOrgUnit(item.itemId);
   };
 
+  /**
+   * Hauptfunktion zum Löschen der Organisationseinheit.
+   */
   const handleDelete = async () => {
     setLoading(true);
     try {
-      // Alle zu löschenden IDs sammeln
       const allIds = [itemId, ...childrenToDelete.flatMap(collectAllIds)];
 
-      // Funktionen entfernen
-      if (functionList.length > 0) {
-        for (const func of functionList) {
-          await handleRemoveFunction(func);
-        }
+      for (const func of functionList) {
+        await handleRemoveFunction(func);
       }
 
-      // Lösche alle Kinder
-      for (const childId of childrenToDelete) {
-        await removeOrgUnitRecursively(childId); // Lösche die Kinder
+      for (const child of childrenToDelete) {
+        await removeOrgUnitRecursively(child);
       }
 
-      // Lösche die Hauptorganisationseinheit
-      const newOrgUnitList = await removeOrgUnit(itemId);
-      await refetch(newOrgUnitList); // Lade die neuesten Daten
-      onRemove(allIds); // Übergebe alle IDs an `onRemove`
-      onClose(); // Schließe das Modal
+      const updatedOrgUnits = await removeOrgUnit(itemId);
+      refetch(updatedOrgUnits);
+      onRemove(allIds);
+      onClose();
     } catch (error) {
-      if (error instanceof Error) {
-        setSnackbar({
-          open: true,
-          message: error.message,
-        });
-      } else {
-        setSnackbar({
-          open: true,
-          message: 'Fehler beim Löschen der Organisationseinheit.',
-        });
-      }
+      setSnackbar({
+        open: true,
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Fehler beim Löschen der Organisationseinheit.',
+      });
     } finally {
       setLoading(false);
     }
   };
-
-  if (loading)
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
 
   return (
     <>
@@ -130,11 +141,10 @@ const DeleteConfirmationModal = ({
       <Modal
         open={open}
         onClose={onClose}
-        disableEscapeKeyDown={false}
+        aria-labelledby="delete-confirmation-title"
+        aria-describedby="delete-confirmation-description"
         closeAfterTransition
-        BackdropProps={{
-          timeout: 500,
-        }}
+        BackdropProps={{ timeout: 500 }}
       >
         <Fade in={open}>
           <Box
@@ -147,23 +157,45 @@ const DeleteConfirmationModal = ({
               borderRadius: 2,
               p: 4,
               width: 300,
+              boxShadow: 24,
             }}
           >
-            <Typography variant="h6">Löschen bestätigen</Typography>
-            <Typography>
-              Möchten Sie diese Organisationseinheit wirklich löschen? Alle
-              Untereinheiten werden ebenfalls gelöscht.
-            </Typography>
-            <Box
-              sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}
-            >
-              <Button variant="outlined" onClick={onClose}>
-                Abbrechen
-              </Button>
-              <Button variant="contained" color="error" onClick={handleDelete}>
-                Löschen
-              </Button>
-            </Box>
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <>
+                <Typography
+                  id="delete-confirmation-title"
+                  variant="h6"
+                  sx={{ mb: 2 }}
+                >
+                  Löschung bestätigen
+                </Typography>
+                <Typography id="delete-confirmation-description" sx={{ mb: 3 }}>
+                  Möchten Sie diese Organisationseinheit wirklich löschen? Alle
+                  Untereinheiten werden ebenfalls gelöscht.
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Button variant="outlined" onClick={onClose}>
+                    Abbrechen
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleDelete}
+                  >
+                    Löschen
+                  </Button>
+                </Box>
+              </>
+            )}
           </Box>
         </Fade>
       </Modal>

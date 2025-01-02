@@ -1,3 +1,11 @@
+/**
+ * @file OrganigrammPage.tsx
+ * @description Stellt die Organigramm-Seite der Hochschule Karlsruhe (HSKA) dar. Diese Seite erlaubt es,
+ * Organisationseinheiten, Funktionen und Benutzer hierarchisch zu durchsuchen und auszuwählen.
+ *
+ * @module OrganigrammPage
+ */
+
 'use client';
 
 import { Box, Modal, Typography, useTheme } from '@mui/material';
@@ -14,37 +22,44 @@ import { FunctionString, FunctionUser } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { User } from '../../types/user.type';
 
+/**
+ * Hauptkomponente für die Organigramm-Seite.
+ *
+ * Diese Komponente implementiert:
+ * - Auswahl von Organisationseinheiten, Funktionen und Benutzern
+ * - Dynamische Anzeige von Spalten für Organisationseinheiten, Funktionen, Benutzer und Benutzerdetails
+ * - Modal-basierte Benutzerinformationen
+ *
+ * @component
+ * @returns {JSX.Element} Die JSX-Struktur der Seite.
+ *
+ * @example
+ * Verwendung in einer Next.js-App
+ * <OrganigrammPage />
+ */
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
-  const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | undefined>(
-    undefined,
-  );
-  const [selectedRootOrgUnit, setSelectedRootOrgUnit] = useState<
-    OrgUnit | undefined
-  >(undefined);
-
-  const [selectedFunctionId, setSelectedFunctionId] = useState<
-    string | undefined
-  >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<FunctionUser>();
-
-  const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
-    undefined,
-  );
-  const [isSingleUser, setIsSingleUser] = useState<boolean>(false);
+  // Zustand für die Auswahl
+  const [state, setState] = useState({
+    selectedOrgUnit: undefined as OrgUnit | undefined,
+    selectedRootOrgUnit: undefined as OrgUnit | undefined,
+    selectedFunctionId: undefined as string | undefined,
+    selectedFunction: undefined as FunctionUser | undefined,
+    selectedUserId: undefined as string | undefined,
+    expandedNodes: [] as string[],
+    organizationUsers: [] as User[],
+    isSingleUser: false,
+    isImplicitFunction: false,
+  });
 
   // Benutzerdaten
-  const [combinedUsers, setCombinedUsers] = useState<User[]>([]);
-  const [isImpliciteFunction, setIsImpliciteFunction] =
-    useState<boolean>(false);
-
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
+  // URL-Parameter
   const searchParams = useSearchParams();
   const openNodesParam = searchParams.get('openNodes') || '';
   const parentOrgUnitIdParam = searchParams.get('parentOrgUnitId') || '';
-  const [expandedNodes, setExpandedNodes] = useState<string[] | undefined>([]);
 
   const resetUrlParams = () => {
     const currentUrl = new URL(window.location.href);
@@ -54,35 +69,46 @@ export default function OrganigrammPage() {
     window.history.replaceState(null, '', currentUrl.toString());
   };
 
-  const loadS = useCallback(async () => {
+  /**
+   * Initialisiert die Seite basierend auf URL-Parametern.
+   *
+   * @function initializePageState
+   * @async
+   * @returns {Promise<void>}
+   */
+  const initializePageState = useCallback(async () => {
     try {
-      if (openNodesParam) {
-        const openNodes = openNodesParam.split(',').filter((id) => id);
-        setExpandedNodes(openNodes);
-      }
+      const expandedNodes = openNodesParam.split(',').filter(Boolean);
+      const selectedOrgUnit = parentOrgUnitIdParam
+        ? await getOrgUnitById(parentOrgUnitIdParam)
+        : undefined;
 
-      if (parentOrgUnitIdParam) {
-        const orgUnit = await getOrgUnitById(parentOrgUnitIdParam);
-        if (orgUnit) setSelectedOrgUnit(orgUnit);
-      }
-
-      setSelectedFunctionId(undefined);
+      setState((prev) => ({
+        ...prev,
+        expandedNodes,
+        selectedOrgUnit,
+        selectedFunctionId: undefined,
+      }));
     } catch (error) {
       console.error('Fehler beim Initialisieren der Daten:', error);
     }
   }, [openNodesParam, parentOrgUnitIdParam]);
 
-  // URL-Parameter verarbeiten und Zustände aktualisieren
   useEffect(() => {
-    loadS();
-  }, [loadS, openNodesParam, parentOrgUnitIdParam]);
+    initializePageState();
+  }, [initializePageState]);
 
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
-  }, [setFacultyTheme, theme.palette]);
+  }, [theme.palette]);
 
-  // Mitglieder laden
-  const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
+  /**
+   * Lädt Mitglieder einer Organisationseinheit.
+   */
+  const loadOrganizationMembers = async (
+    alias: string,
+    kostenstelleNr: string,
+  ) => {
     try {
       return await fetchMitglieder(alias, kostenstelleNr);
     } catch (error) {
@@ -91,76 +117,91 @@ export default function OrganigrammPage() {
     }
   };
 
-  // Organisationseinheit auswählen
+  /**
+   * Handhabt die Auswahl einer Organisationseinheit.
+   */
   const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
-    setSelectedOrgUnit(orgUnit);
-    setSelectedFunctionId(undefined); // Reset selection
-    setSelectedUserId(undefined); // Reset selection
-    setSelectedRootOrgUnit(undefined);
-    setExpandedNodes(undefined);
+    const users =
+      orgUnit.alias && orgUnit.kostenstelleNr
+        ? await loadOrganizationMembers(orgUnit.alias, orgUnit.kostenstelleNr)
+        : [];
 
-    if (orgUnit.alias || orgUnit.kostenstelleNr) {
-      orgUnit.hasMitglieder = true;
-      setSelectedRootOrgUnit(orgUnit);
-      setCombinedUsers(
-        await getMitgliederIds(orgUnit.alias!, orgUnit.kostenstelleNr!),
-      );
-    }
+    const root = orgUnit.alias || orgUnit.kostenstelleNr ? orgUnit : undefined;
 
-    resetUrlParams(); // URL-Parameter zurücksetzen
+    setState({
+      ...state,
+      selectedOrgUnit: orgUnit,
+      selectedRootOrgUnit: root,
+      selectedFunctionId: undefined,
+      selectedUserId: undefined,
+      expandedNodes: [],
+      organizationUsers: users,
+    });
+
+    resetUrlParams();
   };
 
-  // Funktion auswählen
-  const handleFunctionSelect = (functionInfo: FunctionString) => {
-    setSelectedFunctionId(functionInfo._id);
-    //setSelectedFunction(functionInfo);
-    setSelectedUserId(undefined); // Reset selection
-    setIsImpliciteFunction(functionInfo.isImpliciteFunction);
-    setIsSingleUser(functionInfo.isSingleUser);
+  /**
+   * Handhabt die Auswahl einer Funktion.
+   */
+  const handleFunctionSelect = (func: FunctionString) => {
+    setState({
+      ...state,
+      selectedFunctionId: func._id,
+      isImplicitFunction: func.isImpliciteFunction,
+      isSingleUser: func.isSingleUser,
+      selectedUserId: undefined,
+    });
+  };
+
+  /**
+   * Handhabt die Auswahl eines Benutzers.
+   */
+  const handleUserSelect = (userId: string) => {
+    setState({ ...state, selectedUserId: userId });
+  };
+
+  /**
+   * Löscht die Auswahl von Benutzern oder Funktionen.
+   */
+  const handleRemoveSelection = (ids: string[]) => {
+    setState({
+      ...state,
+      selectedUserId: ids.includes(state.selectedUserId!)
+        ? undefined
+        : state.selectedUserId,
+      selectedFunctionId: ids.includes(state.selectedFunctionId!)
+        ? undefined
+        : state.selectedFunctionId,
+      selectedOrgUnit: ids.includes(state.selectedOrgUnit?._id || '')
+        ? undefined
+        : state.selectedOrgUnit,
+    });
   };
 
   // Mitgliederansicht aktivieren
-  const handleMitgliederClick = () => {
-    setSelectedFunctionId('mitglieder'); // Reset functions
-    setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
-    setSelectedUserId(undefined); // Reset users
-    setIsImpliciteFunction(false);
+    const handleMitgliederClick = () => {
+      setState({
+        ...state,
+          selectedFunctionId: 'mitglieder',
+        selectedFunction: createMembersFunction(state.selectedOrgUnit?._id),
+        isImplicitFunction: false,
+          isSingleUser: false,
+        selectedUserId: undefined,
+      });
   };
 
-  // Benutzer auswählen
-  const handleUserSelect = (userId: string) => {
-    setSelectedUserId(userId);
-  };
-
-  // Benutzer oder Funktion entfernen
-  const handleRemove = (ids: string[]) => {
-    if (ids.includes(selectedUserId!)) {
-      setSelectedUserId(undefined);
-    }
-    if (ids.includes(selectedFunctionId!)) {
-      setSelectedFunctionId(undefined);
-      setSelectedFunction(undefined);
-      setSelectedUserId(undefined);
-    }
-    if (ids.includes(selectedOrgUnit?._id || '')) {
-      setSelectedOrgUnit(undefined);
-      setSelectedFunctionId(undefined);
-      setSelectedFunction(undefined);
-      setSelectedUserId(undefined);
-    }
-  };
-
-  // Mitgliederfunktion generieren
-  const mitglied = (orgUnitId: string | undefined) => {
-    return {
-      _id: 'mitglieder',
-      functionName: 'Mitglieder',
-      orgUnit: orgUnitId ?? '',
-      users: combinedUsers,
-      isImpliciteFunction: false,
-      isSingleUser: false,
-    } as FunctionUser;
-  };
+  /**
+   * Erzeugt die Mitglieder-Funktion für eine Organisationseinheit.
+   */
+  const createMembersFunction = (orgUnitId?: string): FunctionUser => ({
+    _id: 'mitglieder',
+    functionName: 'Mitglieder',
+    orgUnit: orgUnitId ?? '',
+    users: state.organizationUsers,
+    isImpliciteFunction: false,
+    // isSingleUser: false,
+  });
 
   return (
     <Box
@@ -207,13 +248,13 @@ export default function OrganigrammPage() {
         </Typography>
         <OrgUnitsSpalte
           onSelect={async (orgUnit) => handleOrgUnitSelect(orgUnit)}
-          onRemove={handleRemove}
-          expandedNodes={expandedNodes}
+          onRemove={handleRemoveSelection}
+          expandedNodes={state.expandedNodes}
         />
       </Box>
 
       {/* Zweite Spalte: Funktionen */}
-      {selectedOrgUnit && (
+      {state.selectedOrgUnit && (
         <Box
           sx={{
             flexShrink: 1,
@@ -246,17 +287,17 @@ export default function OrganigrammPage() {
             Funktionen
           </Typography>
           <FunctionsSpalte
-            orgUnit={selectedOrgUnit}
+            orgUnit={state.selectedOrgUnit}
             onSelect={handleFunctionSelect}
-            rootOrgUnit={selectedRootOrgUnit}
+            rootOrgUnit={state.selectedRootOrgUnit}
             handleMitgliederClick={handleMitgliederClick}
-            onRemove={handleRemove}
+            onRemove={handleRemoveSelection}
           />
         </Box>
       )}
 
       {/* Dritte Spalte: Benutzer-IDs */}
-      {selectedFunctionId && (
+      {state.selectedFunctionId && (
         <Box
           sx={{
             flexShrink: 1,
@@ -288,20 +329,20 @@ export default function OrganigrammPage() {
             Benutzer
           </Typography>
           <UsersSpalte
-            selectedFunctionId={selectedFunctionId}
-            selectedMitglieder={selectedFunction}
+            selectedFunctionId={state.selectedFunctionId}
+            selectedMitglieder={state.selectedFunction}
             onSelectUser={handleUserSelect}
-            onRemove={handleRemove}
-            isImpliciteFunction={isImpliciteFunction}
-            isSingleUser={isSingleUser}
+            onRemove={handleRemoveSelection}
+            isImpliciteFunction={state.isImplicitFunction}
+            isSingleUser={state.isSingleUser}
           />
         </Box>
       )}
 
       {/* Vierte Spalte: Benutzerinformationen als Modal */}
       <Modal
-        open={Boolean(selectedUserId)}
-        onClose={() => handleUserSelect('')}
+        open={Boolean(state.selectedUserId)}
+        onClose={() => setState({ ...state, selectedUserId: undefined })}
         aria-labelledby="user-info-modal"
         aria-describedby="user-info-details"
       >
@@ -319,7 +360,7 @@ export default function OrganigrammPage() {
             p: 4,
           }}
         >
-          {selectedUserId && <UserInfoSpalte userId={selectedUserId} />}
+          {state.selectedUserId && <UserInfoSpalte userId={state.selectedUserId} />}
         </Box>
       </Modal>
     </Box>

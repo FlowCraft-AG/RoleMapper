@@ -1,3 +1,12 @@
+/**
+ * @file Page.tsx
+ * @description Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HSKA).
+ * Diese Seite bietet Navigation zu verschiedenen Ansichten des Organigramms
+ * und zeigt eine eingebettete Organigramm-Komponente.
+ *
+ * @module OrganisationseinheitenPage
+ */
+
 import {
   Box,
   Card,
@@ -10,6 +19,17 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import OrganigrammPage from './orgUnitPage';
 
+/**
+ * Metadata für die Organisationseinheiten-Seite.
+ * Wird von Next.js genutzt, um Titel und Beschreibung der Seite festzulegen.
+ *
+ * @constant
+ * @type {Metadata}
+ * @property {string} title - Der Titel der Seite.
+ * @property {string} description - Beschreibung der Seite.
+ * @property {object} icons - Icon-Konfiguration für die Seite.
+ */
+
 export const metadata: Metadata = {
   title: 'Organisationseinheiten',
   description:
@@ -19,6 +39,24 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Hauptkomponente der Organisationseinheiten-Seite.
+ *
+ * Diese Komponente enthält:
+ * - Einen Header mit dem Titel der Seite
+ * - Eine Navigation als Karten mit Links zu verschiedenen Ansichten des Organigramms
+ * - Eine eingebettete Organigramm-Komponente, die lazy-loaded ist
+ *
+ * @async
+ * @function
+ * @returns {JSX.Element} Die JSX-Struktur der Seite.
+ *
+ * @example
+ * Aufruf in Next.js
+ * export default function App() {
+ *   return <OrganisationseinheitenPage />;
+ * }
+ */
 export default async function HKAPage() {
   return (
     <Box sx={{ padding: 4 }}>
@@ -43,6 +81,7 @@ export default async function HKAPage() {
           marginBottom: 4,
         }}
       >
+        {/* Link zur interaktiven Slider-Darstellung */}
         <Link href="/organisationseinheiten/slider" passHref>
           <Card
             sx={{
@@ -68,6 +107,7 @@ export default async function HKAPage() {
           </Card>
         </Link>
 
+        {/* Link zur Standard-Darstellung */}
         <Link href="/organisationseinheiten/standard" passHref>
           <Card
             sx={{
@@ -93,6 +133,7 @@ export default async function HKAPage() {
         </Link>
       </Box>
 
+      {/* Lazy-loaded Organigramm-Komponente */}
       <Suspense fallback={<div>Laden...</div>}>
         {/* Organigramm-Ansicht */}
         <OrganigrammPage />
