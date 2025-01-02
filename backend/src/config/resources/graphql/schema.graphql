@@ -427,7 +427,7 @@ type ProcessRole {
   """
   Eindeutiger Schlüssel der Rolle.
   """
-  roleKey: String!
+  roleName: String!
   """
   Eindeutige ID der Rolle.
   """

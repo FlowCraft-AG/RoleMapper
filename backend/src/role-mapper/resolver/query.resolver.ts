@@ -77,8 +77,8 @@ export class QueryResolver {
         const { entity, filter, pagination, sort } = input; // Extrahiere Eingabewerte
 
         // Abruf der Rohdaten mit den angegebenen Filtern und Paginierung
-        const rawData = await this.#service.findData(entity, filter, pagination, sort);
-        if (rawData === undefined || rawData.length === 0) {
+        const data = await this.#service.findData(entity, filter, pagination, sort);
+        if (data === undefined || data.length === 0) {
             this.#logger.warn('Keine Daten gefunden für die Anfrage.');
             return {
                 data: [],
@@ -86,20 +86,12 @@ export class QueryResolver {
             };
         }
 
-        // Anwendung der Paginierung, wenn angegeben
-        const paginatedData = pagination
-            ? rawData.slice(
-                  (pagination.offset ?? 0) || 0,
-                  ((pagination.offset ?? 0) || 0) + (pagination.limit ?? 0),
-              )
-            : rawData;
-
-        this.#logger.debug('getEntityData: data=%o', paginatedData);
+        this.#logger.debug('getEntityData: data=%o', data);
 
         // Rückgabe der strukturierten Daten mit Paginierung und Gesamtzahl
         return {
-            data: paginatedData, // Typumwandlung
-            totalCount: rawData.length,
+            data, // Typumwandlung
+            totalCount: data.length,
         };
     }
 

@@ -15,7 +15,7 @@ import { InvalidOperatorException } from '../error/exceptions.js';
 import { EntityCategoryType, EntityType } from '../model/entity/entities.entity.js';
 import { MandateDocument, Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit, OrgUnitDocument } from '../model/entity/org-unit.entity.js';
-import { Process, ProcessDocument } from '../model/entity/process.entity.js';
+import { Process, ProcessDocument, ShortRole } from '../model/entity/process.entity.js';
 import { Role, RoleDocument } from '../model/entity/roles.entity.js';
 import { User, UserDocument } from '../model/entity/user.entity.js';
 import { FilterInput } from '../model/input/filter.input.js';
@@ -77,60 +77,65 @@ export class ReadService {
         this.#logger.debug('findProcessRoles: processId=%s, userId=%s', processId, userId);
 
         // Abrufen des Prozesses aus der Datenbank anhand der Prozess-ID
-        const process = (await this.#modelMap.PROCESSES?.findOne({ processId }).exec()) as
-            | Process
-            | undefined;
-        if (!process?.roles) {
+        const process: Process = await this.#modelMap.PROCESSES?.findOne({ processId }).exec();
+        if (process?.roles === undefined) {
             throw new NotFoundException(`Keine Rollen für diesen Prozess gefunden. ${processId}`);
         }
 
         // Überprüfen, ob der angegebene Benutzer existiert
         if (!(await this.#modelMap.USERS.exists({ userId }))) {
-            throw new NotFoundException(`Keinen Benutzer gefunden mit der userId: ${userId}`);
+            throw new NotFoundException(
+                `findProcessRoles: Keinen Benutzer gefunden mit der userId: ${userId}`,
+            );
         }
 
-        // Abrufen der Rollen-IDs aus dem Prozess
-        const roleIds = process.roles.flatMap(
-            (element): string[] => Object.values(element) as string[],
-        );
-        this.#logger.debug('roleIds=%o', roleIds);
+        // Alle Rollen-IDs aus dem Prozess extrahieren
+        const roleIds = process.roles.flatMap((role: ShortRole) => role.roleId);
+        this.#logger.debug('findProcessRoles: Rollen-IDs aus Prozess: %o', roleIds);
 
         // Abrufen der Rollen aus der Datenbank anhand der IDs
-        const roles = await this.#modelMap.ROLES.find({ roleId: { $in: roleIds } }).exec();
+        const roles: Role[] = await this.#modelMap.ROLES.find({ roleId: { $in: roleIds } }).exec();
+        if (roles?.length === 0) {
+            throw new NotFoundException(
+                `Keine Rolleninformationen gefunden für IDs: ${roleIds.join(', ')}`,
+            );
+        }
         this.#logger.debug('findProcessRoles: roles=%o', roles);
 
-        // Zuordnen der Rollen zu einer Map, um sie schnell abzurufen
-        const rolesMap = new Map(roles.map(({ roleId, query }) => [roleId, query]));
-        this.#logger.debug('findProcessRoles: rolesMap=%o', rolesMap);
+        // // Zuordnen der Rollen zu einer Map, um sie schnell abzurufen
+        // const rolesMap = new Map(roles.map((role) => [role.roleId, role.query]));
+        // this.#logger.debug('findProcessRoles: rolesMap=%o', rolesMap);
 
-        if (rolesMap.size === 0) {
-            this.#logger.warn('findProcessRoles: Keine Rollen gefunden für: %o', roleIds);
-        }
+        // if (rolesMap.size === 0) {
+        //     this.#logger.warn('findProcessRoles: Keine Rollen gefunden für: %o', roleIds);
+        // }
 
-        // Verarbeitung der Rollen und der zugehörigen Benutzer
+        // Rollen und zugehörige Benutzer mit Aggregations-Pipeline verarbeiten
         const results = await Promise.all(
-            process.roles.map(async (roleObject: any) => {
-                // eslint-disable-next-line @stylistic/operator-linebreak
-                const [roleKey, roleId] =
-                    Object.entries((roleObject as Record<string, unknown>) ?? {})[0] ?? [];
-                this.#logger.debug('findProcessRoles: roleKey=%s, roleId=%s', roleKey, roleId);
-
-                // Überprüfen, ob die Rolle gültig ist
-                if (roleKey === null || roleId === undefined || !rolesMap.has(roleId)) {
-                    this.#logger.warn('Ungültige oder fehlende Rolle: %o', roleObject);
-                    return;
-                }
+            roles.map(async (role) => {
+                this.#logger.debug('Verarbeite Rolle: %o', role);
 
                 try {
-                    // Ausführen einer Aggregationsabfrage, um die Benutzer für die Rolle zu finden
-                    const queryPipeline = rolesMap.get(roleId)! as any[];
+                    // Abfrage-Pipeline aus der Rolle ausführen
+                    const queryPipeline = role.query ?? [];
                     const users = await this.#modelMap.MANDATES.aggregate(queryPipeline)
-                        .option({ let: { userId } })
+                        .option({ let: { userId } }) // Lokale Variable für die Pipeline
                         .exec();
-                    return { roleName: roleKey, users };
+
+                    // Ergebnisstruktur für die Rolle erstellen
+                    return {
+                        roleName: role.name,
+                        roleId: role.roleId,
+                        users,
+                    };
                 } catch (error) {
-                    this.#logger.error('Fehler bei Rolle %s: %o', roleKey, error);
-                    return;
+                    this.#logger.error(
+                        'Fehler bei der Verarbeitung der Rolle: %s, Rolle-ID: %s. Fehler: %o',
+                        role.name,
+                        role.roleId,
+                        error,
+                    );
+                    return; // Fehlerhafte Rolle überspringen
                 }
             }),
         );
