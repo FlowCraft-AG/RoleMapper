@@ -137,7 +137,8 @@ export default function Navigation() {
   const navLinks = [
     { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
-    { href: '/rollen', label: 'Rollen' },
+    { href: '/prozesse', label: 'Prozesse' },
+    { href: '/rollen', label: 'Ermittle Rollen' },
     { href: '/konfigurationen', label: 'Konfigurationen' },
   ];
 
