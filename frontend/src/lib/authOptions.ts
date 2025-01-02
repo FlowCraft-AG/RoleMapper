@@ -5,24 +5,37 @@ import KeycloakProvider, {
   KeycloakProfile,
 } from 'next-auth/providers/keycloak';
 import { OAuthConfig } from 'next-auth/providers/oauth';
-import { LOGIN, REFRESH_TOKEN } from '../graphql/mutations/auth';
+import { LOGIN, REFRESH_TOKEN } from '../graphql/auth/auth';
 import { ENV, logEnvironmentVariables } from '../utils/env';
 import { getLogger } from '../utils/logger';
 import client from './apolloClient';
 
 const logger = getLogger('authOptions');
 
+// Logge die Umgebungsvariablen (nützlich für Debugging und Validierung)
 logEnvironmentVariables();
-// validateEnvironmentVariables();
 
 export const authOptions: AuthOptions = {
+  // Geheimnis für die Token-Generierung
   secret: ENV.NEXTAUTH_SECRET || 'development-secret',
+
+  // Authentifizierungsanbieter
   providers: [
+    /**
+     * Keycloak-Provider:
+     * Ermöglicht OAuth-basierte Authentifizierung über Keycloak.
+     */
     KeycloakProvider({
       clientId: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
       clientSecret: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_SECRET as string,
       issuer: ENV.NEXT_PUBLIC_KEYCLOAK_ISSUER as string,
     }),
+    /**
+     * Credentials-Provider:
+     * Ermöglicht benutzerdefinierte Anmeldung mit Benutzername und Passwort.
+     *
+     * (ebenfalls mit keycoak im Backend)
+     */
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
@@ -52,7 +65,12 @@ export const authOptions: AuthOptions = {
     }),
   ],
 
+  // Callbacks für Token-Verarbeitung, Session-Management und Redirects
   callbacks: {
+    /**
+     * JWT-Callback:
+     * Verarbeitet die JWT-Daten bei Anmeldung, Token-Erneuerung und Sitzungsverwaltung.
+     */
     async jwt({ token, user, account, trigger }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
       logger.debug('JWT: %o', token);
@@ -91,7 +109,7 @@ export const authOptions: AuthOptions = {
         };
       }
 
-      // Trigger für manuelle oder automatische Aktualisierung
+      // Token-Aktualisierung auslösen, wenn Ablaufzeit erreicht ist
       if (
         trigger === 'update' || // expliziter Refresh-Trigger
         (token.expires_in && token.expires_in - nowTimeStamp < 60) // automatische Aktualisierung
@@ -122,6 +140,11 @@ export const authOptions: AuthOptions = {
 
       return token;
     },
+
+    /**
+     * Session-Callback:
+     * Ergänzt die Session-Daten um Benutzer- und Token-Informationen.
+     */
     async session({ session, token }) {
       logger.debug('Session Token: %o', token);
 
@@ -140,6 +163,11 @@ export const authOptions: AuthOptions = {
 
       return session;
     },
+
+    /**
+     * Redirect-Callback:
+     * Bestimmt die Ziel-URL nach der Authentifizierung oder Abmeldung.
+     */
     redirect({ url, baseUrl }) {
       logger.debug('Redirect URL: %s', url);
       logger.debug('Base URL: %s', baseUrl);
@@ -148,6 +176,7 @@ export const authOptions: AuthOptions = {
     },
   },
 
+  // Ereignishandler (z. B. für Abmeldung)
   events: {
     async signOut({ token }: { token: JWT }) {
       if (token.provider === 'keycloak') {

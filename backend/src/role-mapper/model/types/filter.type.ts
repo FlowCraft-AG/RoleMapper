@@ -36,7 +36,13 @@ type Userfilter =
     | 'kostenstelleNr'
     | 'level';
 
-type Mandatefilter = 'functionName' | 'orgUnit' | 'users' | 'isSingleUser' | 'isImpliciteFunction';
+type Mandatefilter =
+    | 'functionName'
+    | 'orgUnit'
+    | 'users'
+    | 'isSingleUser'
+    | 'isImpliciteFunction'
+    | '_id';
 type OrgUnitfilter = 'name' | 'parentId' | 'supervisor';
 type Processfilter = 'processId' | 'name' | 'roles';
 type Rolefilter = 'roleId' | 'name';

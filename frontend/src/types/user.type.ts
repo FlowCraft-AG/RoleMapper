@@ -1,63 +1,90 @@
+/**
+ * Typdefinition für einen Benutzer (User).
+ * Dieser Typ beschreibt die Eigenschaften eines Benutzers im System.
+ */
 export type User = {
-  _id: string;
-  userId: string;
-  userType: string;
-  userRole: string;
-  orgUnit: string;
-  active: boolean;
-  validFrom: string;
-  validUntil: string;
-  employee?: {
-    costCenter: string;
-    department: string;
-  };
-  student?: {
-    _id: string;
-    courseOfStudy: string;
-    courseOfStudyUnique: string;
-    courseOfStudyShort: string;
-    courseOfStudyName: string;
-    level: string;
-    examRegulation: string;
-  };
+  _id: string; // Eindeutige ID des Benutzers
+  userId: string; // Benutzer-ID
+  userType: string; // Typ des Benutzers (z. B. Mitarbeiter, Student)
+  userRole: string; // Rolle des Benutzers im System
+  orgUnit: string; // Zugehörige Organisationseinheit
+  active: boolean; // Gibt an, ob der Benutzer aktiv ist
+  validFrom: string; // Gültigkeitsbeginn des Benutzers
+  validUntil: string; // Gültigkeitsende des Benutzers
+  profile?: Profile; // Optionale Profildaten des Benutzers
+  employee?: Employee; // Optionale Mitarbeiter-spezifische Daten
+  student?: Student; // Optionale Studenten-spezifische Daten
 };
 
-export type UserDetailsProps = {
-  user: User;
+/**
+ * Typdefinition für die Profildaten eines Benutzers.
+ */
+type Profile = {
+  firstName: string; // Vorname des Benutzers
+  lastName: string; // Nachname des Benutzers
 };
 
-export type UserListProps = {
-  users: string[];
-  selectUser: (userId: string) => void;
+/**
+ * Typdefinition für Mitarbeiter-spezifische Daten.
+ */
+type Employee = {
+  costCenter: string; // Kostenstelle des Mitarbeiters
+  department: string; // Abteilung des Mitarbeiters
 };
 
-export type UserCredetials = {
-  userId: string;
-  _id: string;
+/**
+ * Typdefinition für Studenten-spezifische Daten.
+ */
+type Student = {
+  _id?: string; // Optionale ID des Studenten
+  courseOfStudy: string; // Studiengang des Studenten
+  courseOfStudyUnique: string; // Eindeutige Kennung des Studiengangs
+  courseOfStudyShort: string; // Abkürzung des Studiengangs
+  courseOfStudyName: string; // Vollständiger Name des Studiengangs
+  level: string; // Studienlevel (z. B. Bachelor, Master)
+  examRegulation: string; // Prüfungsordnung
 };
 
-// Beispiel für das User Enum
+/**
+ * Typdefinition für eine Kurzversion eines Benutzers (ShortUser).
+ * Wird verwendet, wenn nur grundlegende Benutzerdaten benötigt werden.
+ */
+export type ShortUser = {
+  _id: string; // Eindeutige ID des Benutzers
+  userId: string; // Benutzer-ID
+  profile: Profile; // Profildaten (Vor- und Nachname)
+};
+
+/**
+ * Enum zur Beschreibung von Benutzereigenschaften.
+ * Diese Werte können für dynamische Auswahloptionen (z. B. Select-Elemente) verwendet werden.
+ */
 export enum UserEnum {
-  UserId = 'userId', // Attribut
-  UserType = 'userType', // Enum-Wert
-  UserRole = 'userRole', // Enum-Wert
-  OrgUnit = 'orgUnit',
-  Active = 'active',
-  ValidFrom = 'validFrom',
-  ValidUntil = 'validUntil',
-  Employee = 'employee',
-  CostCenter = 'costCenter',
-  Department = 'department',
-  Student = 'student',
-  CourseOfStudy = 'courseOfStudy',
-  CourseOfStudyUnique = 'courseOfStudyUnique',
-  CourseOfStudyShort = 'courseOfStudyShort',
-  CourseOfStudyName = 'courseOfStudyName',
-  Level = 'level',
-  ExamRegulation = 'examRegulation',
+  UserId = 'userId', // Benutzer-ID
+  UserType = 'userType', // Typ des Benutzers
+  UserRole = 'userRole', // Rolle des Benutzers
+  OrgUnit = 'orgUnit', // Zugehörige Organisationseinheit
+  Active = 'active', // Gibt an, ob der Benutzer aktiv ist
+  ValidFrom = 'validFrom', // Gültigkeitsbeginn des Benutzers
+  ValidUntil = 'validUntil', // Gültigkeitsende des Benutzers
+  Employee = 'employee', // Mitarbeiterdaten
+  CostCenter = 'costCenter', // Kostenstelle (nur für Mitarbeiter)
+  Department = 'department', // Abteilung (nur für Mitarbeiter)
+  Student = 'student', // Studentendaten
+  CourseOfStudy = 'courseOfStudy', // Studiengang
+  CourseOfStudyUnique = 'courseOfStudyUnique', // Eindeutige Kennung des Studiengangs
+  CourseOfStudyShort = 'courseOfStudyShort', // Abkürzung des Studiengangs
+  CourseOfStudyName = 'courseOfStudyName', // Vollständiger Name des Studiengangs
+  Level = 'level', // Studienlevel (Bachelor, Master etc.)
+  ExamRegulation = 'examRegulation', // Prüfungsordnung
 }
 
-// Extrahiert die Enum-Werte
+/**
+ * Extrahiert die Werte des UserEnum als Array von Strings.
+ * Kann verwendet werden, um dynamische Auswahloptionen (z. B. in Formularen) zu erstellen.
+ *
+ * @returns {string[]} - Eine Liste der Enum-Werte als Strings.
+ */
 export const getEnumValues = (): string[] => {
   return Object.values(UserEnum).filter(
     (value) => typeof value === 'string',

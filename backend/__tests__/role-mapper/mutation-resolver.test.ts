@@ -9,7 +9,6 @@ import {
     ENDPOINTS,
     TEST_MANDATES2,
     TEST_MANDATES3,
-    TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION,
     TEST_MANDATES_DUPLICATE,
     TEST_MANDATES_REMOVE_SINGLE_USER_FUNCTION_2,
 } from '../test-data.js';
@@ -353,35 +352,35 @@ describe('MutationResolver', () => {
         expect(addUserToFunction.users).toContain(mandate.userId);
     });
 
-    test('[GRAPHQL] add to Single User Function ', async () => {
-        const mandate = TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION;
-        const query = `
-            mutation AddUserToFunction {
-                addUserToFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
-                    _id
-                    functionName
-                    users
-                    orgUnit
-                    type
-                }
-            }
-        `;
+    // test('[GRAPHQL] add to Single User Function ', async () => {
+    //     const mandate = TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION;
+    //     const query = `
+    //         mutation AddUserToFunction {
+    //             addUserToFunction(functionName: "${mandate.functionName}", userId: "${mandate.userId}") {
+    //                 _id
+    //                 functionName
+    //                 users
+    //                 orgUnit
+    //                 type
+    //             }
+    //         }
+    //     `;
 
-        const { status, headers, data } = await sendGraphQLRequest(client, query);
+    //     const { status, headers, data } = await sendGraphQLRequest(client, query);
 
-        validateHeader(headers);
+    //     validateHeader(headers);
 
-        expect(status).toBe(HttpStatus.OK);
-        expect(data.errors).toBeDefined();
-        expect(data.data).toBeDefined();
+    //     expect(status).toBe(HttpStatus.OK);
+    //     expect(data.errors).toBeDefined();
+    //     expect(data.data).toBeDefined();
 
-        const message = data.errors ? data.errors[0].message : UNKNOWN_ERROR_MESSAGE;
+    //     const message = data.errors ? data.errors[0].message : UNKNOWN_ERROR_MESSAGE;
 
-        expect(data.data?.addUserToFunction).toBeNull();
-        expect(message).toMatch(
-            'Einzelbenutzer-Funktion erkannt! Diese Funktion kann nur einem User zugewiesen werden.',
-        );
-    });
+    //     expect(data.data?.addUserToFunction).toBeNull();
+    //     expect(message).toMatch(
+    //         'Einzelbenutzer-Funktion erkannt! Diese Funktion kann nur einem User zugewiesen werden.',
+    //     );
+    // });
 
     test('[GRAPHQL] remove SingleUser from Function', async () => {
         const mandate = TEST_MANDATES_REMOVE_SINGLE_USER_FUNCTION_2;

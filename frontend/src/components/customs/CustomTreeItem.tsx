@@ -1,3 +1,11 @@
+/**
+ * @file CustomTreeItem.tsx
+ * @description Eine erweiterte TreeItem-Komponente zur Darstellung von Organisationseinheiten mit integrierten Aktionen
+ * wie Hinzufügen, Bearbeiten und Löschen. Unterstützt komplexe Prüfungen auf abhängige Funktionen und Kinder.
+ *
+ * @module CustomTreeItem
+ */
+
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import {
   Children,
@@ -11,17 +19,26 @@ import {
 import {
   checkForFunctions,
   fetchFunctionsByOrgUnit,
-} from '../../app/organisationseinheiten/fetchkp';
+} from '../../lib/api/function.api';
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
-import { Function } from '../../types/function.type';
+import { FunctionString } from '../../types/function.type';
 import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';
-import OrgUnitFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal1';
-import ConfirmDeleteModal from '../modal/ConfirmOrgUnitDeleteModal2';
-import ChildFunctionsModal from '../modal/ConfirmOrgUnitDeleteModal3';
-import CreateOrgUnitModal from '../modal/CreateOrgUnitModal';
-import DeleteConfirmationModal from '../modal/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
-import EditOrgUnitModal from '../modal/EditOrgUnitModal';
+import OrgUnitFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal1';
+import ConfirmDeleteModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal2';
+import ChildFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal3';
+import CreateOrgUnitModal from '../modal/orgUnitModals/CreateOrgUnitModal';
+import DeleteConfirmationModal from '../modal/orgUnitModals/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
+import EditOrgUnitModal from '../modal/orgUnitModals/EditOrgUnitModal';
 
+/**
+ * Interface für die Darstellung eines zu rendernden Items.
+ *
+ * @interface ItemToRender
+ * @property {string} label - Die Bezeichnung des Items.
+ * @property {string} itemId - Die eindeutige ID des Items.
+ * @property {string} [id] - Optionale ID des Items.
+ * @property {ItemToRender[]} [children] - Verschachtelte Kinder des Items.
+ */
 export interface ItemToRender {
   label: string;
   itemId: string;
@@ -33,13 +50,41 @@ interface ChildProp {
   itemsToRender?: ItemToRender[]; // Optional, falls es fehlen könnte
 }
 
+/**
+ * Props für die `CustomTreeItem`-Komponente.
+ *
+ * @interface CustomTreeItemProps
+ * @extends TreeItem2Props
+ * @property {function} onRemove - Callback-Funktion, die aufgerufen wird, wenn ein Item entfernt wird.
+ * @property {function} refetch - Callback-Funktion, um die Daten zu aktualisieren.
+ * @property {ReactElement<ChildProp>[] | ReactElement<ChildProp>} [children] - Verschachtelte Organisationseinheiten.
+ */
 interface CustomTreeItemProps extends TreeItem2Props {
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   refetch: () => Promise<void>; // Die refetch-Methode
   children?: ReactElement<ChildProp>[] | ReactElement<ChildProp>; // Optional, falls es verschachtelte Organisationseinheiten gibt
 }
 
+/**
+ * `CustomTreeItem`-Komponente
+ *
+ * Diese Komponente erweitert die Funktionalität von TreeItem, indem sie Aktionen wie Hinzufügen, Bearbeiten und Löschen
+ * integriert. Sie führt auch Prüfungen auf abhängige Funktionen und Kinder durch.
+ *
+ * @component
+ * @param {CustomTreeItemProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des benutzerdefinierten TreeItems.
+ *
+ * @example
+ * <CustomTreeItem
+ *   itemId="1"
+ *   label="Fakultät A"
+ *   onRemove={(ids) => console.log('Entfernte IDs:', ids)}
+ *   refetch={async () => console.log('Daten aktualisieren')}
+ * />
+ */
 const CustomTreeItem = forwardRef(function CustomTreeItem(
-  { refetch, slots, slotProps, ...props }: CustomTreeItemProps,
+  { onRemove, refetch, slots, slotProps, ...props }: CustomTreeItemProps,
   ref: Ref<HTMLLIElement>,
 ) {
   const { itemId, label, children } = props;
@@ -52,15 +97,27 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
   const [childrenToDelete, setChildrenToDelete] = useState<ItemToRender[]>([]);
   const [openEditModal, setOpenEditModal] = useState(false);
 
-  const [orgUnitFunctions, setOrgUnitFunctions] = useState<Function[]>([]); // Funktionen der Organisationseinheit
+  const [orgUnitFunctions, setOrgUnitFunctions] = useState<FunctionString[]>(
+    [],
+  ); // Funktionen der Organisationseinheit
   const [childFunctions, setChildFunctions] = useState<
-    { orgUnit: string; functions: Function[] }[]
+    { orgUnit: string; functions: FunctionString[] }[]
   >([]); // Funktionen der Kinder
 
+  /**
+   * Öffnet das Modal zum Erstellen einer Organisationseinheit.
+   *
+   * @function handleAdd
+   */
   const handleAdd = () => {
     setOpenCreateModal(true);
   };
 
+  /**
+   * Prüft und verwaltet den Löschprozess einer Organisationseinheit.
+   *
+   * @function handleDelete
+   */
   const handleDelete = async () => {
     // Prüfe, ob OrgUnit Funktionen hat
     if (await checkForFunctions(itemId)) {
@@ -84,6 +141,11 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     handleNextStep();
   };
 
+  /**
+   * Führt den nächsten Schritt im Löschprozess durch.
+   *
+   * @function handleNextStep
+   */
   const handleNextStep = async () => {
     // Prüfe, ob Kinder existieren
     const childrenWithNames: ItemToRender[] = [];
@@ -98,7 +160,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
 
     // Falls keine Funktionen vorhanden sind, prüfen wir die Nachkommen
     if (childrenWithNames.length > 0) {
-      console.log('childrenWithNames', childrenWithNames);
       setChildrenToDelete(childrenWithNames); // Kinder speichern
       setOpenChildrenModal(true); // Modal für Kinder öffnen
       return;
@@ -108,11 +169,16 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     handleNextStep2(childrenWithNames);
   };
 
+  /**
+   * Prüft auf abhängige Funktionen von Kindern und führt den nächsten Schritt durch.
+   *
+   * @function handleNextStep2
+   * @param {ItemToRender[]} childrenWithNames - Die Kinder der aktuellen Organisationseinheit.
+   */
   const handleNextStep2 = async (childrenWithNames: ItemToRender[]) => {
     // Prüfe, ob Kinder Funktionen haben
     const childrenWithFunctions =
       await checkChildrenForFunctions(childrenWithNames);
-    console.log('childrenWithFunctions', childrenWithFunctions);
 
     if (childrenWithFunctions.length > 0) {
       setChildFunctions(childrenWithFunctions); // Funktionen der Kinder speichern
@@ -123,19 +189,30 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
     handleFinalDelete();
   };
 
+  /**
+   * Führt den endgültigen Löschprozess durch.
+   *
+   * @function handleFinalDelete
+   */
   const handleFinalDelete = async () => {
+    // Kombiniere die Funktionen der Organisationseinheit und der Kinder
+    const combinedFunctions = [
+      { orgUnit: label as string, functions: orgUnitFunctions },
+      ...childFunctions,
+    ];
+    setChildFunctions(combinedFunctions);
+
+    // Setze das Modal mit den kombinierten Funktionen
     setOpenConfirmDeleteModal(true); // Bestätigungs-Modal öffnen
   };
 
   // Prüfe, ob Kinder oder deren Nachkommen Funktionen haben
   const checkChildrenForFunctions = async (children: ItemToRender[]) => {
-    const results: { orgUnit: string; functions: Function[] }[] = [];
+    const results: { orgUnit: string; functions: FunctionString[] }[] = [];
 
     for (const child of children) {
-      console.log('child', child);
       // Prüfe die Funktionen des aktuellen Kindes
       const functions = await fetchFunctionsByOrgUnit(child.itemId);
-      console.log('functions', functions);
       if (functions.length > 0) {
         results.push({ orgUnit: child.label, functions }); // Speichere label als Name
       }
@@ -145,7 +222,6 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
         results.push(...childResults); // Ergebnisse der Kinder hinzufügen
       }
     }
-    console.log('results', results);
     return results;
   };
 
@@ -227,6 +303,7 @@ const CustomTreeItem = forwardRef(function CustomTreeItem(
       <DeleteConfirmationModal
         open={openConfirmDeleteModal}
         onClose={() => setOpenConfirmDeleteModal(false)}
+        onRemove={onRemove}
         itemId={itemId}
         childrenToDelete={childrenToDelete} // IDs rekursiv extrahieren
         functionList={childFunctions.flatMap((child) => child.functions)} // Funktionen der Kinder

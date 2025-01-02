@@ -1,13 +1,39 @@
+/**
+ * @file OrgUnitFunctionsModal.tsx
+ * @description Modal zur Anzeige der Funktionen einer Organisationseinheit.
+ *
+ * @module OrgUnitFunctionsModal
+ */
+
 import { Box, Button, List, ListItem, Modal, Typography } from '@mui/material';
 
+/**
+ * Props für die `OrgUnitFunctionsModal`-Komponente.
+ */
 interface OrgUnitFunctionsModalProps {
-  open: boolean;
-  onClose: () => void;
-  onContinue: () => void; // Funktion für "Weiter"
-  functions: { functionName: string; orgUnit: string }[]; // Liste der Funktionen
-  orgUnit: string; // Name der Organisationseinheit
+  open: boolean; // Gibt an, ob das Modal geöffnet ist.
+  onClose: () => void; // Funktion zum Schließen des Modals.
+  onContinue: () => void; // Funktion, die aufgerufen wird, wenn der "Weiter"-Button geklickt wird.
+  functions: { functionName: string; orgUnit: string }[]; // Liste der Funktionen, die zur Organisationseinheit gehören.
+  orgUnit: string; // Name der Organisationseinheit.
 }
 
+/**
+ * Modal zur Anzeige der Funktionen einer Organisationseinheit.
+ *
+ * @component
+ * @param {OrgUnitFunctionsModalProps} props - Die Eigenschaften der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <OrgUnitFunctionsModal
+ *   open={true}
+ *   onClose={() => console.log('Modal geschlossen')}
+ *   onContinue={() => console.log('Weiter geklickt')}
+ *   functions={[{ functionName: 'Manager', orgUnit: 'HR' }]}
+ *   orgUnit="Personalabteilung"
+ * />
+ */
 const OrgUnitFunctionsModal = ({
   open,
   onClose,
