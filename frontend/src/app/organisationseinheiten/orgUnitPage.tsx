@@ -17,7 +17,6 @@ import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../components/organigramm/UsersSpalte';
 import { getOrgUnitById } from '../../lib/api/orgUnit.api';
 import { fetchMitglieder } from '../../lib/api/user.api';
-import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { FunctionString, FunctionUser } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { User } from '../../types/user.type';
@@ -54,7 +53,7 @@ export default function OrganigrammPage() {
 
   // Benutzerdaten
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
-  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  // const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
   // URL-Parameter
   const searchParams = useSearchParams();
@@ -180,15 +179,15 @@ export default function OrganigrammPage() {
   };
 
   // Mitgliederansicht aktivieren
-    const handleMitgliederClick = () => {
-      setState({
-        ...state,
-          selectedFunctionId: 'mitglieder',
-        selectedFunction: createMembersFunction(state.selectedOrgUnit?._id),
-        isImplicitFunction: false,
-          isSingleUser: false,
-        selectedUserId: undefined,
-      });
+  const handleMitgliederClick = () => {
+    setState({
+      ...state,
+      selectedFunctionId: 'mitglieder',
+      selectedFunction: createMembersFunction(state.selectedOrgUnit?._id),
+      isImplicitFunction: false,
+      isSingleUser: false,
+      selectedUserId: undefined,
+    });
   };
 
   /**
@@ -360,7 +359,9 @@ export default function OrganigrammPage() {
             p: 4,
           }}
         >
-          {state.selectedUserId && <UserInfoSpalte userId={state.selectedUserId} />}
+          {state.selectedUserId && (
+            <UserInfoSpalte userId={state.selectedUserId} />
+          )}
         </Box>
       </Modal>
     </Box>

@@ -5,7 +5,7 @@
  * und spezifische Informationen zu Mitarbeitern oder Studierenden an.
  *
  * @module UserInfoSpalte
-*/
+ */
 
 import {
   Alert,

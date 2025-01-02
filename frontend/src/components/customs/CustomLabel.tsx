@@ -21,7 +21,7 @@ import { IconButton, Stack, Tooltip, Typography } from '@mui/material';
 export interface CustomLabelProps {
   children: React.ReactNode;
   className?: string;
-    onAdd: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onAdd: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onEdit: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }

@@ -27,7 +27,6 @@ import { getListItemStyles } from '../../utils/styles';
 import CustomTreeItem from '../customs/CustomTreeItem';
 import TransitionComponent from './TransitionComponent';
 
-
 /**
  * Erweiterte Slot-Props für die TreeItem-Komponente.
  *
@@ -301,4 +300,3 @@ export default function OrgUnitsSpalte({
     </Box>
   );
 }
-

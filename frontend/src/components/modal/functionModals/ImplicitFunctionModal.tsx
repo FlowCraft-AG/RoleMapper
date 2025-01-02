@@ -1,10 +1,9 @@
-
 /**
  * @file ImplicitFunctionModal.tsx
  * @description Modal-Komponente zur Erstellung von implizierten Funktionen in einer Organisationseinheit.
  *
  * @module ImplicitFunctionModal
-*/
+ */
 import {
   Box,
   Button,
