@@ -102,7 +102,7 @@ export const TEST_EMPLOYEE_2 = {
 export const TEST_MANDATES = {
     create: {
         functionName: 'name',
-        orgUnit: 'orgUnit',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
         type: 'asd',
         users: ['gyca1011'],
     },
@@ -115,19 +115,46 @@ export const TEST_MANDATES = {
 
 export const TEST_MANDATES2 = {
     create: {
-        functionName: 'Student',
-        orgUnit: 'orgUnit',
+        functionName: 'Studentx',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
         type: 'asd',
         users: ['gyca1011'],
     },
     update: {
-        filter: { field: 'functionName', operator: 'EQ', value: 'Student' },
+        filter: { field: 'functionName', operator: 'EQ', value: 'Studentx' },
         data: { functionName: 'IWI-Student' },
     },
     delete: { field: 'functionName', operator: 'EQ', value: 'IWI-Student' },
 };
 
+export const TEST_MANDATES_DUPLICATE = {
+    create: {
+        functionName: 'Studentx',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
+        type: 'asd',
+        users: ['gyca1011'],
+    },
+    create2: {
+        functionName: 'studentx',
+        orgUnit: '675ae493d8a9043ad4d61c2c',
+        type: 'asd',
+        users: ['gyca1011'],
+    },
+    functionName: 'Prodekan',
+    userId: 'nera0001',
+};
+
 export const TEST_MANDATES3 = {
+    functionName: 'Prodekan',
+    userId: 'gyca1011',
+};
+
+export const TEST_MANDATES_ADD_TO_SINGLE_USER_FUNCTION = {
     functionName: 'Dekan',
     userId: 'gyca1011',
+};
+
+export const TEST_MANDATES_REMOVE_SINGLE_USER_FUNCTION_2 = {
+    functionName: 'Dekan',
+    userId: USER_DATA.LEITER_2,
 };

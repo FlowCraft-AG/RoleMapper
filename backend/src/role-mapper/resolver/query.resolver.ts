@@ -2,10 +2,14 @@
 /* eslint-disable @stylistic/indent */
 import { UseFilters, UseInterceptors } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
+import { OrgUnit } from '../model/entity/org-unit.entity.js';
+import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
+import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
 
@@ -70,10 +74,10 @@ export class QueryResolver {
     ): Promise<any> {
         this.#logger.debug('getEntityData: input=%o', input);
 
-        const { entity, filter, pagination } = input; // Extrahiere Eingabewerte
+        const { entity, filter, pagination, sort } = input; // Extrahiere Eingabewerte
 
         // Abruf der Rohdaten mit den angegebenen Filtern und Paginierung
-        const rawData = await this.#service.findData(entity, filter, pagination);
+        const rawData = await this.#service.findData(entity, filter, pagination, sort);
         if (rawData === undefined || rawData.length === 0) {
             this.#logger.warn('Keine Daten gefunden für die Anfrage.');
             return {
@@ -97,5 +101,52 @@ export class QueryResolver {
             data: paginatedData, // Typumwandlung
             totalCount: rawData.length,
         };
+    }
+
+    @Public()
+    @Query('getSavedData')
+    async getSavedData(@Args('id') id: string): Promise<any> {
+        this.#logger.debug('getSavedData: id=%s', id);
+
+        // Hole die gespeicherten Daten, basierend auf der Abfrage-ID
+        const { functionName, data } = await this.#service.executeSavedQuery(id);
+
+        // Stelle sicher, dass die Daten den Typ User haben und extrahiere die userId
+        // const users = data.map((user) => {
+        //     const userTyped = user as User; // Typisiere das user-Objekt als User
+        //     return userTyped.userId; // Extrahiere userId
+        // });
+        const users = data as User[];
+        return { functionName, users };
+    }
+
+    @Public()
+    @Query('getUsersByFunction')
+    async getUsersByFunction(@Args('id') id: string): Promise<GetUsersByFunctionResult> {
+        this.#logger.debug('getUsersByFunction: id=%s', id);
+
+        const result = await this.#service.findUsersByFunction(id);
+
+        if (result === undefined) {
+            this.#logger.warn('Keine Daten gefunden für die Anfrage.');
+            return {
+                functionName: '',
+                users: [],
+                isImpliciteFunction: false,
+            };
+        }
+
+        const { functionName, users, isImpliciteFunction, orgUnit } = result;
+        return { functionName, users, isImpliciteFunction, orgUnit };
+    }
+
+    @Public()
+    @Query('getAncestors')
+    async getAncestors(@Args('id') id: Types.ObjectId): Promise<OrgUnit[]> {
+        this.#logger.debug('getAncestors: id=%s', id);
+
+        const ancestors = await this.#service.findAncestors(id);
+        this.#logger.debug('getAncestors: Ancestors:', ancestors);
+        return ancestors;
     }
 }

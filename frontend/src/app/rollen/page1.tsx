@@ -3,7 +3,7 @@
 import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import { GET_ROLES } from '../../graphql/queries/get-rollen';
+import { GET_ROLES } from '../../graphql/roles/get-rollen';
 import client from '../../lib/apolloClient';
 
 // Definiere Typen für die Antwortdaten

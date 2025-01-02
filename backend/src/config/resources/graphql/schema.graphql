@@ -11,6 +11,17 @@ type Query {
   """
   getData(input: DataInput!): DataPayload!
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
+  getSavedData(id: ID!): MandatePayload
+  getUsersByFunction(id: ID!): MandatePayload
+  getAncestors(id: ID): [OrgUnit]
+}
+
+type MandatePayload {
+  users: [User!]
+  functionName: String
+  isImpliciteFunction: Boolean
+  _id: ID
+  orgUnit: String
 }
 
 # Abfrageparameter
@@ -30,6 +41,10 @@ input DataInput {
   Pagination-Parameter zur Steuerung der Ergebnisse.
   """
   pagination: PaginationInput
+  """
+  Sortierparameter für die Ergebnisse.
+  """
+  sort: SortInput
 }
 
 """
@@ -65,6 +80,28 @@ input FilterInput {
   AND: [FilterInput]
   OR: [FilterInput]
   NOR: [FilterInput]
+}
+
+"""
+Sortierparameter für Abfragen.
+"""
+input SortInput {
+  """
+  Feld, nach dem sortiert werden soll.
+  """
+  field: FilterOptions
+  """
+  Sortierreihenfolge, z. B. ASC oder DESC.
+  """
+  direction: directionInput
+}
+
+"""
+Sortierreihenfolge für Abfragen.
+"""
+enum directionInput {
+  ASC
+  DESC
 }
 
 # Rückgabewerte
@@ -145,6 +182,10 @@ type User {
   """
   active: Boolean
   """
+  Profil des Benutzers.
+  """
+  profile: Profile
+  """
   Details zum Studenten (optional).
   """
   student: Student
@@ -169,7 +210,7 @@ type Student {
   """
   Eindeutige ID des Studenten.
   """
-  _id: ID!
+  _id: ID
   """
   Studiengang des Studenten.
   """
@@ -208,6 +249,20 @@ type Employee {
   Abteilung, in der der Mitarbeiter tätig ist.
   """
   department: String!
+}
+
+"""
+Profilinformationen eines Benutzers.
+"""
+type Profile {
+  """
+  Vorname des Benutzers.
+  """
+  firstName: String
+  """
+  Nachname des Benutzers.
+  """
+  lastName: String
 }
 
 # Organisationseinheiten
@@ -261,7 +316,86 @@ type Function {
   Typ der Funktion, z. B. 'academic' oder 'administrative'.
   """
   type: String
+  """
+  Gibt an, ob die Funktion nur von einem Benutzer besetzt werden kann.
+  """
+  isSingleUser: Boolean
+  """
+  Gibt an, ob die Funktion implizit ist und nicht manuell zugewiesen werden kann.
+  """
+  isImpliciteFunction: Boolean
+
+  query: GraphQlQuery
 }
+
+type GraphQlQuery {
+  """
+  Die Ziel-Entität der Abfrage, z. B. USERS, MANDATES.
+  """
+  entity: EntityType
+  """
+  Filterbedingungen der Abfrage.
+  """
+  filter: Filter
+  """
+  Pagination-Parameter der Abfrage.
+  """
+  pagination: Pagination
+  """
+  Sortierparameter der Abfrage.
+  """
+  sort: Sort
+}
+
+"""
+Filterbedingungen als Output-Typ.
+"""
+type Filter {
+  """
+  Das zu filternde Feld, z. B. userId oder orgUnit.
+  """
+  field: FilterOptions
+  """
+  Der Vergleichsoperator, z. B. EQ oder IN.
+  """
+  operator: Operator
+  """
+  Der Vergleichswert.
+  """
+  value: String
+  AND: [Filter]
+  OR: [Filter]
+  NOR: [Filter]
+}
+
+"""
+Pagination-Parameter als Output-Typ.
+"""
+type Pagination {
+  """
+  Anzahl der zurückzugebenden Ergebnisse.
+  """
+  limit: Int
+  """
+  Startpunkt der Ergebnisse.
+  """
+  offset: Int
+}
+
+"""
+Sortierparameter als Output-Typ.
+"""
+type Sort {
+  """
+  Feld, nach dem sortiert werden soll.
+  """
+  field: FilterOptions
+  """
+  Sortierreihenfolge, z. B. ASC oder DESC.
+  """
+  direction: directionInput
+}
+
 
 # Prozesse und Rollen
 """
@@ -379,6 +513,22 @@ enum FilterOptions {
   users
   roles
   type
+  courseOfStudy
+  level
+  isImpliciteFunction
+  isSingleUser
+
+  examRegulation
+  costCenter
+  department
+  courseOfStudyUnique
+  courseOfStudyShort
+  courseOfStudyName
+  alias
+  kostenstelleNr
+
+  firstName
+  lastName
 }
 
 type Mutation {
@@ -416,8 +566,15 @@ type Mutation {
   Entfernt einen Benutzer aus einer Funktion.
   """
   removeUserFromFunction(functionName: String!, userId: String!): Function
+
+  saveQuery(functionName: String!, orgUnitId: ID!, input: DataInput!): SavedQueryPayload
 }
 
+type SavedQueryPayload {
+  success: Boolean!
+  message: String
+  result: Function
+}
 """
 Input für das Erstellen einer neuen Entität.
 """
@@ -463,6 +620,8 @@ input CreateFunctionInput {
   orgUnit: String!
   type: String
   users: [String!]!
+  isSingleUser: Boolean
+  isImpliciteFunction: Boolean
 }
 
 input CreateProcessInput {
@@ -478,7 +637,7 @@ input ProcessRoleInput {
 
 input CreateOrgUnitInput {
   name: String!
-  parentId: String
+  parentId: ID
   supervisor: String
 }
 
@@ -520,7 +679,7 @@ input UpdateEntityInput {
 }
 
 input UpdateUserInput {
-  userId: String!
+  userId: String
   userType: String
   userRole: String
   orgUnit: String
@@ -543,27 +702,28 @@ input UpdateEmployeeInput {
 }
 
 input UpdateFunctionInput {
-  functionName: String!
+  functionName: String
   orgUnit: String
   type: String
   users: [String!]
+  isSingleUser: Boolean
 }
 
 input UpdateProcessInput {
-  processId: String!
+  processId: String
   name: String
   roles: [ProcessRoleInput]
 }
 
 input UpdateOrgUnitInput {
-  orgUnitId: String!
+  orgUnitId: String
   name: String
   parentId: String
   supervisor: String
 }
 
 input UpdateRoleInput {
-  roleId: String!
+  roleId: String
   name: String
   query: [QueryStageInput]
 }
@@ -600,7 +760,13 @@ type MutationResponse {
   Das Ergebnis der Mutation, z. B. die erstellte oder aktualisierte Entität.
   """
   result: EntityResult
+  """
+  Anzahl der betroffenen Entitäten.
+  """
   affectedCount: Int
+  """
+  Warnungen oder Hinweise zur Operation.
+  """
   warnings: [String]
 }
 

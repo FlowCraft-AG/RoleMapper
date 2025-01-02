@@ -1,210 +1,143 @@
-'use client';
+/**
+ * @file Page.tsx
+ * @description Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HSKA).
+ * Diese Seite bietet Navigation zu verschiedenen Ansichten des Organigramms
+ * und zeigt eine eingebettete Organigramm-Komponente.
+ *
+ * @module OrganisationseinheitenPage
+ */
 
-import { useLazyQuery } from '@apollo/client';
-import { Box, Typography } from '@mui/material';
-import { useState } from 'react';
-import FunctionsSpalte from '../../components/organigramm/FunctionsSpalte';
-import OrgUnitsSpalte from '../../components/organigramm/OrgUnitsSpalte';
-import UserInfoSpalte from '../../components/organigramm/UserInfoSpalte';
-import UsersSpalte from '../../components/organigramm/UsersSpalte';
-import { MITGLIEDER } from '../../graphql/queries/get-users';
-import client from '../../lib/apolloClient';
-import theme from '../../theme';
-import { FunctionInfo } from '../../types/function.type';
-import { OrgUnitDTO } from '../../types/orgUnit.type';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Typography,
+} from '@mui/material';
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { Suspense } from 'react';
+import OrganigrammPage from './orgUnitPage';
 
-export default function OrganigrammPage() {
-  const [selectedOrgUnit, setSelectedOrgUnit] = useState<
-    OrgUnitDTO | undefined
-  >(undefined);
-  const [selectedRootOrgUnit, setSelectedRootOrgUnit] = useState<
-    OrgUnitDTO | undefined
-  >(undefined);
+/**
+ * Metadata für die Organisationseinheiten-Seite.
+ * Wird von Next.js genutzt, um Titel und Beschreibung der Seite festzulegen.
+ *
+ * @constant
+ * @type {Metadata}
+ * @property {string} title - Der Titel der Seite.
+ * @property {string} description - Beschreibung der Seite.
+ * @property {object} icons - Icon-Konfiguration für die Seite.
+ */
 
-  const [selectedFunctionId, setSelectedFunctionId] = useState<
-    string | undefined
-  >(undefined);
-  const [selectedFunction, setSelectedFunction] = useState<FunctionInfo>();
+export const metadata: Metadata = {
+  title: 'Organisationseinheiten',
+  description:
+    'Organigramm der Hochschule Karlsruhe (HSKA) zur Darstellung der Fakultäten, Institute und Rollen.',
+  icons: {
+    icon: '/favicon.ico',
+  },
+};
 
-  const [selectedUserId, setSelectedUserId] = useState<string | undefined>(
-    undefined,
-  );
-  const [combinedUsers, setCombinedUsers] = useState<string[]>([]);
-
-  const [fetchMitglieder] = useLazyQuery(MITGLIEDER, {
-    client,
-    onCompleted: (data) => {
-      setCombinedUsers(
-        data.getData.data.map((user: { userId: string }) => user.userId),
-      );
-    },
-    onError: () => {
-      setCombinedUsers([]);
-    },
-  });
-
-  const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
-    const { data } = await fetchMitglieder({
-      variables: {
-        alias: alias || null,
-        kostenstelleNr: kostenstelleNr || null,
-      },
-    });
-    return data.getData.data.map((user: { userId: string }) => user.userId);
-  };
-
-  const isChild = (
-    orgUnit: OrgUnitDTO,
-    currentRootOrgUnit: OrgUnitDTO | undefined,
-  ) => {
-    return orgUnit.parentId === currentRootOrgUnit?.id;
-  };
-
-  const handleOrgUnitSelect = async (orgUnitDTO: OrgUnitDTO) => {
-    setSelectedOrgUnit(orgUnitDTO);
-    if (orgUnitDTO.alias || orgUnitDTO.kostenstelleNr) {
-      orgUnitDTO.hasMitglieder = true;
-      setSelectedRootOrgUnit(orgUnitDTO);
-      setCombinedUsers(
-        await getMitgliederIds(orgUnitDTO.alias!, orgUnitDTO.kostenstelleNr!),
-      );
-    }
-
-    if (
-      selectedFunctionId !== 'mitglieder' ||
-      !isChild(orgUnitDTO, selectedRootOrgUnit)
-    ) {
-      setSelectedFunctionId(undefined); // Reset selection
-      setSelectedUserId(undefined); // Reset selection
-      if (
-        orgUnitDTO.type === undefined &&
-        !isChild(orgUnitDTO, selectedRootOrgUnit)
-      ) {
-        setSelectedOrgUnit(undefined);
-      }
-    }
-  };
-
-  const handleFunctionSelect = (functionInfo: FunctionInfo) => {
-    setSelectedFunctionId(functionInfo._id);
-    setSelectedFunction(functionInfo);
-    setSelectedUserId(undefined); // Reset selection
-  };
-
-  const handleMitgliederClick = () => {
-    setSelectedFunctionId('mitglieder'); // Reset functions
-    setSelectedFunction(mitglied(selectedRootOrgUnit?.id, combinedUsers));
-    setSelectedUserId(undefined); // Reset users
-  };
-
-  const handleUserSelect = (userId: string) => {
-    setSelectedUserId(userId);
-  };
-
-  const handleRemove = (userId: string, functionId: string) => {
-    if (userId === selectedUserId) {
-      setSelectedUserId(undefined);
-    }
-    if (functionId === selectedFunctionId) {
-      setSelectedFunctionId(undefined);
-      setSelectedFunction(undefined);
-      setSelectedUserId(undefined);
-    }
-  };
-
-  const mitglied = (orgUnitId: string | undefined, users: string[]) => {
-    return {
-      _id: 'mitglieder',
-      functionName: 'Mitglieder',
-      orgUnit: orgUnitId,
-      users: combinedUsers,
-    };
-  };
-
+/**
+ * Hauptkomponente der Organisationseinheiten-Seite.
+ *
+ * Diese Komponente enthält:
+ * - Einen Header mit dem Titel der Seite
+ * - Eine Navigation als Karten mit Links zu verschiedenen Ansichten des Organigramms
+ * - Eine eingebettete Organigramm-Komponente, die lazy-loaded ist
+ *
+ * @async
+ * @function
+ * @returns {JSX.Element} Die JSX-Struktur der Seite.
+ *
+ * @example
+ * Aufruf in Next.js
+ * export default function App() {
+ *   return <OrganisationseinheitenPage />;
+ * }
+ */
+export default async function HKAPage() {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-      {/* Erste Spalte: Organisationseinheiten */}
-      <Box
+    <Box sx={{ padding: 4 }}>
+      <Typography
+        variant="h4"
         sx={{
-          minWidth: 250,
-          borderRight: `1px solid ${theme.palette.divider}`,
-          paddingRight: 2,
-          marginRight: 2,
+          textAlign: 'center',
+          marginBottom: 4,
+          fontWeight: 'bold',
+          letterSpacing: 1,
         }}
       >
-        <Typography variant="h6">Organisationseinheiten</Typography>
-        <OrgUnitsSpalte
-          onSelect={async (orgUnitDTO) => handleOrgUnitSelect(orgUnitDTO)}
-        />
-      </Box>
+        Organisationseinheiten
+      </Typography>
 
-      {/* Zweite Spalte: Funktionen */}
-      {selectedOrgUnit && (
-        <Box
-          sx={{
-            minWidth: 250,
-            borderRight: `1px solid ${theme.palette.divider}`,
-            paddingRight: 2,
-            marginRight: 2,
-          }}
-        >
-          <Typography variant="h6">Funktionen</Typography>
-          <FunctionsSpalte
-            orgUnit={selectedOrgUnit}
-            onSelect={handleFunctionSelect}
-            rootOrgUnit={selectedRootOrgUnit}
-            handleMitgliederClick={handleMitgliederClick}
-            onRemove={handleRemove}
-          />
-        </Box>
-      )}
-
-      {/* Dritte Spalte: Benutzer-IDs */}
-      {selectedFunctionId && (
-        <Box
-          sx={{
-            minWidth: 250,
-            borderRight: `1px solid ${theme.palette.divider}`,
-            paddingRight: 2,
-            marginRight: 2,
-            maxHeight: 'calc(100vh - 64px)',
-            overflow: 'auto',
-            position: 'sticky',
-            top: 0, // Überschrift bleibt oben
-          }}
-        >
-          <Box
+      {/* Navigation als Karten */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 3,
+          marginBottom: 4,
+        }}
+      >
+        {/* Link zur interaktiven Slider-Darstellung */}
+        <Link href="/organisationseinheiten/slider" passHref>
+          <Card
             sx={{
-              position: 'sticky',
-              top: 0, // Überschrift bleibt oben
-              backgroundColor: theme.palette.background.default, // Hintergrundfarbe für die Überschrift
-              zIndex: 1,
-              padding: 1,
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
             }}
           >
-            <Typography variant="h6" gutterBottom>
-              Benutzer
-            </Typography>
-          </Box>
-          {
-            <UsersSpalte
-              selectedFunctionId={selectedFunctionId}
-              selectedMitglieder={selectedFunction}
-              onSelectUser={handleUserSelect}
-              onRemove={handleRemove}
-            />
-          }
-        </Box>
-      )}
-      {/* Vierte Spalte: Benutzerinformationen */}
-      {selectedUserId && (
-        <Box sx={{ minWidth: 250 }}>
-          <Typography variant="h6" gutterBottom>
-            Benutzerinformationen
-          </Typography>
-          <UserInfoSpalte userId={selectedUserId} />
-        </Box>
-      )}
+            <CardActionArea>
+              <CardContent>
+                <Typography variant="h6" align="center" gutterBottom>
+                  Slider
+                </Typography>
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  Entdecken Sie das Organigramm in einer interaktiven
+                  Slider-Darstellung.
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Link>
+
+        {/* Link zur Standard-Darstellung */}
+        <Link href="/organisationseinheiten/standard" passHref>
+          <Card
+            sx={{
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
+            }}
+          >
+            <CardActionArea>
+              <CardContent>
+                <Typography variant="h6" align="center" gutterBottom>
+                  Standard
+                </Typography>
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color="text.secondary"
+                >
+                  Klassische Ansicht des Organigramms mit Fokus auf Einfachheit.
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Link>
+      </Box>
+
+      {/* Lazy-loaded Organigramm-Komponente */}
+      <Suspense fallback={<div>Laden...</div>}>
+        {/* Organigramm-Ansicht */}
+        <OrganigrammPage />
+      </Suspense>
     </Box>
   );
 }

@@ -1,40 +1,86 @@
+/**
+ * @file FunctionsSpalte.tsx
+ * @description Stellt die Spalte für Funktionen innerhalb einer Organisationseinheit dar.
+ * Diese Komponente zeigt Funktionen an, ermöglicht die Verwaltung von Funktionen und bietet Modals für verschiedene Aktionen.
+ *
+ * @module FunctionsSpalte
+ */
+
 'use client';
 
-import { useMutation, useQuery } from '@apollo/client';
-import { Delete, Visibility } from '@mui/icons-material';
+import {
+  Add,
+  Delete,
+  DynamicFeed,
+  Edit,
+  Group,
+  Person,
+} from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
   IconButton,
   List,
-  ListItem,
   ListItemButton,
   ListItemText,
-  Modal,
-  TextField,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
-import { CREATE_FUNCTIONS } from '../../graphql/mutations/create-function';
-import { DELETE_FUNCTIONS } from '../../graphql/mutations/delete-function';
-import { FUNCTIONS_BY_ORG_UNIT } from '../../graphql/queries/get-functions';
-import client from '../../lib/apolloClient';
-import theme from '../../theme';
-import { Function, FunctionInfo } from '../../types/function.type';
-import { OrgUnitDTO } from '../../types/orgUnit.type';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  fetchFunctionById,
+  fetchFunctionsByOrgUnit,
+  removeFunction,
+} from '../../lib/api/function.api';
+import { FunctionString } from '../../types/function.type';
+import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
+import EditFunctionModal from '../modal/functionModals/EditFunctionModal';
+import ExplicitFunctionModal from '../modal/functionModals/ExplicitFunctionModal';
+import ImplicitFunctionModal from '../modal/functionModals/ImplicitFunctionModal';
+import SelectFunctionTypeModal from '../modal/functionModals/SelectFunctionTypeModal';
 
+/**
+ * Props für die `FunctionsSpalte`-Komponente.
+ *
+ * @interface FunctionsColumnProps
+ * @property {OrgUnit} orgUnit - Die Organisationseinheit, zu der die Funktionen gehören.
+ * @property {OrgUnit | undefined} rootOrgUnit - Die übergeordnete Organisationseinheit (falls vorhanden).
+ * @property {FunctionString[]} [functions] - Die Liste der Funktionen, die optional übergeben werden kann.
+ * @property {function} onSelect - Callback-Funktion, die aufgerufen wird, wenn eine Funktion ausgewählt wird.
+ * @property {function} handleMitgliederClick - Callback-Funktion, um Mitglieder anzuzeigen.
+ * @property {function} onRemove - Callback-Funktion, die aufgerufen wird, wenn Funktionen entfernt werden.
+ */
 interface FunctionsColumnProps {
-  orgUnit: OrgUnitDTO;
-  rootOrgUnit: OrgUnitDTO | undefined;
-  functions?: Function[]; // Alle Funktionen, zentral von `page.tsx` übergeben
-  onSelect: (functionInfo: FunctionInfo) => void;
+  orgUnit: OrgUnit;
+  rootOrgUnit: OrgUnit | undefined;
+  functions?: FunctionString[]; // Alle Funktionen, zentral von `page.tsx` übergeben
+  onSelect: (func: FunctionString) => void;
   handleMitgliederClick: () => void;
-  onRemove: (userId: string, functionId: string) => void;
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
+/**
+ * `FunctionsSpalte` zeigt alle Funktionen einer Organisationseinheit an und bietet Verwaltungsoptionen.
+ *
+ * - Funktionen können hinzugefügt, bearbeitet und entfernt werden.
+ * - Unterstützt implizite und explizite Funktionen sowie Modals für spezifische Aktionen.
+ *
+ * @component
+ * @param {FunctionsColumnProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Funktionen-Spalte.
+ *
+ * @example
+ * <FunctionsSpalte
+ *   orgUnit={selectedOrgUnit}
+ *   rootOrgUnit={rootOrgUnit}
+ *   onSelect={(func) => console.log(func)}
+ *   handleMitgliederClick={() => console.log('Mitglieder anzeigen')}
+ *   onRemove={(ids) => console.log('Entfernte IDs:', ids)}
+ * />
+ */
 export default function FunctionsSpalte({
   orgUnit,
   rootOrgUnit,
@@ -42,21 +88,64 @@ export default function FunctionsSpalte({
   handleMitgliederClick,
   onRemove,
 }: FunctionsColumnProps) {
+  const theme = useTheme(); // Dynamisches Theme aus Material-UI
+  //const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  const [functions, setFunctions] = useState<FunctionString[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<string | undefined>(
     undefined,
   );
-  const [addUserToFunction] = useMutation(CREATE_FUNCTIONS, { client });
-  const [removeUserFromFunction] = useMutation(DELETE_FUNCTIONS, { client });
-  const [open, setOpen] = useState(false);
-  const [newFunctionData, setNewFunctionData] = useState({
-    functionName: '',
-    type: '',
-    users: [] as string[],
-  });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | undefined>(undefined);
 
-  const { data, loading, error, refetch } = useQuery(FUNCTIONS_BY_ORG_UNIT, {
-    client,
-  });
+  const [openSelectType, setOpenSelectType] = useState(false);
+  const [openImplicitFunction, setOpenImplicitFunction] = useState(false);
+  const [openExplicitFunction, setOpenExplicitFunction] = useState(false);
+
+  const [openEditFunction, setOpenEditFunction] = useState(false); // State für Edit Modal
+  const [currentFunction, setCurrentFunction] = useState<
+    FunctionString | undefined
+  >(undefined); // Funktion, die bearbeitet wird
+
+  /**
+   * Lädt alle Funktionen einer Organisationseinheit.
+   *
+   * @async
+   * @function loadFunctions
+   * @param {string} orgUnitId - Die ID der Organisationseinheit.
+   * @returns {Promise<void>}
+   */
+  const loadFunctions = useCallback(async (orgUnitId: string) => {
+    try {
+      setLoading(true);
+      const functionList = await fetchFunctionsByOrgUnit(orgUnitId);
+      setFunctions(functionList);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Ein unbekannter Fehler ist aufgetreten.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
+
+  /**
+   * Aktualisiert die Liste der Funktionen.
+   *
+   * @function refetch
+   * @param {FunctionString[]} functionList - Die aktualisierte Liste der Funktionen.
+   */
+  const refetch = (functionList: FunctionString[]) => {
+    setFunctions(functionList);
+  };
+
+  useEffect(() => {
+    if (orgUnit && orgUnit._id) {
+      loadFunctions(orgUnit._id); // Hier wird `orgUnit.id` als Parameter übergeben
+    }
+  }, [orgUnit, loadFunctions]); // Reagiert auf Änderungen der `orgUnit.id`
+  // Der Effekt wird nur beim ersten Laden der Komponente ausgeführt.
 
   if (loading)
     return (
@@ -68,77 +157,93 @@ export default function FunctionsSpalte({
   if (error)
     return (
       <Box sx={{ p: 2 }}>
-        <Alert severity="error">Fehler: {error.message}</Alert>
+        <Alert severity="error">Fehler: {error}</Alert>
       </Box>
     );
 
-  const functions: Function[] = data.getData.data;
   // Funktionen filtern
-  const filteredFunctions: Function[] =
-    functions.filter((func: Function) => func.orgUnit === orgUnit.id) || [];
-
-  if (functions.length === 0 && orgUnit.hasMitglieder === undefined)
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="info">Keine Funktionen verfügbar</Alert>
-      </Box>
-    );
-
-  const handleInputChange = (field: string, value: string | string[]) => {
-    setNewFunctionData((prev) => ({ ...prev, [field]: value }));
-  };
+  //   const filteredFunctions: Function[] =
+  //     functions.filter((func: Function) => func.orgUnit === orgUnit._id) || [];
 
   // Klick-Handler für eine Funktion oder "Mitglieder"
-  const handleClick = (func: Function | string) => {
+  const handleClick = async (func: FunctionString | string) => {
     if (typeof func === 'string') {
       setSelectedIndex(func);
       handleMitgliederClick();
     } else {
       setSelectedIndex(func._id);
-      onSelect(func);
+      const func2: FunctionString = await fetchFunctionById(func._id);
+      onSelect(func2);
     }
   };
 
-  const handleAddFunction = async () => {
-    console.log('orgUnit', orgUnit);
-    try {
-      await addUserToFunction({
-        variables: {
-          functionName: newFunctionData.functionName,
-          orgUnit: orgUnit.id,
-          type: newFunctionData.type,
-          users: newFunctionData.users,
-        },
-      });
-      refetch(); // Aktualisiere die Daten nach der Mutation
-      setNewFunctionData({
-        functionName: '',
-        type: '',
-        users: [],
-      });
-      setOpen(false);
-    } catch (err) {
-      console.error('Fehler beim Hinzufügen des Benutzers:', err);
+  /**
+   * Handhabt das Entfernen einer Funktion.
+   *
+   * @async
+   * @function handleRemoveFunction
+   * @param {FunctionString} func - Die zu entfernende Funktion.
+   * @returns {Promise<void>}
+   */
+  const handleRemoveFunction = async (func: FunctionString) => {
+    const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
+    if (success) {
+      setFunctions((prev) => prev.filter((f) => f._id !== func._id)); // Update den lokalen Zustand
+      onRemove([func._id]); // Übergebe die ID an `onRemove`
+    } else {
+      setError('Fehler beim Entfernen der Funktion.');
     }
   };
 
-  const handleRemoveFunction = async (func: Function) => {
-    try {
-      await removeUserFromFunction({
-        variables: {
-          functionName: func.functionName,
-        },
-      });
-      refetch();
-      onRemove('', func._id);
-    } catch (err) {
-      console.error('Fehler beim Entfernen des Benutzers:', err);
-    }
-  };
-
-  const handleViewUser = (func: Function) => {
+  const handleViewUser = (func: FunctionString) => {
     setSelectedIndex(func._id);
     handleClick(func);
+  };
+
+  /**
+   * Handhabt das Hinzufügen einer neuen Funktion.
+   */
+  const handleAddFunctionClick = () => {
+    setOpenSelectType(true);
+  };
+
+  /**
+   * Handhabt die Auswahl eines Funktionstyps (implizit/explizit).
+   *
+   * @function handleSelectFunctionType
+   * @param {string} type - Der Typ der Funktion.
+   */
+  const handleSelectFunctionType = (type: string) => {
+    if (type === 'implizierte') {
+      setOpenImplicitFunction(true);
+    } else {
+      setOpenExplicitFunction(true);
+    }
+    setOpenSelectType(false);
+  };
+
+  const handleBackToSelectType = () => {
+    setOpenSelectType(true);
+    setOpenImplicitFunction(false);
+    setOpenExplicitFunction(false);
+  };
+
+  /**
+   * Handhabt das Bearbeiten einer Funktion.
+   *
+   * @async
+   * @function handleEditFunction
+   * @param {FunctionString} func - Die zu bearbeitende Funktion.
+   */
+  const handleEditFunction = async (func: FunctionString) => {
+    const func2 = await fetchFunctionById(func._id); // API-Aufruf zum Laden der Organisationseinheit
+    setCurrentFunction(func2);
+    setOpenEditFunction(true); // Öffne das Edit-Modal
+  };
+
+  const onEdit = (functionId: string) => {
+    setOpenEditFunction(false);
+    onRemove([functionId]); // Entferne die alte Funktion
   };
 
   return (
@@ -155,12 +260,14 @@ export default function FunctionsSpalte({
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setOpen(true)}
+          onClick={handleAddFunctionClick}
           sx={{ marginBottom: 2 }}
+          startIcon={<Add />}
         >
           Funktion hinzufügen
         </Button>
       </Box>
+
       {rootOrgUnit && rootOrgUnit.hasMitglieder && (
         <List>
           <ListItemButton
@@ -173,109 +280,124 @@ export default function FunctionsSpalte({
               selectedIndex === `mitglieder_${rootOrgUnit.name}`,
             )}
           >
+            <Tooltip title={'Mitglieder im ' + rootOrgUnit.name}>
+              <Box display="flex" alignItems="center">
+                {/*Das DynamicFeed-Icon, das dynamische, abgeleitete Gruppen repräsentiert.*/}
+                <DynamicFeed sx={{ marginRight: 1 }} color="action" />
+              </Box>
+            </Tooltip>
             <ListItemText
               primary={
                 rootOrgUnit.name === 'Rektorat'
                   ? `Mitglieder im ${rootOrgUnit.name}`
-                  : `Mitglieder der${rootOrgUnit.type ? ` ${rootOrgUnit.type}` : ''} ${rootOrgUnit.name}`
+                  : `Alle Benutzer der${rootOrgUnit.type ? ` ${rootOrgUnit.type}` : ''} ${rootOrgUnit.name}`
               }
             />
           </ListItemButton>
         </List>
       )}
+
+      {functions.length === 0 && (
+        <Box sx={{ p: 2 }}>
+          <Alert severity="info">Keine Funktionen verfügbar</Alert>
+        </Box>
+      )}
+
       <List>
-        {filteredFunctions.map((func) => (
-          <ListItem
-            key={func._id}
+        {functions.map((func) => (
+          <ListItemButton
+            key={func._id} // Eindeutiger Schlüssel für jedes Element
+            selected={selectedIndex === func._id}
+            onClick={() => handleViewUser(func)}
             sx={getListItemStyles(theme, selectedIndex === func._id)}
-            secondaryAction={
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Tooltip title="Details anzeigen">
-                  <IconButton
-                    edge="end"
-                    color="primary"
-                    onClick={() => handleViewUser(func)}
-                  >
-                    <Visibility />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Benutzer entfernen">
-                  <IconButton
-                    edge="end"
-                    color="error"
-                    onClick={() => handleRemoveFunction(func)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            }
           >
+            {/* Icon abhängig von implizit/explizit und Einzelperson/Mehrpersonen */}
+            {/* Icon abhängig vom Funktionstyp */}
+            <Tooltip
+              title={`${
+                func.isImpliciteFunction
+                  ? 'Implizite Funktion'
+                  : 'Explizite Funktion'
+              } - ${
+                func.isImpliciteFunction
+                  ? 'Mehrere Personen belegen diese Funktion'
+                  : func.isSingleUser
+                    ? 'Nur eine Person kann diese Funktion belegen'
+                    : 'Mehrere Personen können diese Funktion belegen'
+              }`}
+            >
+              {/* Icon abhängig vom Funktionstyp */}
+              {/*Das DynamicFeed-Icon, das dynamische, abgeleitete Gruppen repräsentiert.*/}
+              {/*Das Person-Icon repräsentiert eine einzelne Person.*/}
+              {/*Das Group-Icon repräsentiert eine Gruppe von Personen.*/}
+              {func.isImpliciteFunction ? (
+                <DynamicFeed sx={{ marginRight: 1 }} color="action" /> // Icon für implizite Funktionen
+              ) : func.isSingleUser ? (
+                <Person sx={{ marginRight: 1 }} color="action" /> // Icon für Einzelperson
+              ) : (
+                <Group sx={{ marginRight: 1 }} color="action" /> // Icon für Gruppen
+              )}
+            </Tooltip>
+
             <ListItemText primary={func.functionName} />
-          </ListItem>
+            <Tooltip title="Bearbeiten">
+              <IconButton
+                edge="end"
+                color="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditFunction(func);
+                }}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Benutzer entfernen">
+              <IconButton
+                edge="end"
+                color="error"
+                onClick={(e) => {
+                  e.stopPropagation(); // Blockiere Event nur für den Button
+                  handleRemoveFunction(func);
+                }}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </ListItemButton>
         ))}
       </List>
-      {/* Modal für Benutzer hinzufügen */}
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}
-        >
-          <TextField
-            fullWidth
-            label="Funktionsname"
-            placeholder="z.B. Studentische Hilfskraft"
-            value={newFunctionData.functionName}
-            onChange={(e) => handleInputChange('functionName', e.target.value)}
-          />
-          <TextField
-            fullWidth
-            placeholder="z.B. Fakultaet"
-            label="Typ"
-            value={newFunctionData.type}
-            onChange={(e) => handleInputChange('type', e.target.value)}
-          />
-          <TextField
-            fullWidth
-            placeholder="z.B. gyca1011,lufr1012"
-            label="Benutzer (Kommagetrennt)"
-            value={newFunctionData.users.join(', ')}
-            onChange={(e) =>
-              handleInputChange(
-                'users',
-                e.target.value.split(',').map((u) => u.trim()),
-              )
-            }
-          />
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}
-          >
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleAddFunction}
-            >
-              Hinzufügen
-            </Button>
-            <Button fullWidth variant="outlined" onClick={() => setOpen(false)}>
-              Abbrechen
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+
+      {/* Modal für Funktionen hinzufügen */}
+      {/* Modals */}
+      <SelectFunctionTypeModal
+        open={openSelectType}
+        onClose={() => setOpenSelectType(false)}
+        onSelectType={handleSelectFunctionType}
+      />
+      <ImplicitFunctionModal
+        open={openImplicitFunction}
+        onClose={() => setOpenImplicitFunction(false)}
+        orgUnitId={orgUnit._id}
+        refetch={refetch}
+        onBack={handleBackToSelectType}
+      />
+      <ExplicitFunctionModal
+        open={openExplicitFunction}
+        onClose={() => setOpenExplicitFunction(false)}
+        onBack={handleBackToSelectType}
+        orgUnitId={orgUnit._id}
+        refetch={refetch}
+      />
+
+      <EditFunctionModal
+        open={openEditFunction}
+        onClose={() => setOpenEditFunction(false)}
+        onEdit={onEdit}
+        functionData={currentFunction}
+        refetch={refetch}
+      />
     </Box>
   );
 }

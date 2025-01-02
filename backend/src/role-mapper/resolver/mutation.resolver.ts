@@ -1,17 +1,22 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @stylistic/operator-linebreak */
 /* eslint-disable security/detect-object-injection */
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { CreateEntityInput } from '../model/dto/create.dto.js';
 import { DeleteEntityInput } from '../model/dto/delete.dto.js';
 import { UpdateEntityInput } from '../model/dto/update.dto.js';
 import { CreateDataInput } from '../model/input/create.input.js';
+import { DataInput } from '../model/input/data.input.js';
 import { UpdateDataInput } from '../model/input/update.input.js';
 import { MutationPayload } from '../model/payload/mutation.payload.js';
 import { WriteService } from '../service/write.service.js';
+import { DUPLICATE_KEY_ERROR_CODE } from '../utils/konstanten.js';
 
 @Resolver()
 @Injectable()
@@ -63,11 +68,53 @@ export class MutationResolver {
             };
         } catch (error) {
             this.#logger.error('createEntity: Error occurred: %o', error);
+
+            // Dynamische Fehlermeldungen basierend auf der Entity
+            let errorMessage = 'An error occurred during the operation.';
+
+            // Spezifische Nachrichten für Duplikatfehler
+            if (error instanceof Error && (error as any).code === DUPLICATE_KEY_ERROR_CODE) {
+                switch (entity) {
+                    case 'MANDATES': {
+                        errorMessage = `Die Funktion "${functionData?.functionName}" existiert bereits oder konnte nicht erstellt werden.`;
+                        break;
+                    }
+                    case 'PROCESSES': {
+                        errorMessage = `Der Prozess "${processData?.name}" existiert bereits.`;
+                        break;
+                    }
+                    case 'ORG_UNITS': {
+                        errorMessage = `Die Organisationseinheit "${orgUnitData?.name}" existiert bereits.`;
+                        break;
+                    }
+                    case 'ROLES': {
+                        errorMessage = `Die Rolle "${roleData?.roleId}" existiert bereits.`;
+                        break;
+                    }
+                    case 'USERS': {
+                        throw new Error('Not implemented yet: "USERS" case');
+                    }
+                }
+                throw new ConflictException(errorMessage);
+            }
+
+            // Behandlung anderer spezifischer Fehler
+            if ((error as any).name === 'ValidationError') {
+                throw new BadRequestException((error as Error).message); // Gibt die Validierungsfehlermeldung zurück
+            }
+
+            if (error instanceof Error) {
+                errorMessage = `${errorMessage} Technische Details: ${error.message}`;
+            }
+
             return {
                 success: false,
-                message: (error as Error).message,
+                message: errorMessage,
                 result: undefined,
             };
+
+            // Rückgabe für unbekannte Fehler
+            // throw new InternalServerErrorException(errorMessage);
         }
     }
 
@@ -78,7 +125,6 @@ export class MutationResolver {
     @Mutation('updateEntity')
     async updateEntity(@Args('input') input: UpdateEntityInput): Promise<MutationPayload> {
         this.#logger.debug('updateEntity: input=%o', input);
-        // eslint-disable-next-line @stylistic/operator-linebreak
         const { entity, filter, userData, functionData, processData, orgUnitData, roleData } =
             input;
         try {
@@ -164,5 +210,39 @@ export class MutationResolver {
             this.#logger.error('Error:', (error as Error).message);
             throw new Error((error as Error).message);
         }
+    }
+
+    @Public()
+    @Mutation('saveQuery')
+    @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
+    async saveQuery(
+        @Args('functionName') functionName: string, // Name der Funktion, für die die Daten abgerufen werden sollen
+        @Args('orgUnitId') orgUnitId: Types.ObjectId, // ID der Organisationseinheit, für die die Daten abgerufen werden sollen
+        @Args('input') input: DataInput, // Eingabedaten, die die Entität, Filter und Paginierung enthalten
+    ) {
+        this.#logger.debug(
+            'saveQuery: functionName=%s, orgUnit=%s, input=%o',
+            functionName,
+            orgUnitId,
+            input,
+        );
+
+        const { entity, filter, sort } = input; // Extrahiere Eingabewerte
+
+        // Abrufen der gespeicherten Query und Ausführung
+        const { result, success } = await this.#service.saveQuery(
+            functionName,
+            orgUnitId,
+            entity,
+            filter,
+            sort,
+        );
+        this.#logger.debug('Query result:', result);
+        // Rückgabe des Ergebnisses
+        return {
+            success,
+            message: `Save operation successful.`,
+            result,
+        };
     }
 }
