@@ -1,3 +1,11 @@
+/**
+ * @file UsersSpalte.tsx
+ * @description Stellt die Spalte für Benutzer einer ausgewählten Funktion dar.
+ * Diese Komponente bietet Funktionen zur Anzeige, Suche, Hinzufügung und Entfernung von Benutzern.
+ *
+ * @module UsersSpalte
+ */
+
 'use client';
 
 import { Add, Delete, Search, SwapHoriz } from '@mui/icons-material';
@@ -25,6 +33,17 @@ import { User } from '../../types/user.type';
 import { getListItemStyles } from '../../utils/styles';
 import AddUserModal from '../modal/userModals/AddUserModal';
 
+/**
+ * Props für die `UsersSpalte`-Komponente.
+ *
+ * @interface UsersColumnProps
+ * @property {string} selectedFunctionId - Die ID der ausgewählten Funktion.
+ * @property {FunctionUser | undefined} selectedMitglieder - Die Liste der Mitglieder für die Funktion.
+ * @property {function} onSelectUser - Callback-Funktion, die aufgerufen wird, wenn ein Benutzer ausgewählt wird.
+ * @property {function} onRemove - Callback-Funktion, um Benutzer aus der Funktion zu entfernen.
+ * @property {boolean} isImpliciteFunction - Gibt an, ob die Funktion implizit ist.
+ * @property {boolean} isSingleUser - Gibt an, ob die Funktion nur von einem Benutzer belegt werden kann.
+ */
 interface UsersColumnProps {
   selectedFunctionId: string;
   selectedMitglieder: FunctionUser | undefined;
@@ -34,6 +53,27 @@ interface UsersColumnProps {
   isSingleUser: boolean;
 }
 
+/**
+ * `UsersSpalte` zeigt die Benutzer einer Funktion an und bietet Verwaltungsfunktionen.
+ *
+ * - Unterstützt die Anzeige von Benutzern basierend auf der Funktion.
+ * - Ermöglicht das Hinzufügen, Ersetzen oder Entfernen von Benutzern.
+ * - Bietet eine Suchfunktion, um Benutzer effizient zu finden.
+ *
+ * @component
+ * @param {UsersColumnProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Benutzer-Spalte.
+ *
+ * @example
+ * <UsersSpalte
+ *   selectedFunctionId="12345"
+ *   selectedMitglieder={mitgliederData}
+ *   onSelectUser={(userId) => console.log(userId)}
+ *   onRemove={(ids) => console.log(ids)}
+ *   isImpliciteFunction={false}
+ *   isSingleUser={true}
+ * />
+ */
 export default function UsersSpalte({
   selectedFunctionId,
   selectedMitglieder,
@@ -58,6 +98,13 @@ export default function UsersSpalte({
   );
   const [error, setError] = useState<string | undefined>(undefined);
 
+  /**
+   * Lädt die Benutzer basierend auf der ausgewählten Funktion.
+   *
+   * @async
+   * @function loadFunctions
+   * @returns {Promise<void>}
+   */
   const loadFunctions = useCallback(async () => {
     // setLoading(true);
     setError(undefined);
@@ -84,6 +131,9 @@ export default function UsersSpalte({
     }
   }, [selectedFunctionId, selectedMitglieder, isImpliciteFunction]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
+  /**
+   * Filtert Benutzer basierend auf der Suchanfrage.
+   */
   useEffect(() => {
     // Filtere Benutzer basierend auf der Suchanfrage
     if (selectedFunction && selectedFunction.users) {
@@ -95,6 +145,12 @@ export default function UsersSpalte({
     }
   }, [searchTerm, selectedFunction]);
 
+  /**
+   * Handhabt Änderungen in der Suchleiste.
+   *
+   * @function handleSearchChange
+   * @param {React.ChangeEvent<HTMLInputElement>} event - Das Eingabe-Event.
+   */
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
@@ -105,12 +161,25 @@ export default function UsersSpalte({
     }
   }, [selectedFunctionId, loadFunctions]);
 
+  /**
+   * Aktualisiert die Benutzerliste, nachdem Änderungen vorgenommen wurden.
+   *
+   * @function refetch
+   * @param {FunctionUser} functionInfo - Die aktualisierte Funktion mit Benutzern.
+   */
   const refetch = (functionInfo: FunctionUser) => {
     setSelectedFunction(functionInfo); // Aktualisiere den Zustand
     setFilteredUsers(functionInfo.users); // Aktualisiere die gefilterte Liste
     setSearchTerm(''); // Suchfeld zurücksetzen
   };
 
+  /**
+   * Entfernt einen Benutzer aus der Funktion.
+   *
+   * @async
+   * @function handleRemoveUser
+   * @param {string} userId - Die ID des Benutzers, der entfernt werden soll.
+   */
   const handleRemoveUser = async (userId: string) => {
     try {
       await removeUserFromFunction(
@@ -133,6 +202,12 @@ export default function UsersSpalte({
     }
   };
 
+  /**
+   * Wählt einen Benutzer aus und zeigt dessen Details an.
+   *
+   * @function handleViewUser
+   * @param {string} userId - Die ID des ausgewählten Benutzers.
+   */
   const handleViewUser = (userId: string) => {
     setSelectedIndex(userId);
     onSelectUser(userId);

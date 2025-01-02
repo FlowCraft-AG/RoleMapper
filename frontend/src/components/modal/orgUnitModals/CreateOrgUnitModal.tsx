@@ -1,3 +1,10 @@
+/**
+ * @file CreateOrgUnitModal.tsx
+ * @description Modal-Komponente zur Erstellung neuer Organisationseinheiten.
+ *
+ * @module CreateOrgUnitModal
+ */
+
 import {
   Box,
   Button,
@@ -14,13 +21,31 @@ import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import FunctionAutocomplete from '../../FunctionAutocomplete';
 
+/**
+ * Props für die `CreateOrgUnitModal`-Komponente.
+ */
 interface CreateOrgUnitModalProps {
-  open: boolean;
-  onClose: () => void;
-  parentId: string;
-  refetch: (orgUnitList: OrgUnit[]) => void;
+  open: boolean; // Gibt an, ob das Modal geöffnet ist.
+  onClose: () => void; // Funktion zum Schließen des Modals.
+  parentId: string; // Die ID der übergeordneten Organisationseinheit.
+  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheiten.
 }
 
+/**
+ * Modal-Komponente zur Erstellung einer neuen Organisationseinheit.
+ *
+ * @component
+ * @param {CreateOrgUnitModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <CreateOrgUnitModal
+ *   open={true}
+ *   onClose={() => console.log('Modal schließen')}
+ *   parentId="12345"
+ *   refetch={(updatedOrgUnits) => console.log('Aktualisierte Einheiten:', updatedOrgUnits)}
+ * />
+ */
 const CreateOrgUnitModal = ({
   open,
   onClose,
@@ -40,6 +65,9 @@ const CreateOrgUnitModal = ({
   const [creationLoading, setCreationLoading] = useState(false);
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
 
+  /**
+   * Lädt die verfügbaren Funktionen und Organisationseinheiten.
+   */
   const loadFunctons = useCallback(async () => {
     setFunctionLoading(true);
     try {
@@ -60,14 +88,27 @@ const CreateOrgUnitModal = ({
     }
   }, []);
 
-  const handleCreate = async () => {
+  /**
+   * Validiert den Namen der Organisationseinheit.
+   *
+   * @returns {boolean} Gibt `true` zurück, wenn der Name gültig ist.
+   */
+  const validateName = (): boolean => {
     if (!formData.name || !/^[a-zA-ZäöüÄÖÜß]+$/.test(formData.name)) {
       setSnackbar({
         open: true,
         message: 'Name darf nur Buchstaben enthalten.',
       });
-      return;
+      return false;
     }
+    return true;
+  };
+
+  /**
+   * Erstellt eine neue Organisationseinheit.
+   */
+  const handleCreate = async () => {
+    if (!validateName()) return;
 
     setCreationLoading(true);
     try {
@@ -99,16 +140,31 @@ const CreateOrgUnitModal = ({
     }
   }, [open, loadFunctons]);
 
+  /**
+   * Schließt das Modal und setzt das Formular zurück.
+   */
   const handleClose = () => {
     setFormData({ name: '', supervisor: undefined });
     onClose();
   };
 
+  /**
+   * Sucht den Namen einer Organisationseinheit basierend auf ihrer ID.
+   *
+   * @param {string} id - Die ID der Organisationseinheit.
+   * @returns {string} Der Name der Organisationseinheit oder "Unbekannt".
+   */
   const orgUnitLookup = (id: string) => {
     const orgUnit = orgUnits.find((unit) => unit._id === id);
     return orgUnit ? orgUnit.name : 'Unbekannt';
   };
 
+  /**
+   * Erstellt den Pfad einer Organisationseinheit basierend auf ihrer ID.
+   *
+   * @param {string} id - Die ID der Organisationseinheit.
+   * @returns {string} Der Pfad der Organisationseinheit.
+   */
   const orgUnitPathLookup = (id: string): string => {
     const path: string[] = [];
     let currentId = id;

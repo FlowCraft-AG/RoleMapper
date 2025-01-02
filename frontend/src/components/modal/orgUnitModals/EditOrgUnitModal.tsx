@@ -1,3 +1,10 @@
+/**
+ * @file EditOrgUnitModal.tsx
+ * @description Modal-Komponente zur Bearbeitung einer bestehenden Organisationseinheit.
+ *
+ * @module EditOrgUnitModal
+ */
+
 import {
   Box,
   Button,
@@ -18,13 +25,31 @@ import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import FunctionAutocomplete from '../../FunctionAutocomplete';
 
+/**
+ * Props für die `EditOrgUnitModal`-Komponente.
+ */
 interface EditOrgUnitModalProps {
-  open: boolean;
-  onClose: () => void;
-  itemId: string;
-  refetch: (orgUnitList: OrgUnit[]) => void;
+  open: boolean; // Gibt an, ob das Modal geöffnet ist.
+  onClose: () => void; // Funktion zum Schließen des Modals.
+  itemId: string; // Die ID der zu bearbeitenden Organisationseinheit.
+  refetch: (orgUnitList: OrgUnit[]) => void; // Callback zur Aktualisierung der Organisationseinheiten.
 }
 
+/**
+ * Modal-Komponente zur Bearbeitung einer Organisationseinheit.
+ *
+ * @component
+ * @param {EditOrgUnitModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <EditOrgUnitModal
+ *   open={true}
+ *   onClose={() => console.log('Modal schließen')}
+ *   itemId="12345"
+ *   refetch={(updatedOrgUnits) => console.log('Aktualisierte Einheiten:', updatedOrgUnits)}
+ * />
+ */
 const EditOrgUnitModal = ({
   open,
   onClose,
@@ -42,6 +67,12 @@ const EditOrgUnitModal = ({
   const [functionData, setFunctionData] = useState<FunctionString[]>([]);
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
 
+  /**
+   * Logs Fehler und zeigt eine Snackbar mit der Fehlermeldung an.
+   *
+   * @param {string} message - Die Fehlermeldung.
+   * @param {unknown} error - Das Fehlerobjekt.
+   */
   const logError = (message: string, error: unknown) => {
     console.error(message, error);
     setSnackbar({
@@ -50,8 +81,17 @@ const EditOrgUnitModal = ({
     });
   };
 
+  /**
+   * Überprüft, ob die gegebene ID ein gültiges MongoDB ObjectId ist.
+   *
+   * @param {string} id - Die zu überprüfende ID.
+   * @returns {boolean} Gibt `true` zurück, wenn die ID gültig ist.
+   */
   const isValidObjectId = (id: string) => /^[a-fA-F0-9]{24}$/.test(id);
 
+  /**
+   * Lädt die Daten der Organisationseinheit sowie verfügbare Funktionen und Organisationseinheiten.
+   */
   const loadData = useCallback(async () => {
     try {
       const [orgUnit, functions, orgUnitList] = await Promise.all([
@@ -76,6 +116,9 @@ const EditOrgUnitModal = ({
     }
   }, [open, loadData]);
 
+  /**
+   * Speichert die Änderungen der Organisationseinheit.
+   */
   const handleSave = async () => {
     if (!formData.name) {
       setSnackbar({ open: true, message: 'Name darf nicht leer sein.' });
@@ -103,16 +146,31 @@ const EditOrgUnitModal = ({
     }
   };
 
+  /**
+   * Schließt das Modal und setzt das Formular zurück.
+   */
   const handleClose = () => {
     setFormData({ name: '', supervisor: undefined });
     onClose();
   };
 
+  /**
+   * Sucht den Namen einer Organisationseinheit basierend auf ihrer ID.
+   *
+   * @param {string} id - Die ID der Organisationseinheit.
+   * @returns {string} Der Name der Organisationseinheit oder "Unbekannt".
+   */
   const orgUnitLookup = (id: string) => {
     const orgUnit = orgUnits.find((unit) => unit._id === id);
     return orgUnit ? orgUnit.name : 'Unbekannt';
   };
 
+  /**
+   * Erstellt den Pfad einer Organisationseinheit basierend auf ihrer ID.
+   *
+   * @param {string} id - Die ID der Organisationseinheit.
+   * @returns {string} Der Pfad der Organisationseinheit.
+   */
   const orgUnitPathLookup = (id: string): string => {
     const path: string[] = [];
     let currentId = id;

@@ -1,3 +1,9 @@
+/**
+ * @file AddUserModal.tsx
+ * @description Modal-Komponente für das Hinzufügen oder Ersetzen eines Benutzers in einer Funktion.
+ *
+ * @module AddUserModal
+ */
 import { SwapHoriz } from '@mui/icons-material';
 import {
   Alert,
@@ -15,6 +21,16 @@ import { FunctionUser } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
 
+/**
+ * Props für die `AddUserModal`-Komponente.
+ *
+ * @interface AddUserModalProps
+ * @property {boolean} open - Gibt an, ob das Modal geöffnet ist.
+ * @property {() => void} onClose - Callback-Funktion, um das Modal zu schließen.
+ * @property {(FunctionInfo: FunctionUser) => void} refetch - Callback-Funktion, um die Liste der Benutzer zu aktualisieren.
+ * @property {FunctionUser | undefined} selectedFunction - Die aktuell ausgewählte Funktion.
+ * @property {boolean} isSingleUser - Gibt an, ob die Funktion nur einen Benutzer zulässt.
+ */
 interface AddUserModalProps {
   open: boolean;
   onClose: () => void;
@@ -23,6 +39,25 @@ interface AddUserModalProps {
   isSingleUser: boolean;
 }
 
+/**
+ * `AddUserModal`-Komponente
+ *
+ * Diese Komponente zeigt ein Modal zur Auswahl und Hinzufügung eines Benutzers zu einer Funktion.
+ * Bei Funktionen, die nur einen Benutzer zulassen, wird eine Bestätigung zum Ersetzen des aktuellen Benutzers angezeigt.
+ *
+ * @component
+ * @param {AddUserModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <AddUserModal
+ *   open={true}
+ *   onClose={() => console.log('Modal schließen')}
+ *   refetch={(newData) => console.log('Liste aktualisieren', newData)}
+ *   selectedFunction={selectedFunction}
+ *   isSingleUser={false}
+ * />
+ */
 const AddUserModal: React.FC<AddUserModalProps> = ({
   open,
   onClose,
@@ -42,6 +77,12 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     'userId',
   ); // Zustand für die Anzeige
 
+  /**
+   * Lädt die Liste der Benutzer-IDs basierend auf dem Anzeigeformat.
+   *
+   * @function fetchUsers
+   * @async
+   */
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -66,6 +107,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   }, [open, fetchUsers]);
 
+  /**
+   * Validiert die Benutzer-ID und setzt entsprechende Fehlermeldungen.
+   *
+   * @function validateInput
+   * @returns {boolean} Gibt `true` zurück, wenn die Eingabe gültig ist.
+   */
+
   const validateInput = () => {
     const newErrors: { [key: string]: string | undefined } = {};
     const userIdRegex = /^[a-zA-Z]{4}[0-9]{4}$/;
@@ -81,6 +129,12 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Fügt einen neuen Benutzer zu der ausgewählten Funktion hinzu.
+   *
+   * @function handleAddUser
+   * @async
+   */
   const handleAddUser = async () => {
     if (!validateInput()) {
       return;
@@ -111,17 +165,33 @@ const AddUserModal: React.FC<AddUserModalProps> = ({
     }
   };
 
+  /**
+   * Öffnet das Bestätigungsmodal für das Ersetzen eines Benutzers.
+   *
+   * @function handleOpenConfirmModal
+   */
   const handleOpenConfirmModal = () => {
     if (validateInput()) {
       setConfirmModalOpen(true);
     }
   };
 
+  /**
+   * Bestätigt das Ersetzen eines Benutzers und führt die Hinzufügung durch.
+   *
+   * @function handleConfirmReplace
+   * @async
+   */
   const handleConfirmReplace = async () => {
     setConfirmModalOpen(false);
     await handleAddUser();
   };
 
+  /**
+   * Wechselt das Anzeigeformat der Benutzerliste zwischen Benutzer-ID und Namen.
+   *
+   * @function toggleDisplayFormat
+   */
   const toggleDisplayFormat = () => {
     setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
   };

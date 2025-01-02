@@ -1,11 +1,44 @@
+/**
+ * @file SelectFunctionTypeModal.tsx
+ * @description Modal-Komponente zur Auswahl eines Funktionstyps (implizit oder explizit).
+ *
+ * @module SelectFunctionTypeModal
+ */
+
 import { Box, Button, Modal, Stack, Typography } from '@mui/material';
 
+/**
+ * Props für die `SelectFunctionTypeModal`-Komponente.
+ *
+ * @interface SelectFunctionTypeModalProps
+ * @property {boolean} open - Gibt an, ob das Modal geöffnet ist.
+ * @property {() => void} onClose - Callback-Funktion, um das Modal zu schließen.
+ * @property {(type: string) => void} onSelectType - Callback-Funktion, die aufgerufen wird, wenn ein Funktionstyp ausgewählt wird.
+ */
 interface SelectFunctionTypeModalProps {
   open: boolean;
   onClose: () => void;
   onSelectType: (type: string) => void;
 }
 
+/**
+ * `SelectFunctionTypeModal`-Komponente
+ *
+ * Diese Komponente zeigt ein Modal, in dem der Benutzer zwischen zwei Funktionstypen auswählen kann:
+ * - Implizierte Funktion
+ * - Explizierte Funktion
+ *
+ * @component
+ * @param {SelectFunctionTypeModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <SelectFunctionTypeModal
+ *   open={true}
+ *   onClose={() => console.log('Modal geschlossen')}
+ *   onSelectType={(type) => console.log('Ausgewählter Typ:', type)}
+ * />
+ */
 const SelectFunctionTypeModal = ({
   open,
   onClose,
