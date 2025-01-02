@@ -13,9 +13,6 @@ export const metadata: Metadata = {
   title: 'Organisationseinheiten',
   description:
     'Organigramm der Hochschule Karlsruhe (HSKA) zur Darstellung der Fakultäten, Institute und Rollen.',
-  icons: {
-    icon: '/favicon.ico', // Favicon im public-Ordner referenzieren
-  },
 };
 
 export default async function HKAPage() {

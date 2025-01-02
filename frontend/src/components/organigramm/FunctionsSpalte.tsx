@@ -1,3 +1,11 @@
+/**
+ * @file FunctionsSpalte.tsx
+ * @description Stellt die Spalte für Funktionen innerhalb einer Organisationseinheit dar.
+ * Diese Komponente zeigt Funktionen an, ermöglicht die Verwaltung von Funktionen und bietet Modals für verschiedene Aktionen.
+ *
+ * @module FunctionsSpalte
+ */
+
 'use client';
 
 import {
@@ -34,6 +42,17 @@ import ExplicitFunctionModal from '../modal/functionModals/ExplicitFunctionModal
 import ImplicitFunctionModal from '../modal/functionModals/ImplicitFunctionModal';
 import SelectFunctionTypeModal from '../modal/functionModals/SelectFunctionTypeModal';
 
+/**
+ * Props für die `FunctionsSpalte`-Komponente.
+ *
+ * @interface FunctionsColumnProps
+ * @property {OrgUnit} orgUnit - Die Organisationseinheit, zu der die Funktionen gehören.
+ * @property {OrgUnit | undefined} rootOrgUnit - Die übergeordnete Organisationseinheit (falls vorhanden).
+ * @property {FunctionString[]} [functions] - Die Liste der Funktionen, die optional übergeben werden kann.
+ * @property {function} onSelect - Callback-Funktion, die aufgerufen wird, wenn eine Funktion ausgewählt wird.
+ * @property {function} handleMitgliederClick - Callback-Funktion, um Mitglieder anzuzeigen.
+ * @property {function} onRemove - Callback-Funktion, die aufgerufen wird, wenn Funktionen entfernt werden.
+ */
 interface FunctionsColumnProps {
   orgUnit: OrgUnit;
   rootOrgUnit: OrgUnit | undefined;
@@ -43,6 +62,25 @@ interface FunctionsColumnProps {
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
+/**
+ * `FunctionsSpalte` zeigt alle Funktionen einer Organisationseinheit an und bietet Verwaltungsoptionen.
+ *
+ * - Funktionen können hinzugefügt, bearbeitet und entfernt werden.
+ * - Unterstützt implizite und explizite Funktionen sowie Modals für spezifische Aktionen.
+ *
+ * @component
+ * @param {FunctionsColumnProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Funktionen-Spalte.
+ *
+ * @example
+ * <FunctionsSpalte
+ *   orgUnit={selectedOrgUnit}
+ *   rootOrgUnit={rootOrgUnit}
+ *   onSelect={(func) => console.log(func)}
+ *   handleMitgliederClick={() => console.log('Mitglieder anzeigen')}
+ *   onRemove={(ids) => console.log('Entfernte IDs:', ids)}
+ * />
+ */
 export default function FunctionsSpalte({
   orgUnit,
   rootOrgUnit,
@@ -68,6 +106,14 @@ export default function FunctionsSpalte({
     FunctionString | undefined
   >(undefined); // Funktion, die bearbeitet wird
 
+  /**
+   * Lädt alle Funktionen einer Organisationseinheit.
+   *
+   * @async
+   * @function loadFunctions
+   * @param {string} orgUnitId - Die ID der Organisationseinheit.
+   * @returns {Promise<void>}
+   */
   const loadFunctions = useCallback(async (orgUnitId: string) => {
     try {
       setLoading(true);
@@ -84,6 +130,12 @@ export default function FunctionsSpalte({
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
+  /**
+   * Aktualisiert die Liste der Funktionen.
+   *
+   * @function refetch
+   * @param {FunctionString[]} functionList - Die aktualisierte Liste der Funktionen.
+   */
   const refetch = (functionList: FunctionString[]) => {
     setFunctions(functionList);
   };
@@ -125,6 +177,14 @@ export default function FunctionsSpalte({
     }
   };
 
+  /**
+   * Handhabt das Entfernen einer Funktion.
+   *
+   * @async
+   * @function handleRemoveFunction
+   * @param {FunctionString} func - Die zu entfernende Funktion.
+   * @returns {Promise<void>}
+   */
   const handleRemoveFunction = async (func: FunctionString) => {
     const success = await removeFunction(func._id, func.orgUnit); // Serverseitige Funktion aufrufen
     if (success) {
@@ -140,10 +200,19 @@ export default function FunctionsSpalte({
     handleClick(func);
   };
 
+  /**
+   * Handhabt das Hinzufügen einer neuen Funktion.
+   */
   const handleAddFunctionClick = () => {
     setOpenSelectType(true);
   };
 
+  /**
+   * Handhabt die Auswahl eines Funktionstyps (implizit/explizit).
+   *
+   * @function handleSelectFunctionType
+   * @param {string} type - Der Typ der Funktion.
+   */
   const handleSelectFunctionType = (type: string) => {
     if (type === 'implizierte') {
       setOpenImplicitFunction(true);
@@ -159,6 +228,13 @@ export default function FunctionsSpalte({
     setOpenExplicitFunction(false);
   };
 
+  /**
+   * Handhabt das Bearbeiten einer Funktion.
+   *
+   * @async
+   * @function handleEditFunction
+   * @param {FunctionString} func - Die zu bearbeitende Funktion.
+   */
   const handleEditFunction = async (func: FunctionString) => {
     const func2 = await fetchFunctionById(func._id); // API-Aufruf zum Laden der Organisationseinheit
     setCurrentFunction(func2);

@@ -1,3 +1,10 @@
+/**
+ * @file ChildFunctionsModal.tsx
+ * @description Modal zur Anzeige von Funktionen der untergeordneten Organisationseinheiten.
+ *
+ * @module ChildFunctionsModal
+ */
+
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -12,23 +19,51 @@ import {
   Modal,
   Typography,
 } from '@mui/material';
+import { JSX } from 'react';
 
+interface ChildFunctionsModalProps {
+  open: boolean; // Gibt an, ob das Modal geöffnet ist.
+  onClose: () => void; // Funktion zum Schließen des Modals.
+  onContinue: () => void; // Funktion, die aufgerufen wird, wenn der "Weiter"-Button geklickt wird.
+  childrenFunctions: {
+    orgUnit: string;
+    functions: { functionName: string }[];
+  }[]; // Liste der Funktionen der untergeordneten Organisationseinheiten.
+}
+
+/**
+ * Modal zur Anzeige der Funktionen von untergeordneten Organisationseinheiten.
+ *
+ * @component
+ * @param {ChildFunctionsModalProps} props - Die Eigenschaften der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <ChildFunctionsModal
+ *   open={true}
+ *   onClose={() => console.log('Modal geschlossen')}
+ *   onContinue={() => console.log('Weiter gedrückt')}
+ *   childrenFunctions={[
+ *     {
+ *       orgUnit: 'Fakultät A',
+ *       functions: [{ functionName: 'Lehrstuhl 1' }, { functionName: 'Lehrstuhl 2' }],
+ *     },
+ *   ]}
+ * />
+ */
 const ChildFunctionsModal = ({
   open,
   onClose,
   childrenFunctions,
   onContinue,
-}: {
-  open: boolean;
-  onClose: () => void;
-  onContinue: () => void; // Funktion für "Weiter"
-  childrenFunctions: {
-    orgUnit: string;
-    functions: { functionName: string }[];
-  }[];
-}) => {
+}: ChildFunctionsModalProps): JSX.Element => {
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="child-functions-title"
+      aria-describedby="child-functions-description"
+    >
       <Box
         sx={{
           position: 'absolute',
@@ -40,18 +75,30 @@ const ChildFunctionsModal = ({
           borderRadius: 2,
           width: '90%',
           maxWidth: 600,
+          maxHeight: '80vh',
+          overflowY: 'auto', // Scrollbar bei langen Inhalten
           boxShadow: 24,
         }}
       >
+        {/* Header mit Titel und Schließen-Button */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          <Typography
+            id="child-functions-title"
+            variant="h6"
+            sx={{ fontWeight: 'bold' }}
+          >
             Funktionen von untergeordneten Organisationseinheiten
           </Typography>
-          <IconButton onClick={onClose}>
+          <IconButton
+            aria-label="Modal schließen"
+            onClick={onClose}
+            sx={{ color: 'text.secondary' }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
 
+        {/* Anzeige der untergeordneten Funktionen */}
         {childrenFunctions.length > 0 ? (
           childrenFunctions.map((child, index) => (
             <Accordion key={index}>
@@ -82,6 +129,7 @@ const ChildFunctionsModal = ({
           ))
         ) : (
           <Typography
+            id="child-functions-description"
             variant="body2"
             sx={{
               color: 'text.secondary',
@@ -94,6 +142,7 @@ const ChildFunctionsModal = ({
           </Typography>
         )}
 
+        {/* Action-Buttons */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
           <Button
             onClick={onClose}
