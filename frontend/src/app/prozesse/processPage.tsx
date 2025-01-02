@@ -1,19 +1,19 @@
 'use client';
 
 import { Box, Typography, useTheme } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 
 export default function ProcessPage() {
   console.log('PROCESS PAGE');
-  
+
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
 
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
   }, [setFacultyTheme, theme.palette]);
-/*
+  /*
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     return await fetchMitgliederIds(alias, kostenstelleNr);
   };
@@ -75,7 +75,7 @@ export default function ProcessPage() {
   };
 */
 
-return (
+  return (
     <Box sx={{ display: 'flex', flexDirection: 'row' }}>
       {/* Erste Spalte: Prozesse */}
       <Box
