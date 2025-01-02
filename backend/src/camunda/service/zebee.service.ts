@@ -1,7 +1,6 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable security-node/detect-crlf */
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ZBClient, ZBWorker } from 'zeebe-node';
 import { getLogger } from '../../logger/logger.js';
@@ -25,7 +24,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         this.registerOutputWorker();
         this.registerNoteWorker();
         this.registerGetRolesWorker();
-        console.log('Zeebe Worker gestartet.');
+        this.#logger.debug('Zeebe Worker gestartet.');
     }
 
     async onModuleDestroy() {
@@ -42,7 +41,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
 
     async startProcess(processKey: string, variables: Record<string, any>) {
         try {
-            console.log(`Starte Prozess mit Key: ${processKey} und Variablen:`, variables);
+            this.#logger.debug(`Starte Prozess mit Key: ${processKey} und Variablen:`, variables);
 
             return await this.#zbClient.createProcessInstance({
                 bpmnProcessId: processKey,
@@ -55,16 +54,16 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
     }
 
     private registerOutputWorker() {
-        console.log('Registriere Worker für "output" ');
+        this.#logger.debug('Registriere Worker für "output" ');
         this.#outputWorker = this.#zbClient.createWorker({
             taskType: 'output',
             taskHandler: async (job) => {
                 const eingabe = job.variables.eingabe;
 
                 if (eingabe !== null && eingabe !== undefined) {
-                    console.log(`Benutzer Eingabe: ${eingabe}`);
+                    this.#logger.debug(`Benutzer Eingabe: ${eingabe}`);
                 } else {
-                    console.log('Variable "eingabe" nicht gefunden.');
+                    this.#logger.debug('Variable "eingabe" nicht gefunden.');
                 }
 
                 await job.complete({
@@ -76,16 +75,16 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
     }
 
     private registerNoteWorker() {
-        console.log('Registriere Worker für "note"');
+        this.#logger.debug('Registriere Worker für "note"');
         this.#noteWorker = this.#zbClient.createWorker({
             taskType: 'note',
             taskHandler: async (job) => {
                 const gegebeneNote = job.variables.gegebene_note;
 
                 if (gegebeneNote) {
-                    console.log(`Benutzer Eindruck: ${gegebeneNote}`);
+                    this.#logger.debug(`Benutzer Eindruck: ${gegebeneNote}`);
                 } else {
-                    console.log('Variable "note" nicht gefunden.');
+                    this.#logger.debug('Variable "note" nicht gefunden.');
                 }
 
                 await job.complete({
@@ -97,7 +96,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
     }
 
     private registerGetRolesWorker() {
-        console.log('Registriere Worker um Rollen zu ermitteln');
+        this.#logger.debug('Registriere Worker um Rollen zu ermitteln');
         this.#noteWorker = this.#zbClient.createWorker({
             taskType: 'getRoles',
             taskHandler: async (job) => {
@@ -130,7 +129,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
                     this.#logger.debug('Job abgeschlossen mit assignee: %o', assignee);
                     this.#logger.debug('Prozess-Variablen vor Abschluss: %o', job.variables);
                 } else {
-                    console.log('Variable "note" nicht gefunden.');
+                    this.#logger.debug('Variable "note" nicht gefunden.');
                 }
                 return 'JOB_ACTION_ACKNOWLEDGEMENT' as const;
             },
