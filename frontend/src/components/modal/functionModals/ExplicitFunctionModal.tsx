@@ -1,3 +1,10 @@
+/**
+ * @file ExplicitFunctionModal.tsx
+ * @description Modal-Komponente zur Erstellung von expliziten Funktionen in einer Organisationseinheit.
+ *
+ * @module ExplicitFunctionModal
+ */
+
 'use client';
 
 import { SwapHoriz } from '@mui/icons-material';
@@ -20,6 +27,16 @@ import { FunctionString } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
 
+/**
+ * Props für die `ExplicitFunctionModal`-Komponente.
+ *
+ * @interface ExplicitFunctionModalProps
+ * @property {boolean} open - Gibt an, ob das Modal geöffnet ist.
+ * @property {() => void} onClose - Callback-Funktion, um das Modal zu schließen.
+ * @property {() => void} onBack - Callback-Funktion, um zur vorherigen Ansicht zurückzukehren.
+ * @property {string} orgUnitId - Die ID der Organisationseinheit, zu der die Funktion gehört.
+ * @property {(functionList: FunctionString[]) => void} refetch - Callback zur Aktualisierung der Funktionsliste.
+ */
 interface ExplicitFunctionModalProps {
   open: boolean;
   onClose: () => void;
@@ -28,6 +45,26 @@ interface ExplicitFunctionModalProps {
   refetch: (functionList: FunctionString[]) => void;
 }
 
+/**
+ * `ExplicitFunctionModal`-Komponente
+ *
+ * Diese Komponente zeigt ein Modal zur Erstellung von expliziten Funktionen an. Der Benutzer kann
+ * einen Funktionsnamen eingeben, Benutzer zuweisen und optional festlegen, ob die Funktion nur von
+ * einem Benutzer besetzt werden kann.
+ *
+ * @component
+ * @param {ExplicitFunctionModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <ExplicitFunctionModal
+ *   open={true}
+ *   onClose={() => console.log('Modal schließen')}
+ *   onBack={() => console.log('Zurück')}
+ *   orgUnitId="123"
+ *   refetch={(newFunctions) => console.log('Liste aktualisieren', newFunctions)}
+ * />
+ */
 const ExplicitFunctionModal = ({
   open,
   onClose,
@@ -49,7 +86,12 @@ const ExplicitFunctionModal = ({
     'userId',
   ); // Zustand für die Anzeige
 
-  // Funktion zum Abrufen der Benutzer von der Serverseite
+  /**
+   * Lädt Benutzer-IDs von der Server-Seite.
+   *
+   * @function loadUsers
+   * @async
+   */
   const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -68,6 +110,12 @@ const ExplicitFunctionModal = ({
     }
   }, [displayFormat]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
+  /**
+   * Validiert die Benutzereingaben und zeigt Fehlermeldungen an, falls erforderlich.
+   *
+   * @function validateInput
+   * @returns {boolean} Gibt `true` zurück, wenn alle Eingaben gültig sind.
+   */
   const validateInput = () => {
     const newErrors: { [key: string]: string | undefined } = {};
     const functionNameRegex = /^[a-zA-Z ]+$/; // Funktionsname kann Leerzeichen enthalten, aber keine Sonderzeichen
@@ -90,6 +138,13 @@ const ExplicitFunctionModal = ({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  /**
+   * Speichert die neue Funktion, wenn die Eingaben gültig sind.
+   *
+   * @function handleSave
+   * @async
+   */
 
   const handleSave = async () => {
     if (!validateInput()) return;
@@ -117,6 +172,11 @@ const ExplicitFunctionModal = ({
     }
   };
 
+  /**
+   * Setzt alle Eingabefelder und Fehlermeldungen zurück.
+   *
+   * @function resetFields
+   */
   const resetFields = () => {
     setFunctionName('');
     setUsers([]);
@@ -130,6 +190,11 @@ const ExplicitFunctionModal = ({
     }
   }, [open, loadUsers]);
 
+  /**
+   * Schaltet das Anzeigeformat zwischen `userId` und `nameOnly` um.
+   *
+   * @function toggleDisplayFormat
+   */
   const toggleDisplayFormat = () => {
     setDisplayFormat((prev) => (prev === 'userId' ? 'nameOnly' : 'userId'));
   };

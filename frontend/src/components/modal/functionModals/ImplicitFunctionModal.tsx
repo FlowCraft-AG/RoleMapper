@@ -1,3 +1,9 @@
+/**
+ * @file ImplicitFunctionModal.tsx
+ * @description Modal-Komponente zur Erstellung von implizierten Funktionen in einer Organisationseinheit.
+ *
+ * @module ImplicitFunctionModal
+ */
 import {
   Box,
   Button,
@@ -15,6 +21,16 @@ import { createImpliciteFunction } from '../../../lib/api/function.api';
 import { FunctionString } from '../../../types/function.type';
 import { getEnumValues } from '../../../types/user.type';
 
+/**
+ * Props für die `ImplicitFunctionModal`-Komponente.
+ *
+ * @interface ImplicitFunctionModalProps
+ * @property {boolean} open - Gibt an, ob das Modal geöffnet ist.
+ * @property {() => void} onClose - Callback-Funktion, um das Modal zu schließen.
+ * @property {() => void} onBack - Callback-Funktion, um zur vorherigen Ansicht zurückzukehren.
+ * @property {string} orgUnitId - Die ID der Organisationseinheit, zu der die Funktion gehört.
+ * @property {(functionList: FunctionString[]) => void} refetch - Callback zur Aktualisierung der Funktionsliste.
+ */
 interface ImplicitFunctionModalProps {
   open: boolean;
   onClose: () => void;
@@ -23,6 +39,25 @@ interface ImplicitFunctionModalProps {
   refetch: (functionList: FunctionString[]) => void; // Callback zur Aktualisierung der Funktionliste
 }
 
+/**
+ * `ImplicitFunctionModal`-Komponente
+ *
+ * Diese Komponente zeigt ein Modal zur Erstellung von implizierten Funktionen an.
+ * Der Benutzer kann einen Funktionsnamen, ein Attribut und einen Wert eingeben.
+ *
+ * @component
+ * @param {ImplicitFunctionModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <ImplicitFunctionModal
+ *   open={true}
+ *   onClose={() => console.log('Modal schließen')}
+ *   onBack={() => console.log('Zurück')}
+ *   orgUnitId="123"
+ *   refetch={(newFunctions) => console.log('Liste aktualisieren', newFunctions)}
+ * />
+ */
 const ImplicitFunctionModal = ({
   open,
   onClose,
@@ -41,6 +76,11 @@ const ImplicitFunctionModal = ({
   // Extrahieren der Enum-Werte des UserAttributes
   const availableFields = getEnumValues(); // Hier erhalten wir alle Attributnamen des Enums
 
+  /**
+   * Setzt alle Eingabefelder und Fehlermeldungen zurück.
+   *
+   * @function resetFields
+   */
   const resetFields = () => {
     setFunctionName('');
     setField('');
@@ -48,15 +88,19 @@ const ImplicitFunctionModal = ({
     setErrors({});
   };
 
-  const handleSave = async () => {
+  /**
+   * Validiert die Benutzereingaben und zeigt Fehlermeldungen an, falls erforderlich.
+   *
+   * @function validateInputs
+   * @returns {boolean} Gibt `true` zurück, wenn alle Eingaben gültig sind.
+   */
+  const validateInputs = () => {
     const newErrors: { [key: string]: string | undefined } = {};
     const functionNameRegex = /^[a-zA-Z\s]+$/; // Nur Buchstaben und Leerzeichen erlaubt
 
     if (!functionName.trim()) {
       newErrors.functionName = 'Funktionsname darf nicht leer sein.';
-    }
-
-    if (!functionNameRegex.test(functionName)) {
+    } else if (!functionNameRegex.test(functionName)) {
       newErrors.functionName =
         'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
     }
@@ -65,35 +109,44 @@ const ImplicitFunctionModal = ({
       newErrors.field = 'Attribut muss ausgewählt sein.';
     }
 
-    if (!value) {
-      newErrors.value = 'wert darf nicht leer sein!.';
+    if (!value.trim()) {
+      newErrors.value = 'Wert darf nicht leer sein.';
     }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      try {
-        const newFunction = await createImpliciteFunction({
-          functionName,
-          orgUnitId,
-          field,
-          value,
-        });
-        refetch(newFunction); // Aktualisiere die Liste
-        setSnackbar({
-          open: true,
-          message: 'Implizierte Funktion erfolgreich erstellt.',
-        });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-        resetFields(); // Eingabefelder zurücksetzen
-        onClose();
-      } catch (err) {
-        console.error('Fehler beim Hinzufügen des Benutzers:', err);
-        setSnackbar({
-          open: true,
-          message: 'Fehler beim Hinzufügen des Benutzers:',
-        });
-      }
+  /**
+   * Speichert die neue Funktion, wenn die Eingaben gültig sind.
+   *
+   * @function handleSave
+   * @async
+   */
+  const handleSave = async () => {
+    if (!validateInputs()) return;
+
+    try {
+      const newFunction = await createImpliciteFunction({
+        functionName,
+        orgUnitId,
+        field,
+        value,
+      });
+      refetch(newFunction); // Aktualisiere die Liste
+      setSnackbar({
+        open: true,
+        message: 'Implizierte Funktion erfolgreich erstellt.',
+      });
+
+      resetFields(); // Eingabefelder zurücksetzen
+      onClose();
+    } catch (err) {
+      console.error('Fehler beim Erstellen der Funktion.', err);
+      setSnackbar({
+        open: true,
+        message: 'Fehler beim Erstellen der Funktion.',
+      });
     }
   };
 
