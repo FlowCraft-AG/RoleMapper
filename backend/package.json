@@ -74,7 +74,8 @@
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "7.8.1"
+    "rxjs": "7.8.1",
+    "zeebe-node": "^8.3.2"
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "4.4.0",
@@ -100,7 +101,7 @@
     "@types/nodemailer-smtp-transport": "2.7.8",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
     "@typescript-eslint/parser": "^8.16.0",
-    "axios": "^1.7.8",
+    "axios": "^1.7.9",
     "depcheck": "1.4.7",
     "dotenv": "^16.4.7",
     "eslint": "^8.57.1",

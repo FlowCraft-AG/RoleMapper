@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, type SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import compression from 'compression';
 import { AppModule } from './app.module.js';
+import { deployCamundaResources } from './camunda/config/deployment.config.js';
 import { corsOptions } from './config/cors.js';
 import { nodeConfig } from './config/node.js';
 import { paths } from './config/paths.js';
@@ -28,6 +29,7 @@ const bootstrap = async () => {
     app.useGlobalPipes(new ValidationPipe());
     setupSwagger(app);
     app.enableCors(corsOptions);
+    await deployCamundaResources();
     await app.listen(port);
 };
 
