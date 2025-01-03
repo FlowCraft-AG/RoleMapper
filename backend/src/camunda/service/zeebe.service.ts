@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ZBClient, ZBWorker } from 'zeebe-node';
+import { zbClient } from '../../config/zeebe.js';
 import { getLogger } from '../../logger/logger.js';
 import { ReadService } from '../../role-mapper/service/read.service.js';
 
@@ -19,7 +20,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
     }
 
     onModuleInit() {
-        this.#zbClient = new ZBClient('localhost:26500'); // Zeebe Gateway-Adresse
+        this.#zbClient = zbClient; // Zeebe Gateway-Adresse
 
         this.registerOutputWorker();
         this.registerNoteWorker();
