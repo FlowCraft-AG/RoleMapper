@@ -99,7 +99,7 @@
     "@types/nodemailer": "6.4.17",
     "@types/nodemailer-direct-transport": "1.0.35",
     "@types/nodemailer-smtp-transport": "2.7.8",
-    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.16.0",
     "axios": "^1.7.9",
     "depcheck": "1.4.7",
