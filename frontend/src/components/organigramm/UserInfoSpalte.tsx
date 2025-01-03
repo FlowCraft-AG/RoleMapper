@@ -1,3 +1,12 @@
+/**
+ * @file UserInfoSpalte.tsx
+ * @description Stellt die Benutzerinformationen einer ausgewählten Person dar.
+ * Die Komponente zeigt Details wie Benutzerrolle, Aktivstatus, Gültigkeitszeitraum
+ * und spezifische Informationen zu Mitarbeitern oder Studierenden an.
+ *
+ * @module UserInfoSpalte
+ */
+
 import {
   Alert,
   Box,
@@ -11,15 +20,41 @@ import { useCallback, useEffect, useState } from 'react';
 import { fetchUserDetails } from '../../lib/api/user.api';
 import { User } from '../../types/user.type';
 
+/**
+ * Props für die `UserInfoSpalte`-Komponente.
+ *
+ * @interface UserInfoColumnProps
+ * @property {string} userId - Die ID des ausgewählten Benutzers.
+ */
 interface UserInfoColumnProps {
   userId: string; // Der ausgewählte Benutzer
 }
 
+/**
+ * `UserInfoSpalte` zeigt die Details eines Benutzers an.
+ *
+ * - Ruft Benutzerinformationen basierend auf der übergebenen Benutzer-ID ab.
+ * - Unterstützt Informationen für Mitarbeiter und Studierende.
+ * - Zeigt den Aktivstatus und andere wichtige Attribute an.
+ *
+ * @component
+ * @param {UserInfoColumnProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Benutzerinfo-Spalte.
+ *
+ * @example
+ * <UserInfoSpalte userId="12345" />
+ */
 export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
 
-  // Benutzerinformationen abrufen
+  /**
+   * Ruft die Benutzerinformationen vom Server ab.
+   *
+   * @async
+   * @function fetchData
+   * @returns {Promise<void>}
+   */
   const fetchData = useCallback(async () => {
     setError(undefined);
     try {
@@ -37,7 +72,13 @@ export default function UserInfoSpalte({ userId }: UserInfoColumnProps) {
     }
   }, [userId, fetchData]);
 
-  // Datum formatieren
+  /**
+   * Formatiert ein Datum in ein lesbares Format.
+   *
+   * @function formatDate
+   * @param {string | undefined} timestamp - Der Zeitstempel als String.
+   * @returns {string} Das formatierte Datum oder eine Ersatzanzeige.
+   */
   const formatDate = (timestamp?: string) => {
     if (!timestamp) return 'Nicht verfügbar';
     const numericTimestamp = parseInt(timestamp, 10);

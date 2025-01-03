@@ -1,3 +1,11 @@
+/**
+ * @file OrgUnitsSpalte.tsx
+ * @description Stellt die Spalte für Organisationseinheiten dar. Die Organisationseinheiten werden in einer Baumstruktur dargestellt,
+ * und es können dynamische Themes sowie Interaktionen mit den Einheiten durchgeführt werden.
+ *
+ * @module OrgUnitsSpalte
+ */
+
 'use client';
 
 import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
@@ -19,12 +27,51 @@ import { getListItemStyles } from '../../utils/styles';
 import CustomTreeItem from '../customs/CustomTreeItem';
 import TransitionComponent from './TransitionComponent';
 
+/**
+ * Erweiterte Slot-Props für die TreeItem-Komponente.
+ *
+ * @interface ExtendedSlotProps
+ * @extends TreeItem2Props
+ * @property {function} refetch - Methode zum Neuladen der Daten.
+ * @property {function} onRemove - Callback-Funktion, um Elemente zu entfernen.
+ */
+interface ExtendedSlotProps extends TreeItem2Props {
+  refetch: () => Promise<void>; // Die refetch-Methode
+  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
+}
+
+/**
+ * Props für die `OrgUnitsSpalte`-Komponente.
+ *
+ * @interface OrgUnitRichTreeViewProps
+ * @property {function} onSelect - Callback-Funktion, die aufgerufen wird, wenn eine Organisationseinheit ausgewählt wird.
+ * @property {function} onRemove - Callback-Funktion, die aufgerufen wird, wenn Organisationseinheiten entfernt werden.
+ * @property {string[] | undefined} expandedNodes - Die Knoten, die standardmäßig geöffnet sind.
+ */
 interface OrgUnitRichTreeViewProps {
   onSelect: (orgUnit: OrgUnit) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
   expandedNodes?: string[] | undefined;
 }
 
+/**
+ * Die `OrgUnitsSpalte`-Komponente stellt die Organisationseinheiten in einer hierarchischen Struktur dar.
+ *
+ * - Unterstützt dynamisches Styling basierend auf der ausgewählten Fakultät.
+ * - Verwendet eine rekursive Struktur, um Organisationseinheiten und deren Untereinheiten darzustellen.
+ * - Ermöglicht das dynamische Laden und Aktualisieren von Organisationseinheiten.
+ *
+ * @component
+ * @param {OrgUnitRichTreeViewProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Organisationseinheiten-Spalte.
+ *
+ * @example
+ * <OrgUnitsSpalte
+ *   onSelect={(orgUnit) => console.log(orgUnit)}
+ *   onRemove={(ids) => console.log(ids)}
+ *   expandedNodes={['node1', 'node2']}
+ * />
+ */
 export default function OrgUnitsSpalte({
   onSelect,
   onRemove,
@@ -36,7 +83,13 @@ export default function OrgUnitsSpalte({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>();
 
-  // Funktion zum Abrufen der Organisationseinheiten
+  /**
+   * Lädt alle Organisationseinheiten vom Server.
+   *
+   * @async
+   * @function loadOrgUnits
+   * @returns {Promise<void>}
+   */
   const loadOrgUnits = useCallback(async () => {
     try {
       setLoading(true);
@@ -51,6 +104,12 @@ export default function OrgUnitsSpalte({
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
+  /**
+   * Aktualisiert die Organisationseinheiten in der Komponente.
+   *
+   * @function refetch
+   * @param {OrgUnit[]} orgUnitList - Die aktualisierte Liste der Organisationseinheiten.
+   */
   const refetch = (orgUnitList: OrgUnit[]) => {
     setOrgUnits(orgUnitList);
   };
@@ -78,7 +137,14 @@ export default function OrgUnitsSpalte({
   // Baumstruktur für TreeView vorbereiten
   const treeData = buildTree(orgUnits, null);
 
-  // Baue die Tree-Datenstruktur
+  /**
+   * Erstellt eine rekursive Baumstruktur aus den Organisationseinheiten.
+   *
+   * @function buildTree
+   * @param {OrgUnit[]} data - Die Organisationseinheiten-Daten.
+   * @param {string | null} parentId - Die ID der übergeordneten Einheit.
+   * @returns {TreeViewBaseItem[]} Die Baumstruktur.
+   */
   function buildTree(
     data: OrgUnit[],
     parentId: string | null,
@@ -108,10 +174,25 @@ export default function OrgUnitsSpalte({
     return children;
   };
 
+  /**
+   * Überprüft, ob eine Organisationseinheit Kinder hat.
+   *
+   * @function hasChildren
+   * @param {OrgUnit[]} orgUnits - Die Liste der Organisationseinheiten.
+   * @param {string} unitId - Die ID der Organisationseinheit.
+   * @returns {boolean} `true`, wenn Kinder vorhanden sind, andernfalls `false`.
+   */
   const hasChildren = (orgUnits: OrgUnit[], unitId: string): boolean => {
     return orgUnits.some((unit) => unit.parentId === unitId);
   };
 
+  /**
+   * Behandelt Klicks auf Elemente im TreeView.
+   *
+   * @function handleItemClick
+   * @param {React.MouseEvent} event - Das Klick-Event.
+   * @param {string} nodeId - Die ID des angeklickten Knotens.
+   */
   const handleItemClick = (event: React.MouseEvent, nodeId: string) => {
     const selectedOrgUnit = orgUnits.find((unit) => unit._id === nodeId);
     if (!selectedOrgUnit)
@@ -144,8 +225,13 @@ export default function OrgUnitsSpalte({
     // Weitergabe der Auswahl an die Parent-Komponente
     onSelect(selectedOrgUnit);
   };
-
-  // Funktion, um das Theme rekursiv auf alle Knoten anzuwenden
+  /**
+   * Wendet ein Theme auf eine Organisationseinheit und deren Kinder an.
+   *
+   * @function applyThemeToOrgUnit
+   * @param {OrgUnit} unit - Die Organisationseinheit.
+   * @param {FacultyTheme} theme - Das anzuwendende Theme.
+   */
   const applyThemeToOrgUnit = (unit: OrgUnit, theme: FacultyTheme) => {
     setFacultyTheme(theme); // Setze das Theme für das aktuelle Element
 
@@ -153,6 +239,13 @@ export default function OrgUnitsSpalte({
     unit.children?.forEach((child) => applyThemeToOrgUnit(child, theme));
   };
 
+  /**
+   * Findet die Fakultät für eine gegebene Organisationseinheit.
+   *
+   * @function findFacultyParent
+   * @param {OrgUnit} unit - Die Organisationseinheit.
+   * @returns {OrgUnit | undefined} Die übergeordnete Fakultät.
+   */
   const findFacultyParent = (unit: OrgUnit): OrgUnit | undefined => {
     // Wenn die aktuelle Einheit keine übergeordnete Einheit hat, ist sie selbst eine Fakultät
     if (!unit.parentId) return unit;
@@ -181,18 +274,6 @@ export default function OrgUnitsSpalte({
           expandedNodes.length > 0 && {
             selectedItems: expandedNodes[expandedNodes.length - 1], // Der letzte offene Knoten
           })}
-        // Wenn `expandedNodes` definiert ist, wird der Zustand kontrolliert
-        // {...(expandedNodes && {
-        //   expandedItems: expandedNodes.length > 0 ? expandedNodes : [],
-        //   selectedItems:
-        //     expandedNodes.length > 0
-        //       ? [expandedNodes[expandedNodes.length - 1]]
-        //       : [],
-        // })}
-
-        // // Unkontrollierter Zustand, wenn keine initialen `expandedNodes` vorhanden sind
-        // defaultExpandedItems={!expandedNodes ? [] : undefined}
-        // defaultSelectedItems={!expandedNodes ? [] : undefined}
         slots={{
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
@@ -218,9 +299,4 @@ export default function OrgUnitsSpalte({
       />
     </Box>
   );
-}
-
-interface ExtendedSlotProps extends TreeItem2Props {
-  refetch: () => Promise<void>; // Die refetch-Methode
-  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }

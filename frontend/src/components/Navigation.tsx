@@ -1,3 +1,10 @@
+/**
+ * @file Navigation.tsx
+ * @description Implementiert die Navigationsleiste der Anwendung, einschließlich dynamischer Benachrichtigungen,
+ * einer Umschaltfunktion für benutzerdefinierte Stile und Links zu verschiedenen Seiten.
+ *
+ * @module Navigation
+ */
 'use client';
 
 import { Login, Notifications } from '@mui/icons-material';
@@ -23,12 +30,34 @@ import {
 } from '../lib/api/function.api';
 import { useFacultyTheme } from '../theme/ThemeProviderWrapper';
 
+/**
+ * Typ für eine einzelne Benachrichtigung.
+ *
+ * @interface Notification
+ * @property {string} message - Die Nachricht der Benachrichtigung.
+ * @property {string} nodeId - Die ID des Knotens, auf den sich die Benachrichtigung bezieht.
+ * @property {string} orgUnit - Die Organisationseinheit der Benachrichtigung.
+ */
 interface Notification {
   message: string;
   nodeId: string;
   orgUnit: string;
 }
 
+/**
+ * `Navigation`-Komponente
+ *
+ * Diese Komponente implementiert die Haupt-Navigationsleiste der Anwendung.
+ * - Zeigt Links zu verschiedenen Seiten an.
+ * - Unterstützt Benachrichtigungen, die regelmäßig aktualisiert werden.
+ * - Bietet eine Umschaltfunktion für benutzerdefinierte Stile.
+ *
+ * @component
+ * @returns {JSX.Element} Die JSX-Struktur der Navigationsleiste.
+ *
+ * @example
+ * <Navigation />
+ */
 export default function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
@@ -38,10 +67,17 @@ export default function Navigation() {
   const { setFacultyTheme } = useFacultyTheme();
   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
 
+  /**
+   * Aktualisiert das Thema, wenn Änderungen auftreten.
+   */
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
   }, [setFacultyTheme, theme.palette]);
 
+  /**
+   * Ruft Benachrichtigungen ab, die Funktionen ohne zugewiesene Benutzer anzeigen.
+   * Aktualisiert die Benachrichtigungen alle 10 Sekunden.
+   */
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -65,6 +101,11 @@ export default function Navigation() {
     return () => clearInterval(interval);
   }, []);
 
+  /**
+   * Handhabt das Klicken auf eine Benachrichtigung und navigiert zur entsprechenden Organisationseinheit.
+   *
+   * @param {Notification} notification - Die ausgewählte Benachrichtigung.
+   */
   const handleNotificationClick = async (notification: Notification) => {
     handleCloseMenu();
     try {
@@ -96,7 +137,8 @@ export default function Navigation() {
   const navLinks = [
     { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
-    { href: '/rollen', label: 'Rollen' },
+    { href: '/prozesse', label: 'Prozesse' },
+    { href: '/rollen', label: 'Ermittle Rollen' },
     { href: '/konfigurationen', label: 'Konfigurationen' },
   ];
 

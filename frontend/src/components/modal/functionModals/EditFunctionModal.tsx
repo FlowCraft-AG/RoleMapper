@@ -1,3 +1,10 @@
+/**
+ * @file EditFunctionModal.tsx
+ * @description Modal-Komponente zum Bearbeiten einer Funktion in einer Organisationseinheit.
+ *
+ * @module EditFunctionModal
+ */
+
 import {
   Autocomplete,
   Box,
@@ -20,6 +27,16 @@ import { fetchOrgUnitsIds } from '../../../lib/api/orgUnit.api';
 import { FunctionString } from '../../../types/function.type';
 import { ShortOrgUnit } from '../../../types/orgUnit.type';
 
+/**
+ * Props für die `EditFunctionModal`-Komponente.
+ *
+ * @interface EditFunctionModalProps
+ * @property {boolean} open - Gibt an, ob das Modal geöffnet ist.
+ * @property {() => void} onClose - Callback-Funktion, um das Modal zu schließen.
+ * @property {FunctionString | undefined} functionData - Die zu bearbeitende Funktion.
+ * @property {(functionList: FunctionString[]) => void} refetch - Callback zur Aktualisierung der Funktionsliste.
+ * @property {(functionId: string) => void} onEdit - Callback nach dem Speichern der Funktion.
+ */
 interface EditFunctionModalProps {
   open: boolean;
   onClose: () => void;
@@ -27,6 +44,31 @@ interface EditFunctionModalProps {
   refetch: (functionList: FunctionString[]) => void; // Callback zur Aktualisierung der Funktionliste
   onEdit: (functionId: string) => void;
 }
+
+/**
+ * `EditFunctionModal`-Komponente
+ *
+ * Diese Komponente zeigt ein Modal an, mit dem eine Funktion bearbeitet werden kann. Sie ermöglicht es,
+ * den Funktionsnamen, die zugehörige Organisationseinheit und die Einstellung "Einzelnutzer" zu bearbeiten.
+ *
+ * @component
+ * @param {EditFunctionModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Modals.
+ *
+ * @example
+ * <EditFunctionModal
+ *   open={true}
+ *   onClose={() => console.log('Modal schließen')}
+ *   functionData={{
+ *     _id: '123',
+ *     functionName: 'Test Funktion',
+ *     orgUnit: '456',
+ *     isSingleUser: false,
+ *   }}
+ *   refetch={(newFunctions) => console.log('Liste aktualisieren', newFunctions)}
+ *   onEdit={(functionId) => console.log('Bearbeitete Funktion:', functionId)}
+ * />
+ */
 
 const EditFunctionModal = ({
   open,
@@ -45,6 +87,13 @@ const EditFunctionModal = ({
   const [orgUnits, setOrgUnits] = useState<ShortOrgUnit[]>([]);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Fehlerbehandlungsfunktion.
+   *
+   * @function handleError
+   * @param {string} message - Fehlermeldung, die angezeigt werden soll.
+   * @param {unknown} error - Das Fehlerobjekt.
+   */
   const handleError = (message: string, error: unknown) => {
     console.error(message, error);
     setSnackbar({
@@ -53,7 +102,12 @@ const EditFunctionModal = ({
     });
   };
 
-  // Funktion zum Laden der Organisationseinheit
+  /**
+   * Lädt die aktuellen Daten der Funktion.
+   *
+   * @function loadFunctionData
+   * @async
+   */
   const loadFunctionData = useCallback(async () => {
     try {
       const func = await fetchFunctionById(functionData?._id ?? ''); // API-Aufruf zum Laden der Organisationseinheit
@@ -67,6 +121,12 @@ const EditFunctionModal = ({
     }
   }, [functionData]); // Die Funktion wird nur beim ersten Laden ausgeführt
 
+  /**
+   * Lädt die IDs der Organisationseinheiten.
+   *
+   * @function fetchOrgUnits
+   * @async
+   */
   const fetchOrgUnits = useCallback(async () => {
     setLoading(true);
     try {
@@ -87,8 +147,21 @@ const EditFunctionModal = ({
     }
   }, [open, functionData, loadFunctionData, fetchOrgUnits]);
 
+  /**
+   * Validiert den Funktionsnamen.
+   *
+   * @function validateFunctionName
+   * @param {string} name - Der zu validierende Funktionsname.
+   * @returns {boolean} Gibt `true` zurück, wenn der Name gültig ist.
+   */
   const validateFunctionName = (name: string) => /^[a-zA-Z\s]+$/.test(name);
 
+  /**
+   * Speichert die Änderungen der Funktion.
+   *
+   * @function handleSave
+   * @async
+   */
   const handleSave = async () => {
     if (!validateFunctionName(formData.functionName!)) {
       console.error('Invalid function name');
@@ -131,6 +204,14 @@ const EditFunctionModal = ({
     }
   };
 
+  /**
+   * Erzeugt einen anzeigbaren Namen für Organisationseinheiten.
+   *
+   * @function buildDisplayName
+   * @param {ShortOrgUnit} unit - Die Organisationseinheit.
+   * @param {Map<string, ShortOrgUnit>} orgUnitsMap - Eine Map aller Organisationseinheiten.
+   * @returns {string} Der anzeigbare Name.
+   */
   const buildDisplayName = (
     unit: { name: string; parentId?: string },
     orgUnitsMap: Map<string, { name: string; parentId?: string }>,
