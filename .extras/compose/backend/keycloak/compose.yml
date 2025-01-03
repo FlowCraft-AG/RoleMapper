@@ -2,6 +2,8 @@ version: '3.9'
 
 services:
   keycloak:
+    networks:
+      - hka-network
     # image: quay.io/keycloak/keycloak:22.0.1
     image: keycloak/keycloak:latest
     container_name: keycloak
@@ -36,3 +38,6 @@ services:
         reservations:
           cpus: '2.0'
           memory: 2G
+
+networks:
+  hka-network:

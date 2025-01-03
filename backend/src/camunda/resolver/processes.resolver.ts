@@ -6,7 +6,11 @@ import { ZeebeService } from '../service/zeebe.service.js';
 @Resolver()
 export class ProcessesResolver {
     readonly #logger = getLogger(ProcessesResolver.name);
-    constructor(private readonly zeebeService: ZeebeService) {}
+    readonly #zeebeService: ZeebeService;
+
+    constructor(zeebeService: ZeebeService) {
+        this.#zeebeService = zeebeService;
+    }
 
     @Public()
     @Mutation(() => String) // Gibt einen String (z. B. Prozessinstanz-ID) zurück
@@ -15,7 +19,7 @@ export class ProcessesResolver {
         @Args('variables') variables: string,
     ): Promise<string> {
         const kp = { eingabe: 'gyca1011', userId: variables, procesId: 'DA0001' };
-        const result = await this.zeebeService.startProcess(processKey, kp);
+        const result = await this.#zeebeService.startProcess(processKey, kp);
         this.#logger.debug('Process started:', result);
         return `Process started with key: ${result.processInstanceKey}`;
     }

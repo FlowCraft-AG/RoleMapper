@@ -1,9 +1,11 @@
 include:
   - path: ./keycloak/compose.yml
-  # - path: ../camunda/compose.yml
+  - path: ../camunda/compose.yml
 
 services:
   backend:
+    networks:
+      - hka-network
     pull_policy: always
     image: calebscript/role-mapper-backend:2024.12.1
     ports:
@@ -33,8 +35,8 @@ services:
     depends_on:
       keycloak:
         condition: service_started
-      # zeebe:
-      #   condition: service_healthy
+      zeebe:
+        condition: service_healthy
     env_file: .env
     hostname: backend
     container_name: rolemapper-backend
@@ -46,3 +48,6 @@ services:
         reservations:
           cpus: '1.0'
           memory: 1G
+
+networks:
+  hka-network:
