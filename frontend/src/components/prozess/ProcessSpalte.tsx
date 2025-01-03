@@ -141,6 +141,7 @@ export default function ProcessSpalte({
     data: Process[],
     parentId: string | null,
   ): TreeViewBaseItem[] {
+    console.log(data);
     return data
       .filter((process) => process.parentId === parentId)
       .map((process) => ({
@@ -170,14 +171,6 @@ export default function ProcessSpalte({
     <Box sx={{ minHeight: 352, minWidth: 250 }}>
       <RichTreeView
         items={treeData}
-        {...(expandedNodes &&
-          expandedNodes.length > 0 && {
-            expandedItems: expandedNodes, // Die offenen Knoten aus den Props
-          })}
-        {...(expandedNodes &&
-          expandedNodes.length > 0 && {
-            selectedItems: expandedNodes[expandedNodes.length - 1], // Der letzte offene Knoten
-          })}
         slots={{
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,

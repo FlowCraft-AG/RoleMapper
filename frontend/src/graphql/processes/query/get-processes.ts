@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_ALL_PROCESSES = gql`
-  query GetProcesses {
-    getProcesses(
+  query GetData {
+    getData(
       input: { entity: PROCESSES, sort: { field: name, direction: ASC } }
     ) {
       totalCount

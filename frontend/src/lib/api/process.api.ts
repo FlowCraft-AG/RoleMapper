@@ -31,9 +31,10 @@ export async function fetchAllProcesses(): Promise<Process[]> {
       query: GET_ALL_PROCESSES,
     });
 
-    return data.getProcesses.data || [];
+    return data.getData.data || [];
   } catch (error) {
-    handleGraphQLError(error, 'Fehler beim Laden der Prozesse.');
+    //handleGraphQLError(error, 'Fehler beim Laden der Prozesse.');
+    return []
   }
 }
 
@@ -53,7 +54,7 @@ export async function getProcessById(processId: string): Promise<Process> {
       variables: { id: processId },
     });
 
-    return data.getProcesses.data[0];
+    return data.getData.data[0];
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Laden des Prozesses.');
   }

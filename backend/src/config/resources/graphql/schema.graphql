@@ -409,6 +409,7 @@ type Process {
   """
   Name des Prozesses.
   """
+  parentId: String
   name: String
   """
   Eindeutige Prozess-ID.
