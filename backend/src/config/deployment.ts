@@ -5,20 +5,12 @@ import { Injectable, type OnApplicationBootstrap } from '@nestjs/common';
 import chalk from 'chalk';
 import fs from 'node:fs';
 import path from 'node:path';
-import { getLogger } from '../../logger/logger.js';
-import { zbClient } from './zeebe-client.config.js';
+import { getLogger } from '../logger/logger.js';
+import { zbClient } from './zeebe.js';
 
 const logger = getLogger('DeploymentService');
 
-const CAMUNDA_BASE_PATH = path.resolve(
-    import.meta.dirname,
-    '..',
-    '..',
-    '..',
-    '..',
-    '.extras',
-    'camunda',
-);
+const CAMUNDA_BASE_PATH = path.resolve(import.meta.dirname, '..', '..', '..', '.extras', 'camunda');
 
 async function deployFilesInFolder(folderPath: string) {
     const files = fs.readdirSync(folderPath);
@@ -62,9 +54,6 @@ export async function deployCamundaResources() {
     } catch (error) {
         logger.error(`${chalk.red('✖ Fehler beim Bereitstellen der Ressourcen:')}`);
         logger.error(`${chalk.redBright('Details:')} ${(error as Error).message}`);
-    } finally {
-        await zbClient.close();
-        // logger.info(chalk.cyan('Zeebe-Client geschlossen.'));
     }
 }
 

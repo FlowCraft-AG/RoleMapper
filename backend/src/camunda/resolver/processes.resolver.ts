@@ -1,9 +1,11 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
-import { ZeebeService } from '../service/zebee.service.js';
+import { getLogger } from '../../logger/logger.js';
+import { ZeebeService } from '../service/zeebe.service.js';
 
 @Resolver()
 export class ProcessesResolver {
+    readonly #logger = getLogger(ProcessesResolver.name);
     constructor(private readonly zeebeService: ZeebeService) {}
 
     @Public()
@@ -14,7 +16,7 @@ export class ProcessesResolver {
     ): Promise<string> {
         const kp = { eingabe: 'gyca1011', userId: variables, procesId: 'DA0001' };
         const result = await this.zeebeService.startProcess(processKey, kp);
-        console.log('Process started:', result);
+        this.#logger.debug('Process started:', result);
         return `Process started with key: ${result.processInstanceKey}`;
     }
 }

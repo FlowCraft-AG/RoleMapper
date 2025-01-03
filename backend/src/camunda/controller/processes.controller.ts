@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
-import { ZeebeService } from '../service/zebee.service.js';
+import { ZeebeService } from '../service/zeebe.service.js';
 
 @Controller('processes')
 export class ProcessesController {
