@@ -3,6 +3,8 @@ include:
 
 services:
   frontend:
+    networks:
+      - hka-network
     pull_policy: always
     image: calebscript/role-mapper-frontend:2024.12.24
     # image: flowcraft/role-mapper-frontend:2024.12.24
@@ -36,3 +38,6 @@ services:
         reservations:
           cpus: '1.0'
           memory: 1G
+
+networks:
+  hka-network:

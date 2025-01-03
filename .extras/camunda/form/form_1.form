@@ -1,0 +1,23 @@
+{
+  "components": [
+    {
+      "label": "genehmigen",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1911wdz",
+        "columns": null
+      },
+      "id": "Field_0tsp1fe",
+      "key": "eingabe"
+    }
+  ],
+  "type": "default",
+  "id": "genehmigen_form",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}

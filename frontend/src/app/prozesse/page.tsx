@@ -3,7 +3,6 @@ import { ENV } from '../../utils/env';
 import { getLogger } from '../../utils/logger';
 import ProzessPage from './processPage';
 
-
 export const metadata: Metadata = {
   title: 'Prozesse',
   description:

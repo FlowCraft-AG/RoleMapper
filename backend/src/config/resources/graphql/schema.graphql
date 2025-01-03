@@ -409,15 +409,15 @@ type Process {
   """
   Name des Prozesses.
   """
-  name: String!
+  name: String
   """
   Eindeutige Prozess-ID.
   """
-  processId: String!
+  processId: String
   """
   Liste der Rollen, die mit dem Prozess verknüpft sind.
   """
-  roles: [ProcessRole!]!
+  roles: [ProcessRole]
 }
 
 """
@@ -427,11 +427,11 @@ type ProcessRole {
   """
   Eindeutiger Schlüssel der Rolle.
   """
-  roleKey: String!
+  roleName: String
   """
   Eindeutige ID der Rolle.
   """
-  roleId: String!
+  roleId: String
 }
 
 # Rollen mit dynamischen Abfragen
@@ -568,6 +568,7 @@ type Mutation {
   removeUserFromFunction(functionName: String!, userId: String!): Function
 
   saveQuery(functionName: String!, orgUnitId: ID!, input: DataInput!): SavedQueryPayload
+  startProcess(processKey: String!, variables: String): String!
 }
 
 type SavedQueryPayload {

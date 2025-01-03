@@ -4,6 +4,7 @@ import { DocumentBuilder, type SwaggerCustomOptions, SwaggerModule } from '@nest
 import compression from 'compression';
 import { AppModule } from './app.module.js';
 import { corsOptions } from './config/cors.js';
+import { deployCamundaResources } from './config/deployment.js';
 import { nodeConfig } from './config/node.js';
 import { paths } from './config/paths.js';
 import { helmetHandlers } from './security/http/helmet.handler.js';
@@ -28,6 +29,7 @@ const bootstrap = async () => {
     app.useGlobalPipes(new ValidationPipe());
     setupSwagger(app);
     app.enableCors(corsOptions);
+    await deployCamundaResources();
     await app.listen(port);
 };
 

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1fsg8mp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <bpmn:process id="TEST" name="Test-prozess" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1m4bw3p</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_121e1ru" name="Test User Task">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formId="user_input" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qpze92</bpmn:incoming>
+      <bpmn:outgoing>Flow_12y28vx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1m4bw3p" sourceRef="StartEvent_1" targetRef="Activity_1he3x4i" />
+    <bpmn:serviceTask id="Activity_1rcidir" name="Test Service Task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="getRoles" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=procesId" target="procesId" />
+          <zeebe:output source="=userId" target="userId" />
+          <zeebe:output source="=assignee" target="assignee" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12y28vx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ao1vl2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_12y28vx" sourceRef="Activity_121e1ru" targetRef="Activity_1rcidir" />
+    <bpmn:endEvent id="Event_0aj2mjo">
+      <bpmn:incoming>Flow_1359xeb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ao1vl2" sourceRef="Activity_1rcidir" targetRef="Activity_18vqw0j" />
+    <bpmn:serviceTask id="Activity_1he3x4i" name="Test Service Task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="output" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=eingabe" target="eingabe" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1m4bw3p</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qpze92</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0qpze92" sourceRef="Activity_1he3x4i" targetRef="Activity_121e1ru" />
+    <bpmn:userTask id="Activity_18vqw0j" name="genehmigen">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formId="genehmigen_form" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=assignee" target="assignee" />
+        </zeebe:ioMapping>
+        <zeebe:assignmentDefinition assignee="=assignee" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ao1vl2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zsxewt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0zsxewt" sourceRef="Activity_18vqw0j" targetRef="Activity_1l0eng6" />
+    <bpmn:serviceTask id="Activity_1l0eng6" name="Test Service Task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="output" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=eingabe" target="eingabe" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zsxewt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1359xeb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1359xeb" sourceRef="Activity_1l0eng6" targetRef="Event_0aj2mjo" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="TEST">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="172" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_121e1ru_di" bpmnElement="Activity_121e1ru">
+        <dc:Bounds x="560" y="90" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rcidir_di" bpmnElement="Activity_1rcidir">
+        <dc:Bounds x="760" y="90" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0aj2mjo_di" bpmnElement="Event_0aj2mjo">
+        <dc:Bounds x="1342" y="112" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i2told" bpmnElement="Activity_1he3x4i">
+        <dc:Bounds x="320" y="90" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18vqw0j_di" bpmnElement="Activity_18vqw0j">
+        <dc:Bounds x="960" y="90" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rcsf5w" bpmnElement="Activity_1l0eng6">
+        <dc:Bounds x="1140" y="90" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1m4bw3p_di" bpmnElement="Flow_1m4bw3p">
+        <di:waypoint x="208" y="130" />
+        <di:waypoint x="320" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12y28vx_di" bpmnElement="Flow_12y28vx">
+        <di:waypoint x="660" y="130" />
+        <di:waypoint x="760" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ao1vl2_di" bpmnElement="Flow_0ao1vl2">
+        <di:waypoint x="860" y="130" />
+        <di:waypoint x="960" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qpze92_di" bpmnElement="Flow_0qpze92">
+        <di:waypoint x="420" y="130" />
+        <di:waypoint x="560" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zsxewt_di" bpmnElement="Flow_0zsxewt">
+        <di:waypoint x="1060" y="130" />
+        <di:waypoint x="1140" y="130" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1359xeb_di" bpmnElement="Flow_1359xeb">
+        <di:waypoint x="1240" y="130" />
+        <di:waypoint x="1342" y="130" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

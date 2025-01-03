@@ -12,6 +12,7 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  CircularProgress,
   Typography,
 } from '@mui/material';
 import { Metadata } from 'next';
@@ -34,9 +35,6 @@ export const metadata: Metadata = {
   title: 'Organisationseinheiten',
   description:
     'Organigramm der Hochschule Karlsruhe (HSKA) zur Darstellung der Fakultäten, Institute und Rollen.',
-  icons: {
-    icon: '/favicon.ico',
-  },
 };
 
 /**
@@ -134,7 +132,13 @@ export default async function HKAPage() {
       </Box>
 
       {/* Lazy-loaded Organigramm-Komponente */}
-      <Suspense fallback={<div>Laden...</div>}>
+      <Suspense
+        fallback={
+          <Box sx={{ textAlign: 'center', padding: 4 }}>
+            <CircularProgress />
+          </Box>
+        }
+        >
         {/* Organigramm-Ansicht */}
         <OrganigrammPage />
       </Suspense>

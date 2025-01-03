@@ -2,6 +2,7 @@ import { ApolloDriverConfig } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ZeebeModule } from './camunda/zeebe.module.js';
 import { graphQlModuleOptions } from './config/graphql.js';
 import { database } from './config/mongo-database.js';
 import { LoggerModule } from './logger/logger.module.js';
@@ -20,6 +21,7 @@ import { KeycloakModule } from './security/keycloak/keycloak.module.js';
             dbName: database.databaseName,
         }),
         RoleMapperModule,
+        ZeebeModule,
     ],
 })
 export class AppModule implements NestModule {
