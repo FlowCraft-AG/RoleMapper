@@ -26,7 +26,8 @@ export const ENV = {
     process.env.CAMUNDA_TASKLIST_API_URL ?? 'http://localhost:8082/v1',
   CAMUNDA_KEYCLOAK_API_URL:
     process.env.CAMUNDA_KEYCLOAK_API_URL ??
-    'http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token',
+        'http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token',
+    CAMUNDA_KEYCLOAK_CLIENT_SECRET: process.env.CAMUNDA_KEYCLOAK_CLIENT_SECRET ?? 'N/A',
 };
 
 /**
