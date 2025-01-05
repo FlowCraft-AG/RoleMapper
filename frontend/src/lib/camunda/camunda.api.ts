@@ -20,6 +20,7 @@ const logger = getLogger('camunda-api');
 const CAMUNDA_OPERATE_API_URL = ENV.CAMUNDA_OPERATE_API_URL;
 const CAMUNDA_TASKLIST_API_URL = ENV.CAMUNDA_TASKLIST_API_URL;
 const CAMUNDA_KEYCLOAK_API_URL = ENV.CAMUNDA_KEYCLOAK_API_URL;
+const CAMUNDA_KEYCLOAK_CLIENT_SECRET = ENV.CAMUNDA_KEYCLOAK_CLIENT_SECRET;
 
 /**
  * Führt eine HTTP-Anfrage aus und behandelt Fehler zentral.
@@ -64,7 +65,7 @@ export async function fetchAuthToken() {
     password: 'demo',
     grant_type: 'password',
     client_id: 'camunda-identity',
-    client_secret: '2I4NbP2qznopJpu0xcvre2Zq4BwZaKGe',
+      client_secret: CAMUNDA_KEYCLOAK_CLIENT_SECRET,
     scope: 'openid',
   });
 
