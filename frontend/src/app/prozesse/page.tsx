@@ -7,7 +7,7 @@
  */
 
 import { Metadata } from 'next';
-import ProcessPage from './processPageTest';
+import ProcessPage from './processPage';
 
 /**
  * Metadata für die Prozesse-Seite.
