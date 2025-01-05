@@ -138,8 +138,10 @@ export default function Navigation() {
     { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/prozesse', label: 'Prozesse' },
-    { href: '/rollen', label: 'Ermittle Rollen' },
     { href: '/konfigurationen', label: 'Konfigurationen' },
+    { href: '/test', label: 'Test' },
+    { href: '/models', label: 'Modele' },
+    { href: '/process', label: 'Aktive Prozesses' },
   ];
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {

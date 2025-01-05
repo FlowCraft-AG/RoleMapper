@@ -138,7 +138,7 @@ export default async function HKAPage() {
             <CircularProgress />
           </Box>
         }
-        >
+      >
         {/* Organigramm-Ansicht */}
         <OrganigrammPage />
       </Suspense>

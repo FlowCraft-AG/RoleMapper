@@ -1,6 +1,7 @@
 include:
-  - path: ./keycloak/compose.yml
-  - path: ../camunda/compose.yml
+  # - path: ./keycloak/compose.yml
+  # - path: ../camunda/compose.yml
+  - path: ../camunda/full/compose.yaml
 
 services:
   backend:

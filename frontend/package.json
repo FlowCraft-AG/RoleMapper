@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.12.2",
+    "@bpmn-io/form-js": "^1.13.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.1",
@@ -42,6 +43,10 @@
     "@react-spring/web": "^9.7.5",
     "@types/next-auth": "^3.13.0",
     "autosuggest-highlight": "^3.3.4",
+    "bpmn-js": "^18.1.2",
+    "bpmn-js-properties-panel": "^5.30.0",
+    "camunda-bpmn-js": "^5.4.2",
+    "dmn-js": "^17.0.3",
     "dotenv": "^16.4.7",
     "fs-extra": "^11.2.0",
     "graphql": "^16.10.0",
@@ -52,10 +57,12 @@
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zeebe-bpmn-moddle": "^1.7.0"
   },
   "devDependencies": {
     "@types/autosuggest-highlight": "^3.2.3",
+    "@types/bpmn-moddle": "^5.1.11",
     "@types/fs-extra": "^11.0.4",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.2",
@@ -67,6 +74,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.0",
     "prettier-plugin-organize-imports": "4.1.0",
+    "raw-loader": "^4.0.2",
     "ts-node": "^10.9.1",
     "typedoc": "^0.27.2",
     "typescript": "^5"
