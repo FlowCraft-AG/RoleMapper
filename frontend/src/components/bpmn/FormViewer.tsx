@@ -11,6 +11,7 @@ export default function FormViewer({ formJSON }: FormViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const container = containerRef.current; // Lokale Kopie der Ref erstellen
     let formInstance: Form | null = null;
 
     const loadForm = async () => {
@@ -22,18 +23,18 @@ export default function FormViewer({ formJSON }: FormViewerProps) {
           return;
         }
 
-        // Parse JSON der `.form`-Datei
-        const parsedSchema = JSON.parse(formJSON);
-        console.log('Parsed .form Schema:', parsedSchema);
-
-        if (!containerRef.current) {
+        if (!container) {
           console.error('Der Container für das Formular ist nicht verfügbar.');
           return;
         }
 
+        // Parse JSON der `.form`-Datei
+        const parsedSchema = JSON.parse(formJSON);
+        console.log('Parsed .form Schema:', parsedSchema);
+
         // Initialisiere und lade das Formular
         formInstance = new Form({
-          container: containerRef.current,
+          container,
         });
 
         await formInstance.importSchema(parsedSchema);
@@ -54,12 +55,13 @@ export default function FormViewer({ formJSON }: FormViewerProps) {
     loadForm();
 
     return () => {
-      // Ressourcen bereinigen
+      // Cleanup: Lokale Kopie verwenden
       if (formInstance) {
         formInstance.destroy();
       }
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+
+      if (container) {
+        container.innerHTML = '';
       }
     };
   }, [formJSON]);
