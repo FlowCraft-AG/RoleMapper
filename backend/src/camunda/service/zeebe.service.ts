@@ -3,60 +3,76 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ZBClient, ZBWorker } from 'zeebe-node';
+import { config } from '../../config/app.js';
 import { zbClient } from '../../config/zeebe.js';
 import { getLogger } from '../../logger/logger.js';
 import { ReadService } from '../../role-mapper/service/read.service.js';
 
+const { zeebe } = config;
+
 @Injectable()
 export class ZeebeService implements OnModuleInit, OnModuleDestroy {
     readonly #logger = getLogger(ZeebeService.name); // Logger für die Service-Protokollierung
-    #zbClient!: ZBClient;
-    #outputWorker!: ZBWorker<any, any, any>;
-    #noteWorker!: ZBWorker<any, any, any>;
+    #zbClient?: ZBClient;
+    #outputWorker?: ZBWorker<any, any, any>;
+    #noteWorker?: ZBWorker<any, any, any>;
     readonly #service: ReadService;
+    readonly #isZeebeEnabled: boolean;
 
     constructor(service: ReadService) {
         this.#service = service;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.#isZeebeEnabled = zeebe?.enable; // Überprüfen, ob Zeebe aktiviert ist
     }
 
     onModuleInit() {
-        this.#zbClient = zbClient; // Zeebe Gateway-Adresse
-
-        this.registerOutputWorker();
-        this.registerNoteWorker();
-        this.registerGetRolesWorker();
-        this.#logger.debug('Zeebe Worker gestartet.');
+        if (this.#isZeebeEnabled) {
+            this.#zbClient = zbClient; // Zeebe Gateway-Adresse
+            this.registerOutputWorker();
+            this.registerNoteWorker();
+            this.registerGetRolesWorker();
+            this.#logger.debug('Zeebe Worker gestartet.');
+        } else {
+            this.#logger.debug('Zeebe ist deaktiviert. Keine Worker registriert.');
+        }
     }
 
     async onModuleDestroy() {
-        if (this.#outputWorker !== null && this.#outputWorker !== undefined) {
-            await this.#outputWorker.close();
-        }
-        if (this.#noteWorker !== null && this.#noteWorker !== undefined) {
-            await this.#noteWorker.close();
-        }
-        if (this.#zbClient !== null && this.#zbClient !== undefined) {
-            await this.#zbClient.close();
+        if (this.#isZeebeEnabled) {
+            if (this.#outputWorker) {
+                await this.#outputWorker.close();
+            }
+            if (this.#noteWorker) {
+                await this.#noteWorker.close();
+            }
+            if (this.#zbClient) {
+                await this.#zbClient.close();
+            }
         }
     }
 
     async startProcess(processKey: string, variables: Record<string, any>) {
+        if (!this.#isZeebeEnabled) {
+            this.#logger.warn('Zeebe ist deaktiviert. Prozesse können nicht gestartet werden.');
+            throw new Error('Zeebe ist deaktiviert.');
+        }
+
         try {
             this.#logger.debug(`Starte Prozess mit Key: ${processKey} und Variablen:`, variables);
 
-            return await this.#zbClient.createProcessInstance({
+            return await this.#zbClient!.createProcessInstance({
                 bpmnProcessId: processKey,
                 variables: variables,
             });
         } catch (error) {
-            console.error('Fehler beim Starten des Prozesses:', error);
+            this.#logger.error('Fehler beim Starten des Prozesses:', error);
             throw error;
         }
     }
 
     private registerOutputWorker() {
-        this.#logger.debug('Registriere Worker für "output" ');
-        this.#outputWorker = this.#zbClient.createWorker({
+        this.#logger.debug('Registriere Worker für "output"');
+        this.#outputWorker = this.#zbClient!.createWorker({
             taskType: 'output',
             taskHandler: async (job) => {
                 const eingabe = job.variables.eingabe;
@@ -77,7 +93,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
 
     private registerNoteWorker() {
         this.#logger.debug('Registriere Worker für "note"');
-        this.#noteWorker = this.#zbClient.createWorker({
+        this.#noteWorker = this.#zbClient!.createWorker({
             taskType: 'note',
             taskHandler: async (job) => {
                 const gegebeneNote = job.variables.gegebene_note;
@@ -98,7 +114,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
 
     private registerGetRolesWorker() {
         this.#logger.debug('Registriere Worker um Rollen zu ermitteln');
-        this.#noteWorker = this.#zbClient.createWorker({
+        this.#noteWorker = this.#zbClient!.createWorker({
             taskType: 'getRoles',
             taskHandler: async (job) => {
                 const userId: string = job.variables.userId;
