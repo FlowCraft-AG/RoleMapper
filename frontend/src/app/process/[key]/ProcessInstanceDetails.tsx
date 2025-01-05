@@ -1,3 +1,11 @@
+/**
+ * @file ProcessInstanceDetailsContent.tsx
+ * @description Komponente zur Anzeige der Details einer Prozessinstanz, einschließlich Variablen und Tasks.
+ *
+ * Diese Komponente bietet Tabs, um Variablen und Aufgaben (Tasks) einer Prozessinstanz übersichtlich darzustellen.
+ *
+ * @module ProcessInstanceDetailsContent
+ */
 'use client';
 
 import {
@@ -17,7 +25,7 @@ import {
   fetchVariablesByProcessInstance,
 } from '../../../lib/camunda/camunda.api';
 import {
-  ProcessDetails,
+  ProcessInstance,
   ProcessTask,
   ProcessVariable,
 } from '../../../types/process.type';
@@ -25,13 +33,36 @@ import GeneralInfoCard from './GeneralInfoCard';
 import TasksGrid from './TasksGrid';
 import VariablesTable from './VariablesTable';
 
+/**
+/**
+ * Props für die `ProcessInstanceDetailsContent`-Komponente.
+ */
+interface ProcessInstanceDetailsContentProps {
+  processKey: string;
+}
+
+/**
+ * `ProcessInstanceDetailsContent`-Komponente
+ *
+ * Diese Komponente zeigt die Details einer Prozessinstanz an, darunter:
+ * - Allgemeine Informationen (GeneralInfoCard)
+ * - Prozessvariablen (VariablesTable)
+ * - Aufgaben (TasksGrid)
+ *
+ * @component
+ * @param {ProcessInstanceDetailsContentProps} props - Die Eigenschaften der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Prozessinstanzdetails.
+ *
+ * @example
+ * ```tsx
+ * <ProcessInstanceDetailsContent processKey="12345" />
+ * ```
+ */
 export default function ProcessInstanceDetailsContent({
   processKey,
-}: {
-  processKey: string;
-}) {
+}: ProcessInstanceDetailsContentProps) {
   const router = useRouter(); // Initialisiere den Router-Hook
-  const [details, setDetails] = useState<ProcessDetails | null>(null);
+  const [details, setDetails] = useState<ProcessInstance | null>(null);
   const [variables, setVariables] = useState<ProcessVariable[]>([]);
   const [tasks, setTasks] = useState<ProcessTask[]>([]);
   const [tabIndex, setTabIndex] = useState(0);
@@ -39,6 +70,13 @@ export default function ProcessInstanceDetailsContent({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    /**
+     * Lädt die Details der Prozessinstanz, die Variablen und die Tasks.
+     *
+     * @async
+     * @function fetchData
+     * @returns {Promise<void>}
+     */
     async function fetchData() {
       try {
         setLoading(true);
@@ -50,7 +88,7 @@ export default function ProcessInstanceDetailsContent({
         const tasks = await fetchAllTasksByProcessInstance(processKey);
 
         setDetails(details);
-        setVariables(variablesResponse.items);
+        setVariables(variablesResponse);
         setTasks(tasks);
       } catch (error) {
         setError('Fehler beim Laden der Prozessdaten.');

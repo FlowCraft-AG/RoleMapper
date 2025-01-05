@@ -1,11 +1,36 @@
-import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material';
-import { ProcessDetails } from '../../../types/process.type';
+/**
+ * @module GeneralInfoCard
+ * @description Diese Komponente zeigt allgemeine Informationen zu einer Prozessinstanz an.
+ */
 
-export default function GeneralInfoCard({
-  details,
-}: {
-  details: ProcessDetails;
-}) {
+import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material';
+import { ProcessInstance } from '../../../types/process.type';
+
+/**
+ * Props für die `GeneralInfoCard`-Komponente.
+ * @typedef ProcessDetailsProps
+ * @property {ProcessInstance} details - Die Prozessdetails.
+ */
+interface ProcessDetailsProps {
+  details: ProcessInstance;
+}
+
+/**
+ * `GeneralInfoCard`-Komponente
+ *
+ * Zeigt allgemeine Informationen zu einer Prozessinstanz an.
+ *
+ * @component
+ * @param {Object} props - Eigenschaften der Komponente
+ * @param {ProcessInstance} props.details - Die Prozessdetails
+ * @returns {JSX.Element} Die JSX-Struktur der allgemeinen Informationen
+ *
+ * @example
+ * ```tsx
+ * <GeneralInfoCard details={details} />
+ * ```
+ */
+export default function GeneralInfoCard({ details }: ProcessDetailsProps) {
   return (
     <Card sx={{ marginBottom: 3 }}>
       <CardHeader

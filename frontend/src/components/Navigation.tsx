@@ -97,7 +97,7 @@ export default function Navigation() {
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000); // Alle 10 Sekunden aktualisieren HIER ÄNDERN SIE DIE ZEIT
+    const interval = setInterval(fetchNotifications, 60000); // Alle 10 Sekunden aktualisieren HIER ÄNDERN SIE DIE ZEIT
     return () => clearInterval(interval);
   }, []);
 

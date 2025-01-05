@@ -11,11 +11,31 @@ import {
 } from '@mui/material';
 import { ProcessVariable } from '../../../types/process.type';
 
-export default function VariablesTable({
-  variables,
-}: {
+/**
+ * Props für die `VariablesTable`-Komponente.
+ * @typedef ProcessVariableProps
+ * @property {ProcessVariable[]} variables - Die Prozessvariablen.
+ */
+interface ProcessVariableProps {
   variables: ProcessVariable[];
-}) {
+}
+
+/**
+ * `VariablesTable`-Komponente
+ *
+ * Zeigt eine Tabelle mit den Variablen einer Prozessinstanz an.
+ *
+ * @component
+ * @param {Object} props - Eigenschaften der Komponente
+ * @param {ProcessVariable[]} props.variables - Liste der Prozessvariablen
+ * @returns {JSX.Element} Die JSX-Struktur der Variablentabelle
+ *
+ * @example
+ * ```tsx
+ * <VariablesTable variables={variables} />
+ * ```
+ */
+export default function VariablesTable({ variables }: ProcessVariableProps) {
   return (
     <Paper sx={{ padding: 3 }}>
       <Typography variant="h6" gutterBottom>

@@ -20,6 +20,13 @@ export const ENV = {
   NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'N/A', // Aktive Umgebung (z. B. production, development)
   NEXT_PUBLIC_PINO_PRETTY: process.env.NEXT_PUBLIC_PINO_PRETTY ?? 'true', // Aktiviert Pretty Print für Logs
   NEXT_PUBLIC_LOG_DIR: process.env.NEXT_PUBLIC_LOG_DIR ?? 'logs', // Log-Verzeichnis
+  CAMUNDA_OPERATE_API_URL:
+    process.env.CAMUNDA_OPERATE_API_URL ?? 'http://localhost:8081/v1',
+  CAMUNDA_TASKLIST_API_URL:
+    process.env.CAMUNDA_TASKLIST_API_URL ?? 'http://localhost:8082/v1',
+  CAMUNDA_KEYCLOAK_API_URL:
+    process.env.CAMUNDA_KEYCLOAK_API_URL ??
+    'http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token',
 };
 
 /**

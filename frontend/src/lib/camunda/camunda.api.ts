@@ -1,192 +1,232 @@
+/**
+ * @file camunda-api.ts
+ * @description Stellt Funktionen zur Interaktion mit der Camunda Platform API bereit, einschließlich des Abrufens von Prozessdefinitionen, Instanzdetails, Variablen und Aufgaben.
+ *
+ * @module camunda-api
+ */
+
 'use server';
 
-import { ProcessTask } from '../../types/process.type';
-import { fetchAuthToken } from '../operate';
+import {
+  ProcessInstance,
+  ProcessTask,
+  ProcessVariable,
+} from '../../types/process.type';
+import { ENV } from '../../utils/env';
+import { getLogger } from '../../utils/logger';
 
-const CAMUNDA_API_URL = 'http://localhost:8081/v1';
+const logger = getLogger('camunda-api');
 
-export const fetchActiveProcessInstances = async () => {
-  const token = await fetchAuthToken(); // Auflösen der Promise
-  try {
-    const response = await fetch(
-      `${CAMUNDA_API_URL}/process-instances/search`,
-      {
-        method: 'POST', // Hier muss die Methode explizit angegeben werden
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          filter: {
-            state: 'ACTIVE',
-          },
-          sort: [
-            {
-              field: 'bpmnProcessId',
-              order: 'ASC',
-            },
-          ],
-        }),
-      },
-    );
+const CAMUNDA_OPERATE_API_URL = ENV.CAMUNDA_OPERATE_API_URL;
+const CAMUNDA_TASKLIST_API_URL = ENV.CAMUNDA_TASKLIST_API_URL;
+const CAMUNDA_KEYCLOAK_API_URL = ENV.CAMUNDA_KEYCLOAK_API_URL;
 
-    if (!response.ok) {
-      throw new Error(`Fehler beim Abrufen: ${response.statusText}`);
-    }
+/**
+ * Führt eine HTTP-Anfrage aus und behandelt Fehler zentral.
+ *
+ * @param {string} url - Die URL der Anfrage.
+ * @param {RequestInit} options - Optionen für die Anfrage.
+ * @param {'json' | 'text'} [responseType='json'] - Der erwartete Antworttyp.
+ * @returns {Promise<any>} Die Antwort als JSON oder Text.
+ * @throws {Error} Wenn die Anfrage fehlschlägt.
+ */
+async function httpRequest(
+  url: string,
+  options: RequestInit,
+  responseType: 'json' | 'text' = 'json',
+) {
+  logger.debug(`Sende Anfrage an: ${url}`);
+  const response = await fetch(url, options);
 
-    const result = await response.json();
-    console.log('alle Prozessinstanzen', result);
-    return await result; // Die Antwort als JSON parsen
-  } catch (error) {
-    console.error('Fehler beim Abrufen der Prozessinstanzen:', error);
-    throw error;
+  if (!response.ok) {
+    logger.error(`HTTP-Fehler: ${response.statusText}`);
+    throw new Error(`HTTP-Fehler: ${response.statusText}`);
   }
-};
 
-export const fetchAllProcessInstances = async () => {
-  const token = await fetchAuthToken(); // Auflösen der Promise
-  try {
-    const response = await fetch(
-      `${CAMUNDA_API_URL}/process-instances/search`,
-      {
-        method: 'POST', // Hier muss die Methode explizit angegeben werden
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sort: [
-            {
-              field: 'bpmnProcessId',
-              order: 'ASC',
-            },
-          ],
-        }),
-      },
-    );
+  logger.debug(`Erfolgreiche Antwort von: ${url}`);
 
-    if (!response.ok) {
-      throw new Error(`Fehler beim Abrufen: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    console.log('alle Prozessinstanzen', result);
-    return await result; // Die Antwort als JSON parsen
-  } catch (error) {
-    console.error('Fehler beim Abrufen der Prozessinstanzen:', error);
-    throw error;
+  if (responseType === 'json') {
+    return await response.json(); // JSON-Daten verarbeiten
   }
-};
 
-export const fetchProcessInstanceDetails = async (key: string) => {
-  const token = await fetchAuthToken(); // Auflösen der Promise
-  const response = await fetch(
-    `http://localhost:8081/v1/process-instances/${key}`,
+  return await response.text(); // Textdaten (z. B. XML) verarbeiten
+}
+
+/**
+ * Ruft ein Authentifizierungstoken von Keycloak ab.
+ *
+ * @returns {Promise<string>} Das JWT-Token.
+ */
+
+export async function fetchAuthToken() {
+  const formData = new URLSearchParams({
+    username: 'demo',
+    password: 'demo',
+    grant_type: 'password',
+    client_id: 'camunda-identity',
+    client_secret: '2I4NbP2qznopJpu0xcvre2Zq4BwZaKGe',
+    scope: 'openid',
+  });
+
+  const tokenResponse = await httpRequest(CAMUNDA_KEYCLOAK_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formData.toString(),
+  });
+
+  return tokenResponse.access_token;
+}
+
+/**
+ * Ruft das XML einer Prozessdefinition ab.
+ *
+ * @param {string} processDefinitionKey - Der Schlüssel der Prozessdefinition.
+ * @returns {Promise<string>} Das XML der Prozessdefinition.
+ */
+export async function fetchProcessDefinitionXml(
+  processDefinitionKey: string,
+): Promise<string> {
+  const token = await fetchAuthToken();
+
+  const result = await httpRequest(
+    `${CAMUNDA_OPERATE_API_URL}/process-definitions/${processDefinitionKey}/xml`,
     {
       method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    },
+    'text', // Gib an, dass die Antwort im Textformat erwartet wird);
+  );
+
+  logger.debug(
+    'XML der Prozessdefinition erfolgreich abgerufen: %s',
+    result.length,
+  );
+  return result;
+}
+
+/**
+ * Ruft alle Prozessinstanzen ab.
+ *
+ * @param {boolean} [activeOnly=false] - Gibt an, ob nur aktive Instanzen abgerufen werden sollen.
+ * @returns {Promise<ProcessInstance[]>} Die Liste der Prozessinstanzen.
+ */
+export async function fetchProcessInstances(
+  activeOnly = false,
+): Promise<ProcessInstance[]> {
+  logger.debug('Prozessinstanzen abrufen (nur aktive: %s)', activeOnly);
+  const token = await fetchAuthToken();
+  const body = {
+    filter: activeOnly ? { state: 'ACTIVE' } : undefined,
+    sort: [{ field: 'bpmnProcessId', order: 'ASC' }],
+  };
+
+  const result = await httpRequest(
+    `${CAMUNDA_OPERATE_API_URL}/process-instances/search`,
+    {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(body),
     },
   );
+  return result.items;
+}
 
-  if (!response.ok) {
-    console.log('fetchProcessInstanceDetails', response);
-    throw new Error(`Fehler beim Abrufen der Details: ${response.statusText}`);
-  }
+/**
+ * Ruft Details zu einer spezifischen Prozessinstanz ab.
+ *
+ * @param {string} key - Der Schlüssel der Prozessinstanz.
+ * @returns {Promise<ProcessInstance>} Die Details der Prozessinstanz.
+ */
+export async function fetchProcessInstanceDetails(
+  key: string,
+): Promise<ProcessInstance> {
+  const token = await fetchAuthToken();
+  return await httpRequest(
+    `${CAMUNDA_OPERATE_API_URL}/process-instances/${key}`,
+    {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+}
 
-  return await response.json();
-};
-
-export const fetchVariablesByProcessInstance = async (
+/**
+ * Ruft die Variablen einer spezifischen Prozessinstanz ab.
+ *
+ * @param {string} processInstanceKey - Der Schlüssel der Prozessinstanz.
+ * @returns {Promise<ProcessVariable[]>} Die Variablen der Prozessinstanz.
+ */
+export async function fetchVariablesByProcessInstance(
   processInstanceKey: string,
-) => {
-  const token = await fetchAuthToken(); // Auflösen der Promise
-  const response = await fetch(`http://localhost:8081/v1/variables/search`, {
+): Promise<ProcessVariable[]> {
+  const token = await fetchAuthToken();
+  return await httpRequest(`${CAMUNDA_OPERATE_API_URL}/variables/search`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      filter: {
-        processInstanceKey,
-      },
+      filter: { processInstanceKey },
+    }),
+  });
+}
+
+/**
+ * Ruft die aktive Element-ID einer Prozessinstanz ab.
+ *
+ * @param {string} processInstanceKey - Der Schlüssel der Prozessinstanz.
+ * @returns {Promise<string | null>} Die aktive Element-ID oder null.
+ */
+export async function fetchActiveElementId(
+  processInstanceKey: string,
+): Promise<string | null> {
+  logger.debug(
+    'Aktive Element-ID für Prozessinstanz abrufen: %s',
+    processInstanceKey,
+  );
+
+  const token = await fetchAuthToken();
+  const tasks = await httpRequest(`${CAMUNDA_TASKLIST_API_URL}/tasks/search`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      processInstanceKey,
+      state: 'CREATED',
     }),
   });
 
-  if (!response.ok) {
-    console.log('fetchProcessInstanceDetails', response);
-    throw new Error(`Fehler beim Abrufen der Details: ${response.statusText}`);
-  }
+  const activeTask = tasks.find(
+    (task: ProcessTask) => task.taskState === 'CREATED',
+  );
 
-  return await response.json();
-};
+  return activeTask ? activeTask.taskDefinitionId : null;
+}
 
-export const fetchActiveElementId = async (
+/**
+ * Ruft alle Aufgaben einer Prozessinstanz ab.
+ *
+ * @param {string} processInstanceKey - Der Schlüssel der Prozessinstanz.
+ * @returns {Promise<ProcessTask[]>} Die Liste der Aufgaben.
+ */
+export async function fetchAllTasksByProcessInstance(
   processInstanceKey: string,
-): Promise<string | null> => {
-  const token = await fetchAuthToken(); // Auflösen der Promise
-  try {
-    const response = await fetch('http://localhost:8082/v1/tasks/search', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        processInstanceKey,
-        state: 'CREATED',
-      }),
-    });
-
-    if (!response.ok) {
-      console.log('fetchActiveElementId Response:', response);
-      throw new Error('Failed to fetch tasks');
-    }
-
-    const tasks = await response.json();
-
-    // Suche nach der aktiven Aufgabe (Status: CREATED)
-    const activeTask = tasks.find(
-      (task: ProcessTask) => task.taskState === 'CREATED',
-    );
-    console.log('Active Task:', activeTask);
-    return activeTask?.taskDefinitionId || null;
-  } catch (error) {
-    console.error('Error fetching active element ID:', error);
-    return null;
-  }
-};
-
-export const fetchAllTasksByProcessInstance = async (
-  processInstanceKey: string,
-): Promise<ProcessTask[]> => {
-  const token = await fetchAuthToken(); // Auflösen der Promise
-  try {
-    const response = await fetch('http://localhost:8082/v1/tasks/search', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        processInstanceKey,
-      }),
-    });
-
-    if (!response.ok) {
-      console.log('fetchActiveElementId Response:', response);
-      throw new Error('Failed to fetch tasks');
-    }
-
-    const tasks = await response.json();
-
-    // Suche nach der aktiven Aufgabe (Status: CREATED)
-    return tasks;
-  } catch (error) {
-    console.error('Error fetching active element ID:', error);
-    throw new Error('Failed to fetch tasks');
-  }
-};
+): Promise<ProcessTask[]> {
+  const token = await fetchAuthToken();
+  return await httpRequest(`${CAMUNDA_TASKLIST_API_URL}/tasks/search`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      processInstanceKey,
+    }),
+  });
+}
