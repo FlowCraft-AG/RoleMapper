@@ -1,3 +1,10 @@
+/**
+ * @file ProcessDefinitionToggleViewer.tsx
+ * @description React-Komponente zur Anzeige einer Prozessdefinition entweder als BPMN-Diagramm oder als XML-Ansicht.
+ *
+ * @module ProcessDefinitionToggleViewer
+ */
+
 'use client';
 
 import { Box, Button, Container, Typography } from '@mui/material';
@@ -7,15 +14,37 @@ import BpmnViewer from '../../../components/bpmn/BpmnViewer';
 import ProcessDefinitionXmlViewer from '../../../components/bpmn/ProcessDefinitionXmlViewer';
 import {
   fetchActiveElementId,
+  fetchProcessDefinitionXml,
   fetchProcessInstanceDetails,
 } from '../../../lib/camunda/camunda.api';
-import { fetchProcessDefinitionXml } from '../../../lib/operate';
 import { ProcessInstance } from '../../../types/process.type';
 
+/**
+ * Props für die `ProcessDefinitionToggleViewer`-Komponente.
+ *
+ * @interface ProcessDefinitionToggleViewerProps
+ * @property {string} processInstanceKey - Der Schlüssel der Prozessinstanz, dessen Definition angezeigt werden soll.
+ */
 interface ProcessDefinitionToggleViewerProps {
   processInstanceKey: string;
 }
 
+/**
+ * `ProcessDefinitionToggleViewer`-Komponente
+ *
+ * Diese Komponente bietet die Möglichkeit, zwischen der XML-Ansicht und der BPMN-Diagramm-Ansicht
+ * einer Prozessdefinition umzuschalten. Die aktive Prozessinstanz und das zugehörige Diagramm
+ * werden anhand des `processInstanceKey` geladen.
+ *
+ * @component
+ * @param {ProcessDefinitionToggleViewerProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Ansicht.
+ *
+ * @example
+ * ```tsx
+ * <ProcessDefinitionToggleViewer processInstanceKey="my-instance-key" />
+ * ```
+ */
 const ProcessDefinitionToggleViewer = ({
   processInstanceKey,
 }: ProcessDefinitionToggleViewerProps) => {
@@ -25,6 +54,9 @@ const ProcessDefinitionToggleViewer = ({
   const [instanz, setInstanz] = useState<ProcessInstance | null>(null);
   const [activeElementId, setActiveElementId] = useState<string | null>(null);
 
+  /**
+   * Lädt die Prozessinstanz-Details, die XML-Definition und die aktive Element-ID.
+   */
   useEffect(() => {
     const loadDiagramUrl = async () => {
       try {

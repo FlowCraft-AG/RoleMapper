@@ -1,3 +1,10 @@
+/**
+ * @file BpmnViewer.tsx
+ * @description React-Komponente zur Anzeige von BPMN-Diagrammen mit Unterstützung für XML-Dateien und URLs.
+ *
+ * @module BpmnViewer
+ */
+
 'use client';
 
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
@@ -8,6 +15,17 @@ import BpmnJS, {
 import { useEffect, useRef, useState } from 'react';
 import styles from '../../styles/BpmnViewer.module.css';
 
+/**
+ * Props für die `BpmnViewer`-Komponente.
+ *
+ * @interface BpmnViewerProps
+ * @property {string} [diagramXML] - Der XML-Inhalt des Diagramms als String.
+ * @property {string} [diagramURL] - Eine URL, von der das Diagramm geladen wird.
+ * @property {string} [activeElementId] - Die ID eines Elements im Diagramm, das hervorgehoben werden soll.
+ * @property {() => void} [onLoading] - Callback, der aufgerufen wird, wenn das Diagramm geladen wird.
+ * @property {(err: Error) => void} [onError] - Callback, der aufgerufen wird, wenn ein Fehler auftritt.
+ * @property {(warnings: string[]) => void} [onShown] - Callback, der aufgerufen wird, wenn das Diagramm erfolgreich angezeigt wird.
+ */
 interface BpmnViewerProps {
   diagramXML?: string;
   diagramURL?: string;
@@ -17,6 +35,25 @@ interface BpmnViewerProps {
   onShown?: (warnings: string[]) => void;
 }
 
+/**
+ * `BpmnViewer`-Komponente
+ *
+ * Diese Komponente rendert BPMN-Diagramme basierend auf bereitgestellten XML-Daten oder einer URL.
+ * Zusätzlich unterstützt sie die Hervorhebung eines bestimmten Elements im Diagramm.
+ *
+ * @component
+ * @param {BpmnViewerProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Diagramm-Viewers.
+ *
+ * @example
+ * <BpmnViewer
+ *   diagramXML="<bpmn:definitions ... />"
+ *   activeElementId="Activity_1"
+ *   onLoading={() => console.log('Diagramm wird geladen')}
+ *   onError={(err) => console.error('Fehler:', err)}
+ *   onShown={(warnings) => console.log('Diagramm angezeigt mit Warnungen:', warnings)}
+ * />
+ */
 const BpmnViewer: React.FC<BpmnViewerProps> = ({
   diagramXML,
   diagramURL,
@@ -29,6 +66,12 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Lädt das BPMN-Diagramm basierend auf XML oder URL und zeigt es an.
+   *
+   * @function loadDiagram
+   * @async
+   */
   useEffect(() => {
     const bpmnViewer = new BpmnJS({
       container: containerRef.current || undefined,

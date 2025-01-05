@@ -2,7 +2,31 @@ import { CheckCircle, Error, PendingActions } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material';
 import { ProcessTask } from '../../../types/process.type';
 
-export default function TasksGrid({ tasks }: { tasks: ProcessTask[] }) {
+/**
+ * Props für die `TasksGrid`-Komponente.
+ * @typedef TasksGridProps
+ * @property {ProcessTask[]} tasks - Die Aufgaben einer Prozessinstanz.
+ */
+interface TasksGridProps {
+  tasks: ProcessTask[];
+}
+
+/**
+ * `TasksGrid`-Komponente
+ *
+ * Zeigt ein Grid mit den Aufgaben einer Prozessinstanz an.
+ *
+ * @component
+ * @param {Object} props - Eigenschaften der Komponente
+ * @param {ProcessTask[]} props.tasks - Liste der Aufgaben
+ * @returns {JSX.Element} Die JSX-Struktur des Grids
+ *
+ * @example
+ * ```tsx
+ * <TasksGrid tasks={tasks} />
+ * ```
+ */
+export default function TasksGrid({ tasks }: TasksGridProps) {
   return (
     <Grid container spacing={3}>
       {tasks.map((task) => (
