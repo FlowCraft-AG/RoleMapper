@@ -1,0 +1,8 @@
+.bpmn-highlight:not(.djs-connection) .djs-visual> :nth-child(1) {
+  fill: red !important;
+  /* Ändert die Farbe des hervorgehobenen Elements */
+  stroke: black !important;
+  /* Ändert die Umrandungsfarbe */
+  stroke-width: 2px;
+  /* Optional: Erhöht die Umrandungsbreite */
+}

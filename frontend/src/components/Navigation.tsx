@@ -97,7 +97,7 @@ export default function Navigation() {
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 10000); // Alle 10 Sekunden aktualisieren HIER ÄNDERN SIE DIE ZEIT
+    const interval = setInterval(fetchNotifications, 60000); // Alle 10 Sekunden aktualisieren HIER ÄNDERN SIE DIE ZEIT
     return () => clearInterval(interval);
   }, []);
 
@@ -138,8 +138,9 @@ export default function Navigation() {
     { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/prozesse', label: 'Prozesse' },
-    { href: '/rollen', label: 'Ermittle Rollen' },
     { href: '/konfigurationen', label: 'Konfigurationen' },
+    { href: '/models', label: 'Modele' },
+    { href: '/process', label: 'Aktive Prozesses' },
   ];
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {

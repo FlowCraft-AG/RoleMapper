@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0kvndu9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <bpmn:process id="test_prozess" name="Test Prozess" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="UserTaskForm_2jl7vmj">{
+  "components": [
+    {
+      "label": "Text Eingabe",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0emgxws",
+        "columns": null
+      },
+      "id": "Field_0p3vsr2",
+      "key": "eingabe",
+      "description": "gib irgendetwas ein"
+    }
+  ],
+  "type": "default",
+  "id": "user_input",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}</zeebe:userTaskForm>
+      <zeebe:userTaskForm id="UserTaskForm_1d1r2md">{
+  "components": [
+    {
+      "label": "Wissen",
+      "values": [
+        {
+          "label": "schlau",
+          "value": "schlau"
+        },
+        {
+          "label": "tollpatsch",
+          "value": "tollpatsch"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1solvn3",
+        "columns": null
+      },
+      "id": "Field_07m4k4g",
+      "key": "wissen",
+      "description": "wie ist der Schüler"
+    },
+    {
+      "label": "Beziehung",
+      "values": [
+        {
+          "label": "mag ich",
+          "value": "mag ich"
+        },
+        {
+          "label": "mag ich nicht",
+          "value": "mag ich nicht"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_16irctj",
+        "columns": null
+      },
+      "id": "Field_1s9lo0b",
+      "key": "beziehung",
+      "description": "beziehungsstatus zum Schüler"
+    }
+  ],
+  "type": "default",
+  "id": "user_input_note",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_19jqyjh</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="test_task" name="User Input">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:UserTaskForm_2jl7vmj" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19jqyjh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0em8ce2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_19jqyjh" sourceRef="StartEvent_1" targetRef="test_task" />
+    <bpmn:serviceTask id="output_ausgeben" name="Output Ausgeben">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="output" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=eingabe" target="eingabe" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0em8ce2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lr87gf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0em8ce2" sourceRef="test_task" targetRef="output_ausgeben" />
+    <bpmn:endEvent id="Event_12pwxeu">
+      <bpmn:incoming>Flow_0cvk3oy</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1lr87gf" sourceRef="output_ausgeben" targetRef="user_input_note" />
+    <bpmn:userTask id="user_input_note" name="User input ">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:UserTaskForm_1d1r2md" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1lr87gf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0k45qhd</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0k45qhd" sourceRef="user_input_note" targetRef="note_verteilen" />
+    <bpmn:businessRuleTask id="note_verteilen" name="Noten verteilen">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="note_verteilen" resultVariable="gegebene_note" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0k45qhd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gylob2</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_1gylob2" sourceRef="note_verteilen" targetRef="Activity_0kzxyjh" />
+    <bpmn:serviceTask id="Activity_0kzxyjh" name="Output Ausgeben">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="note" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=gegebene_note" target="gegebene_note" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1gylob2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cvk3oy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0cvk3oy" sourceRef="Activity_0kzxyjh" targetRef="Event_12pwxeu" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="test_prozess">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g4kq1a_di" bpmnElement="test_task">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15nc4kx_di" bpmnElement="output_ausgeben">
+        <dc:Bounds x="430" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_12pwxeu_di" bpmnElement="Event_12pwxeu">
+        <dc:Bounds x="1062" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pezzj9_di" bpmnElement="user_input_note">
+        <dc:Bounds x="600" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1owbogs_di" bpmnElement="note_verteilen">
+        <dc:Bounds x="760" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i39044" bpmnElement="Activity_0kzxyjh">
+        <dc:Bounds x="910" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_19jqyjh_di" bpmnElement="Flow_19jqyjh">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0em8ce2_di" bpmnElement="Flow_0em8ce2">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="430" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lr87gf_di" bpmnElement="Flow_1lr87gf">
+        <di:waypoint x="530" y="120" />
+        <di:waypoint x="600" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k45qhd_di" bpmnElement="Flow_0k45qhd">
+        <di:waypoint x="700" y="120" />
+        <di:waypoint x="760" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gylob2_di" bpmnElement="Flow_1gylob2">
+        <di:waypoint x="860" y="120" />
+        <di:waypoint x="910" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cvk3oy_di" bpmnElement="Flow_0cvk3oy">
+        <di:waypoint x="1010" y="120" />
+        <di:waypoint x="1062" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

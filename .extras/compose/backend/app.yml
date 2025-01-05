@@ -8,7 +8,7 @@ node:
 # K e y c l o a k
 # ==============================================================================
 keycloak:
-  authServerUrl: http://keycloak:8080
+  authServerUrl: http://keycloak:18080/auth
   realm: flowcraft
   clientId: rolemapper
   #tokenValidation: online
@@ -47,3 +47,4 @@ mail:
 # ==============================================================================
 zeebe:
   url: zeebe:26500
+  enable: true

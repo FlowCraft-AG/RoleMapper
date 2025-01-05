@@ -1,0 +1,46 @@
+{
+  "realm": "flowcraft",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "rolemapper",
+      "name": "rolemapper",
+      "rootUrl": "https://localhost:3000",
+      "redirectUris": ["http://localhost:3000/api/auth/callback/keycloak", "https://oauth.pstmn.io/v1/callback", "https://rolemapper:3000", "http://localhost:4000/api/auth/callback/keycloak", "http://frontend:4000/api/auth/callback/keycloak"],
+      "publicClient": false,
+      "secret": "zomzt73VuP6LTUpPpZf5pghlv8exNCtB",
+      "protocol": "openid-connect",
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "roles": {
+    "realm": [],
+    "client": {
+      "rolemapper": [{ "name": "admin" }, { "name": "user" }]
+    }
+  },
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@flowCraft.de",
+      "firstName": "Admin",
+      "lastName": "FlowCraft",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "p" }],
+      "clientRoles": {
+        "rolemapper": ["admin"]
+      }
+    },
+    {
+      "username": "user",
+      "email": "user@flowCraft.de",
+      "firstName": "User",
+      "lastName": "FlowCraft",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "p" }],
+      "clientRoles": {
+        "rolemapper": ["user"]
+      }
+    }
+  ]
+}
