@@ -141,7 +141,6 @@ export default function ProcessSpalte({
     data: Process[],
     parentId: string | null,
   ): TreeViewBaseItem[] {
-    console.log(data);
     return data
       .filter((process) => process.parentId === parentId)
       .map((process) => ({
