@@ -2,6 +2,7 @@ import { ApolloDriverConfig } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ZeebeModule } from './camunda/zeebe.module.js';
 import { graphQlModuleOptions } from './config/graphql.js';
 import { database } from './config/mongo-database.js';
 import { LoggerModule } from './logger/logger.module.js';
@@ -10,7 +11,6 @@ import { ReadController } from './role-mapper/controller/read.controller.js';
 import { WriteController } from './role-mapper/controller/write.controller.js';
 import { RoleMapperModule } from './role-mapper/role-mapper.module.js';
 import { KeycloakModule } from './security/keycloak/keycloak.module.js';
-import { ZeebeModule } from './camunda/zeebe.module.js';
 
 @Module({
     imports: [

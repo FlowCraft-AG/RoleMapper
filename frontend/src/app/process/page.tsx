@@ -89,8 +89,9 @@ export default function ProcessInstances() {
             const matchesStatus =
               statusFilter === 'ALL' ||
               (statusFilter === 'ACTIVE' && instance.state === 'ACTIVE') ||
-                (statusFilter === 'COMPLETED' && instance.state === 'COMPLETED') ||
-                (statusFilter === 'CANCELED' && instance.state === 'CANCELED');
+              (statusFilter === 'COMPLETED' &&
+                instance.state === 'COMPLETED') ||
+              (statusFilter === 'CANCELED' && instance.state === 'CANCELED');
             const matchesProcessName =
               !filter ||
               instance.bpmnProcessId

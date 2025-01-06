@@ -7,8 +7,8 @@
  */
 
 import { Metadata } from 'next';
-import ProcessPage from './processPage';
 import { Suspense } from 'react';
+import ProcessPage from './processPage';
 
 /**
  * Metadata für die Prozesse-Seite.
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
  * @returns {JSX.Element} Die JSX-Struktur der Seite.
  */
 export default async function ProzessePage() {
-   return (
-     <Suspense fallback={<div>Loading...</div>}>
-       <ProcessPage />
-     </Suspense>
-   );
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProcessPage />
+    </Suspense>
+  );
 }
