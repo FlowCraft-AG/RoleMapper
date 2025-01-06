@@ -7,6 +7,7 @@
     <bpmn:userTask id="Activity_121e1ru" name="Test User Task">
       <bpmn:extensionElements>
         <zeebe:formDefinition formId="user_input" />
+        <zeebe:assignmentDefinition assignee="=userId" candidateUsers="=[userId]" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0qpze92</bpmn:incoming>
       <bpmn:outgoing>Flow_12y28vx</bpmn:outgoing>
@@ -34,6 +35,7 @@
         <zeebe:taskDefinition type="output" />
         <zeebe:ioMapping>
           <zeebe:output source="=eingabe" target="eingabe" />
+          <zeebe:output source="=userId" target="userId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1m4bw3p</bpmn:incoming>
@@ -47,7 +49,7 @@
           <zeebe:output source="=assignee" target="assignee" />
           <zeebe:output source="=eingabe" target="eingabe" />
         </zeebe:ioMapping>
-        <zeebe:assignmentDefinition candidateUsers="=assignee" />
+        <zeebe:assignmentDefinition assignee="=assignee[1]" candidateUsers="=assignee" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ao1vl2</bpmn:incoming>
       <bpmn:outgoing>Flow_0zsxewt</bpmn:outgoing>

@@ -130,7 +130,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
                     this.#logger.debug('Rollen für den Benutzer: %o', result);
                     const vorgesetzter = result?.roles[0];
                     this.#logger.debug('Vorgesetzter für den Benutzer: %o', vorgesetzter);
-                    const assignee = vorgesetzter?.users[0]?.user?.userId;
+                    const assignee = [vorgesetzter?.users[0]?.user?.userId];
                     if (!assignee) {
                         this.#logger.error(
                             'Assignee konnte nicht ermittelt werden. Rollen-Ergebnis: %o',

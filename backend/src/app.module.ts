@@ -10,6 +10,7 @@ import { ReadController } from './role-mapper/controller/read.controller.js';
 import { WriteController } from './role-mapper/controller/write.controller.js';
 import { RoleMapperModule } from './role-mapper/role-mapper.module.js';
 import { KeycloakModule } from './security/keycloak/keycloak.module.js';
+import { ZeebeModule } from './camunda/zeebe.module.js';
 
 @Module({
     imports: [
@@ -20,7 +21,7 @@ import { KeycloakModule } from './security/keycloak/keycloak.module.js';
             dbName: database.databaseName,
         }),
         RoleMapperModule,
-        // ZeebeModule,
+        ZeebeModule,
     ],
 })
 export class AppModule implements NestModule {
