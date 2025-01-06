@@ -111,6 +111,7 @@ export default function UsersSpalte({
     try {
       if (selectedFunctionId === 'mitglieder') {
         console.log('Fetching mitglieder');
+        console.log('Selected Mitglieder:', selectedMitglieder);
         setSelectedFunction(selectedMitglieder);
       } else if (isImpliciteFunction) {
         console.log('Fetching saved data');
