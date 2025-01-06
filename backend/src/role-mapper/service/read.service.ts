@@ -68,7 +68,7 @@ export class ReadService {
     /**
      * Sucht die Rollen und die zugehörigen Benutzer für einen gegebenen Prozess.
      *
-     * @param {string} _id - Die (Object)ID des Prozesses, für den die Rollen gesucht werden.
+     * @param {string} _id - Die (Object-)ID des Prozesses, für den die Rollen gesucht werden.
      * @param {string} userId - Die ID des Benutzers, der die Anfrage stellt.
      * @returns {Promise<{ roles: RoleResult[] }>} Eine Liste der Rollen und der zugehörigen Benutzer.
      * @throws {NotFoundException} Wenn der Prozess oder der Benutzer nicht gefunden werden kann.

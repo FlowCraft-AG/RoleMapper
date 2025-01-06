@@ -1,3 +1,6 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable camelcase, @typescript-eslint/naming-convention */
 
 import { Injectable } from '@nestjs/common';
@@ -97,6 +100,13 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         this.#logger.debug('refresh: response.data=%o', response.data);
         return response.data;
     }
+    /**
+     * Loggt den Payload eines Tokens.
+     *
+     * @param {(AxiosResponse<Record<string, string | number>>)} response
+     * @return {*}
+     * @memberof KeycloakService
+     */
 
     #logPayload(response: AxiosResponse<Record<string, string | number>>) {
         const { access_token } = response.data;
@@ -110,15 +120,23 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         const payloadDecoded = atob(payloadString);
 
         // JSON-Objekt fuer Payload aus dem decodierten String herstellen
-
-        /* eslint-disable @typescript-eslint/no-unsafe-assignment */
         const payload = JSON.parse(payloadDecoded);
-        const { azp, exp, resource_access } = payload;
-        this.#logger.debug('#logPayload: exp=%s', exp);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const { roles } = resource_access[azp]; // eslint-disable-line security/detect-object-injection
-        /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 
+        /**
+         *  Mit RoleMapper client ID
+         */
+
+        // const { azp, exp, resource_access } = payload;
+        // this.#logger.debug('#logPayload: exp=%s', exp);
+        // const { roles } = resource_access[azp]; // eslint-disable-line security/detect-object-injection
+
+        /**
+         *  Mit Camunda client ID
+         */
+        const { exp, realm_access } = payload;
+        this.#logger.debug('#logPayload: exp=%s', exp);
+
+        const { roles } = realm_access;
         this.#logger.debug('#logPayload: roles=%o', roles);
     }
 }
