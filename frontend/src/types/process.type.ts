@@ -1,15 +1,37 @@
-// Typen für Aufgaben
-// interface Task {
-//   id: string; // Eindeutige ID der Aufgabe
-//   name: string; // Name der Aufgabe
-//   assignee: string | null; // Benutzer, der die Aufgabe zugewiesen bekommen hat (oder null)
-// }
+/**
+ * Typdefinition für einen Prozess (Process).
+ * Beschreibt die Eigenschaften eines Prozesses im System.
+ */
+export type Process = {
+  _id: string; // Eindeutige ID des Prozesses
+  name: string; // Name des Prozesses
+  parentId?: string; // Optionale ID des übergeordneten Prozesses
+  roles?: Role[]; // Optionale Liste von Rollen, die mit dem Prozess verknüpft sind
+  processId?: string; // Optionale Prozesskennung (z. B. für spezielle Prozesse)
+  children?: Process[]; // Optionale Liste von untergeordneten Prozessen (rekursiv)
+};
 
-// Typen für Variablen
-// interface Variable {
-//   value: string; // Wert der Variablen
-// }
+/**
+ * Typdefinition für eine Rolle (Role), die mit einem Prozess verknüpft ist.
+ */
+export type Role = {
+  roleName: string; // Name der Rolle
+  roleId: string; // ID der Rolle
+};
 
+/**
+ * Typdefinition für einen vereinfachten Prozess (ShortProcess).
+ * Wird verwendet, wenn nur grundlegende Informationen eines Prozesses benötigt werden.
+ */
+export type ShortProcess = {
+  _id: string; // Eindeutige ID des Prozesses
+  name: string; // Name des Prozesses
+  parentId: string | undefined; // ID des übergeordneten Prozesses oder undefined
+};
+
+/*******************************************************************************************************************************************************
+ * T Y P E N    F Ü R    C A M U N D A - P R O Z E S S E    U N D    A U F G A B E N
+ ****************************************************************************************************************************************************/
 // Typen für Prozessdetails
 export interface ProcessInstance {
   key: string; // Eindeutiger Schlüssel der Prozessinstanz
@@ -21,16 +43,6 @@ export interface ProcessInstance {
   processDefinitionKey: string; // Schlüssel der Prozessdefinition
   tenantId: string; // Mandanten-ID (kann leer sein)
 }
-
-// // Typen für Prozessinstanzen
-// export interface ProcessInstance {
-//   id: string; // Eindeutige ID der Prozessinstanz
-//   definitionId: string; // ID der zugehörigen Prozessdefinition
-//   businessKey: string; // Geschäftsschlüssel der Instanz
-//   tasks: Task[]; // Liste der Aufgaben in dieser Instanz
-//   variables: Record<string, Variable>; // Variablen der Instanz (als Schlüssel-Wert-Paare)
-//   processDefinitionKey: string; // Schlüssel der Prozessdefinition
-// }
 
 // Typen für Prozessvariablen
 export type ProcessVariable = {

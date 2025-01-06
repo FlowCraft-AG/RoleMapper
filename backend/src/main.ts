@@ -36,7 +36,6 @@ const bootstrap = async () => {
     if (zeebe?.enable) {
         await deployCamundaResources();
     }
-
     await app.listen(port);
 };
 
