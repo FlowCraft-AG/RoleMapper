@@ -21,6 +21,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -66,6 +67,7 @@ export default function Navigation() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { setFacultyTheme } = useFacultyTheme();
   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
+  const { data: session } = useSession();
 
   /**
    * Aktualisiert das Thema, wenn Änderungen auftreten.
@@ -199,6 +201,21 @@ export default function Navigation() {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* Benutzername */}
+          {session?.user.username && (
+            <Typography
+              variant="body1"
+              sx={{
+                color: useCustomStyles
+                  ? theme.palette.custom?.navbar?.secondary || '#fff'
+                  : theme.palette.text.primary,
+                fontWeight: 'bold',
+              }}
+            >
+              {session.user.name}
+            </Typography>
+          )}
+
           <Tooltip title="Benachrichtigungen">
             <IconButton
               color="inherit"
