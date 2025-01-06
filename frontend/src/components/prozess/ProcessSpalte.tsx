@@ -45,7 +45,6 @@ interface ExtendedSlotProps extends TreeItem2Props {
 interface ProcessRichTreeViewProps {
   onSelect: (process: Process) => void;
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
-  expandedNodes?: string[] | undefined;
 }
 
 /**
@@ -68,7 +67,6 @@ interface ProcessRichTreeViewProps {
 export default function ProcessSpalte({
   onSelect,
   onRemove,
-  expandedNodes,
 }: ProcessRichTreeViewProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const [processes, setProcesses] = useState<Process[]>([]);

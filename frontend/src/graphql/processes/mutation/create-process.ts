@@ -5,11 +5,7 @@ export const CREATE_PROCESS = gql`
     createEntity(
       input: {
         entity: PROCESSES
-        processData: {
-          name: $name
-          parentId: $parentId
-          roles: $roles
-        }
+        processData: { name: $name, parentId: $parentId, roles: $roles }
       }
     ) {
       success

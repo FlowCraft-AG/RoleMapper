@@ -1,7 +1,12 @@
 import { gql } from '@apollo/client';
 
 export const UPDATE_PROCESS = gql`
-  mutation UpdateEntity($id: String, $name: String, $parentId: String, $roles: [RoleInput!]) {
+  mutation UpdateEntity(
+    $id: String
+    $name: String
+    $parentId: String
+    $roles: [RoleInput!]
+  ) {
     updateEntity(
       input: {
         entity: PROCESSES

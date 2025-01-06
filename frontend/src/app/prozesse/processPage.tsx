@@ -11,9 +11,9 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import ProcessSpalte from '../../components/prozess/ProcessSpalte';
 import { getProcessById } from '../../lib/api/process.api';
 import { Process } from '../../types/process.type';
-import ProcessSpalte from '../../components/prozess/ProcessSpalte';
 
 /**
  * Hauptkomponente für die Prozess-Seite.
@@ -151,7 +151,6 @@ export default function ProcessPage() {
         <ProcessSpalte
           onSelect={handleProcessSelect}
           onRemove={handleRemoveSelection}
-          expandedNodes={state.expandedNodes}
         />
       </Box>
 

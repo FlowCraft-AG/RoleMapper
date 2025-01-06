@@ -35,7 +35,7 @@ export class Process extends Document {
     name!: string;
 
     @Prop({ required: true })
-    parentId!: string;  
+    parentId!: string;
 
     /**
      * Die eindeutige ID des Prozesses.

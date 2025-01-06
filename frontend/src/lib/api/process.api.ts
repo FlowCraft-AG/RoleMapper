@@ -6,7 +6,7 @@ import { UPDATE_PROCESS } from '../../graphql/processes/mutation/update-process'
 import {
   GET_ALL_PROCESSES,
   GET_PROCESS_BY_ID,
-  GET_PROCESSES_SHORT
+  GET_PROCESSES_SHORT,
 } from '../../graphql/processes/query/get-processes';
 import { Process, ShortProcess } from '../../types/process.type';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
@@ -33,8 +33,7 @@ export async function fetchAllProcesses(): Promise<Process[]> {
 
     return data.getData.data || [];
   } catch (error) {
-    //handleGraphQLError(error, 'Fehler beim Laden der Prozesse.');
-    return []
+    handleGraphQLError(error, 'Fehler beim Laden der Prozesse.');
   }
 }
 
@@ -107,7 +106,12 @@ export async function updateProcess(
   roles: { roleName: string; roleId: string }[],
 ): Promise<Process[]> {
   try {
-    logger.debug('Aktualisiere Prozess: %o', { processId, name, parentId, roles });
+    logger.debug('Aktualisiere Prozess: %o', {
+      processId,
+      name,
+      parentId,
+      roles,
+    });
 
     await client.mutate({
       mutation: UPDATE_PROCESS,
@@ -153,19 +157,15 @@ export async function removeProcess(processId: string): Promise<Process[]> {
  * @throws {ApolloError} - Wird geworfen, wenn die Query fehlschlägt.
  */
 export async function fetchProcessIds(): Promise<ShortProcess[]> {
-    try {
-      logger.debug('Lade IDs aller Prozesse');
-  
-      const { data } = await client.query({
-        query: GET_PROCESSES_SHORT,
-      });
-  
-      return data.getData.data;
-    } catch (error) {
-      handleGraphQLError(
-        error,
-        'Fehler beim Laden der Prozess-IDs.',
-      );
-    }
+  try {
+    logger.debug('Lade IDs aller Prozesse');
+
+    const { data } = await client.query({
+      query: GET_PROCESSES_SHORT,
+    });
+
+    return data.getData.data;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
   }
-  
+}

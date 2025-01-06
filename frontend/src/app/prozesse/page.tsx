@@ -8,6 +8,7 @@
 
 import { Metadata } from 'next';
 import ProcessPage from './processPage';
+import { Suspense } from 'react';
 
 /**
  * Metadata für die Prozesse-Seite.
@@ -23,9 +24,6 @@ export const metadata: Metadata = {
   title: 'Prozesse',
   description:
     'Darstellung und Anpassung von Prozessen und Rollen an der Hochschule Karlsruhe (HSKA).',
-  icons: {
-    icon: '/favicon.ico',
-  },
 };
 
 /**
@@ -38,5 +36,9 @@ export const metadata: Metadata = {
  * @returns {JSX.Element} Die JSX-Struktur der Seite.
  */
 export default async function ProzessePage() {
-  return <ProcessPage />;
+   return (
+     <Suspense fallback={<div>Loading...</div>}>
+       <ProcessPage />
+     </Suspense>
+   );
 }

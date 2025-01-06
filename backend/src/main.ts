@@ -5,10 +5,10 @@ import compression from 'compression';
 import { AppModule } from './app.module.js';
 import { config } from './config/app.js';
 import { corsOptions } from './config/cors.js';
+import { deployCamundaResources } from './config/deployment.js';
 import { nodeConfig } from './config/node.js';
 import { paths } from './config/paths.js';
 import { helmetHandlers } from './security/http/helmet.handler.js';
-import { deployCamundaResources } from './config/deployment.js';
 
 const { zeebe } = config;
 
