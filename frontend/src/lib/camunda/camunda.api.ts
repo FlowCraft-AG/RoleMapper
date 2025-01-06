@@ -144,8 +144,11 @@ export async function fetchProcessInstances(
     );
 
     return result.items;
-  } catch (error: any) {
-    if (error.message.includes('claims are invalid')) {
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes('claims are invalid')
+    ) {
       logger.error('Fehlerhafte Berechtigungen: %s', error.message);
       throw new Error(
         'Berechtigungsfehler: Bitte überprüfe deine API-Zugriffsrechte.',

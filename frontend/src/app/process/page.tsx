@@ -100,15 +100,17 @@ export default function ProcessInstances() {
         );
 
         setInstances(filteredInstances);
-      } catch (error: any) {
-        setError(error.message || 'Ein unbekannter Fehler ist aufgetreten.');
+      } catch (error) {
+        setError(
+          (error as Error).message || 'Ein unbekannter Fehler ist aufgetreten.',
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [filter, statusFilter]);
+  }, [session, filter, statusFilter]);
 
   return (
     <Box sx={{ padding: 4 }}>
