@@ -125,12 +125,13 @@ export default function OrganigrammPage() {
         ? await loadOrganizationMembers(orgUnit.alias, orgUnit.kostenstelleNr)
         : [];
 
-    const root = orgUnit.alias || orgUnit.kostenstelleNr ? orgUnit : undefined;
+      const isRoot = orgUnit.alias || orgUnit.kostenstelleNr ? true : false;
+      console.log('OrganigrammPage: isRoot=', isRoot);
 
     setState({
       ...state,
       selectedOrgUnit: orgUnit,
-      selectedRootOrgUnit: root,
+      selectedRootOrgUnit: isRoot ? orgUnit : undefined,
       selectedFunctionId: undefined,
       selectedUserId: undefined,
       expandedNodes: [],
