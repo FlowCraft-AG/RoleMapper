@@ -47,7 +47,7 @@
           <zeebe:output source="=assignee" target="assignee" />
           <zeebe:output source="=eingabe" target="eingabe" />
         </zeebe:ioMapping>
-        <zeebe:assignmentDefinition assignee="=assignee" />
+        <zeebe:assignmentDefinition candidateUsers="=assignee" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ao1vl2</bpmn:incoming>
       <bpmn:outgoing>Flow_0zsxewt</bpmn:outgoing>
