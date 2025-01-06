@@ -105,8 +105,8 @@ export default function OrganigrammPage() {
    * Lädt Mitglieder einer Organisationseinheit.
    */
   const loadOrganizationMembers = async (
-    alias: string,
-    kostenstelleNr: string,
+    alias?: string,
+    kostenstelleNr?: string,
   ) => {
     try {
       return await fetchMitglieder(alias, kostenstelleNr);
@@ -121,16 +121,17 @@ export default function OrganigrammPage() {
    */
   const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
     const users =
-      orgUnit.alias && orgUnit.kostenstelleNr
+      orgUnit.alias || orgUnit.kostenstelleNr
         ? await loadOrganizationMembers(orgUnit.alias, orgUnit.kostenstelleNr)
         : [];
 
-    const root = orgUnit.alias || orgUnit.kostenstelleNr ? orgUnit : undefined;
+    const isRoot = orgUnit.alias || orgUnit.kostenstelleNr ? true : false;
+    if (isRoot) orgUnit.hasMitglieder = true;
 
     setState({
       ...state,
       selectedOrgUnit: orgUnit,
-      selectedRootOrgUnit: root,
+      selectedRootOrgUnit: isRoot ? orgUnit : undefined,
       selectedFunctionId: undefined,
       selectedUserId: undefined,
       expandedNodes: [],
