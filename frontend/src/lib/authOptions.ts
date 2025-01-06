@@ -73,11 +73,12 @@ export const authOptions: AuthOptions = {
      */
     async jwt({ token, user, account, trigger }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
-      logger.debug('JWT: %o', token);
+      logger.trace('JWT: %o', token);
 
       if (user && account?.provider !== 'keycloak') {
         logger.trace('USER-LogIn');
-        logger.debug('USER: %o', user);
+        logger.trace('USER: %o', user);
+        const userData = logPayload(user.access_token || '');
         token = {
           ...token,
           access_token: user.access_token,
@@ -87,16 +88,16 @@ export const authOptions: AuthOptions = {
           refresh_expires_in: user.refresh_expires_in + nowTimeStamp,
           refresh_token: user.refresh_token,
           user: {
-            name: user.name,
-            email: user.email,
-            username: user.username,
+            name: userData?.name || user.name,
+            email: userData?.email || user.email,
+            username: userData?.preferred_username || user.username,
           },
         };
       }
 
       if (account && account.provider && account.provider === 'keycloak') {
         logger.trace('ACCOUNT-LogIn');
-        logger.debug('ACCOUNT: %s', account.access_token);
+        logger.trace('ACCOUNT: %s', account.access_token);
 
         token = {
           ...token,
@@ -146,7 +147,7 @@ export const authOptions: AuthOptions = {
      * Ergänzt die Session-Daten um Benutzer- und Token-Informationen.
      */
     async session({ session, token }) {
-      logger.debug('Session Token: %o', token);
+      logger.trace('Session Token: %o', token);
 
       session.user = token.user || {
         name: token.name as string,
@@ -193,4 +194,50 @@ export const authOptions: AuthOptions = {
       }
     },
   },
+};
+
+/**
+ * Decodiert und loggt den Payload eines JWT-Access-Tokens.
+ *
+ * @param {string} access_token - Der JWT-Access-Token.
+ * @returns {object} Ein Objekt mit Payload-Daten wie Name, Benutzername und E-Mail.
+ */
+const logPayload = (
+  access_token: string,
+): {
+  name?: string;
+  preferred_username?: string;
+  given_name?: string;
+  family_name?: string;
+  email?: string;
+} | null => {
+  try {
+    const [, payloadString] = access_token.split('.');
+
+    if (!payloadString) {
+      logger.warn('Ungültiges Access-Token-Format');
+      return null;
+    }
+
+    const payloadDecoded = Buffer.from(payloadString, 'base64').toString(
+      'utf-8',
+    );
+    const payload = JSON.parse(payloadDecoded);
+
+    const { name, preferred_username, given_name, family_name, email } =
+      payload;
+    logger.debug(
+      'logPayload: name=%s, preferred_username=%s, given_name=%s, family_name=%s, email=%s',
+      name,
+      preferred_username,
+      given_name,
+      family_name,
+      email,
+    );
+
+    return { name, preferred_username, given_name, family_name, email };
+  } catch (error) {
+    logger.error('Fehler beim Decodieren des Access-Tokens:', error);
+    return null;
+  }
 };

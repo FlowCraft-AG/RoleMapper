@@ -40,8 +40,11 @@ async function httpRequest(
   const response = await fetch(url, options);
 
   if (!response.ok) {
-    logger.error(`HTTP-Fehler: ${response.statusText}`);
-    throw new Error(`HTTP-Fehler: ${response.statusText}`);
+    const errorText = await response.text();
+    logger.error(`HTTP-Fehler: ${response.statusText}, Details: ${errorText}`);
+    throw new Error(
+      `HTTP-Fehler: ${response.statusText}, Details: ${errorText}`,
+    );
   }
 
   logger.debug(`Erfolgreiche Antwort von: ${url}`);
@@ -112,27 +115,46 @@ export async function fetchProcessDefinitionXml(
  * @returns {Promise<ProcessInstance[]>} Die Liste der Prozessinstanzen.
  */
 export async function fetchProcessInstances(
+  token: string | undefined,
   activeOnly = false,
 ): Promise<ProcessInstance[]> {
   logger.debug('Prozessinstanzen abrufen (nur aktive: %s)', activeOnly);
-  const token = await fetchAuthToken();
+  logger.trace('fetchProcessInstances: Token=%s', token);
+
+  if (!token) {
+    throw new Error('Kein Zugriffstoken vorhanden.');
+  }
+  //const token = await fetchAuthToken();
   const body = {
     filter: activeOnly ? { state: 'ACTIVE' } : undefined,
     sort: [{ field: 'bpmnProcessId', order: 'ASC' }],
   };
 
-  const result = await httpRequest(
-    `${CAMUNDA_OPERATE_API_URL}/process-instances/search`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+  try {
+    const result = await httpRequest(
+      `${CAMUNDA_OPERATE_API_URL}/process-instances/search`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
       },
-      body: JSON.stringify(body),
-    },
-  );
-  return result.items;
+    );
+
+    return result.items;
+  } catch (error: any) {
+    if (error.message.includes('claims are invalid')) {
+      logger.error('Fehlerhafte Berechtigungen: %s', error.message);
+      throw new Error(
+        'Berechtigungsfehler: Bitte überprüfe deine API-Zugriffsrechte.',
+      );
+    }
+
+    logger.error('Allgemeiner Fehler bei fetchProcessInstances: %s', error);
+    throw error; // Andere Fehler weiterreichen
+  }
 }
 
 /**
