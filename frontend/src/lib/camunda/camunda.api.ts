@@ -166,18 +166,24 @@ export async function fetchVariablesByProcessInstance(
   processInstanceKey: string,
 ): Promise<ProcessVariable[]> {
   const token = await fetchAuthToken();
-  const variables = await httpRequest(`${CAMUNDA_OPERATE_API_URL}/variables/search`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+  const variables = await httpRequest(
+    `${CAMUNDA_OPERATE_API_URL}/variables/search`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        filter: { processInstanceKey },
+      }),
     },
-    body: JSON.stringify({
-      filter: { processInstanceKey },
-    }),
-  });
-    logger.debug('Variablen der Prozessinstanz erfolgreich abgerufen: %o', variables);
-    return variables.items
+  );
+  logger.debug(
+    'Variablen der Prozessinstanz erfolgreich abgerufen: %o',
+    variables,
+  );
+  return variables.items;
 }
 
 /**
