@@ -13,7 +13,7 @@ export class ProcessesResolver {
     }
 
     @Public()
-    @Mutation(() => String) // Gibt einen String (z. B. Prozessinstanz-ID) zurück
+    @Mutation() // Gibt einen String (z. B. Prozessinstanz-ID) zurück
     async startProcess(
         @Args('processKey') processKey: string,
         @Args('variables') variables: string,
