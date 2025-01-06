@@ -85,7 +85,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          publish_dir: ./docs/backend
+          publish_dir: ./docs/frontend
 
   package:
     runs-on: ubuntu-latest
