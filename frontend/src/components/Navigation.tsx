@@ -139,7 +139,6 @@ export default function Navigation() {
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/prozesse', label: 'Prozesse' },
     { href: '/konfigurationen', label: 'Konfigurationen' },
-    { href: '/test', label: 'Test' },
     { href: '/models', label: 'Modele' },
     { href: '/process', label: 'Aktive Prozesses' },
   ];

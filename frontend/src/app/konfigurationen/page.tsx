@@ -63,6 +63,22 @@ const ConfigPage = () => {
       key: 'NEXT_PUBLIC_LOG_DIR',
       value: ENV.NEXT_PUBLIC_LOG_DIR || undefined,
     },
+    {
+      key: 'CAMUNDA_KEYCLOAK_CLIENT_SECRET',
+      value: ENV.CAMUNDA_KEYCLOAK_CLIENT_SECRET || undefined,
+    },
+    {
+      key: 'CAMUNDA_OPERATE_API_URL',
+      value: ENV.CAMUNDA_OPERATE_API_URL || undefined,
+    },
+    {
+      key: 'CAMUNDA_TASKLIST_API_URL',
+      value: ENV.CAMUNDA_TASKLIST_API_URL || undefined,
+    },
+    {
+      key: 'CAMUNDA_KEYCLOAK_API_URL ',
+      value: ENV.CAMUNDA_KEYCLOAK_API_URL || undefined,
+    },
   ];
 
   configData.map((config) => logger.info('%s=%s', config.key, config.value));
