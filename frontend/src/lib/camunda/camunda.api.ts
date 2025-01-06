@@ -65,7 +65,7 @@ export async function fetchAuthToken() {
     password: 'demo',
     grant_type: 'password',
     client_id: 'camunda-identity',
-      client_secret: CAMUNDA_KEYCLOAK_CLIENT_SECRET,
+    client_secret: CAMUNDA_KEYCLOAK_CLIENT_SECRET,
     scope: 'openid',
   });
 
@@ -145,13 +145,15 @@ export async function fetchProcessInstanceDetails(
   key: string,
 ): Promise<ProcessInstance> {
   const token = await fetchAuthToken();
-  return await httpRequest(
+  const instanz = await httpRequest(
     `${CAMUNDA_OPERATE_API_URL}/process-instances/${key}`,
     {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` },
     },
   );
+  logger.debug('Details der Prozessinstanz erfolgreich abgerufen: %o', instanz);
+  return instanz;
 }
 
 /**
@@ -164,7 +166,7 @@ export async function fetchVariablesByProcessInstance(
   processInstanceKey: string,
 ): Promise<ProcessVariable[]> {
   const token = await fetchAuthToken();
-  return await httpRequest(`${CAMUNDA_OPERATE_API_URL}/variables/search`, {
+  const variables = await httpRequest(`${CAMUNDA_OPERATE_API_URL}/variables/search`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -174,6 +176,8 @@ export async function fetchVariablesByProcessInstance(
       filter: { processInstanceKey },
     }),
   });
+    logger.debug('Variablen der Prozessinstanz erfolgreich abgerufen: %o', variables);
+    return variables.items
 }
 
 /**
