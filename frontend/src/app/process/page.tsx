@@ -89,7 +89,8 @@ export default function ProcessInstances() {
             const matchesStatus =
               statusFilter === 'ALL' ||
               (statusFilter === 'ACTIVE' && instance.state === 'ACTIVE') ||
-              (statusFilter === 'COMPLETED' && instance.state === 'COMPLETED');
+                (statusFilter === 'COMPLETED' && instance.state === 'COMPLETED') ||
+                (statusFilter === 'CANCELED' && instance.state === 'CANCELED');
             const matchesProcessName =
               !filter ||
               instance.bpmnProcessId
@@ -147,7 +148,6 @@ export default function ProcessInstances() {
               <MenuItem value="ACTIVE">Aktive Prozesse</MenuItem>
               <MenuItem value="COMPLETED">Abgeschlossene Prozesse</MenuItem>
               <MenuItem value="CANCELED">Abgebrochene Prozesse</MenuItem>
-              <MenuItem value="FAILED">Fehlgeschlagene Prozesse</MenuItem>
             </Select>
           </FormControl>
 
