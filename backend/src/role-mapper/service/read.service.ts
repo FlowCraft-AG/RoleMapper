@@ -68,13 +68,13 @@ export class ReadService {
     /**
      * Sucht die Rollen und die zugehörigen Benutzer für einen gegebenen Prozess.
      *
-     * @param {string} processId - Die ID des Prozesses, für den die Rollen gesucht werden.
+     * @param {string} _id - Die (Object)ID des Prozesses, für den die Rollen gesucht werden.
      * @param {string} userId - Die ID des Benutzers, der die Anfrage stellt.
      * @returns {Promise<{ roles: RoleResult[] }>} Eine Liste der Rollen und der zugehörigen Benutzer.
      * @throws {NotFoundException} Wenn der Prozess oder der Benutzer nicht gefunden werden kann.
      */
     async findProcessRoles(_id: string, userId: string): Promise<{ roles: RoleResult[] }> {
-        this.#logger.debug('findProcessRoles: processId=%s, userId=%s', _id, userId);
+        this.#logger.debug('findProcessRoles: _id=%s, userId=%s', _id, userId);
 
         // Abrufen des Prozesses aus der Datenbank anhand der Prozess-ID
         const process: Process = await this.#modelMap.PROCESSES?.findOne({ _id }).exec();
