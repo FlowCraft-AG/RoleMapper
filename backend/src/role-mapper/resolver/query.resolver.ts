@@ -6,6 +6,7 @@ import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { EntityType } from '../model/entity/entities.entity.js';
+import { Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit } from '../model/entity/org-unit.entity.js';
 import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
@@ -16,7 +17,6 @@ import { MandatePayload } from '../model/payload/mandate.payload.js';
 import { RolePayload } from '../model/payload/role-payload.type.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
-import { Mandates } from '../model/entity/mandates.entity.js';
 
 /**
  * Resolver für die `RoleMapper`-Entität, der GraphQL-Abfragen verarbeitet und die entsprechenden Daten
@@ -108,12 +108,11 @@ export class QueryResolver {
                 totalCount: 0,
             };
         }
+        const result: DataPayload = { data, totalCount: data.length };
+        this.#logger.debug('getEntityData: result=%o', result);
 
         // Rückgabe der strukturierten Daten mit Paginierung und Gesamtzahl
-        return {
-            data, // Typumwandlung
-            totalCount: data.length,
-        };
+        return result;
     }
 
     /**
@@ -148,18 +147,34 @@ export class QueryResolver {
             throw new NotFoundException(`Keine gespeicherten Daten für ID ${id} gefunden`);
         }
 
-        const { functionName, orgUnit } = savedQuery as Mandates;
+        const { functionName, orgUnit, isImpliciteFunction } = savedQuery as Mandates;
         const users = data as User[];
 
         return {
             functionName,
             users,
-            isImpliciteFunction: true,
+            isImpliciteFunction,
             orgUnit,
             _id: new Types.ObjectId(id),
         };
     }
 
+    /**
+     * Führt eine Abfrage aus, um Benutzer basierend auf einer Funktion abzurufen.
+     *
+     * Diese Methode ruft die `findUsersByFunction`-Methode des Services auf, um die Benutzer,
+     * die einer bestimmten Funktion zugeordnet sind, sowie weitere relevante Informationen abzurufen.
+     *
+     * @param {string} id - Die eindeutige ID der Funktion, für die die Benutzer abgerufen werden sollen.
+     * @returns {Promise<GetUsersByFunctionResult>} Ein Promise, das die Nutzlast mit den abgerufenen Benutzerdaten zurückgibt.
+     *
+     * @example
+     * ```typescript
+     * const result = await getUsersByFunction('64b1f768d9a8e900001b1b2f');
+     * console.log(result.functionName); // Gibt den Namen der Funktion zurück.
+     * console.log(result.users); // Gibt die Benutzer zurück, die der Funktion zugeordnet sind.
+     * ```
+     */
     @Public()
     @Query('getUsersByFunction')
     async getUsersByFunction(@Args('id') id: string): Promise<GetUsersByFunctionResult> {
@@ -167,7 +182,7 @@ export class QueryResolver {
 
         const result = await this.#service.findUsersByFunction(id);
 
-        if (result === undefined) {
+        if (!result) {
             this.#logger.warn('Keine Daten gefunden für die Anfrage.');
             return {
                 functionName: '',
@@ -180,6 +195,21 @@ export class QueryResolver {
         return { functionName, users, isImpliciteFunction, orgUnit };
     }
 
+    /**
+     * Führt eine Abfrage aus, um alle übergeordneten Organisationseinheiten basierend auf einer ID abzurufen.
+     *
+     * Diese Methode ruft die `findAncestors`-Methode des Services auf, um die Hierarchie
+     * der übergeordneten Organisationseinheiten zu ermitteln.
+     *
+     * @param {Types.ObjectId} id - Die eindeutige ID der Organisationseinheit, deren Vorfahren abgerufen werden sollen.
+     * @returns {Promise<OrgUnit[]>} Ein Promise, das die Liste der übergeordneten Organisationseinheiten zurückgibt.
+     *
+     * @example
+     * ```typescript
+     * const ancestors = await getAncestors(new Types.ObjectId('64b1f768d9a8e900001b1b2f'));
+     * console.log(ancestors); // Gibt die Liste der übergeordneten Organisationseinheiten aus.
+     * ```
+     */
     @Public()
     @Query('getAncestors')
     async getAncestors(@Args('id') id: Types.ObjectId): Promise<OrgUnit[]> {

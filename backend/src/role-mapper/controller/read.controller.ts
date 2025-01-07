@@ -26,7 +26,7 @@ import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { EntityCategoryType } from '../model/entity/entities.entity.js';
 import { FilterInput } from '../model/input/filter.input.js';
-import { DataPayload, DataResult } from '../model/payload/data.payload.js';
+import { DataPayloadRest, DataResult } from '../model/payload/data.payload.js';
 import { RolePayloadRest } from '../model/payload/role-payload.type.js';
 import { FilterField, FilterOperator } from '../model/types/filter.type.js';
 import { Link, Links } from '../model/types/link.type.js';
@@ -188,7 +188,7 @@ export class ReadController {
         @Query('value') value?: string,
         @Query('limit') limit = DEFAULT_LIMIT, // Standardwert für limit
         @Query('offset') offset = 0, // Standardwert für offset
-    ): Promise<DataPayload> {
+    ): Promise<DataPayloadRest> {
         const baseUri = getBaseUri(request);
         this.#logger.debug('getData: baseUri=%s', baseUri);
         this.#logger.debug(
