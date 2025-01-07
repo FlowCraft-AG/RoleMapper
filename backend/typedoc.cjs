@@ -3,6 +3,7 @@ module.exports = {
     // out: '../.extras/doc/api',
     out: '../docs/backend',
     entryPoints: ['src'],
+    includeVersion: true,
     entryPointStrategy: 'expand',
     excludeExternals: true,
     excludePrivate: true,
