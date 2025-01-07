@@ -94,6 +94,7 @@ export default function OrgUnitsSpalte({
     try {
       setLoading(true);
       const data = await fetchAllOrgUnits();
+      console.log('OrgUnitsSpalte - loadOrgUnits: orgUnits', data);
       setOrgUnits(data);
     } catch (err) {
       const errorMessage =

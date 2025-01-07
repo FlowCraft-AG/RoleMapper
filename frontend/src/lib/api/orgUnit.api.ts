@@ -32,7 +32,9 @@ export async function fetchAllOrgUnits(): Promise<OrgUnit[]> {
       query: GET_ALL_ORG_UNITS,
     });
 
-    return data.getData.data || [];
+    const result = data.getData.data || [];
+    logger.debug('fetchAllOrgUnits: orgUnits=%o', result);
+    return result;
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Laden der Organisationseinheiten.');
   }

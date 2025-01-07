@@ -21,7 +21,7 @@ import { User, UserDocument } from '../model/entity/user.entity.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { PaginationParameters } from '../model/input/pagination-parameters.js';
 import { SortInput } from '../model/input/sort.input.js';
-import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
+import { GetUsersByFunctionResult } from '../model/payload/get-users.payload.js';
 import { RoleResult } from '../model/payload/role-payload.type.js';
 import { FilterField, FilterFields } from '../model/types/filter.type.js';
 import { operatorMap } from '../model/types/map.type.js';

@@ -8,7 +8,9 @@
 
 > **UserWithFunction**: `object`
 
-Defined in: [src/role-mapper/model/payload/role-payload.type.ts:25](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/payload/role-payload.type.ts#L25)
+Defined in: [src/role-mapper/model/payload/role-payload.type.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/payload/role-payload.type.ts#L42)
+
+Typ für einen Benutzer mit zugeordneter Funktion.
 
 ## Type declaration
 

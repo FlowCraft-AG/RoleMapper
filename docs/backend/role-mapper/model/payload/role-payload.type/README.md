@@ -9,5 +9,6 @@
 ## Type Aliases
 
 - [RolePayload](type-aliases/RolePayload.md)
+- [RolePayloadRest](type-aliases/RolePayloadRest.md)
 - [RoleResult](type-aliases/RoleResult.md)
 - [UserWithFunction](type-aliases/UserWithFunction.md)

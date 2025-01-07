@@ -8,7 +8,9 @@
 
 > **DataInput**: `object`
 
-Defined in: [src/role-mapper/model/input/data.input.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/input/data.input.ts#L6)
+Defined in: [src/role-mapper/model/input/data.input.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/input/data.input.ts#L14)
+
+Eingabeparameter für die dynamische Abfrage von Entitätsdaten.
 
 ## Type declaration
 
@@ -24,6 +26,6 @@ Defined in: [src/role-mapper/model/input/data.input.ts:6](https://github.com/Flo
 
 > `optional` **pagination**: [`PaginationParameters`](../../pagination-parameters/type-aliases/PaginationParameters.md)
 
-### sort
+### sort?
 
-> **sort**: [`SortInput`](../../sort.input/type-aliases/SortInput.md)
+> `optional` **sort**: [`SortInput`](../../sort.input/type-aliases/SortInput.md)

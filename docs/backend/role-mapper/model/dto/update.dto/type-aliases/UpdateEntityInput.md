@@ -8,7 +8,12 @@
 
 > **UpdateEntityInput**: `object`
 
-Defined in: [src/role-mapper/model/dto/update.dto.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/dto/update.dto.ts#L12)
+Defined in: [src/role-mapper/model/dto/update.dto.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/dto/update.dto.ts#L18)
+
+Eingabetyp für das Aktualisieren von Entitäten.
+
+Dieser Typ definiert die Struktur der Eingabedaten, die für das Aktualisieren von
+Entitäten in REST- und GraphQL-Anwendungen verwendet werden.
 
 ## Type declaration
 
@@ -16,30 +21,112 @@ Defined in: [src/role-mapper/model/dto/update.dto.ts:12](https://github.com/Flow
 
 > **data**: [`UpdateDataInput`](../../../input/update.input/type-aliases/UpdateDataInput.md)
 
+Die allgemeinen Aktualisierungsdaten, die für REST-Anwendungen verwendet werden.
+
+#### Example
+
+```ts
+{
+     *   field: "name",
+     *   value: "Updated Name"
+     * }
+```
+
 ### entity
 
 > **entity**: [`EntityCategoryType`](../../../entity/entities.entity/type-aliases/EntityCategoryType.md)
+
+Der Typ der Entität, die aktualisiert werden soll.
+
+#### Example
+
+```ts
+"USERS", "MANDATES", "PROCESSES", "ROLES", "ORG_UNITS"
+```
 
 ### filter
 
 > **filter**: [`FilterInput`](../../../input/filter.input/type-aliases/FilterInput.md)
 
+Die Filterkriterien, um die Zielentität(en) für die Aktualisierung zu identifizieren.
+
+#### Example
+
+```ts
+{
+     *   field: "name",
+     *   operator: "EQ",
+     *   value: "IT-Abteilung"
+     * }
+```
+
 ### functionData?
 
 > `optional` **functionData**: [`UpdateFunctionInput`](../../../input/update.input/type-aliases/UpdateFunctionInput.md)
+
+Die spezifischen Aktualisierungsdaten für Funktionen (GraphQL).
+
+#### Example
+
+```ts
+{
+     *   functionName: "Updated Function"
+     * }
+```
 
 ### orgUnitData?
 
 > `optional` **orgUnitData**: [`UpdateOrgUnitInput`](../../../input/update.input/type-aliases/UpdateOrgUnitInput.md)
 
+Die spezifischen Aktualisierungsdaten für Organisationseinheiten (GraphQL).
+
+#### Example
+
+```ts
+{
+     *   orgUnitName: "Updated Org Unit"
+     * }
+```
+
 ### processData?
 
 > `optional` **processData**: [`UpdateProcessInput`](../../../input/update.input/type-aliases/UpdateProcessInput.md)
+
+Die spezifischen Aktualisierungsdaten für Prozesse (GraphQL).
+
+#### Example
+
+```ts
+{
+     *   processName: "Updated Process"
+     * }
+```
 
 ### roleData?
 
 > `optional` **roleData**: [`UpdateRoleInput`](../../../input/update.input/type-aliases/UpdateRoleInput.md)
 
+Die spezifischen Aktualisierungsdaten für Rollen (GraphQL).
+
+#### Example
+
+```ts
+{
+     *   roleName: "Updated Role"
+     * }
+```
+
 ### userData?
 
 > `optional` **userData**: [`UpdateUserInput`](../../../input/update.input/type-aliases/UpdateUserInput.md)
+
+Die spezifischen Aktualisierungsdaten für Benutzer (GraphQL).
+
+#### Example
+
+```ts
+{
+     *   firstName: "John",
+     *   lastName: "Doe"
+     * }
+```

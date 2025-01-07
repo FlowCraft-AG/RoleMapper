@@ -12,7 +12,7 @@ import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
 import { GetRolesInput } from '../model/input/get-roles.input.js';
 import { DataPayload } from '../model/payload/data.payload.js';
-import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
+import { GetUsersByFunctionResult } from '../model/payload/get-users.payload.js';
 import { MandatePayload } from '../model/payload/mandate.payload.js';
 import { RolePayload } from '../model/payload/role-payload.type.js';
 import { ReadService } from '../service/read.service.js';

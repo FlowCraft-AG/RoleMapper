@@ -6,7 +6,7 @@
 
 # Class: OrgUnit
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/org-unit.entity.ts#L15)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/org-unit.entity.ts#L11)
 
 Repräsentiert eine Organisationseinheit innerhalb des Systems.
 
@@ -50,7 +50,9 @@ Defined in: node\_modules/mongoose/types/document.d.ts:22
 
 > `optional` **alias**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:44](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/org-unit.entity.ts#L44)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:46](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/org-unit.entity.ts#L46)
+
+Der Alias der Organisationseinheit.
 
 ***
 
@@ -58,7 +60,9 @@ Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:44](https://github.
 
 > `optional` **kostenstelleNr**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:45](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/org-unit.entity.ts#L45)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:53](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/org-unit.entity.ts#L53)
+
+Die Kostenstellennummer der Organisationseinheit.
 
 ***
 
@@ -66,7 +70,7 @@ Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:45](https://github.
 
 > **name**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/org-unit.entity.ts#L26)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:22](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/org-unit.entity.ts#L22)
 
 Der Name der Organisationseinheit.
 
@@ -76,7 +80,7 @@ Der Name der Organisationseinheit.
 
 > `optional` **parentId**: `ObjectId`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:34](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/org-unit.entity.ts#L34)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/org-unit.entity.ts#L30)
 
 Die ID der übergeordneten Organisationseinheit.
 
@@ -86,7 +90,7 @@ Die ID der übergeordneten Organisationseinheit.
 
 > `optional` **supervisor**: `ObjectId`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/org-unit.entity.ts#L42)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/org-unit.entity.ts#L38)
 
 Der Vorgesetzte der Organisationseinheit.
 
@@ -96,4 +100,6 @@ Der Vorgesetzte der Organisationseinheit.
 
 > `optional` **type**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:46](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/org-unit.entity.ts#L46)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:59](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/org-unit.entity.ts#L59)
+
+Der Typ der Organisationseinheit.
