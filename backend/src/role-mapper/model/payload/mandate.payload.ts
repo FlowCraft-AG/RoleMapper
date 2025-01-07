@@ -1,5 +1,7 @@
-import { Types } from 'mongoose';
-import { User } from '../entity/user.entity';
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @typescript-eslint/naming-convention */
+import type { Types } from 'mongoose';
+import type { User } from '../entity/user.entity.js';
 
 /**
  * Nutzlast für die Rückgabe von Mandatsdaten.
@@ -12,8 +14,8 @@ import { User } from '../entity/user.entity';
  */
 export type MandatePayload = {
     users: User[];
-    functionName: String;
-    isImpliciteFunction: Boolean;
+    functionName: string;
+    isImpliciteFunction: boolean;
     _id: Types.ObjectId;
     orgUnit: Types.ObjectId;
 };

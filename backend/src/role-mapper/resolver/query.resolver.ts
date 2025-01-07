@@ -10,7 +10,7 @@ import { Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit } from '../model/entity/org-unit.entity.js';
 import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
-import { GetRolesInput } from '../model/input/get-roles.input';
+import { GetRolesInput } from '../model/input/get-roles.input.js';
 import { DataPayload } from '../model/payload/data.payload.js';
 import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
 import { MandatePayload } from '../model/payload/mandate.payload.js';
@@ -142,7 +142,7 @@ export class QueryResolver {
         // Abrufen der gespeicherten Daten basierend auf der Abfrage-ID
         const { savedQuery, data } = await this.#service.executeSavedQuery(id);
 
-        if (!savedQuery || !data) {
+        if (savedQuery === undefined || data === undefined) {
             this.#logger.warn('Keine gespeicherten Daten für ID=%s gefunden', id);
             throw new NotFoundException(`Keine gespeicherten Daten für ID ${id} gefunden`);
         }
@@ -182,7 +182,7 @@ export class QueryResolver {
 
         const result = await this.#service.findUsersByFunction(id);
 
-        if (!result) {
+        if (result === undefined) {
             this.#logger.warn('Keine Daten gefunden für die Anfrage.');
             return {
                 functionName: '',

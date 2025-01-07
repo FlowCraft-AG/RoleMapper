@@ -25,6 +25,7 @@ export class OrgUnit extends Document {
      *
      * @prop {Types.ObjectId} [parentId] - Die ID der übergeordneten Organisationseinheit. Dieses Feld ist optional.
      */
+
     @Prop({ required: false })
     parentId?: Types.ObjectId;
     /**
@@ -32,6 +33,7 @@ export class OrgUnit extends Document {
      *
      * @prop {string} [supervisor] - Der Vorgesetzte der Organisationseinheit. Dieses Feld ist optional.
      */
+
     @Prop({ required: false })
     supervisor?: Types.ObjectId;
     /**
@@ -39,6 +41,7 @@ export class OrgUnit extends Document {
      *
      * @prop {string} [alias] - Ein Aliasname für die Organisationseinheit. Optional.
      */
+
     @Prop({ required: false })
     alias?: string;
     /**
@@ -46,6 +49,7 @@ export class OrgUnit extends Document {
      *
      * @prop {string} [kostenstelleNr] - Die Kostenstellennummer. Optional.
      */
+
     kostenstelleNr?: string;
     /**
      * Der Typ der Organisationseinheit.
