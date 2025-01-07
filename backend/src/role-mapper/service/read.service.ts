@@ -166,7 +166,7 @@ export class ReadService {
         const data = await this.findData('USERS', filter, pagination, sort);
 
         // Nur Mandates zurückgeben
-        return { functionName, data };
+        return { savedQuery, data };
     }
 
     /**

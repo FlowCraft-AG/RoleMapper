@@ -11,7 +11,6 @@ type EntitySchema = {
     name: string;
     schema: EntitySchemaType;
 };
-
 /**
  * Liste aller Mongoose-Entitäten und deren Schemas.
  * Wird für die Registrierung im Modul verwendet.
@@ -36,7 +35,6 @@ const entitySchemas: EntitySchema[] = [
     { name: Process.name, schema: PROCESS_SCHEMA },
     { name: Role.name, schema: ROLE_SCHEMA },
 ];
-
 /**
  * Exportiert die Entitäten in einem Format, das für die Registrierung im Modul verwendet werden kann.
  */
@@ -44,16 +42,26 @@ export const entities = entitySchemas.map(({ name, schema }) => ({
     name,
     schema,
 }));
-
+/**
+ * Unterstützte Entitätstypen im System.
+ */
 export type EntityType = User | Mandates | OrgUnit | Process | Role;
+/**
+ * Schematypen für die Entitäten.
+ */
 export type EntitySchemaType =
     | typeof USER_SCHEMA
     | typeof MANDATE_SCHEMA
     | typeof ORG_UNIT_SCHEMA
     | typeof PROCESS_SCHEMA
     | typeof ROLE_SCHEMA;
-
+/**
+ * Kategorien der Entitäten, die abgefragt werden können.
+ */
 export type EntityCategoryType = 'USERS' | 'MANDATES' | 'PROCESSES' | 'ROLES' | 'ORG_UNITS';
+/**
+ * Mongoose-Dokumenttypen der Entitäten.
+ */
 export type EntityDocument =
     | UserDocument
     | MandateDocument
