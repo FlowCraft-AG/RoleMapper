@@ -100,13 +100,6 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         this.#logger.debug('refresh: response.data=%o', response.data);
         return response.data;
     }
-    /**
-     * Loggt den Payload eines Tokens.
-     *
-     * @param {(AxiosResponse<Record<string, string | number>>)} response
-     * @return {*}
-     * @memberof KeycloakService
-     */
 
     #logPayload(response: AxiosResponse<Record<string, string | number>>) {
         const { access_token } = response.data;
