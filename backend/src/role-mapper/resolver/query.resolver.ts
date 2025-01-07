@@ -8,7 +8,9 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { OrgUnit } from '../model/entity/org-unit.entity.js';
 import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
+import { GetRolesInput } from '../model/input/get-roles.input';
 import { GetUsersByFunctionResult } from '../model/payload/kp.payload.js';
+import { RolePayload } from '../model/payload/role-payload.type.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
 
@@ -37,20 +39,25 @@ export class QueryResolver {
     /**
      * Führt eine Abfrage aus, um die Rollen eines Prozesses zu erhalten.
      *
-     * Diese Methode ruft die Methode `findProcessRoles` des `ReadService` auf, um die Rollen
-     * eines bestimmten Prozesses und die zugehörigen Benutzer zu erhalten.
+     * Diese Methode ruft die `findProcessRoles`-Methode des `ReadService` auf, um die Rollen
+     * eines bestimmten Prozesses sowie die zugehörigen Benutzer abzurufen.
      *
-     * @param {string} processId - Die ID des Prozesses.
-     * @param {string} userId - Die ID des Benutzers, der die Anfrage stellt.
-     * @returns {Promise<any>} - Die Rollen des Prozesses.
-     * @throws {NotFoundException} - Wenn der Prozess oder der Benutzer nicht gefunden werden kann.
+     * @param {GetRolesInput} input - Die Eingabedaten für die Abfrage (enthält `processId` und `userId`).
+     * @returns {Promise<RolePayload>} Ein Promise mit den Rollen des Prozesses und den zugeordneten Benutzern.
+     * @throws {NotFoundException} Wird ausgelöst, wenn der Prozess oder der Benutzer nicht gefunden werden kann.
+     *
+     * @example
+     * ```typescript
+     * const result = await getRole({ processId: '12345', userId: 'user678' });
+     * console.log(result.roles); // Gibt die Rollen und Benutzer aus.
+     * ```
      */
     @Query('getProcessRoles')
     @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
     async getRole(
-        @Args('processId') processId: string, // Prozess-ID aus den GraphQL-Argumenten
-        @Args('userId') userId: string, // Benutzer-ID aus den GraphQL-Argumenten
-    ): Promise<any> {
+        @Args() input: GetRolesInput, // Verwende `Args` mit dem Typ `GetRolesInput`
+    ): Promise<RolePayload> {
+        const { processId, userId } = input; // Destrukturiere die Eingabe
         this.#logger.debug(`getRole: processId=${processId}, userId=${userId}`);
         return this.#service.findProcessRoles(processId, userId); // Aufruf der Service-Methode
     }

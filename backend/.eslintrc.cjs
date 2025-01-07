@@ -23,6 +23,7 @@ module.exports = {
     },
     plugins: [
         '@typescript-eslint',
+        'eslint-plugin-jsdoc',
         'unicorn',
         'sonarjs',
         'prettier',

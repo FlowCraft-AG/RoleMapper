@@ -27,7 +27,7 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { EntityCategoryType } from '../model/entity/entities.entity.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { DataPayload, DataResult } from '../model/payload/data.payload.js';
-import { RolePayload } from '../model/payload/role-payload.type.js';
+import { RolePayloadRest } from '../model/payload/role-payload.type.js';
 import { FilterField, FilterOperator } from '../model/types/filter.type.js';
 import { Link, Links } from '../model/types/link.type.js';
 import { ReadService } from '../service/read.service.js';
@@ -127,12 +127,15 @@ export class ReadController {
         @Query('processId') processId: string,
         @Query('userId') userId: string,
         @Req() request: Request,
-    ): Promise<RolePayload> {
+    ): Promise<RolePayloadRest> {
         const baseUri = getBaseUri(request);
         this.#logger.debug('getProcessRoles: processId=%s, userId=%s', processId, userId);
 
         // Abrufen der Rollen
-        const rolePayload: RolePayload = await this.#service.findProcessRoles(processId, userId);
+        const rolePayload: RolePayloadRest = await this.#service.findProcessRoles(
+            processId,
+            userId,
+        );
 
         // HATEOAS-Links hinzufügen
         rolePayload._links = this.#createHateoasLinks(baseUri, rolePayload, processId, userId);
@@ -251,7 +254,7 @@ export class ReadController {
      */
     #createHateoasLinks(
         baseUri: string,
-        rolePayload: RolePayload,
+        rolePayload: RolePayloadRest,
         processId: string,
         userId: string,
     ): Links {
