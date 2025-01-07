@@ -4,10 +4,12 @@ module.exports = {
     out: '../docs/backend',
     entryPoints: ['src'],
     includeVersion: true,
+    plugin: ['typedoc-plugin-markdown'],
     entryPointStrategy: 'expand',
     excludeExternals: true,
     excludePrivate: true,
-    theme: 'default',
+    // theme: 'default',
+    theme: 'markdown',
     validation: {
         invalidLink: true,
     },
