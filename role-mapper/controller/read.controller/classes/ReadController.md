@@ -6,7 +6,7 @@
 
 # Class: ReadController
 
-Defined in: [src/role-mapper/controller/read.controller.ts:80](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/controller/read.controller.ts#L80)
+Defined in: [src/role-mapper/controller/read.controller.ts:80](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/controller/read.controller.ts#L80)
 
 ReadController
 
@@ -105,7 +105,7 @@ Die Benutzer-ID, die zur Erstellung der Links verwendet wird.
 
 > **new ReadController**(`readService`): [`ReadController`](ReadController.md)
 
-Defined in: [src/role-mapper/controller/read.controller.ts:83](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/controller/read.controller.ts#L83)
+Defined in: [src/role-mapper/controller/read.controller.ts:83](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/controller/read.controller.ts#L83)
 
 #### Parameters
 
@@ -123,7 +123,7 @@ Defined in: [src/role-mapper/controller/read.controller.ts:83](https://github.co
 
 > **getData**(`request`, `entityType`, `field`?, `operator`?, `value`?, `limit`?, `offset`?): `Promise`\<[`DataPayload`](../../../model/payload/data.payload/type-aliases/DataPayload.md)\>
 
-Defined in: [src/role-mapper/controller/read.controller.ts:180](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/controller/read.controller.ts#L180)
+Defined in: [src/role-mapper/controller/read.controller.ts:180](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/controller/read.controller.ts#L180)
 
 Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
 
@@ -175,7 +175,7 @@ Die Ziel-Entität (z. B. USERS, MANDATES).
 
 > **getProcessRoles**(`processId`, `userId`, `request`): `Promise`\<[`RolePayload`](../../../model/payload/role-payload.type/type-aliases/RolePayload.md)\>
 
-Defined in: [src/role-mapper/controller/read.controller.ts:126](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/controller/read.controller.ts#L126)
+Defined in: [src/role-mapper/controller/read.controller.ts:126](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/controller/read.controller.ts#L126)
 
 Führt eine Abfrage aus, um die Rollen eines Prozesses zu erhalten.
 

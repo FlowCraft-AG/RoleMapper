@@ -6,7 +6,7 @@
 
 # Class: MutationResolver
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:23](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L23)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:23](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L23)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/role-mapper/resolver/mutation.resolver.ts:23](https://github.co
 
 > **new MutationResolver**(`service`): [`MutationResolver`](MutationResolver.md)
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L26)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L26)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/role-mapper/resolver/mutation.resolver.ts:26](https://github.co
 
 > **addUserToRole**(`functionId`, `userId`): `Promise`\<`Document`\<`unknown`, \{\}, [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)\> & [`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md) & `Required`\<\{\}\> & `object` \| [`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md) & `Required`\<\{\}\> & `object` \| [`Process`](../../../model/entity/process.entity/classes/Process.md) & `Required`\<\{\}\> & `object` \| [`Role`](../../../model/entity/roles.entity/classes/Role.md) & `Required`\<\{\}\> & `object` \| [`User`](../../../model/entity/user.entity/classes/User.md) & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:187](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L187)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:187](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L187)
 
 #### Parameters
 
@@ -54,7 +54,7 @@ Defined in: [src/role-mapper/resolver/mutation.resolver.ts:187](https://github.c
 
 > **createEntity**(`input`): `Promise`\<[`MutationPayload`](../../../model/payload/mutation.payload/classes/MutationPayload.md)\>
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L40)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L40)
 
 Erstellt eine neue Entität in der Datenbank.
 
@@ -74,7 +74,7 @@ Erstellt eine neue Entität in der Datenbank.
 
 > **deleteEntity**(`input`): `Promise`\<[`MutationPayload`](../../../model/payload/mutation.payload/classes/MutationPayload.md)\>
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:165](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L165)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:165](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L165)
 
 Löscht eine bestehende Entität aus der Datenbank.
 
@@ -94,7 +94,7 @@ Löscht eine bestehende Entität aus der Datenbank.
 
 > **removeUserFromRole**(`functionId`, `userId`): `Promise`\<`Document`\<`unknown`, \{\}, [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)\> & [`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md) & `Required`\<\{\}\> & `object` \| [`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md) & `Required`\<\{\}\> & `object` \| [`Process`](../../../model/entity/process.entity/classes/Process.md) & `Required`\<\{\}\> & `object` \| [`Role`](../../../model/entity/roles.entity/classes/Role.md) & `Required`\<\{\}\> & `object` \| [`User`](../../../model/entity/user.entity/classes/User.md) & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:200](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L200)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:200](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L200)
 
 #### Parameters
 
@@ -116,7 +116,7 @@ Defined in: [src/role-mapper/resolver/mutation.resolver.ts:200](https://github.c
 
 > **saveQuery**(`functionName`, `orgUnitId`, `input`): `Promise`\<\{ `message`: `string`; `result`: `Document`\<`unknown`, \{\}, [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)\> & [`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md) & `Required`\<\{\}\> & `object` \| [`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md) & `Required`\<\{\}\> & `object` \| [`Process`](../../../model/entity/process.entity/classes/Process.md) & `Required`\<\{\}\> & `object` \| [`Role`](../../../model/entity/roles.entity/classes/Role.md) & `Required`\<\{\}\> & `object` \| [`User`](../../../model/entity/user.entity/classes/User.md) & `Required`\<\{\}\> & `object`; `success`: `boolean`; \}\>
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:218](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L218)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:218](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L218)
 
 #### Parameters
 
@@ -142,7 +142,7 @@ Defined in: [src/role-mapper/resolver/mutation.resolver.ts:218](https://github.c
 
 > **updateEntity**(`input`): `Promise`\<[`MutationPayload`](../../../model/payload/mutation.payload/classes/MutationPayload.md)\>
 
-Defined in: [src/role-mapper/resolver/mutation.resolver.ts:126](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/mutation.resolver.ts#L126)
+Defined in: [src/role-mapper/resolver/mutation.resolver.ts:126](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/resolver/mutation.resolver.ts#L126)
 
 Aktualisiert eine bestehende Entität in der Datenbank.
 

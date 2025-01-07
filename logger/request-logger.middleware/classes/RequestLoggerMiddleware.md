@@ -6,7 +6,7 @@
 
 # Class: RequestLoggerMiddleware
 
-Defined in: [src/logger/request-logger.middleware.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/logger/request-logger.middleware.ts#L6)
+Defined in: [src/logger/request-logger.middleware.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/logger/request-logger.middleware.ts#L6)
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: [src/logger/request-logger.middleware.ts:6](https://github.com/FlowC
 
 > **use**(`request`, `_response`, `next`): `void`
 
-Defined in: [src/logger/request-logger.middleware.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/logger/request-logger.middleware.ts#L9)
+Defined in: [src/logger/request-logger.middleware.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/logger/request-logger.middleware.ts#L9)
 
 #### Parameters
 

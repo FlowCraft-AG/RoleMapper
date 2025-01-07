@@ -8,4 +8,4 @@
 
 > **EntitySchemaType**: *typeof* [`USER_SCHEMA`](../../user.entity/variables/USER_SCHEMA.md) \| *typeof* [`MANDATE_SCHEMA`](../../mandates.entity/variables/MANDATE_SCHEMA.md) \| *typeof* [`ORG_UNIT_SCHEMA`](../../org-unit.entity/variables/ORG_UNIT_SCHEMA.md) \| *typeof* [`PROCESS_SCHEMA`](../../process.entity/variables/PROCESS_SCHEMA.md) \| *typeof* [`ROLE_SCHEMA`](../../roles.entity/variables/ROLE_SCHEMA.md)
 
-Defined in: [src/role-mapper/model/entity/entities.entity.ts:49](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/entities.entity.ts#L49)
+Defined in: [src/role-mapper/model/entity/entities.entity.ts:49](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/entities.entity.ts#L49)

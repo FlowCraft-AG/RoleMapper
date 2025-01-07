@@ -6,7 +6,7 @@
 
 # Class: BadUserInputError
 
-Defined in: [src/role-mapper/error/errors.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/error/errors.ts#L12)
+Defined in: [src/role-mapper/error/errors.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/error/errors.ts#L12)
 
 Error-Klasse für GraphQL, die einen Response mit `errors` und
 code `BAD_USER_INPUT` produziert.
@@ -21,7 +21,7 @@ code `BAD_USER_INPUT` produziert.
 
 > **new BadUserInputError**(`message`, `exception`?): [`BadUserInputError`](BadUserInputError.md)
 
-Defined in: [src/role-mapper/error/errors.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/error/errors.ts#L18)
+Defined in: [src/role-mapper/error/errors.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/error/errors.ts#L18)
 
 Erstellt eine neue Instanz von BadUserInputError.
 

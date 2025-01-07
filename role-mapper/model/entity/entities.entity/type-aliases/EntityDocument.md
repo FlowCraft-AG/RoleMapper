@@ -8,4 +8,4 @@
 
 > **EntityDocument**: [`UserDocument`](../../user.entity/type-aliases/UserDocument.md) \| [`MandateDocument`](../../mandates.entity/type-aliases/MandateDocument.md) \| [`ProcessDocument`](../../process.entity/type-aliases/ProcessDocument.md) \| [`RoleDocument`](../../roles.entity/type-aliases/RoleDocument.md) \| [`OrgUnitDocument`](../../org-unit.entity/type-aliases/OrgUnitDocument.md)
 
-Defined in: [src/role-mapper/model/entity/entities.entity.ts:57](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/entities.entity.ts#L57)
+Defined in: [src/role-mapper/model/entity/entities.entity.ts:57](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/entities.entity.ts#L57)

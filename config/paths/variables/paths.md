@@ -8,7 +8,7 @@
 
 > `const` **paths**: `object`
 
-Defined in: [src/config/paths.ts:1](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/config/paths.ts#L1)
+Defined in: [src/config/paths.ts:1](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/config/paths.ts#L1)
 
 ## Type declaration
 

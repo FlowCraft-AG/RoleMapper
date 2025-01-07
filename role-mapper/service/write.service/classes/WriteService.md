@@ -6,7 +6,7 @@
 
 # Class: WriteService
 
-Defined in: [src/role-mapper/service/write.service.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L35)
+Defined in: [src/role-mapper/service/write.service.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L35)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/role-mapper/service/write.service.ts:35](https://github.com/Flo
 
 > **new WriteService**(`userModel`, `processModel`, `functionModel`, `orgUnitModel`, `roleModel`, `readService`): [`WriteService`](WriteService.md)
 
-Defined in: [src/role-mapper/service/write.service.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L40)
+Defined in: [src/role-mapper/service/write.service.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L40)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: [src/role-mapper/service/write.service.ts:40](https://github.com/Flo
 
 > **addUserToFunction**(`functionName`, `userId`): `Promise`\<`Document`\<`unknown`, \{\}, [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)\> & [`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md) & `Required`\<\{\}\> & `object` \| [`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md) & `Required`\<\{\}\> & `object` \| [`Process`](../../../model/entity/process.entity/classes/Process.md) & `Required`\<\{\}\> & `object` \| [`Role`](../../../model/entity/roles.entity/classes/Role.md) & `Required`\<\{\}\> & `object` \| [`User`](../../../model/entity/user.entity/classes/User.md) & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/service/write.service.ts:154](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L154)
+Defined in: [src/role-mapper/service/write.service.ts:154](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L154)
 
 #### Parameters
 
@@ -74,7 +74,7 @@ Defined in: [src/role-mapper/service/write.service.ts:154](https://github.com/Fl
 
 > **createEntity**(`entity`, `data`): `Promise`\<[`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md) & `Required`\<\{\}\> \| [`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md) & `Required`\<\{\}\> \| [`Process`](../../../model/entity/process.entity/classes/Process.md) & `Required`\<\{\}\> \| [`Role`](../../../model/entity/roles.entity/classes/Role.md) & `Required`\<\{\}\> \| [`User`](../../../model/entity/user.entity/classes/User.md) & `Required`\<\{\}\>\>
 
-Defined in: [src/role-mapper/service/write.service.ts:66](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L66)
+Defined in: [src/role-mapper/service/write.service.ts:66](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L66)
 
 Erstellt eine neue Entität.
 
@@ -108,7 +108,7 @@ Die Daten für die neue Entität.
 
 > **deleteEntity**(`entity`, `filters`): `Promise`\<\{ `deletedCount`: `number`; `message`: `string`; `success`: `boolean`; \}\>
 
-Defined in: [src/role-mapper/service/write.service.ts:139](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L139)
+Defined in: [src/role-mapper/service/write.service.ts:139](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L139)
 
 Löscht eine oder mehrere Entitäten.
 
@@ -140,7 +140,7 @@ Der Name der Entität.
 
 > **removeUserFromFunction**(`functionName`, `userId`, `newUserId`?): `Promise`\<`Document`\<`unknown`, \{\}, [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)\> & [`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md) & `Required`\<\{\}\> & `object` \| [`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md) & `Required`\<\{\}\> & `object` \| [`Process`](../../../model/entity/process.entity/classes/Process.md) & `Required`\<\{\}\> & `object` \| [`Role`](../../../model/entity/roles.entity/classes/Role.md) & `Required`\<\{\}\> & `object` \| [`User`](../../../model/entity/user.entity/classes/User.md) & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/service/write.service.ts:201](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L201)
+Defined in: [src/role-mapper/service/write.service.ts:201](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L201)
 
 #### Parameters
 
@@ -166,7 +166,7 @@ Defined in: [src/role-mapper/service/write.service.ts:201](https://github.com/Fl
 
 > **saveQuery**(`functionName`, `orgUnitId`, `entity`, `filter`?, `sort`?): `Promise`\<\{ `result`: `Document`\<`unknown`, \{\}, [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)\> & [`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md) & `Required`\<\{\}\> & `object` \| [`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md) & `Required`\<\{\}\> & `object` \| [`Process`](../../../model/entity/process.entity/classes/Process.md) & `Required`\<\{\}\> & `object` \| [`Role`](../../../model/entity/roles.entity/classes/Role.md) & `Required`\<\{\}\> & `object` \| [`User`](../../../model/entity/user.entity/classes/User.md) & `Required`\<\{\}\> & `object`; `success`: `boolean`; \}\>
 
-Defined in: [src/role-mapper/service/write.service.ts:283](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L283)
+Defined in: [src/role-mapper/service/write.service.ts:283](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L283)
 
 #### Parameters
 
@@ -200,7 +200,7 @@ Defined in: [src/role-mapper/service/write.service.ts:283](https://github.com/Fl
 
 > **updateEntity**(`entity`, `filters`, `data`): `Promise`\<\{ `matchedCount`: `number`; `message`: `string`; `modifiedCount`: `number`; `success`: `boolean`; `upsertedCount`: `number`; `upsertedId`: `null` \| `ObjectId`; \}\>
 
-Defined in: [src/role-mapper/service/write.service.ts:94](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/write.service.ts#L94)
+Defined in: [src/role-mapper/service/write.service.ts:94](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/write.service.ts#L94)
 
 Aktualisiert eine oder mehrere Entitäten.
 

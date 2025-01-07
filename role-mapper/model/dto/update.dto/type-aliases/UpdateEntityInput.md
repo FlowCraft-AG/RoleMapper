@@ -8,7 +8,7 @@
 
 > **UpdateEntityInput**: `object`
 
-Defined in: [src/role-mapper/model/dto/update.dto.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/dto/update.dto.ts#L12)
+Defined in: [src/role-mapper/model/dto/update.dto.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/dto/update.dto.ts#L12)
 
 ## Type declaration
 

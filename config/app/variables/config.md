@@ -8,4 +8,4 @@
 
 > `const` **config**: `Record`\<`string`, `any`\>
 
-Defined in: [src/config/app.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/config/app.ts#L10)
+Defined in: [src/config/app.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/config/app.ts#L10)

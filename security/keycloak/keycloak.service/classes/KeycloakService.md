@@ -6,7 +6,7 @@
 
 # Class: KeycloakService
 
-Defined in: [src/security/keycloak/keycloak.service.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/security/keycloak/keycloak.service.ts#L24)
+Defined in: [src/security/keycloak/keycloak.service.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/security/keycloak/keycloak.service.ts#L24)
 
 ## Implements
 
@@ -18,7 +18,7 @@ Defined in: [src/security/keycloak/keycloak.service.ts:24](https://github.com/Fl
 
 > **new KeycloakService**(): [`KeycloakService`](KeycloakService.md)
 
-Defined in: [src/security/keycloak/keycloak.service.ts:32](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/security/keycloak/keycloak.service.ts#L32)
+Defined in: [src/security/keycloak/keycloak.service.ts:32](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/security/keycloak/keycloak.service.ts#L32)
 
 #### Returns
 
@@ -30,7 +30,7 @@ Defined in: [src/security/keycloak/keycloak.service.ts:32](https://github.com/Fl
 
 > **createKeycloakConnectOptions**(): `KeycloakConnectOptions`
 
-Defined in: [src/security/keycloak/keycloak.service.ts:50](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/security/keycloak/keycloak.service.ts#L50)
+Defined in: [src/security/keycloak/keycloak.service.ts:50](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/security/keycloak/keycloak.service.ts#L50)
 
 #### Returns
 
@@ -46,7 +46,7 @@ Defined in: [src/security/keycloak/keycloak.service.ts:50](https://github.com/Fl
 
 > **refresh**(`refresh_token`): `Promise`\<`undefined` \| `Record`\<`string`, `string` \| `number`\>\>
 
-Defined in: [src/security/keycloak/keycloak.service.ts:76](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/security/keycloak/keycloak.service.ts#L76)
+Defined in: [src/security/keycloak/keycloak.service.ts:76](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/security/keycloak/keycloak.service.ts#L76)
 
 #### Parameters
 
@@ -64,7 +64,7 @@ Defined in: [src/security/keycloak/keycloak.service.ts:76](https://github.com/Fl
 
 > **token**(`__namedParameters`): `Promise`\<`undefined` \| `Record`\<`string`, `string` \| `number`\>\>
 
-Defined in: [src/security/keycloak/keycloak.service.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/security/keycloak/keycloak.service.ts#L54)
+Defined in: [src/security/keycloak/keycloak.service.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/security/keycloak/keycloak.service.ts#L54)
 
 #### Parameters
 

@@ -6,7 +6,7 @@
 
 # Class: ReadService
 
-Defined in: [src/role-mapper/service/read.service.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L36)
+Defined in: [src/role-mapper/service/read.service.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L36)
 
 Der Service, der alle Leseoperationen für Entitäten wie Benutzer, Prozesse und Mandate behandelt.
 
@@ -19,7 +19,7 @@ basierend auf gegebenen Filtern.
 
 > **new ReadService**(`userModel`, `processModel`, `mandateModel`, `orgUnitModel`, `roleModel`): [`ReadService`](ReadService.md)
 
-Defined in: [src/role-mapper/service/read.service.ts:51](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L51)
+Defined in: [src/role-mapper/service/read.service.ts:51](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L51)
 
 Konstruktor für den Service, der die Mongoose-Modelle injiziert.
 
@@ -65,7 +65,7 @@ Modell für Rollen.
 
 > **buildFilterQuery**(`filter`?): `FilterQuery`\<`any`\>
 
-Defined in: [src/role-mapper/service/read.service.ts:235](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L235)
+Defined in: [src/role-mapper/service/read.service.ts:235](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L235)
 
 Erstellt rekursiv eine MongoDB-Filter-Query basierend auf den angegebenen Bedingungen.
 
@@ -97,7 +97,7 @@ Wenn ein unvollständiger Filter angegeben wird.
 
 > **buildSortQuery**(`orderBy`?): `Record`\<`string`, `-1` \| `1`\>
 
-Defined in: [src/role-mapper/service/read.service.ts:283](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L283)
+Defined in: [src/role-mapper/service/read.service.ts:283](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L283)
 
 Erstellt eine Sortier-Query basierend auf den angegebenen Bedingungen.
 
@@ -121,7 +121,7 @@ Die generierte Sortier-Query.
 
 > **executeSavedQuery**(`id`): `Promise`\<\{ `data`: [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)[]; `functionName`: `string`; \}\>
 
-Defined in: [src/role-mapper/service/read.service.ts:149](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L149)
+Defined in: [src/role-mapper/service/read.service.ts:149](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L149)
 
 #### Parameters
 
@@ -139,7 +139,7 @@ Defined in: [src/role-mapper/service/read.service.ts:149](https://github.com/Flo
 
 > **findAncestors**(`id`): `Promise`\<[`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md)[]\>
 
-Defined in: [src/role-mapper/service/read.service.ts:358](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L358)
+Defined in: [src/role-mapper/service/read.service.ts:358](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L358)
 
 #### Parameters
 
@@ -157,7 +157,7 @@ Defined in: [src/role-mapper/service/read.service.ts:358](https://github.com/Flo
 
 > **findData**\<`T`\>(`entity`, `filter`?, `pagination`?, `orderBy`?): `Promise`\<`T`[]\>
 
-Defined in: [src/role-mapper/service/read.service.ts:181](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L181)
+Defined in: [src/role-mapper/service/read.service.ts:181](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L181)
 
 Führt eine dynamische Filterung für eine angegebene Entität durch.
 
@@ -205,7 +205,7 @@ Wenn die Entität nicht unterstützt wird.
 
 > **findProcessRoles**(`processId`, `userId`): `Promise`\<\{ `roles`: [`RoleResult`](../../../model/payload/role-payload.type/type-aliases/RoleResult.md)[]; \}\>
 
-Defined in: [src/role-mapper/service/read.service.ts:76](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L76)
+Defined in: [src/role-mapper/service/read.service.ts:76](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L76)
 
 Sucht die Rollen und die zugehörigen Benutzer für einen gegebenen Prozess.
 
@@ -239,7 +239,7 @@ Wenn der Prozess oder der Benutzer nicht gefunden werden kann.
 
 > **findUsersByFunction**(`id`): `Promise`\<[`GetUsersByFunctionResult`](../../../model/payload/kp.payload/type-aliases/GetUsersByFunctionResult.md)\>
 
-Defined in: [src/role-mapper/service/read.service.ts:313](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/service/read.service.ts#L313)
+Defined in: [src/role-mapper/service/read.service.ts:313](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/service/read.service.ts#L313)
 
 #### Parameters
 

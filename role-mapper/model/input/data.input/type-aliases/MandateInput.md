@@ -8,7 +8,7 @@
 
 > **MandateInput**: `object`
 
-Defined in: [src/role-mapper/model/input/data.input.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/input/data.input.ts#L13)
+Defined in: [src/role-mapper/model/input/data.input.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/input/data.input.ts#L13)
 
 ## Type declaration
 

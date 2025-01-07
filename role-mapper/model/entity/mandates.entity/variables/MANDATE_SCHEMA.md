@@ -8,4 +8,4 @@
 
 > `const` **MANDATE\_SCHEMA**: `Schema`\<[`Mandates`](../classes/Mandates.md), `Model`\<[`Mandates`](../classes/Mandates.md), `any`, `any`, `any`, `Document`\<`unknown`, `any`, [`Mandates`](../classes/Mandates.md)\> & [`Mandates`](../classes/Mandates.md) & `Required`\<\{\}\> & `object`, `any`\>, \{\}, \{\}, \{\}, \{\}, `DefaultSchemaOptions`, [`Mandates`](../classes/Mandates.md), `Document`\<`unknown`, \{\}, `FlatRecord`\<[`Mandates`](../classes/Mandates.md)\>\> & `FlatRecord`\<[`Mandates`](../classes/Mandates.md)\> & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:88](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L88)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:88](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L88)

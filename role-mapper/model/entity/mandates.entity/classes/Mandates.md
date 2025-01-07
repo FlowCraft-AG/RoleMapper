@@ -6,7 +6,7 @@
 
 # Class: Mandates
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L31)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L31)
 
 Repräsentiert eine Function-Entität in der Datenbank.
 Hebt hervor, dass die Funktion eine bestimmte Autorität oder Aufgabe beinhaltet.
@@ -47,7 +47,7 @@ Defined in: node\_modules/mongoose/types/document.d.ts:22
 
 > **functionName**: `string`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:50](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L50)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:50](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L50)
 
 Der Name der Funktion (z. B. "Professor").
 
@@ -57,7 +57,7 @@ Der Name der Funktion (z. B. "Professor").
 
 > **isImpliciteFunction**: `boolean`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:61](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L61)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:61](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L61)
 
 ***
 
@@ -65,7 +65,7 @@ Defined in: [src/role-mapper/model/entity/mandates.entity.ts:61](https://github.
 
 > **isSingleUser**: `boolean`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:58](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L58)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:58](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L58)
 
 Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist.
 
@@ -75,7 +75,7 @@ Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist.
 
 > **orgUnit**: `ObjectId`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L54)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L54)
 
 Organisationseinheit, der die Funktion zugeordnet ist.
 
@@ -85,7 +85,7 @@ Organisationseinheit, der die Funktion zugeordnet ist.
 
 > `optional` **query**: `GraphQLMutationQuerys`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:84](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L84)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:84](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L84)
 
 Die gespeicherte GraphQL-Abfrage
 
@@ -95,6 +95,6 @@ Die gespeicherte GraphQL-Abfrage
 
 > `optional` **users**: `string`[]
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:77](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/entity/mandates.entity.ts#L77)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:77](https://github.com/FlowCraft-AG/RoleMapper/blob/2b9cb86a69a058eebb4388dc6380ab3f35004bd1/backend/src/role-mapper/model/entity/mandates.entity.ts#L77)
 
 Benutzer, die mit dieser Funktion verknüpft sind.
