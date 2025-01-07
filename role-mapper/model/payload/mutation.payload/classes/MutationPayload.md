@@ -6,7 +6,7 @@
 
 # Class: MutationPayload
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/model/payload/mutation.payload.ts#L7)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/payload/mutation.payload.ts#L7)
 
 Definiert die Antwortstruktur für Mutationen in GraphQL.
 
@@ -26,7 +26,7 @@ Definiert die Antwortstruktur für Mutationen in GraphQL.
 
 > `optional` **affectedCount**: `number`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:29](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/model/payload/mutation.payload.ts#L29)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:29](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/payload/mutation.payload.ts#L29)
 
 ***
 
@@ -34,7 +34,7 @@ Defined in: [src/role-mapper/model/payload/mutation.payload.ts:29](https://githu
 
 > `optional` **message**: `string`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/model/payload/mutation.payload.ts#L20)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/payload/mutation.payload.ts#L20)
 
 Eine optionale Nachricht, die zusätzliche Informationen zur Mutation enthält.
 
@@ -44,7 +44,7 @@ Eine optionale Nachricht, die zusätzliche Informationen zur Mutation enthält.
 
 > `optional` **result**: `any`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/model/payload/mutation.payload.ts#L27)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/payload/mutation.payload.ts#L27)
 
 Das Ergebnis der Mutation, falls vorhanden.
 
@@ -54,7 +54,7 @@ Das Ergebnis der Mutation, falls vorhanden.
 
 > **success**: `boolean`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/model/payload/mutation.payload.ts#L13)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/payload/mutation.payload.ts#L13)
 
 Gibt an, ob die Mutation erfolgreich war.
 
@@ -64,4 +64,4 @@ Gibt an, ob die Mutation erfolgreich war.
 
 > `optional` **warnings**: `string`[]
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/model/payload/mutation.payload.ts#L31)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/model/payload/mutation.payload.ts#L31)

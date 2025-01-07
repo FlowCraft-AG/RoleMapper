@@ -8,4 +8,4 @@
 
 > `const` **VOLUMES\_DIR**: `string`
 
-Defined in: [src/config/app.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/config/app.ts#L7)
+Defined in: [src/config/app.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/config/app.ts#L7)

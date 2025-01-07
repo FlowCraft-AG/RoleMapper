@@ -6,7 +6,7 @@
 
 # Class: QueryResolver
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/resolver/query.resolver.ts#L24)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/query.resolver.ts#L24)
 
 Resolver für die `RoleMapper`-Entität, der GraphQL-Abfragen verarbeitet und die entsprechenden Daten
 vom `ReadService` an den Client zurückgibt.
@@ -19,7 +19,7 @@ Verwendet Filter und Interceptoren für Fehlerbehandlung und Zeitprotokollierung
 
 > **new QueryResolver**(`service`): [`QueryResolver`](QueryResolver.md)
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:33](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/resolver/query.resolver.ts#L33)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:33](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/query.resolver.ts#L33)
 
 Konstruktor für den QueryResolver, der den ReadService injiziert.
 
@@ -41,7 +41,7 @@ Der Service, der für die Datenabfragen zuständig ist.
 
 > **getAncestors**(`id`): `Promise`\<[`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md)[]\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:136](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/resolver/query.resolver.ts#L136)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:136](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/query.resolver.ts#L136)
 
 #### Parameters
 
@@ -59,7 +59,7 @@ Defined in: [src/role-mapper/resolver/query.resolver.ts:136](https://github.com/
 
 > **getEntityData**(`input`): `Promise`\<`any`\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:71](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/resolver/query.resolver.ts#L71)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:71](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/query.resolver.ts#L71)
 
 Führt eine dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern aus.
 
@@ -91,7 +91,7 @@ Die Eingabedaten, die die Entität, Filter und Paginierung enthalten.
 
 > **getRole**(`processId`, `userId`): `Promise`\<`any`\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:50](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/resolver/query.resolver.ts#L50)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:50](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/query.resolver.ts#L50)
 
 Führt eine Abfrage aus, um die Rollen eines Prozesses zu erhalten.
 
@@ -128,7 +128,7 @@ Die ID des Benutzers, der die Anfrage stellt.
 
 > **getSavedData**(`id`): `Promise`\<`any`\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:99](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/resolver/query.resolver.ts#L99)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:99](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/query.resolver.ts#L99)
 
 #### Parameters
 
@@ -146,7 +146,7 @@ Defined in: [src/role-mapper/resolver/query.resolver.ts:99](https://github.com/F
 
 > **getUsersByFunction**(`id`): `Promise`\<[`GetUsersByFunctionResult`](../../../model/payload/kp.payload/type-aliases/GetUsersByFunctionResult.md)\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:116](https://github.com/FlowCraft-AG/RoleMapper/blob/1b2b6c233762d0bcac1cf2d3fd5c5f2ed014cf3e/backend/src/role-mapper/resolver/query.resolver.ts#L116)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:116](https://github.com/FlowCraft-AG/RoleMapper/blob/3cef41945a7433078df8de15ae023cbf018d74ba/backend/src/role-mapper/resolver/query.resolver.ts#L116)
 
 #### Parameters
 
