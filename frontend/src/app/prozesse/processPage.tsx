@@ -12,23 +12,10 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import ProcessSpalte from '../../components/prozess/ProcessSpalte';
+import RolesSpalte from '../../components/prozess/RolesSpalte';
 import { getProcessById } from '../../lib/api/process.api';
 import { Process } from '../../types/process.type';
 
-/**
- * Hauptkomponente für die Prozess-Seite.
- *
- * Diese Komponente implementiert:
- * - Auswahl von Prozessen
- * - Dynamische Anzeige von Prozessen in einer Baumstruktur
- *
- * @component
- * @returns {JSX.Element} Die JSX-Struktur der Seite.
- *
- * @example
- * Verwendung in einer Next.js-App
- * <ProcessPage />
- */
 export default function ProcessPage() {
   const theme = useTheme();
   const [state, setState] = useState({
@@ -47,13 +34,6 @@ export default function ProcessPage() {
     window.history.replaceState(null, '', currentUrl.toString());
   };
 
-  /**
-   * Initialisiert die Seite basierend auf URL-Parametern.
-   *
-   * @function initializePageState
-   * @async
-   * @returns {Promise<void>}
-   */
   const initializePageState = useCallback(async () => {
     try {
       const expandedNodes = openNodesParam.split(',').filter(Boolean);
@@ -75,12 +55,6 @@ export default function ProcessPage() {
     initializePageState();
   }, [initializePageState]);
 
-  /**
-   * Handhabt die Auswahl eines Prozesses.
-   *
-   * @function handleProcessSelect
-   * @param {Process} process - Der ausgewählte Prozess.
-   */
   const handleProcessSelect = (process: Process) => {
     setState({
       ...state,
@@ -90,12 +64,6 @@ export default function ProcessPage() {
     resetUrlParams();
   };
 
-  /**
-   * Handhabt das Entfernen eines Prozesses.
-   *
-   * @function handleRemoveSelection
-   * @param {string[]} ids - Die IDs der zu entfernenden Prozesse.
-   */
   const handleRemoveSelection = (ids: string[]) => {
     setState((prev) => ({
       ...prev,
@@ -155,31 +123,8 @@ export default function ProcessPage() {
       </Box>
 
       {/* Bereich für zusätzliche Details */}
-      {state.selectedProcess && (
-        <Box
-          sx={{
-            flexGrow: 1,
-            padding: 2,
-            overflow: 'auto',
-            maxHeight: 'calc(100vh - 64px)',
-            borderRadius: 4,
-            boxShadow: `0px 4px 8px ${theme.palette.divider}`,
-            backgroundColor: theme.palette.background.paper,
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              textAlign: 'center',
-              fontWeight: 'bold',
-              marginBottom: 2,
-            }}
-          >
-            Details zu {state.selectedProcess.name}
-          </Typography>
-          {/* Zusätzliche Informationen zum Prozess können hier dargestellt werden */}
-          <pre>{JSON.stringify(state.selectedProcess, null, 2)}</pre>
-        </Box>
+      {state.selectedProcess && state.selectedProcess.parentId && (
+        <RolesSpalte selectedProcess={state.selectedProcess} />
       )}
     </Box>
   );
