@@ -33,7 +33,7 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
         maxHeight: 'calc(100vh - 64px)',
         borderRadius: 4,
         boxShadow: `0px 4px 8px ${theme.palette.divider}`,
-        backgroundColor: theme.palette.background.default, // Gleiche Hintergrundfarbe wie in processPage
+        backgroundColor: theme.palette.background.default,
       }}
     >
       <Typography
@@ -46,7 +46,7 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
       >
         Details zu {selectedProcess.name}
       </Typography>
-      {/* Zusätzliche Informationen zum Prozess */}
+      {/* Editor Ansicht für den Prozess */}
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
