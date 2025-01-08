@@ -1,6 +1,6 @@
 'use server';
 
-import { GET_ROLES,} from '../../graphql/roles/get-rollen';
+import { GET_ALL_ROLES,} from '../../graphql/rollen/query/get-roles';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
 import client from '../apolloClient';
@@ -22,7 +22,7 @@ export async function fetchAllRoles(): Promise<Map<string, string>> {
       logger.debug('Lade alle Rollen');
   
       const { data } = await client.query({
-        query: GET_ROLES,
+        query: GET_ALL_ROLES,
       });
   
       const roles: Role[] = data.getData.data || [];
