@@ -1,3 +1,9 @@
+/**
+ * @file ZeebeService
+ * @module ZeebeService
+ * @description Diese Datei implementiert den ZeebeService, der Worker für verschiedene Aufgaben registriert und die Interaktion mit einem Zeebe Gateway ermöglicht.
+ */
+
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -12,19 +18,32 @@ const { zeebe } = config;
 
 @Injectable()
 export class ZeebeService implements OnModuleInit, OnModuleDestroy {
-    readonly #logger = getLogger(ZeebeService.name); // Logger für die Service-Protokollierung
+    /** Logger für die Service-Protokollierung */
+    readonly #logger = getLogger(ZeebeService.name);
+    /** Instanz des Zeebe-Clients */
     #zbClient?: ZBClient;
+    /** Worker für Ausgabeverarbeitung */
     #outputWorker?: ZBWorker<any, any, any>;
+    /** Worker für Notizenverarbeitung */
     #noteWorker?: ZBWorker<any, any, any>;
+    /** Service zur Ermittlung von Benutzerrollen */
     readonly #service: ReadService;
+    /** Status, ob Zeebe aktiviert ist */
     readonly #isZeebeEnabled: boolean;
 
+     /**
+     * @constructor
+     * @param service Instanz des ReadService zur Rollenabfrage
+     */
     constructor(service: ReadService) {
         this.#service = service;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.#isZeebeEnabled = zeebe?.enable; // Überprüfen, ob Zeebe aktiviert ist
     }
 
+    /**
+     * Initialisiert den Zeebe-Service und registriert die Worker.
+     */
     onModuleInit() {
         if (this.#isZeebeEnabled) {
             this.#zbClient = zbClient; // Zeebe Gateway-Adresse
@@ -37,6 +56,9 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+    /**
+     * Beendet den Zeebe-Service und schließt die Worker sowie den Client.
+     */
     async onModuleDestroy() {
         if (this.#isZeebeEnabled) {
             if (this.#outputWorker) {
@@ -51,6 +73,12 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+    /**
+     * Startet einen neuen Prozess mit den angegebenen Variablen.
+     * @param processKey Der Schlüssel des BPMN-Prozesses
+     * @param variables Variablen für den Prozess
+     * @throws Fehler, wenn Zeebe deaktiviert ist oder der Prozessstart fehlschlägt
+     */
     async startProcess(processKey: string, variables: Record<string, any>) {
         if (!this.#isZeebeEnabled) {
             this.#logger.warn('Zeebe ist deaktiviert. Prozesse können nicht gestartet werden.');
@@ -70,6 +98,9 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+      /**
+     * Registriert einen Worker für die Verarbeitung von "output"-Aufgaben.
+     */
     private registerOutputWorker() {
         this.#logger.debug('Registriere Worker für "output"');
         this.#outputWorker = this.#zbClient!.createWorker({
@@ -91,6 +122,9 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         });
     }
 
+    /**
+     * Registriert einen Worker für die Verarbeitung von "note"-Aufgaben.
+     */
     private registerNoteWorker() {
         this.#logger.debug('Registriere Worker für "note"');
         this.#noteWorker = this.#zbClient!.createWorker({
@@ -112,6 +146,9 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         });
     }
 
+    /**
+     * Registriert einen Worker, um Benutzerrollen für einen Prozess zu ermitteln.
+     */
     private registerGetRolesWorker() {
         this.#logger.debug('Registriere Worker um Rollen zu ermitteln');
         this.#noteWorker = this.#zbClient!.createWorker({
