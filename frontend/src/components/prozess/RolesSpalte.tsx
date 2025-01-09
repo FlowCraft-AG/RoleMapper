@@ -32,6 +32,7 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
         overflow: 'auto',
         maxHeight: 'calc(100vh - 64px)',
         borderRadius: 4,
+        width: '50%',
         boxShadow: `0px 4px 8px ${theme.palette.divider}`,
         backgroundColor: theme.palette.background.default,
       }}

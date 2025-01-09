@@ -120,9 +120,8 @@ export default function ProcessPage() {
           onSelect={handleProcessSelect}
           onRemove={handleRemoveSelection}
         />
-      </Box>
-
       {/* Bereich für zusätzliche Details */}
+      </Box>
       {state.selectedProcess && state.selectedProcess.parentId && (
         <RolesSpalte selectedProcess={state.selectedProcess} />
       )}
