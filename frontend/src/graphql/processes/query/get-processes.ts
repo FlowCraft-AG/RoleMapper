@@ -4,10 +4,10 @@ export const GET_ALL_PROCESSES = gql`
   query GetData {
     getData(
       input: {
-        entity: PROCESSES,
+        entity: PROCESSES
         sort: { field: name, direction: ASC }
         pagination: { limit: 0, offset: 0 }
-         }
+      }
     ) {
       totalCount
       data {
@@ -54,10 +54,10 @@ export const GET_PROCESSES_SHORT = gql`
   query GetData {
     getData(
       input: {
-        entity: PROCESSES,
+        entity: PROCESSES
         sort: { field: name, direction: ASC }
         pagination: { limit: 0, offset: 0 }
-         }
+      }
     ) {
       totalCount
       data {
