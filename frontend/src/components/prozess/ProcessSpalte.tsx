@@ -8,7 +8,7 @@
 
 'use client';
 
-import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
+import DescriptionIcon from '@mui/icons-material/Description';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import { Alert, CircularProgress, useTheme } from '@mui/material';
@@ -171,7 +171,7 @@ export default function ProcessSpalte({
         slots={{
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
-          endIcon: CorporateFareTwoToneIcon,
+          endIcon: DescriptionIcon,
         }}
         slotProps={{
           item: {
