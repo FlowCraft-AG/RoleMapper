@@ -1,6 +1,6 @@
 /**
  * @file OrganigrammPage.tsx
- * @description Stellt die Organigramm-Seite der Hochschule Karlsruhe (HSKA) dar. Diese Seite erlaubt es,
+ * @description Stellt die Organigramm-Seite der Hochschule Karlsruhe (HKA) dar. Diese Seite erlaubt es,
  * Organisationseinheiten, Funktionen und Benutzer hierarchisch zu durchsuchen und auszuwählen.
  *
  * @module OrganigrammPage

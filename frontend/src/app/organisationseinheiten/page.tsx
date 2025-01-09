@@ -1,6 +1,6 @@
 /**
  * @file Page.tsx
- * @description Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HSKA).
+ * @description Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HKA).
  * Diese Seite bietet Navigation zu verschiedenen Ansichten des Organigramms
  * und zeigt eine eingebettete Organigramm-Komponente.
  *
@@ -34,7 +34,7 @@ import OrganigrammPage from './orgUnitPage';
 export const metadata: Metadata = {
   title: 'Organisationseinheiten',
   description:
-    'Organigramm der Hochschule Karlsruhe (HSKA) zur Darstellung der Fakultäten, Institute und Rollen.',
+    'Organigramm der Hochschule Karlsruhe (HKA) zur Darstellung der Fakultäten, Institute und Rollen.',
 };
 
 /**
