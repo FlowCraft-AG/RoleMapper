@@ -79,32 +79,7 @@ export default async function HKAPage() {
           marginBottom: 4,
         }}
       >
-        {/* Link zur interaktiven Slider-Darstellung */}
-        <Link href="/organisationseinheiten/slider" passHref>
-          <Card
-            sx={{
-              transition: 'transform 0.3s, box-shadow 0.3s',
-              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
-            }}
-          >
-            <CardActionArea>
-              <CardContent>
-                <Typography variant="h6" align="center" gutterBottom>
-                  Slider
-                </Typography>
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="text.secondary"
-                >
-                  Entdecken Sie das Organigramm in einer interaktiven
-                  Slider-Darstellung.
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </Link>
-
+      
         {/* Link zur Standard-Darstellung */}
         <Link href="/organisationseinheiten/standard" passHref>
           <Card
@@ -123,7 +98,7 @@ export default async function HKAPage() {
                   align="center"
                   color="text.secondary"
                 >
-                  Klassische Ansicht des Organigramms mit Fokus auf Einfachheit.
+                  Klassische Ansicht des Organigramms.
                 </Typography>
               </CardContent>
             </CardActionArea>

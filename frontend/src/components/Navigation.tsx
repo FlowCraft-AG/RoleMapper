@@ -137,7 +137,7 @@ export default function Navigation() {
       };
 
   const navLinks = [
-    { href: '/startseite', label: 'Startseite' },
+   // { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/prozesse', label: 'Prozesse' },
    // { href: '/konfigurationen', label: 'Konfigurationen' },
