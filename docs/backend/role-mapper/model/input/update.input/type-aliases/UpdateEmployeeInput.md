@@ -8,7 +8,9 @@
 
 > **UpdateEmployeeInput**: `object`
 
-Defined in: [src/role-mapper/model/input/update.input.ts:23](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/input/update.input.ts#L23)
+Defined in: [src/role-mapper/model/input/update.input.ts:102](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/input/update.input.ts#L102)
+
+Eingabetyp für die Aktualisierung von Mitarbeiterdaten.
 
 ## Type declaration
 
@@ -16,6 +18,10 @@ Defined in: [src/role-mapper/model/input/update.input.ts:23](https://github.com/
 
 > `optional` **costCenter**: `string`
 
+Die Kostenstelle des Mitarbeiters.
+
 ### department?
 
 > `optional` **department**: `string`
+
+Die Abteilung des Mitarbeiters.

@@ -8,7 +8,9 @@
 
 > **UpdateFunctionInput**: `object`
 
-Defined in: [src/role-mapper/model/input/update.input.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/input/update.input.ts#L28)
+Defined in: [src/role-mapper/model/input/update.input.ts:121](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/input/update.input.ts#L121)
+
+Eingabetyp für die Aktualisierung von Funktionen.
 
 ## Type declaration
 
@@ -16,14 +18,22 @@ Defined in: [src/role-mapper/model/input/update.input.ts:28](https://github.com/
 
 > **functionName**: `string`
 
+Der Name der Funktion.
+
 ### orgUnit?
 
 > `optional` **orgUnit**: `Types.ObjectId` \| `string`
+
+Die Organisationseinheit der Funktion.
 
 ### type?
 
 > `optional` **type**: `string`
 
+Der Typ der Funktion.
+
 ### users?
 
 > `optional` **users**: `string`[]
+
+Die Benutzer, die der Funktion zugeordnet sind.

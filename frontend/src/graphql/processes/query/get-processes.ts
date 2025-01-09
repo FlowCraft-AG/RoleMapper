@@ -3,7 +3,11 @@ import { gql } from '@apollo/client';
 export const GET_ALL_PROCESSES = gql`
   query GetData {
     getData(
-      input: { entity: PROCESSES, sort: { field: name, direction: ASC } }
+      input: {
+        entity: PROCESSES
+        sort: { field: name, direction: ASC }
+        pagination: { limit: 0, offset: 0 }
+      }
     ) {
       totalCount
       data {
@@ -27,6 +31,7 @@ export const GET_PROCESS_BY_ID = gql`
       input: {
         entity: PROCESSES
         filter: { field: _id, operator: EQ, value: $id }
+        pagination: { limit: 0, offset: 0 }
       }
     ) {
       totalCount
@@ -48,7 +53,11 @@ export const GET_PROCESS_BY_ID = gql`
 export const GET_PROCESSES_SHORT = gql`
   query GetData {
     getData(
-      input: { entity: PROCESSES, sort: { field: name, direction: ASC } }
+      input: {
+        entity: PROCESSES
+        sort: { field: name, direction: ASC }
+        pagination: { limit: 0, offset: 0 }
+      }
     ) {
       totalCount
       data {

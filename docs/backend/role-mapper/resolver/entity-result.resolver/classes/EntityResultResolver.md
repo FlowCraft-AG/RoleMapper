@@ -6,10 +6,12 @@
 
 # Class: EntityResultResolver
 
-Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/resolver/entity-result.resolver.ts#L36)
+Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/resolver/entity-result.resolver.ts#L16)
 
 Resolver für die Union `EntityResult`.
-Bestimmt zur Laufzeit den konkreten Typ des Objekts basierend auf dessen Eigenschaften.
+
+Dieser Resolver bestimmt zur Laufzeit den konkreten Typ eines Objekts innerhalb
+der Union `EntityResult`, basierend auf dessen Eigenschaften.
 
 ## Constructors
 
@@ -27,9 +29,12 @@ Bestimmt zur Laufzeit den konkreten Typ des Objekts basierend auf dessen Eigensc
 
 > **resolveType**(`object`): `undefined` \| `string`
 
-Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:43](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/resolver/entity-result.resolver.ts#L43)
+Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:34](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/resolver/entity-result.resolver.ts#L34)
 
 Bestimmt den konkreten Typ eines Objekts innerhalb der Union `EntityResult`.
+
+Diese Methode überprüft die Eigenschaften des übergebenen Objekts und gibt
+den entsprechenden Typ zurück, falls dieser erkannt wird.
 
 #### Parameters
 
@@ -37,10 +42,18 @@ Bestimmt den konkreten Typ eines Objekts innerhalb der Union `EntityResult`.
 
 `Record`\<`string`, `unknown`\>
 
-Das Objekt, dessen Typ aufgelöst werden soll.
+Das Objekt, dessen Typ bestimmt werden soll.
 
 #### Returns
 
 `undefined` \| `string`
 
-Der Name des konkreten Typs, falls erkannt; andernfalls `undefined`.
+Der Name des konkreten Typs (`User`, `Function`, `Process`, `Role`, `OrgUnit`),
+                              falls erkannt; andernfalls `undefined`.
+
+#### Example
+
+```typescript
+const type = resolver.resolveType({ userId: '123' });
+console.log(type); // 'User'
+```

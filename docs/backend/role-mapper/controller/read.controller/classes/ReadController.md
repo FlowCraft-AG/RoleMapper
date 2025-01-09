@@ -6,7 +6,7 @@
 
 # Class: ReadController
 
-Defined in: [src/role-mapper/controller/read.controller.ts:80](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/controller/read.controller.ts#L80)
+Defined in: [src/role-mapper/controller/read.controller.ts:80](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/controller/read.controller.ts#L80)
 
 ReadController
 
@@ -105,7 +105,7 @@ Die Benutzer-ID, die zur Erstellung der Links verwendet wird.
 
 > **new ReadController**(`readService`): [`ReadController`](ReadController.md)
 
-Defined in: [src/role-mapper/controller/read.controller.ts:83](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/controller/read.controller.ts#L83)
+Defined in: [src/role-mapper/controller/read.controller.ts:83](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/controller/read.controller.ts#L83)
 
 #### Parameters
 
@@ -121,9 +121,9 @@ Defined in: [src/role-mapper/controller/read.controller.ts:83](https://github.co
 
 ### getData()
 
-> **getData**(`request`, `entityType`, `field`?, `operator`?, `value`?, `limit`?, `offset`?): `Promise`\<[`DataPayload`](../../../model/payload/data.payload/type-aliases/DataPayload.md)\>
+> **getData**(`request`, `entityType`, `field`?, `operator`?, `value`?, `limit`?, `offset`?): `Promise`\<[`DataPayloadRest`](../../../model/payload/data.payload/type-aliases/DataPayloadRest.md)\>
 
-Defined in: [src/role-mapper/controller/read.controller.ts:180](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/controller/read.controller.ts#L180)
+Defined in: [src/role-mapper/controller/read.controller.ts:183](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/controller/read.controller.ts#L183)
 
 Dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern.
 
@@ -161,7 +161,7 @@ Die Ziel-Entität (z. B. USERS, MANDATES).
 
 #### Returns
 
-`Promise`\<[`DataPayload`](../../../model/payload/data.payload/type-aliases/DataPayload.md)\>
+`Promise`\<[`DataPayloadRest`](../../../model/payload/data.payload/type-aliases/DataPayloadRest.md)\>
 
 - Die gefilterten Daten.
 
@@ -173,9 +173,9 @@ Die Ziel-Entität (z. B. USERS, MANDATES).
 
 ### getProcessRoles()
 
-> **getProcessRoles**(`processId`, `userId`, `request`): `Promise`\<[`RolePayload`](../../../model/payload/role-payload.type/type-aliases/RolePayload.md)\>
+> **getProcessRoles**(`processId`, `userId`, `request`): `Promise`\<[`RolePayloadRest`](../../../model/payload/role-payload.type/type-aliases/RolePayloadRest.md)\>
 
-Defined in: [src/role-mapper/controller/read.controller.ts:126](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/controller/read.controller.ts#L126)
+Defined in: [src/role-mapper/controller/read.controller.ts:126](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/controller/read.controller.ts#L126)
 
 Führt eine Abfrage aus, um die Rollen eines Prozesses zu erhalten.
 
@@ -199,6 +199,6 @@ Die ID des Benutzers.
 
 #### Returns
 
-`Promise`\<[`RolePayload`](../../../model/payload/role-payload.type/type-aliases/RolePayload.md)\>
+`Promise`\<[`RolePayloadRest`](../../../model/payload/role-payload.type/type-aliases/RolePayloadRest.md)\>
 
 - Die Rollen des Prozesses.

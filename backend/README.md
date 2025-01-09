@@ -40,17 +40,35 @@ Das Backend des **RoleMapper**-Projekts basiert auf **NestJS** und **TypeScript*
 ## Projektstruktur
 ```plaintext
 backend
-├── test              # Tests für das Backend
+├── __tests__          # Tests für das Backend
+│   └── role-mapper    # Snapshot-Tests für Role-Mapping
+│       └── __snapshots__
 ├── log               # Log-Dateien des Backends
 └── src               # Quellcode des Backends
+    ├── camunda       # Camunda-spezifische Logik
+    │   ├── controller # API-Endpunkte für Camunda
+    │   ├── resolver   # GraphQL-Resolver für Camunda
+    │   └── service    # Services für Camunda-Integration
     ├── config        # Konfigurationsdateien
-    │   └── resources # Ressourcen für die Anwendung
-    │       └── app.yml # Camunda-Konfiguration
+    │   └── resources # Ressourcen wie GraphQL-Schema und app.yml
+    │       └── graphql
     ├── logger        # Logging-Funktionalität
     ├── role-mapper   # Hauptlogik für das Rollen-Mapping
-    ├── resolver      # GraphQL-Resolver
-    ├── service       # Geschäftliche Logik
-    └── utils         # Hilfsfunktionen
+    │   ├── controller  # API-Endpunkte
+    │   ├── error       # Fehlerbehandlung
+    │   ├── model       # Datenmodelle
+    │   │   ├── dto       # Data Transfer Objects
+    │   │   ├── entity    # Datenbank-Entitäten
+    │   │   ├── enum      # Enumerationen
+    │   │   ├── input     # GraphQL-Inputs
+    │   │   ├── payload   # Antwort-Payloads
+    │   │   └── types     # Allgemeine Typdefinitionen
+    │   ├── resolver    # GraphQL-Resolver
+    │   ├── service     # Geschäftliche Logik
+    │   └── utils       # Hilfsfunktionen
+    └── security       # Sicherheitsrelevanter Code
+        ├── http        # HTTP-Sicherheitskonfiguration
+        └── keycloak    # Keycloak-Integration
 ```
 
 ---

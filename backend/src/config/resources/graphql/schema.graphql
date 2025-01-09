@@ -21,7 +21,7 @@ type MandatePayload {
   functionName: String
   isImpliciteFunction: Boolean
   _id: ID
-  orgUnit: String
+  orgUnit: ID
 }
 
 # Abfrageparameter

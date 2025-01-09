@@ -9,4 +9,5 @@
 ## Type Aliases
 
 - [DataPayload](type-aliases/DataPayload.md)
+- [DataPayloadRest](type-aliases/DataPayloadRest.md)
 - [DataResult](type-aliases/DataResult.md)

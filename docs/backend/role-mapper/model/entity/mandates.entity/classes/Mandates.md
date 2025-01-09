@@ -6,14 +6,16 @@
 
 # Class: Mandates
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/mandates.entity.ts#L31)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:84](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/mandates.entity.ts#L84)
 
-Repräsentiert eine Function-Entität in der Datenbank.
-Hebt hervor, dass die Funktion eine bestimmte Autorität oder Aufgabe beinhaltet.
+Repräsentiert eine Funktion (Mandate) in der Datenbank.
+
+Funktionen beschreiben organisatorische Rollen oder Autoritäten, die Benutzern
+und Organisationseinheiten zugeordnet sind.
 
 ## Schema
 
-Functions
+Mandates
 
 ## Extends
 
@@ -47,7 +49,7 @@ Defined in: node\_modules/mongoose/types/document.d.ts:22
 
 > **functionName**: `string`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:50](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/mandates.entity.ts#L50)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:107](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/mandates.entity.ts#L107)
 
 Der Name der Funktion (z. B. "Professor").
 
@@ -57,7 +59,9 @@ Der Name der Funktion (z. B. "Professor").
 
 > **isImpliciteFunction**: `boolean`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:61](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/mandates.entity.ts#L61)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:131](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/mandates.entity.ts#L131)
+
+Gibt an, ob es sich um eine implizite Funktion handelt.
 
 ***
 
@@ -65,9 +69,9 @@ Defined in: [src/role-mapper/model/entity/mandates.entity.ts:61](https://github.
 
 > **isSingleUser**: `boolean`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:58](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/mandates.entity.ts#L58)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:123](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/mandates.entity.ts#L123)
 
-Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist.
+Gibt an, ob die Funktion nur für einen Benutzer gilt.
 
 ***
 
@@ -75,19 +79,19 @@ Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist.
 
 > **orgUnit**: `ObjectId`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/mandates.entity.ts#L54)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:115](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/mandates.entity.ts#L115)
 
-Organisationseinheit, der die Funktion zugeordnet ist.
+Die Organisationseinheit, der die Funktion zugeordnet ist.
 
 ***
 
 ### query?
 
-> `optional` **query**: `GraphQLMutationQuerys`
+> `optional` **query**: [`GraphQLMutationQuerys`](../type-aliases/GraphQLMutationQuerys.md)
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:84](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/mandates.entity.ts#L84)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:162](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/mandates.entity.ts#L162)
 
-Die gespeicherte GraphQL-Abfrage
+Die gespeicherte GraphQL-Abfrage.
 
 ***
 
@@ -95,6 +99,6 @@ Die gespeicherte GraphQL-Abfrage
 
 > `optional` **users**: `string`[]
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:77](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/mandates.entity.ts#L77)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:151](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/mandates.entity.ts#L151)
 
-Benutzer, die mit dieser Funktion verknüpft sind.
+Die Benutzer, die dieser Funktion zugeordnet sind.

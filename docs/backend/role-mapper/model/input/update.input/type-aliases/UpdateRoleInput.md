@@ -8,7 +8,9 @@
 
 > **UpdateRoleInput**: `object`
 
-Defined in: [src/role-mapper/model/input/update.input.ts:48](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/input/update.input.ts#L48)
+Defined in: [src/role-mapper/model/input/update.input.ts:213](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/input/update.input.ts#L213)
+
+Eingabetyp für die Aktualisierung von Rollen.
 
 ## Type declaration
 
@@ -16,10 +18,16 @@ Defined in: [src/role-mapper/model/input/update.input.ts:48](https://github.com/
 
 > `optional` **name**: `string`
 
+Der Name der Rolle.
+
 ### query?
 
 > `optional` **query**: [`QueryStageInput`](../../query-stage.input/type-aliases/QueryStageInput.md)[]
 
+Die gespeicherte Abfrage für die Rolle.
+
 ### roleId
 
 > **roleId**: `string`
+
+Die ID der Rolle.
