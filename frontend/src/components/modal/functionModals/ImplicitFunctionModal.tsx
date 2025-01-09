@@ -1,6 +1,6 @@
 /**
  * @file ImplicitFunctionModal.tsx
- * @description Modal-Komponente zur Erstellung von implizierten Funktionen in einer Organisationseinheit.
+ * @description Modal-Komponente zur Erstellung von impliziten Funktionen in einer Organisationseinheit.
  *
  * @module ImplicitFunctionModal
  */
@@ -42,7 +42,7 @@ interface ImplicitFunctionModalProps {
 /**
  * `ImplicitFunctionModal`-Komponente
  *
- * Diese Komponente zeigt ein Modal zur Erstellung von implizierten Funktionen an.
+ * Diese Komponente zeigt ein Modal zur Erstellung von impliziten Funktionen an.
  * Der Benutzer kann einen Funktionsnamen, ein Attribut und einen Wert eingeben.
  *
  * @component
@@ -136,7 +136,7 @@ const ImplicitFunctionModal = ({
       refetch(newFunction); // Aktualisiere die Liste
       setSnackbar({
         open: true,
-        message: 'Implizierte Funktion erfolgreich erstellt.',
+        message: 'Implizite Funktion erfolgreich erstellt.',
       });
 
       resetFields(); // Eingabefelder zurücksetzen
@@ -175,7 +175,7 @@ const ImplicitFunctionModal = ({
             boxShadow: 24,
           }}
         >
-          <Typography variant="h6">Implizierte Funktion</Typography>
+          <Typography variant="h6">Implizite Funktion</Typography>
           <TextField
             label="Funktionsname"
             value={functionName}

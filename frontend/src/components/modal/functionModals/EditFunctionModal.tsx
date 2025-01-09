@@ -181,7 +181,7 @@ const EditFunctionModal = ({
       });
       setSnackbar({
         open: true,
-        message: 'Explizierte Funktion erfolgreich erstellt.',
+        message: 'Explizite Funktion erfolgreich erstellt.',
       });
       refetch(updatedFunction);
       setIsSaving(false);
