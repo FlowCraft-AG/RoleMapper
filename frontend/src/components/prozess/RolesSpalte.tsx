@@ -7,7 +7,7 @@
 
 'use client';
 
-import { Box, Typography, useTheme } from '@mui/material'; // useTheme importiert
+import { Box, Typography, useTheme } from '@mui/material';
 import { Process } from '../../types/process.type';
 import { JSX } from 'react';
 
@@ -22,7 +22,7 @@ interface RolesSpalteProps {
  * @returns {JSX.Element} - JSX-Element für die Rollen-Details.
  */
 export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.Element {
-  const theme = useTheme();
+  const theme = useTheme(); // Theme verwenden
 
   return (
     <Box
@@ -37,16 +37,28 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
       }}
     >
       <Typography
-        variant="h6"
+        variant="h5"
         sx={{
           textAlign: 'center',
           fontWeight: 'bold',
+          position: 'sticky',
+          top: 0,
+          height: '64px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: theme.palette.background.paper,
+          zIndex: 1,
+          padding: '12px 0',
           marginBottom: 2,
+          borderBottom: `2px solid`,
+          borderImage: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.secondary.main}) 1`,
+          borderImageSlice: 1,
         }}
       >
-        Details zu {selectedProcess.name}
+        Editor: {selectedProcess.name}
       </Typography>
-      {/* Editor Ansicht für den Prozess */}
+      {/* Zusätzliche Informationen zum Prozess */}
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
