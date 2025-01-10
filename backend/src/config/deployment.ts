@@ -1,6 +1,14 @@
+/**
+ * @file deployment.service.ts
+ * @module DeploymentService
+ * @description Bereitstellungs- und Banner-Service für die Anwendung. 
+ * Verwaltet die Bereitstellung von Camunda-Ressourcen und generiert Startinformationen.
+ */
+
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable security-node/detect-unhandled-async-errors */
 /* eslint-disable security/detect-non-literal-fs-filename */
+
 import { Injectable, type OnApplicationBootstrap } from '@nestjs/common';
 import chalk from 'chalk';
 import fs from 'node:fs';
@@ -8,10 +16,21 @@ import path from 'node:path';
 import { getLogger } from '../logger/logger.js';
 import { zbClient } from './zeebe.js';
 
+/**
+ * Logger-Instanz für den Bereitstellungsservice.
+ */
 const logger = getLogger('DeploymentService');
 
+/**
+ * Basisverzeichnis für Camunda-Ressourcen.
+ */
 const CAMUNDA_BASE_PATH = path.resolve(import.meta.dirname, '..', '..', '..', '.extras', 'camunda');
 
+/**
+ * Bereitstellung von Dateien in einem angegebenen Ordner.
+ * @param {string} folderPath - Pfad zum Ordner, der die Bereitstellungsdateien enthält.
+ * @description Liest Dateien im Ordner aus und stellt sie mithilfe von Zeebe bereit.
+ */
 async function deployFilesInFolder(folderPath: string) {
     const files = fs.readdirSync(folderPath);
 
@@ -37,6 +56,10 @@ async function deployFilesInFolder(folderPath: string) {
     }
 }
 
+/**
+ * Bereitstellung von Camunda-Ressourcen.
+ * @description Stellt BPMN-, DMN- und Formulardateien bereit.
+ */
 export async function deployCamundaResources() {
     try {
         logger.info(chalk.green('=== Start der Ressourcendeployment ==='));
@@ -57,12 +80,15 @@ export async function deployCamundaResources() {
     }
 }
 
+/**
+ * Service zum Generieren eines Start-Banners und zur Durchführung der Ressourcendeployment.
+ */
 @Injectable()
 export class BannerService implements OnApplicationBootstrap {
     readonly #logger = getLogger(BannerService.name);
 
     /**
-     * Beim Bootstrap der Anwendung Informationen und ein Banner ausgeben.
+     * Startlogik der Anwendung ausführen.
      */
     async onApplicationBootstrap() {
         this.#logger.info(chalk.green('=== Anwendung wird gestartet ==='));
@@ -83,7 +109,7 @@ export class BannerService implements OnApplicationBootstrap {
     }
 
     /**
-     * Banner generieren und ausgeben.
+     * Generiert ein Banner mit Informationen über die Anwendung und gibt es aus.
      */
     #generateBanner() {
         this.#logger.info(chalk.green('==============================='));
@@ -95,3 +121,4 @@ export class BannerService implements OnApplicationBootstrap {
         this.#logger.info(chalk.green('==============================='));
     }
 }
+
