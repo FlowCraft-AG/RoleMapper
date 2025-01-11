@@ -21,119 +21,81 @@ export class CamundaResolver {
     @Query('getTasksByUserId')
     @Public()
     async getTasksByUserId(@Args('userId') userId: string, @Context() context: any) {
-        // Bearer-Token aus dem Header extrahieren
-        const authorizationHeader = context.req.headers.authorization;
-        if (
-            authorizationHeader === undefined ||
-            authorizationHeader.startsWith('Bearer ') === undefined
-        ) {
-            this.#logger.error('Authorization Header fehlt oder ist ungültig.');
-            throw new Error('Authorization Header fehlt oder ist ungültig.');
-        }
-
-        const token: string = authorizationHeader.split(' ')[1]; // Token extrahieren
-        this.#logger.debug('Get tasks by userId: %s', userId);
-        const tasks: Task[] = await this.#camundaService.findTasksByUserId(userId, token);
-        this.#logger.debug('Tasks: %s', tasks);
-        return tasks;
+        const token = this.#extractToken(context);
+        this.#logger.debug('Get tasks by userId: userId=%s', userId);
+        const userTaskList: Task[] = await this.#camundaService.findTasksByUserId(userId, token);
+        this.#logger.debug('Get tasks by userId: userTasksList=%s', userTaskList);
+        return userTaskList;
     }
 
     @Query('getProcessesByKey')
     @Public()
-    async getProcessesByKey(
-        @Args('key') key: string,
+    async getProcessInstancesByProcessInstanceKey(
+        @Args('processInstancenKey') key: string,
         @Context() context: any,
     ): Promise<ProcessInstance> {
-        // Bearer-Token aus dem Header extrahieren
-        const authorizationHeader = context.req.headers.authorization;
-        if (
-            authorizationHeader === undefined ||
-            authorizationHeader.startsWith('Bearer ') === undefined
-        ) {
-            this.#logger.error('Authorization Header fehlt oder ist ungültig.');
-            throw new Error('Authorization Header fehlt oder ist ungültig.');
-        }
-        const token: string = authorizationHeader.split(' ')[1]; // Token extrahieren
-        this.#logger.debug('getProcessesByKey: Get process by processId:', key);
+        const token = this.#extractToken(context);
+        this.#logger.debug('getProcessInstancesByProcessInstanceKey: processInstanceKey=%s', key);
         const instanzen: ProcessInstance = await this.#camundaService.findProcessInstance(
             key,
             token,
         );
-        this.#logger.debug('getProcessesByKey: ProcessInstance: %o', instanzen);
+        this.#logger.debug(
+            'getProcessInstancesByProcessInstanceKey: ProcessInstance=%o',
+            instanzen,
+        );
         return instanzen;
     }
 
     @Query('getProcessesByUserId')
     @Public()
-    async getProcessesByUserId(
+    async getProcessInstancesByUserId(
         @Args('userId') userId: string,
         @Context() context: any,
     ): Promise<ProcessInstance[]> {
-        // Bearer-Token aus dem Header extrahieren
-        const authorizationHeader = context.req.headers.authorization;
-        if (
-            authorizationHeader === undefined ||
-            authorizationHeader.startsWith('Bearer ') === undefined
-        ) {
-            this.#logger.error('Authorization Header fehlt oder ist ungültig.');
-            throw new Error('Authorization Header fehlt oder ist ungültig.');
-        }
-        const token: string = authorizationHeader.split(' ')[1]; // Token extrahieren
-        this.#logger.debug('getProcessesByUserId: userId=%s', userId);
-        const tasks: Task[] = await this.#camundaService.findTasksByUserId(userId, token);
-        this.#logger.debug('getProcessesByUserId: Tasks=%o', tasks);
-        const processInstanceKeys: string[] = tasks.map((task) => task.processInstanceKey);
-        this.#logger.debug('ProcessInstanceKeys: prozessInstanzenKeys=%o', processInstanceKeys);
-        const processInstances: ProcessInstance[] = [];
-        for (const key of processInstanceKeys) {
+        const token = this.#extractToken(context);
+        this.#logger.debug('getProcessInstancesByUserId: userId=%s', userId);
+        const userTaskList: Task[] = await this.#camundaService.findTasksByUserId(userId, token);
+        this.#logger.debug('getProcessInstancesByUserId: userTaskList=%o', userTaskList);
+        const processInstanceKeyList: string[] = userTaskList.map(
+            (task) => task.processInstanceKey,
+        );
+        this.#logger.debug(
+            'getProcessInstancesByUserId: prozessInstanzenKeys=%o',
+            processInstanceKeyList,
+        );
+        const processInstanceList: ProcessInstance[] = [];
+        for (const key of processInstanceKeyList) {
             const instanz: ProcessInstance = await this.#camundaService.findProcessInstance(
                 key,
                 token,
             );
-            processInstances.push(instanz);
+            processInstanceList.push(instanz);
         }
-        this.#logger.debug('getProcessesByUserId: ProcessInstances=%o', processInstances);
-        return processInstances;
+        this.#logger.debug('getProcessInstancesByUserId: ProcessInstances=%o', processInstanceList);
+        return processInstanceList;
     }
 
     @Query('getCamundaProcesses')
     @Public()
     async getProzessListe(@Args('filter') filter: ProcessFilterInput, @Context() context: any) {
-        // Bearer-Token aus dem Header extrahieren
-        const authorizationHeader = context.req.headers.authorization;
-        if (
-            authorizationHeader === undefined ||
-            authorizationHeader.startsWith('Bearer ') === undefined
-        ) {
-            this.#logger.error('Authorization dHeader fehlt oder ist ungültig.');
-            throw new Error('Authorization Header fehlt oder ist ungültig.');
-        }
-        const token: string = authorizationHeader.split(' ')[1]; // Token extrahieren
-        this.#logger.debug('Get all processes');
+        const token = this.#extractToken(context);
+        this.#logger.debug('getProzessListe: filter=%o', filter);
         const instanzen: ProcessInstance[] = await this.#camundaService.findProzessListe(
             filter,
             token,
         );
-        this.#logger.debug('getProzessListe: Instanzen: %o', instanzen);
+        this.#logger.debug('getProzessListe: Instanzen=%o', instanzen);
         return instanzen;
     }
 
     @Query('getTasks')
     @Public()
     async getTasks(@Args('filter') filter: ProcessFilterInput, @Context() context: any) {
-        // Bearer-Token aus dem Header extrahieren
-        const authorizationHeader = context.req.headers.authorization;
-        if (
-            authorizationHeader === undefined ||
-            authorizationHeader.startsWith('Bearer ') === undefined
-        ) {
-            this.#logger.error('Authorization Header fehlt oder ist ungültig.');
-            throw new Error('Authorization Header fehlt oder ist ungültig.');
-        }
-        const token: string = authorizationHeader.split(' ')[1]; // Token extrahieren
-        this.#logger.debug('Get all tasks');
+        const token = this.#extractToken(context);
+        this.#logger.debug('getTasks: filter=%o', filter);
         const instanzen: Task[] = await this.#camundaService.findTaskListe(filter, token);
-        this.#logger.debug('getProzessListe: Instanzen: %o', instanzen);
+        this.#logger.debug('getTasks: Instanzen=%o', instanzen);
         return instanzen;
     }
 
@@ -143,20 +105,12 @@ export class CamundaResolver {
         @Args('filter') filter: VariableFilterInput,
         @Context() context: any,
     ): Promise<ProcessVariable[]> {
-        // Bearer-Token aus dem Header extrahieren
-        const authorizationHeader = context.req.headers.authorization;
-        if (
-            authorizationHeader === undefined ||
-            authorizationHeader.startsWith('Bearer ') === undefined
-        ) {
-            this.#logger.error('Authorization Header fehlt oder ist ungültig.');
-            throw new Error('Authorization Header fehlt oder ist ungültig.');
-        }
-        const token: string = authorizationHeader.split(' ')[1]; // Token extrahieren
-
-        // Anfrage an den Camunda-Service
-        const variables = await this.#camundaService.searchTaskVariables(filter, token);
-
+        const token = this.#extractToken(context);
+        this.#logger.debug('searchTaskVariables: Filter: %o', filter);
+        const variables: ProcessVariable[] = await this.#camundaService.searchTaskVariables(
+            filter,
+            token,
+        );
         this.#logger.debug('searchTaskVariables: Variablen: %o', variables);
         return variables;
     }
@@ -164,11 +118,20 @@ export class CamundaResolver {
     @Public()
     @Query('getProcessDefinitionXmlByKey')
     async getProcessDefinitionXmlByKey(
-        @Args('key') key: string,
+        @Args('processDefinitionKey') key: string,
         @Context() context: any,
     ): Promise<string> {
+        const token = this.#extractToken(context);
+        this.#logger.debug('getProcessDefinitionXmlByKey: processDefinitionKey=%s', key);
+        const xml = await this.#camundaService.getProcessDefinitionXmlByKey(key, token);
+        this.#logger.debug('getProcessDefinitionXmlByKey: xml=%s', xml);
+        return xml;
+    }
+
+    #extractToken(context: any): string {
         // Bearer-Token aus dem Header extrahieren
         const authorizationHeader = context.req.headers.authorization;
+
         if (
             authorizationHeader === undefined ||
             authorizationHeader.startsWith('Bearer ') === undefined
@@ -176,10 +139,7 @@ export class CamundaResolver {
             this.#logger.error('Authorization Header fehlt oder ist ungültig.');
             throw new Error('Authorization Header fehlt oder ist ungültig.');
         }
-        const token: string = authorizationHeader.split(' ')[1]; // Token extrahieren
-        this.#logger.debug('Get process definition by key:', key);
-        const xml = await this.#camundaService.getProcessDefinitionXmlByKey(key, token);
-        this.#logger.debug('Process definition xml:', xml);
-        return xml;
+
+        return authorizationHeader.split(' ')[1] as string; // Token extrahieren
     }
 }

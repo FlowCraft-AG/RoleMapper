@@ -8,11 +8,11 @@ type Query {
 
   getTasksByUserId(userId: String!): [Task]
   getProcessesByUserId(userId: String!): [ProzessInstanz]
-  getProcessesByKey(key: String!): ProzessInstanz
+  getProcessesByKey(processInstancenKey: String!): ProzessInstanz
   getCamundaProcesses(filter: ProcessFilterInput): [ProzessInstanz!]!
   getTasks(filter: TaskFilterInput): [Task!]!
   searchTaskVariables(filter: VariableFilterInput): [TaskVariable!]!
-  getProcessDefinitionXmlByKey(key: ID!): String! # Ruft die Prozessdefinition als XML ab
+  getProcessDefinitionXmlByKey(processDefinitionKey: ID!): String! # Ruft die Prozessdefinition als XML ab
 }
 
 
