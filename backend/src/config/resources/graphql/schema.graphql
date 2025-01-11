@@ -6,9 +6,7 @@ type Query {
   getUsersByFunction(id: ID!): MandatePayload
   getAncestors(id: ID): [OrgUnit]
 
-  getTasksByUserId(userId: String!): [Task]
   getProcessesByUserId(userId: String!): [ProzessInstanz]
-  getProcessesByKey(processInstancenKey: String!): ProzessInstanz
   getCamundaProcesses(filter: ProcessFilterInput): [ProzessInstanz!]!
   getTasks(filter: TaskFilterInput): [Task!]!
   searchTaskVariables(filter: VariableFilterInput): [TaskVariable!]!

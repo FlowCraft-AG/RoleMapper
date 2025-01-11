@@ -1,3 +1,8 @@
+/**
+ * @file camunda-api.ts
+ * @description Typdefinitionen und Input-Modelle für die Camunda Platform API. Diese Typen dienen als Grundlage für die Filter- und Suchanfragen der GraphQL-Resolver.
+ */
+
 export type CamundaBaseFilter = {
     tenantId?: string; // Mandanten-ID
     processDefinitionKey?: string | number; // Prozessdefinition

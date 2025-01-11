@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/naming-convention */
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { lastValueFrom } from 'rxjs';
+import { environment } from '../../config/environment.js';
 import { getLogger } from '../../logger/logger.js';
 import {
     ProcessFilterInput,
@@ -14,129 +11,159 @@ import {
 } from '../types/input/process-filter.Input.js';
 import { ProcessInstance, ProcessVariable, Task } from '../types/process.type.js';
 
+const { CAMUNDA_TASKLIST_API_URL, CAMUNDA_OPERATE_API_URL, REQUEST_TIMEOUT_MS } = environment;
+
 @Injectable()
 export class CamundaReadService {
-    readonly #logger = getLogger(CamundaReadService.name); // Logger für die Service-Protokollierung
+    readonly #logger = getLogger(CamundaReadService.name);
     readonly #httpService: HttpService;
+
     constructor(httpService: HttpService) {
         this.#httpService = httpService;
     }
 
     /**
+     * Sucht Prozessinstanzen anhand eines Filters.
+     * @param filter - Der Filter für die Suche.
+     * @param token - Der Bearer-Token für die Authentifizierung.
+     * @returns Eine Liste von Prozessinstanzen.
+     */
+    async fetchProcessInstances(
+        filter: ProcessFilterInput,
+        token: string,
+    ): Promise<ProcessInstance[]> {
+        this.#logger.debug('fetchProcessInstances: Suche Prozessinstanzen mit Filter: %o', filter);
+        const operateApiUrl = `${CAMUNDA_OPERATE_API_URL}/process-instances/search`;
+        const response = await this.#sendPostRequest<{ items: ProcessInstance[] }>(
+            operateApiUrl,
+            filter,
+            token,
+        );
+        const instanzen = response.items;
+        this.#logger.debug(': Gefundene Prozessinstanzen: %o', instanzen);
+        return instanzen;
+    }
+
+    /**
+     * Sucht Aufgaben basierend auf einem Filter.
+     * @param filter - Der Filter für die Suche.
+     * @param token - Der Bearer-Token für die Authentifizierung.
+     * @returns Eine Liste von Aufgaben.
+     */
+    async fetchProcessTasks(filter: TaskSearchRequest, token: string): Promise<Task[]> {
+        this.#logger.debug('fetchProcessTasks: Suche Aufgaben mit Filter: %o', filter);
+        const tasklistApiUrl = `${CAMUNDA_TASKLIST_API_URL}/tasks/search`;
+        const tasks = await this.#sendPostRequest<Task[]>(tasklistApiUrl, filter, token);
+        this.#logger.debug('fetchProcessTasks: Gefundene Aufgaben: %o', tasks);
+        return tasks;
+    }
+
+    /**
+     * Sucht Variablen basierend auf einem Filter.
+     * @param filter - Der Filter für die Suche.
+     * @param token - Der Bearer-Token für die Authentifizierung.
+     * @returns Eine Liste von Variablen.
+     */
+    async fetchProcessVariables(
+        filter: VariableFilterInput,
+        token: string,
+    ): Promise<ProcessVariable[]> {
+        this.#logger.debug('fetchProcessVariables: Suche Variablen mit Filter: %o', filter);
+        const apiUrl = `${CAMUNDA_OPERATE_API_URL}/variables/search`;
+        const response = await this.#sendPostRequest<{ items: ProcessVariable[] }>(
+            apiUrl,
+            filter,
+            token,
+        );
+        const variables = response.items;
+        this.#logger.debug('fetchProcessVariables: Gefundene Variablen: %o', variables);
+        return variables;
+    }
+
+    /**
+     * Ruft die XML-Definition einer Prozessdefinition basierend auf ihrem Schlüssel ab.
+     * @param key - Der Prozessschlüssel.
+     * @param token - Der Bearer-Token für die Authentifizierung.
+     * @returns Die Prozessdefinition als XML-String.
+     */
+    async fetchProcessDefinitionXml(key: string, token: string): Promise<string> {
+        if (!key) {
+            throw new Error(
+                'fetchProcessDefinitionXml: Der Prozessschlüssel darf nicht leer sein.',
+            );
+        }
+        const apiUrl = `${CAMUNDA_OPERATE_API_URL}/process-definitions/${key}/xml`;
+        this.#logger.info('fetchProcessDefinitionXml: processDefinitionXml=%s', key);
+        const response = await this.#sendGetRequest<string>(apiUrl, token);
+        this.#logger.debug('fetchProcessDefinitionXml: xml=%s', response);
+        return response;
+    }
+
+    /**
      * Führt einen POST-Request an die angegebene Camunda-API durch.
-     * @param url - Die URL der API (z. B. Operate, Tasklist).
+     * @template T - Erwarteter Rückgabetyp der API.
+     * @param url - Die vollständige URL der API.
      * @param body - Daten für den Request-Body.
      * @param token - Der Bearer-Token für die Authentifizierung.
+     * @returns Antwortdaten der API im angegebenen Typ.
      */
-    async sendPostRequest(url: string, body: Record<string, any>, token: string): Promise<any> {
-        this.#logger.info(`POST-Anfrage an Camunda API: ${url} mit Body: ${JSON.stringify(body)}`);
-
+    async #sendPostRequest<T>(url: string, body: Record<string, any>, token: string): Promise<T> {
+        this.#logger.debug('#sendPostRequest: URL=%s, body=%o', url, body);
         try {
             const response: AxiosResponse = await lastValueFrom(
                 this.#httpService.post(url, body, {
                     headers: {
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
                         Authorization: `Bearer ${token}`,
                     },
+                    timeout: Number(REQUEST_TIMEOUT_MS ?? '5000'), // Timeout von 5 Sekunden
                 }),
             );
-            this.#logger.info(`Antwort von Camunda API (POST): ${JSON.stringify(response.data)}`);
-            return response.data;
+            this.#logger.debug('#sendPostRequest: response=%s', JSON.stringify(response.data));
+            return response.data as T;
         } catch (error: any) {
-            this.#logger.error(
-                `Fehler bei der Anfrage an Camunda API (POST): ${error.message}`,
-                error.stack,
-            );
-            throw error;
+            this.#handleError(`POST-Request fehlgeschlagen für URL ${url}`, error);
         }
     }
 
     /**
-     * Methode für die Suche nach Aufgaben anhand der Benutzer-ID.
-     * @param userId - Die ID des Benutzers.
+     * Führt einen GET-Request an die angegebene Camunda-API durch.
+     * @template T - Erwarteter Rückgabetyp der API.
+     * @param url - Die vollständige URL der API.
      * @param token - Der Bearer-Token für die Authentifizierung.
+     * @returns Antwortdaten der API im angegebenen Typ.
      */
-    async findTasksByUserId(userId: string, token: string): Promise<Task[]> {
-        const tasklistApiUrl = 'http://localhost:8082/v1/tasks/search'; // Beispiel-URL für Camunda Tasklist
-        this.#logger.info(`Hole Benutzertasks von Tasklist API für Benutzer-ID: ${userId}`);
-        const TaskList: Task[] = await this.sendPostRequest(
-            tasklistApiUrl,
-            { assignee: userId },
-            token,
-        );
-        this.#logger.debug('Tasks: %s', TaskList);
-        return TaskList;
-    }
-
-    async findProcessInstance(key: string, token: string): Promise<ProcessInstance> {
-        const operateApiUrl = 'http://localhost:8081/v1/process-instances/search';
-
-        // Anfrage an die API senden
-        const result = await this.sendPostRequest(operateApiUrl, { filter: { key } }, token);
-        const instanzen: ProcessInstance[] = result.items;
-
-        // Überprüfung auf leeres Ergebnis
-        if (instanzen.length === 0 || instanzen[0] === undefined) {
-            this.#logger.warn('Keine Prozessinstanz gefunden für den Schlüssel: %s', key);
-            throw new Error('Keine Prozessinstanz gefunden.');
-        }
-
-        // Erste Instanz zurückgeben
-        const instanz: ProcessInstance = instanzen[0];
-        this.#logger.debug('findProcessInstance: Instanz: %o', instanz);
-        return instanz;
-    }
-
-    async findProzessListe(filter: ProcessFilterInput, token: string): Promise<ProcessInstance[]> {
-        this.#logger.debug('findProzessListe: filter: %o', filter);
-        const operateApiUrl = 'http://localhost:8081/v1/process-instances/search';
-        const response = await this.sendPostRequest(operateApiUrl, filter, token);
-        this.#logger.debug('findProzessListe: response: %o', response);
-
-        const instanzen: ProcessInstance[] = response.items;
-        this.#logger.debug('findProzessListe: Instanzen: %o', instanzen);
-        return instanzen;
-    }
-
-    async findTaskListe(filter: TaskSearchRequest, token: string): Promise<Task[]> {
-        this.#logger.debug('findProzessListe: filter: %o', filter);
-        const apiUrl = 'http://localhost:8082/v1/tasks/search';
-        const result = await this.sendPostRequest(apiUrl, filter, token);
-        this.#logger.debug('findProzessListe: response: %o', result);
-        const tasks: Task[] = result;
-        return tasks;
-    }
-
-    async searchTaskVariables(
-        filter: VariableFilterInput,
-        token: string,
-    ): Promise<ProcessVariable[]> {
-        const apiUrl = `http://localhost:8081/v1/variables/search`;
-        const result = await this.sendPostRequest(apiUrl, filter, token);
-        this.#logger.debug('searchTaskVariables: response : %o', result);
-        const tasks: ProcessVariable[] = result.items;
-        return tasks;
-    }
-
-    async getProcessDefinitionXmlByKey(key: string, token: string): Promise<string> {
-        const apiUrl = `http://localhost:8081/v1/process-definitions/${key}/xml`; // GET-Endpunkt
-
+    async #sendGetRequest<T>(url: string, token: string): Promise<T> {
+        this.#logger.debug('sendGetRequest: URL=%s', url);
         try {
-            const response = await lastValueFrom(
-                this.#httpService.get(apiUrl, {
+            const response: AxiosResponse = await lastValueFrom(
+                this.#httpService.get(url, {
                     headers: {
-                        Accept: 'text/xml',
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
                         Authorization: `Bearer ${token}`,
                     },
+                    timeout: Number(REQUEST_TIMEOUT_MS ?? '5000'), // Timeout von 5 Sekunden
                 }),
             );
-            this.#logger.debug('getProcessDefinitionXmlByKey: response : %s', response.data);
-            return response.data as string; // XML-Daten zurückgeben
+            this.#logger.debug('sendGetRequest: response=%o', response.data);
+            return response.data as T;
         } catch (error: any) {
-            this.#logger.error(
-                `Fehler bei der Anfrage an Camunda API (GET - XML): ${error.message}`,
-                error.stack,
-            );
-            throw new Error('Fehler beim Abrufen der Prozessdefinition als XML.');
+            this.#handleError(`GET-Request fehlgeschlagen für URL ${url}`, error);
         }
+    }
+
+    /**
+     * Hilfsmethode zur zentralen Fehlerbehandlung.
+     * @param message - Fehlermeldung für das Logging.
+     * @param error - Der aufgetretene Fehler.
+     * @throws Fehler mit der übergebenen Nachricht.
+     */
+    #handleError(message: string, error: any): never {
+        const errorMessage = error instanceof Error ? error.message : 'Unbekannter fehler';
+        this.#logger.error(
+            `${message}: ${errorMessage}`,
+            error instanceof Error ? error.stack : 'Kein stack trace Verfügbar',
+        );
+        throw new Error(`${message}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 }

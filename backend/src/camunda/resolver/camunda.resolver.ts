@@ -1,117 +1,122 @@
-/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @stylistic/operator-linebreak */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/**
+ * @file camunda-api.ts
+ * @description GraphQL-Resolver für die Camunda Platform API. Stellt Abfragen zur Verfügung,
+ * um Aufgaben, Prozessinstanzen und Prozessdefinitionen zu verarbeiten.
+ */
+
 import { Args, Context, Query, Resolver } from '@nestjs/graphql';
 import { Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { CamundaReadService } from '../service/camunda.service.js';
-import { ProcessFilterInput, VariableFilterInput } from '../types/input/process-filter.Input.js';
+import {
+    ProcessFilterInput,
+    TaskSearchRequest,
+    VariableFilterInput,
+} from '../types/input/process-filter.Input.js';
 import { ProcessInstance, ProcessVariable, Task } from '../types/process.type.js';
+
+type GraphQLContext = {
+    req: {
+        headers: {
+            authorization?: string;
+        };
+    };
+};
+
+/**
+ * GraphQL-Resolver für die Interaktion mit der Camunda Platform API.
+ */
 @Resolver()
 export class CamundaResolver {
     readonly #logger = getLogger(CamundaResolver.name);
     readonly #camundaService: CamundaReadService;
 
+    /**
+     * Konstruktor für den CamundaResolver.
+     *
+     * @param {CamundaReadService} camundaService - Service für die Kommunikation mit der Camunda API.
+     */
     constructor(camundaService: CamundaReadService) {
         this.#camundaService = camundaService;
     }
 
-    @Query('getTasksByUserId')
-    @Public()
-    async getTasksByUserId(@Args('userId') userId: string, @Context() context: any) {
-        const token = this.#extractToken(context);
-        this.#logger.debug('Get tasks by userId: userId=%s', userId);
-        const userTaskList: Task[] = await this.#camundaService.findTasksByUserId(userId, token);
-        this.#logger.debug('Get tasks by userId: userTasksList=%s', userTaskList);
-        return userTaskList;
-    }
-
-    @Query('getProcessesByKey')
-    @Public()
-    async getProcessInstancesByProcessInstanceKey(
-        @Args('processInstancenKey') key: string,
-        @Context() context: any,
-    ): Promise<ProcessInstance> {
-        const token = this.#extractToken(context);
-        this.#logger.debug('getProcessInstancesByProcessInstanceKey: processInstanceKey=%s', key);
-        const instanzen: ProcessInstance = await this.#camundaService.findProcessInstance(
-            key,
-            token,
-        );
-        this.#logger.debug(
-            'getProcessInstancesByProcessInstanceKey: ProcessInstance=%o',
-            instanzen,
-        );
-        return instanzen;
-    }
-
+    /**
+     * Ruft die Prozessinstanzen eines Benutzers ab.
+     *
+     * @param {string} userId - ID des Benutzers.
+     * @param {GraphQLContext} context - GraphQL-Kontext mit Authorization-Header.
+     * @returns {Promise<ProcessInstance[]>} Eine Liste von Prozessinstanzen.
+     *
+     * @example
+     * ```graphql
+     * query {
+     *   getProcessesByUserId(userId: "user1234") {
+     *     id
+     *     state
+     *     businessKey
+     *   }
+     * }
+     * ```
+     */
     @Query('getProcessesByUserId')
     @Public()
     async getProcessInstancesByUserId(
         @Args('userId') userId: string,
-        @Context() context: any,
+        @Context() context: GraphQLContext,
     ): Promise<ProcessInstance[]> {
-        const token = this.#extractToken(context);
         this.#logger.debug('getProcessInstancesByUserId: userId=%s', userId);
-        const userTaskList: Task[] = await this.#camundaService.findTasksByUserId(userId, token);
-        this.#logger.debug('getProcessInstancesByUserId: userTaskList=%o', userTaskList);
-        const processInstanceKeyList: string[] = userTaskList.map(
-            (task) => task.processInstanceKey,
+
+        const token = this.#extractToken(context);
+        const userTasks = await this.#fetchUserTasks(userId, token);
+
+        const processInstances = await this.#fetchProcessInstancesByKeys(
+            userTasks.map((task) => task.processInstanceKey),
+            token,
         );
-        this.#logger.debug(
-            'getProcessInstancesByUserId: prozessInstanzenKeys=%o',
-            processInstanceKeyList,
-        );
-        const processInstanceList: ProcessInstance[] = [];
-        for (const key of processInstanceKeyList) {
-            const instanz: ProcessInstance = await this.#camundaService.findProcessInstance(
-                key,
-                token,
-            );
-            processInstanceList.push(instanz);
-        }
-        this.#logger.debug('getProcessInstancesByUserId: ProcessInstances=%o', processInstanceList);
-        return processInstanceList;
+
+        this.#logger.debug('getProcessInstancesByUserId: processInstances=%o', processInstances);
+        return processInstances;
     }
 
     @Query('getCamundaProcesses')
     @Public()
-    async getProzessListe(@Args('filter') filter: ProcessFilterInput, @Context() context: any) {
-        const token = this.#extractToken(context);
+    async getProzessListe(
+        @Args('filter') filter: ProcessFilterInput,
+        @Context() context: GraphQLContext,
+    ) {
         this.#logger.debug('getProzessListe: filter=%o', filter);
-        const instanzen: ProcessInstance[] = await this.#camundaService.findProzessListe(
-            filter,
-            token,
-        );
-        this.#logger.debug('getProzessListe: Instanzen=%o', instanzen);
-        return instanzen;
+
+        const token = this.#extractToken(context);
+        const instances = await this.#camundaService.fetchProcessInstances(filter, token);
+
+        this.#logger.debug('getProzessListe: instances=%o', instances);
+        return instances;
     }
 
     @Query('getTasks')
     @Public()
-    async getTasks(@Args('filter') filter: ProcessFilterInput, @Context() context: any) {
-        const token = this.#extractToken(context);
+    async getTasks(@Args('filter') filter: ProcessFilterInput, @Context() context: GraphQLContext) {
         this.#logger.debug('getTasks: filter=%o', filter);
-        const instanzen: Task[] = await this.#camundaService.findTaskListe(filter, token);
-        this.#logger.debug('getTasks: Instanzen=%o', instanzen);
-        return instanzen;
+
+        const token = this.#extractToken(context);
+        const tasks = await this.#camundaService.fetchProcessTasks(filter, token);
+
+        this.#logger.debug('getTasks: tasks=%o', tasks);
+        return tasks;
     }
 
     @Public()
     @Query('searchTaskVariables')
-    async searchTaskVariables(
+    async getTaskVariables(
         @Args('filter') filter: VariableFilterInput,
-        @Context() context: any,
+        @Context() context: GraphQLContext,
     ): Promise<ProcessVariable[]> {
+        this.#logger.debug('getTaskVariables: Filter: %o', filter);
+
         const token = this.#extractToken(context);
-        this.#logger.debug('searchTaskVariables: Filter: %o', filter);
-        const variables: ProcessVariable[] = await this.#camundaService.searchTaskVariables(
-            filter,
-            token,
-        );
-        this.#logger.debug('searchTaskVariables: Variablen: %o', variables);
+        const variables = await this.#camundaService.fetchProcessVariables(filter, token);
+
+        this.#logger.debug('getTaskVariables: variables=%o', variables);
         return variables;
     }
 
@@ -119,27 +124,66 @@ export class CamundaResolver {
     @Query('getProcessDefinitionXmlByKey')
     async getProcessDefinitionXmlByKey(
         @Args('processDefinitionKey') key: string,
-        @Context() context: any,
+        @Context() context: GraphQLContext,
     ): Promise<string> {
-        const token = this.#extractToken(context);
         this.#logger.debug('getProcessDefinitionXmlByKey: processDefinitionKey=%s', key);
-        const xml = await this.#camundaService.getProcessDefinitionXmlByKey(key, token);
+
+        const token = this.#extractToken(context);
+        const xml = await this.#camundaService.fetchProcessDefinitionXml(key, token);
+
         this.#logger.debug('getProcessDefinitionXmlByKey: xml=%s', xml);
         return xml;
     }
 
-    #extractToken(context: any): string {
+    /**
+     * Extrahiert das Bearer-Token aus dem Authorization-Header des Kontextes.
+     *
+     * @private
+     * @param {GraphQLContext} context - GraphQL-Kontext mit Request-Headern.
+     * @returns {string} Das extrahierte Bearer-Token.
+     * @throws {Error} Wenn der Authorization-Header fehlt oder ungültig ist.
+     */
+    #extractToken(context: GraphQLContext): string {
         // Bearer-Token aus dem Header extrahieren
         const authorizationHeader = context.req.headers.authorization;
 
-        if (
-            authorizationHeader === undefined ||
-            authorizationHeader.startsWith('Bearer ') === undefined
-        ) {
+        if (authorizationHeader?.startsWith('Bearer ') === undefined) {
             this.#logger.error('Authorization Header fehlt oder ist ungültig.');
             throw new Error('Authorization Header fehlt oder ist ungültig.');
         }
 
-        return authorizationHeader.split(' ')[1] as string; // Token extrahieren
+        return authorizationHeader.split(' ')[1]!; // Token extrahieren
+    }
+
+    /**
+     * Holt Aufgaben eines Benutzers basierend auf der Benutzer-ID.
+     */
+    async #fetchUserTasks(userId: string, token: string): Promise<Task[]> {
+        const filter: TaskSearchRequest = { assignee: userId };
+        this.#logger.debug('#fetchUserTasks: filter=%o', filter);
+
+        const tasks = await this.#camundaService.fetchProcessTasks(filter, token);
+        this.#logger.debug('#fetchUserTasks: tasks=%o', tasks);
+
+        return tasks;
+    }
+
+    /**
+     * Holt Prozessinstanzen basierend auf einer Liste von Schlüsseln.
+     */
+    async #fetchProcessInstancesByKeys(keys: string[], token: string): Promise<ProcessInstance[]> {
+        this.#logger.debug('#fetchProcessInstancesByKeys: keys=%o', keys);
+
+        const processInstances: ProcessInstance[] = [];
+        for (const key of keys) {
+            const filter: ProcessFilterInput = { filter: { processInstanceKey: key } };
+            const instances = await this.#camundaService.fetchProcessInstances(filter, token);
+            if (instances.length > 0 && instances[0] !== undefined) {
+                processInstances.push(instances[0]);
+            }
+        }
+
+        this.#logger.debug('#fetchProcessInstancesByKeys: processInstances=%o', processInstances);
+        return processInstances;
     }
 }
