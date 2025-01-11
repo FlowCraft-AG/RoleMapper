@@ -7,9 +7,12 @@
 
 'use client';
 
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme, Button } from '@mui/material';
 import { Process } from '../../types/process.type';
+import { useState } from 'react';
 import { JSX } from 'react';
+import AddRoleModal from '../modal/processModals/AddRoleModal'
+import { Add } from '@mui/icons-material';
 
 interface RolesSpalteProps {
   selectedProcess: Process;
@@ -23,6 +26,15 @@ interface RolesSpalteProps {
  */
 export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.Element {
   const theme = useTheme(); // Theme verwenden
+  const [open, setOpen] = useState(false);
+
+  const handleAddRole = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Box
@@ -92,6 +104,26 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
           )}
         </tbody>
       </table>
+
+      {/* Button zum Hinzufügen von Rollen */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleAddRole}
+        sx={{
+          marginTop: 2,
+          width: '100%',
+          padding: '10px',
+          fontWeight: 'bold',
+          textTransform: 'none',
+        }}
+        startIcon={<Add />}
+      >
+        Rolle hinzufügen
+      </Button>
+
+      {/* Modal-Komponente auslagern */}
+      <AddRoleModal open={open} onClose={handleClose} />
     </Box>
   );
 }
