@@ -1,0 +1,213 @@
+"""
+Mögliche Zustände eines Prozesses in Camunda.
+"""
+enum ProcessState {
+  ACTIVE # Der Prozess ist aktiv.
+  COMPLETED # Der Prozess wurde abgeschlossen.
+  CANCELED # Der Prozess wurde abgebrochen.
+}
+
+"""
+Mögliche Zustände einer Aufgabe in Camunda.
+"""
+enum TaskState {
+  CREATED # Die Aufgabe wurde erstellt.
+  COMPLETED # Die Aufgabe wurde abgeschlossen.
+  CANCELED # Die Aufgabe wurde abgebrochen.
+  FAILED # Die Aufgabe ist fehlgeschlagen.
+}
+
+"""
+Eine Camunda-Prozessinstanz, die Informationen über Status, Version und Metadaten enthält.
+"""
+type ProcessInstance {
+  """
+  Eindeutiger Schlüssel der Prozessinstanz.
+  """
+  key: ID!
+
+  """
+  Version des Prozesses.
+  """
+  processVersion: Int!
+
+  """
+  BPMN-Prozess-ID, die den Prozess eindeutig identifiziert.
+  """
+  bpmnProcessId: String!
+
+  """
+  Startdatum der Instanz im ISO-Format.
+  """
+  startDate: String!
+
+  """
+  Zustand der Prozessinstanz, z. B. "ACTIVE", "COMPLETED".
+  """
+  state: ProcessState!
+
+  """
+  Gibt an, ob ein Vorfall in der Prozessinstanz vorliegt.
+  """
+  incident: Boolean!
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: String!
+
+  """
+  Mandanten-ID der Prozessinstanz (optional).
+  """
+  tenantId: String
+}
+
+"""
+Eine Prozessvariable, die mit einer Prozessinstanz in Camunda verknüpft ist.
+"""
+type ProcessVariable {
+  """
+  Schlüssel der Variablen.
+  """
+  key: ID!
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: String!
+
+  """
+  Schlüssel des Geltungsbereichs, in dem die Variable definiert ist.
+  """
+  scopeKey: String!
+
+  """
+  Name der Variable.
+  """
+  name: String!
+
+  """
+  Wert der Variable.
+  """
+  value: String!
+
+  """
+  Gibt an, ob der Wert der Variable abgeschnitten wurde.
+  """
+  truncated: Boolean!
+
+  """
+  Mandanten-ID der Variable (optional).
+  """
+  tenantId: String
+}
+
+"""
+Eine Benutzeraufgabe in Camunda, einschließlich Status, Benutzer und zugehöriger Metadaten.
+"""
+type Task {
+  """
+  Eindeutige ID der Aufgabe.
+  """
+  id: ID!
+
+  """
+  Name der Aufgabe.
+  """
+  name: String!
+
+  """
+  ID der Aufgaben-Definition.
+  """
+  taskDefinitionId: String!
+
+  """
+  Name des zugehörigen Prozesses.
+  """
+  processName: String!
+
+  """
+  Erstellungsdatum der Aufgabe im ISO-Format.
+  """
+  creationDate: String!
+
+  """
+  Abschlussdatum der Aufgabe (optional, wenn die Aufgabe noch offen ist).
+  """
+  completionDate: String
+
+  """
+  Benutzer, dem die Aufgabe zugewiesen ist.
+  """
+  assignee: String
+
+  """
+  Zustand der Aufgabe, z. B. "CREATED", "COMPLETED".
+  """
+  taskState: TaskState!
+
+  """
+  Schlüssel des Formulars, das mit der Aufgabe verknüpft ist (optional).
+  """
+  formKey: String
+
+  """
+  ID des zugehörigen Formulars (optional).
+  """
+  formId: String
+
+  """
+  Version des Formulars (optional).
+  """
+  formVersion: Int
+
+  """
+  Gibt an, ob das Formular in die Aufgabe eingebettet ist.
+  """
+  isFormEmbedded: Boolean!
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: String!
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: String!
+
+  """
+  Mandanten-ID der Aufgabe (optional).
+  """
+  tenantId: String
+
+  """
+  Fälligkeitsdatum der Aufgabe (optional).
+  """
+  dueDate: String
+
+  """
+  Datum für die Nachverfolgung der Aufgabe (optional).
+  """
+  followUpDate: String
+
+  """
+  Kandidatengruppen, die für die Aufgabe berechtigt sind (optional).
+  """
+  candidateGroups: [String]
+
+  """
+  Kandidatenbenutzer, die für die Aufgabe berechtigt sind (optional).
+  """
+  candidateUsers: [String]
+
+  """
+  Implementierungstyp der Aufgabe, z. B. "JOB_WORKER" oder "ZEEBE_USER_TASK".
+  """
+  implementation: String
+
+  """
+  Priorität der Aufgabe.
+  """
+  priority: Int!
+}

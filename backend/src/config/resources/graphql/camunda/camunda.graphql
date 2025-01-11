@@ -1,0 +1,51 @@
+###############################################################################################
+# Q U E R I E S
+###############################################################################################
+type Query {
+  """
+  Ruft die Prozessinstanzen ab, die einem Benutzer zugeordnet sind.
+
+  Diese Abfrage wird verwendet, um alle laufenden oder abgeschlossenen Prozessinstanzen eines Benutzers zu finden.
+  """
+  getProcessInstancesByUserId(userId: String!): [ProcessInstance]
+
+  """
+  Ruft Prozessinstanzen basierend auf einem Filter ab.
+
+  Der Filter ermöglicht es, die Abfrage auf spezifische Kriterien einzuschränken.
+  """
+  getCamundaProcesses(filter: ProcessInstanceFilterInput): [ProcessInstance]
+
+  """
+  Ruft Aufgaben basierend auf einem Filter ab.
+
+  Diese Abfrage liefert eine Liste von Aufgaben, die den Kriterien des Filters entsprechen.
+  """
+  getTasks(filter: TaskFilterInput): [Task!]!
+
+  """
+  Sucht nach Variablen innerhalb eines Prozesses.
+
+  Diese Abfrage liefert eine Liste von Prozessvariablen, die den angegebenen Kriterien entsprechen.
+  """
+  searchTaskVariables(filter: ProcessVariableFilterInput): [ProcessVariable]
+
+  """
+  Ruft die Prozessdefinition als XML ab.
+
+  Diese Abfrage liefert die vollständige XML-Definition eines Prozesses, basierend auf seinem Schlüssel.
+  """
+  getProcessDefinitionXmlByKey(processDefinitionKey: ID!): String!
+}
+
+###############################################################################################G
+# M U T A T I O N S
+###############################################################################################
+type Mutation {
+  """
+  Startet einen Prozess basierend auf einem Schlüssel und optionalen Variablen.
+
+  Diese Mutation startet einen neuen Workflow innerhalb der Prozess-Engine.
+  """
+  startProcess(processKey: String!, variables: String): String!
+}

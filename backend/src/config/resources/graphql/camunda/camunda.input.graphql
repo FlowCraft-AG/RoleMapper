@@ -1,0 +1,149 @@
+"""
+Sortierkriterien für Abfragen.
+"""
+input CamundaSortInput {
+  """
+  Das zu sortierende Feld.
+  """
+  field: String
+  """
+  Sortierreihenfolge (ASC oder DESC).
+  """
+  order: directionInput
+}
+
+"""
+Filterkriterien für die Abfrage von Prozessinstanzen.
+"""
+input ProcessInstanceFilterInput {
+  """
+  Eindeutiger Schlüssel der Prozessinstanz.
+  """
+  key: ID
+  """
+  Version der Prozessinstanz.
+  """
+  processVersion: String
+  """
+  BPMN-Prozess-ID der Instanz.
+  """
+  bpmnProcessId: String
+  """
+  Zustand der Prozessinstanz (z. B. "ACTIVE", "COMPLETED").
+  """
+  state: ProcessState
+  """
+  Gibt an, ob ein Vorfall vorliegt.
+  """
+  incident: Boolean
+  """
+  Mandanten-ID der Prozessinstanz (optional).
+  """
+  tenantId: String
+  """
+  Startdatum der Prozessinstanz im ISO-Format.
+  """
+  startDate: String
+  """
+  Enddatum der Prozessinstanz im ISO-Format.
+  """
+  endDate: String
+}
+
+"""
+Filterkriterien für die Abfrage von Aufgaben.
+"""
+input TaskFilterInput {
+  """
+  Zustand der Aufgabe (z. B. "CREATED", "COMPLETED").
+  """
+  state: TaskState
+  """
+  Gibt an, ob die Aufgabe einem Benutzer zugewiesen ist.
+  """
+  assigned: Boolean
+  """
+  Benutzer, dem die Aufgabe zugewiesen ist.
+  """
+  assignee: String
+  """
+  Schlüssel der Prozessdefinition, zu der die Aufgabe gehört.
+  """
+  processDefinitionKey: String
+  """
+  Schlüssel der Prozessinstanz, zu der die Aufgabe gehört.
+  """
+  processInstanceKey: String
+  """
+  Zeitraum für das Nachverfolgungsdatum der Aufgabe.
+  """
+  followUpDate: DateRangeInput
+  """
+  Zeitraum für das Fälligkeitsdatum der Aufgabe.
+  """
+  dueDate: DateRangeInput
+  """
+  Kandidatengruppen für die Aufgabe.
+  """
+  candidateGroups: [String]
+  """
+  Kandidatbenutzer für die Aufgabe.
+  """
+  candidateUser: String
+  """
+  Liste der Kandidatenbenutzer für die Aufgabe.
+  """
+  candidateUsers: [String]
+  """
+  Priorität der Aufgabe.
+  """
+  priority: Int
+}
+
+"""
+Filterkriterien für die Abfrage von Prozessvariablen.
+"""
+input ProcessVariableFilterInput {
+  """
+  Schlüssel der Variable.
+  """
+  key: String
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: String
+  """
+  Schlüssel des Geltungsbereichs der Variable.
+  """
+  scopeKey: String
+  """
+  Name der Variable.
+  """
+  name: String
+  """
+  Wert der Variable.
+  """
+  value: String
+  """
+  Gibt an, ob der Wert der Variable abgeschnitten wurde.
+  """
+  truncated: Boolean
+  """
+  Mandanten-ID der Variable (optional).
+  """
+  tenantId: String
+}
+
+"""
+Zeitraum für die Filterung nach Daten.
+"""
+input DateRangeInput {
+  """
+  Startdatum des Zeitraums im ISO-Format.
+  """
+  from: String
+  """
+  Enddatum des Zeitraums im ISO-Format.
+  """
+  to: String
+}
