@@ -6,7 +6,7 @@
 
 # Class: QueryResolver
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/resolver/query.resolver.ts#L30)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/resolver/query.resolver.ts#L30)
 
 Resolver für die `RoleMapper`-Entität, der GraphQL-Abfragen verarbeitet und die entsprechenden Daten
 vom `ReadService` an den Client zurückgibt.
@@ -19,7 +19,7 @@ Verwendet Filter und Interceptoren für Fehlerbehandlung und Zeitprotokollierung
 
 > **new QueryResolver**(`service`): [`QueryResolver`](QueryResolver.md)
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:39](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/resolver/query.resolver.ts#L39)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:39](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/resolver/query.resolver.ts#L39)
 
 Konstruktor für den QueryResolver, der den ReadService injiziert.
 
@@ -41,7 +41,7 @@ Der Service, der für die Datenabfragen zuständig ist.
 
 > **getAncestors**(`id`): `Promise`\<[`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md)[]\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:215](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/resolver/query.resolver.ts#L215)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:215](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/resolver/query.resolver.ts#L215)
 
 Führt eine Abfrage aus, um alle übergeordneten Organisationseinheiten basierend auf einer ID abzurufen.
 
@@ -75,7 +75,7 @@ console.log(ancestors); // Gibt die Liste der übergeordneten Organisationseinhe
 
 > **getEntityData**(`input`): `Promise`\<[`DataPayload`](../../../model/payload/data.payload/type-aliases/DataPayload.md)\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:95](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/resolver/query.resolver.ts#L95)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:95](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/resolver/query.resolver.ts#L95)
 
 Führt eine dynamische Abfrage für beliebige Entitäten mit flexiblen Filtern aus.
 
@@ -121,7 +121,7 @@ console.log(result.totalCount); // Gibt die Gesamtanzahl der Benutzer zurück
 
 > **getRole**(`input`): `Promise`\<[`RolePayload`](../../../model/payload/role-payload.type/type-aliases/RolePayload.md)\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:61](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/resolver/query.resolver.ts#L61)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:61](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/resolver/query.resolver.ts#L61)
 
 Führt eine Abfrage aus, um die Rollen eines Prozesses zu erhalten.
 
@@ -159,7 +159,7 @@ console.log(result.roles); // Gibt die Rollen und Benutzer aus.
 
 > **getSavedData**(`id`): `Promise`\<[`MandatePayload`](../../../model/payload/mandate.payload/type-aliases/MandatePayload.md)\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:139](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/resolver/query.resolver.ts#L139)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:139](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/resolver/query.resolver.ts#L139)
 
 Führt eine Abfrage aus, um gespeicherte Daten zu einem Mandat abzurufen.
 
@@ -199,7 +199,7 @@ console.log(mandate.functionName); // Gibt den Namen der zugehörigen Funktion z
 
 > **getUsersByFunction**(`id`): `Promise`\<[`GetUsersByFunctionResult`](../../../model/payload/get-users.payload/type-aliases/GetUsersByFunctionResult.md)\>
 
-Defined in: [src/role-mapper/resolver/query.resolver.ts:180](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/resolver/query.resolver.ts#L180)
+Defined in: [src/role-mapper/resolver/query.resolver.ts:180](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/resolver/query.resolver.ts#L180)
 
 Führt eine Abfrage aus, um Benutzer basierend auf einer Funktion abzurufen.
 

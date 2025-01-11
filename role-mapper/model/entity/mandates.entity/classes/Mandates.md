@@ -6,7 +6,7 @@
 
 # Class: Mandates
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:84](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/mandates.entity.ts#L84)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:84](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/mandates.entity.ts#L84)
 
 Repräsentiert eine Funktion (Mandate) in der Datenbank.
 
@@ -49,7 +49,7 @@ Defined in: node\_modules/mongoose/types/document.d.ts:22
 
 > **functionName**: `string`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:107](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/mandates.entity.ts#L107)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:107](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/mandates.entity.ts#L107)
 
 Der Name der Funktion (z. B. "Professor").
 
@@ -59,7 +59,7 @@ Der Name der Funktion (z. B. "Professor").
 
 > **isImpliciteFunction**: `boolean`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:131](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/mandates.entity.ts#L131)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:131](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/mandates.entity.ts#L131)
 
 Gibt an, ob es sich um eine implizite Funktion handelt.
 
@@ -69,7 +69,7 @@ Gibt an, ob es sich um eine implizite Funktion handelt.
 
 > **isSingleUser**: `boolean`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:123](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/mandates.entity.ts#L123)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:123](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/mandates.entity.ts#L123)
 
 Gibt an, ob die Funktion nur für einen Benutzer gilt.
 
@@ -79,7 +79,7 @@ Gibt an, ob die Funktion nur für einen Benutzer gilt.
 
 > **orgUnit**: `ObjectId`
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:115](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/mandates.entity.ts#L115)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:115](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/mandates.entity.ts#L115)
 
 Die Organisationseinheit, der die Funktion zugeordnet ist.
 
@@ -89,7 +89,7 @@ Die Organisationseinheit, der die Funktion zugeordnet ist.
 
 > `optional` **query**: [`GraphQLMutationQuerys`](../type-aliases/GraphQLMutationQuerys.md)
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:162](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/mandates.entity.ts#L162)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:162](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/mandates.entity.ts#L162)
 
 Die gespeicherte GraphQL-Abfrage.
 
@@ -99,6 +99,6 @@ Die gespeicherte GraphQL-Abfrage.
 
 > `optional` **users**: `string`[]
 
-Defined in: [src/role-mapper/model/entity/mandates.entity.ts:151](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/mandates.entity.ts#L151)
+Defined in: [src/role-mapper/model/entity/mandates.entity.ts:151](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/mandates.entity.ts#L151)
 
 Die Benutzer, die dieser Funktion zugeordnet sind.

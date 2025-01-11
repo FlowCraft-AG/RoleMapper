@@ -8,7 +8,7 @@
 
 > **TokenInput**: `object`
 
-Defined in: [src/security/keycloak/token.resolver.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/security/keycloak/token.resolver.ts#L10)
+Defined in: [src/security/keycloak/token.resolver.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/security/keycloak/token.resolver.ts#L10)
 
 Typdefinition für Token-Daten bei GraphQL
 

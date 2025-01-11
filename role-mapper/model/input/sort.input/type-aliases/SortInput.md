@@ -8,7 +8,7 @@
 
 > **SortInput**: `object`
 
-Defined in: [src/role-mapper/model/input/sort.input.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/input/sort.input.ts#L11)
+Defined in: [src/role-mapper/model/input/sort.input.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/input/sort.input.ts#L11)
 
 Eingabeparameter für Sortieroptionen.
 

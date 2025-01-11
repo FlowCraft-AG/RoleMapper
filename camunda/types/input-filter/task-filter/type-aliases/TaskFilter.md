@@ -8,7 +8,7 @@
 
 > **TaskFilter**: [`BaseFilter`](../../base-filter/type-aliases/BaseFilter.md) & `object`
 
-Defined in: [src/camunda/types/input-filter/task-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/types/input-filter/task-filter.ts#L10)
+Defined in: [src/camunda/types/input-filter/task-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/types/input-filter/task-filter.ts#L10)
 
 Erweiterter Filter für die Suche nach Aufgaben in der Camunda Tasklist API.
 

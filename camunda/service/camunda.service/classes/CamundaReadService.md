@@ -6,7 +6,7 @@
 
 # Class: CamundaReadService
 
-Defined in: [src/camunda/service/camunda.service.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/service/camunda.service.ts#L17)
+Defined in: [src/camunda/service/camunda.service.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/service/camunda.service.ts#L17)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/camunda/service/camunda.service.ts:17](https://github.com/FlowC
 
 > **new CamundaReadService**(`httpService`): [`CamundaReadService`](CamundaReadService.md)
 
-Defined in: [src/camunda/service/camunda.service.ts:21](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/service/camunda.service.ts#L21)
+Defined in: [src/camunda/service/camunda.service.ts:21](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/service/camunda.service.ts#L21)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/camunda/service/camunda.service.ts:21](https://github.com/FlowC
 
 > **fetchProcessDefinitionXml**(`key`, `token`): `Promise`\<`string`\>
 
-Defined in: [src/camunda/service/camunda.service.ts:90](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/service/camunda.service.ts#L90)
+Defined in: [src/camunda/service/camunda.service.ts:90](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/service/camunda.service.ts#L90)
 
 Ruft die XML-Definition einer Prozessdefinition basierend auf ihrem Schlüssel ab.
 
@@ -62,7 +62,7 @@ Die Prozessdefinition als XML-String.
 
 > **fetchProcessInstances**(`filter`, `token`): `Promise`\<[`ProcessInstance`](../../../types/process-instance.type/type-aliases/ProcessInstance.md)[]\>
 
-Defined in: [src/camunda/service/camunda.service.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/service/camunda.service.ts#L31)
+Defined in: [src/camunda/service/camunda.service.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/service/camunda.service.ts#L31)
 
 Sucht Prozessinstanzen anhand eines Filters.
 
@@ -92,7 +92,7 @@ Eine Liste von Prozessinstanzen.
 
 > **fetchProcessTasks**(`filter`, `token`): `Promise`\<[`Task`](../../../types/task.type/type-aliases/Task.md)[]\>
 
-Defined in: [src/camunda/service/camunda.service.ts:55](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/service/camunda.service.ts#L55)
+Defined in: [src/camunda/service/camunda.service.ts:55](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/service/camunda.service.ts#L55)
 
 Sucht Aufgaben basierend auf einem Filter.
 
@@ -122,7 +122,7 @@ Eine Liste von Aufgaben.
 
 > **fetchProcessVariables**(`filter`, `token`): `Promise`\<[`ProcessVariable`](../../../types/process-variable.type/type-aliases/ProcessVariable.md)[]\>
 
-Defined in: [src/camunda/service/camunda.service.ts:69](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/service/camunda.service.ts#L69)
+Defined in: [src/camunda/service/camunda.service.ts:69](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/service/camunda.service.ts#L69)
 
 Sucht Variablen basierend auf einem Filter.
 

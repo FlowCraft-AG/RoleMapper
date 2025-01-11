@@ -6,7 +6,7 @@
 
 # Class: CamundaResolver
 
-Defined in: [src/camunda/resolver/camunda.resolver.ts:60](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/resolver/camunda.resolver.ts#L60)
+Defined in: [src/camunda/resolver/camunda.resolver.ts:60](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/resolver/camunda.resolver.ts#L60)
 
 GraphQL-Resolver für die Verarbeitung von Anfragen an die Camunda Platform API.
 
@@ -26,7 +26,7 @@ Alle Anfragen nutzen:
 
 > **new CamundaResolver**(`camundaService`): [`CamundaResolver`](CamundaResolver.md)
 
-Defined in: [src/camunda/resolver/camunda.resolver.ts:77](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/resolver/camunda.resolver.ts#L77)
+Defined in: [src/camunda/resolver/camunda.resolver.ts:77](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/resolver/camunda.resolver.ts#L77)
 
 Konstruktor für den CamundaResolver.
 
@@ -48,7 +48,7 @@ Service für die Kommunikation mit der Camunda API.
 
 > **getProcessDefinitionXmlByKey**(`key`, `context`): `Promise`\<`string`\>
 
-Defined in: [src/camunda/resolver/camunda.resolver.ts:264](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/resolver/camunda.resolver.ts#L264)
+Defined in: [src/camunda/resolver/camunda.resolver.ts:264](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/resolver/camunda.resolver.ts#L264)
 
 **XML-Definition einer Prozessdefinition abrufen**
 
@@ -90,7 +90,7 @@ query {
 
 > **getProcessInstancesByUserId**(`userId`, `context`): `Promise`\<[`ProcessInstance`](../../../types/process-instance.type/type-aliases/ProcessInstance.md)[]\>
 
-Defined in: [src/camunda/resolver/camunda.resolver.ts:108](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/resolver/camunda.resolver.ts#L108)
+Defined in: [src/camunda/resolver/camunda.resolver.ts:108](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/resolver/camunda.resolver.ts#L108)
 
 **Prozessinstanzen eines Benutzers abrufen**
 
@@ -139,7 +139,7 @@ query {
 
 > **getProzessListe**(`filter`, `context`): `Promise`\<[`ProcessInstance`](../../../types/process-instance.type/type-aliases/ProcessInstance.md)[]\>
 
-Defined in: [src/camunda/resolver/camunda.resolver.ts:154](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/resolver/camunda.resolver.ts#L154)
+Defined in: [src/camunda/resolver/camunda.resolver.ts:154](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/resolver/camunda.resolver.ts#L154)
 
 **Prozessinstanzen filtern**
 
@@ -188,7 +188,7 @@ query {
 
 > **getTasks**(`filter`, `context`): `Promise`\<[`Task`](../../../types/task.type/type-aliases/Task.md)[]\>
 
-Defined in: [src/camunda/resolver/camunda.resolver.ts:192](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/resolver/camunda.resolver.ts#L192)
+Defined in: [src/camunda/resolver/camunda.resolver.ts:192](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/resolver/camunda.resolver.ts#L192)
 
 **Aufgaben filtern**
 
@@ -235,7 +235,7 @@ query {
 
 > **getTaskVariables**(`filter`, `context`): `Promise`\<[`ProcessVariable`](../../../types/process-variable.type/type-aliases/ProcessVariable.md)[]\>
 
-Defined in: [src/camunda/resolver/camunda.resolver.ts:230](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/camunda/resolver/camunda.resolver.ts#L230)
+Defined in: [src/camunda/resolver/camunda.resolver.ts:230](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/camunda/resolver/camunda.resolver.ts#L230)
 
 **Variablen einer Aufgabe suchen**
 

@@ -8,6 +8,6 @@
 
 > **EntityDocument**: [`UserDocument`](../../user.entity/type-aliases/UserDocument.md) \| [`MandateDocument`](../../mandates.entity/type-aliases/MandateDocument.md) \| [`ProcessDocument`](../../process.entity/type-aliases/ProcessDocument.md) \| [`RoleDocument`](../../roles.entity/type-aliases/RoleDocument.md) \| [`OrgUnitDocument`](../../org-unit.entity/type-aliases/OrgUnitDocument.md)
 
-Defined in: [src/role-mapper/model/entity/entities.entity.ts:65](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/entity/entities.entity.ts#L65)
+Defined in: [src/role-mapper/model/entity/entities.entity.ts:65](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/model/entity/entities.entity.ts#L65)
 
 Mongoose-Dokumenttypen der Entitäten.

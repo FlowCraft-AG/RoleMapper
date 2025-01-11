@@ -6,7 +6,7 @@
 
 # Class: RoleMapperModule
 
-Defined in: [src/role-mapper/role-mapper.module.ts:19](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/role-mapper.module.ts#L19)
+Defined in: [src/role-mapper/role-mapper.module.ts:19](https://github.com/FlowCraft-AG/RoleMapper/blob/8da0bd78326e48681af59eedcf5fc8f5e650849b/backend/src/role-mapper/role-mapper.module.ts#L19)
 
 ## Constructors
 
