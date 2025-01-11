@@ -7,7 +7,7 @@ import {
   GET_ALL_PROCESSES,
   GET_PROCESS_BY_ID,
   GET_PROCESSES_SHORT,
-} from '../../../graphql/processes/query/get-processes';
+} from '../../../graphql/processes/query/get-processes.query';
 import { Process, ShortProcess } from '../../../types/process.type';
 import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 import { getLogger } from '../../../utils/logger';
