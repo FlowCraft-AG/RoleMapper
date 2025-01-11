@@ -70,8 +70,11 @@ export default function ProcessInstances() {
       setError(null); // Fehler zurücksetzen
 
       try {
+        if (session === undefined || session?.access_token === undefined) {
+          throw new Error('Keine Session vorhanden.');
+        }
         console.log('ProcessInstances: token=', session);
-        const instanzen = await fetchProcessInstances(session?.access_token);
+        const instanzen = await fetchProcessInstances(session.access_token);
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(
