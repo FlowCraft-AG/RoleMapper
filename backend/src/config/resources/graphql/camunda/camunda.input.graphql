@@ -48,6 +48,11 @@ input ProcessInstanceFilterInput {
   Enddatum der Prozessinstanz im ISO-Format.
   """
   endDate: String
+
+  """
+  Sortierkriterien für die Abfrage.
+  """
+  sortBy: [CamundaSortInput]
 }
 
 """

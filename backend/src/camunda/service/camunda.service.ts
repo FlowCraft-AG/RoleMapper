@@ -35,7 +35,7 @@ export class CamundaReadService {
         this.#logger.debug('fetchProcessInstances: Suche Prozessinstanzen mit Filter: %o', filter);
 
         const operateApiUrl = `${CAMUNDA_OPERATE_API_URL}/process-instances/search`;
-        const body = { filter };
+        const body = { filter, size: filter.size ?? undefined, sort: filter.sort ?? undefined };
         const response = await this.#sendPostRequest<{ items: ProcessInstance[] }>(
             operateApiUrl,
             body,
@@ -55,7 +55,7 @@ export class CamundaReadService {
     async fetchProcessTasks(filter: TaskFilter, token: string): Promise<Task[]> {
         this.#logger.debug('fetchProcessTasks: Suche Aufgaben mit Filter: %o', filter);
         const tasklistApiUrl = `${CAMUNDA_TASKLIST_API_URL}/tasks/search`;
-        const tasks = await this.#sendPostRequest<Task[]>(tasklistApiUrl, filter, token);
+        const tasks = await this.#sendPostRequest<Task[]>(tasklistApiUrl, filter ?? {}, token);
         this.#logger.debug('fetchProcessTasks: Gefundene Aufgaben: %o', tasks);
         return tasks;
     }

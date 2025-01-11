@@ -8,78 +8,25 @@
 'use server';
 
 import {
+  GET_ALL_PROCESS_INSTANCES,
+  GET_PROCESS_DEFINITION_XML_BY_PROCESS_DEFINITION_KEY,
+  GET_PROCESS_INSTANCE_BY_PROCESS_INSTANCE_KEY,
+} from '../../graphql/processes/query/get-process-instance.query';
+import { GET_PROCESS_VARIABLE_BY_PROCESS_INSTANCE_KEY } from '../../graphql/processes/query/get-process-variable.query';
+import {
+  GET_ACTIVE_ELEMENT,
+  GET_TASKS_BY_PROCESS_INSTANCE_KEY,
+} from '../../graphql/processes/query/get-tasks.query';
+import {
   ProcessInstance,
   ProcessTask,
   ProcessVariable,
 } from '../../types/process.type';
-import { ENV } from '../../utils/env';
+import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
+import client from '../apolloClient';
 
 const logger = getLogger('camunda-api');
-
-const CAMUNDA_OPERATE_API_URL = ENV.CAMUNDA_OPERATE_API_URL;
-const CAMUNDA_TASKLIST_API_URL = ENV.CAMUNDA_TASKLIST_API_URL;
-const CAMUNDA_KEYCLOAK_API_URL = ENV.CAMUNDA_KEYCLOAK_API_URL;
-const CAMUNDA_KEYCLOAK_CLIENT_SECRET = ENV.CAMUNDA_KEYCLOAK_CLIENT_SECRET;
-
-/**
- * Führt eine HTTP-Anfrage aus und behandelt Fehler zentral.
- *
- * @param {string} url - Die URL der Anfrage.
- * @param {RequestInit} options - Optionen für die Anfrage.
- * @param {'json' | 'text'} [responseType='json'] - Der erwartete Antworttyp.
- * @returns {Promise<any>} Die Antwort als JSON oder Text.
- * @throws {Error} Wenn die Anfrage fehlschlägt.
- */
-async function httpRequest(
-  url: string,
-  options: RequestInit,
-  responseType: 'json' | 'text' = 'json',
-) {
-  logger.debug(`Sende Anfrage an: ${url}`);
-  const response = await fetch(url, options);
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    logger.error(`HTTP-Fehler: ${response.statusText}, Details: ${errorText}`);
-    throw new Error(
-      `HTTP-Fehler: ${response.statusText}, Details: ${errorText}`,
-    );
-  }
-
-  logger.debug(`Erfolgreiche Antwort von: ${url}`);
-
-  if (responseType === 'json') {
-    return await response.json(); // JSON-Daten verarbeiten
-  }
-
-  return await response.text(); // Textdaten (z. B. XML) verarbeiten
-}
-
-/**
- * Ruft ein Authentifizierungstoken von Keycloak ab.
- *
- * @returns {Promise<string>} Das JWT-Token.
- */
-
-export async function fetchAuthToken() {
-  const formData = new URLSearchParams({
-    username: 'demo',
-    password: 'demo',
-    grant_type: 'password',
-    client_id: 'camunda-identity',
-    client_secret: CAMUNDA_KEYCLOAK_CLIENT_SECRET,
-    scope: 'openid',
-  });
-
-  const tokenResponse = await httpRequest(CAMUNDA_KEYCLOAK_API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: formData.toString(),
-  });
-
-  return tokenResponse.access_token;
-}
 
 /**
  * Ruft das XML einer Prozessdefinition ab.
@@ -90,22 +37,15 @@ export async function fetchAuthToken() {
 export async function fetchProcessDefinitionXml(
   processDefinitionKey: string,
 ): Promise<string> {
-  const token = await fetchAuthToken();
-
-  const result = await httpRequest(
-    `${CAMUNDA_OPERATE_API_URL}/process-definitions/${processDefinitionKey}/xml`,
-    {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    },
-    'text', // Gib an, dass die Antwort im Textformat erwartet wird);
-  );
-
-  logger.debug(
-    'XML der Prozessdefinition erfolgreich abgerufen: %s',
-    result.length,
-  );
-  return result;
+  try {
+    logger.debug('Lade alle Funktionen');
+    const { data } = await client.query({
+      query: GET_PROCESS_DEFINITION_XML_BY_PROCESS_DEFINITION_KEY,
+    });
+    return data.getProcessDefinitionXmlByKey;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden aller Funktionen.');
+  }
 }
 
 /**
@@ -121,42 +61,15 @@ export async function fetchProcessInstances(
   logger.debug('Prozessinstanzen abrufen (nur aktive: %s)', activeOnly);
   logger.trace('fetchProcessInstances: Token=%s', token);
 
-  if (!token) {
-    throw new Error('Kein Zugriffstoken vorhanden.');
-  }
-  //const token = await fetchAuthToken();
-  const body = {
-    filter: activeOnly ? { state: 'ACTIVE' } : undefined,
-    sort: [{ field: 'bpmnProcessId', order: 'ASC' }],
-  };
-
   try {
-    const result = await httpRequest(
-      `${CAMUNDA_OPERATE_API_URL}/process-instances/search`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      },
-    );
-
-    return result.items;
+    logger.debug('Lade alle Funktionen');
+    const { data } = await client.query({
+      query: GET_ALL_PROCESS_INSTANCES,
+      variables: { activeOnly },
+    });
+    return data.getProcessDefinitionXmlByKey;
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message.includes('claims are invalid')
-    ) {
-      logger.error('Fehlerhafte Berechtigungen: %s', error.message);
-      throw new Error(
-        'Berechtigungsfehler: Bitte überprüfe deine API-Zugriffsrechte.',
-      );
-    }
-
-    logger.error('Allgemeiner Fehler bei fetchProcessInstances: %s', error);
-    throw error; // Andere Fehler weiterreichen
+    handleGraphQLError(error, 'Fehler beim Laden aller Funktionen.');
   }
 }
 
@@ -169,16 +82,16 @@ export async function fetchProcessInstances(
 export async function fetchProcessInstanceDetails(
   key: string,
 ): Promise<ProcessInstance> {
-  const token = await fetchAuthToken();
-  const instanz = await httpRequest(
-    `${CAMUNDA_OPERATE_API_URL}/process-instances/${key}`,
-    {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  );
-  logger.debug('Details der Prozessinstanz erfolgreich abgerufen: %o', instanz);
-  return instanz;
+  try {
+    logger.debug('Lade alle Funktionen');
+    const { data } = await client.query({
+      query: GET_PROCESS_INSTANCE_BY_PROCESS_INSTANCE_KEY,
+      variables: { key },
+    });
+    return data.getProcessDefinitionXmlByKey;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden aller Funktionen.');
+  }
 }
 
 /**
@@ -190,25 +103,16 @@ export async function fetchProcessInstanceDetails(
 export async function fetchVariablesByProcessInstance(
   processInstanceKey: string,
 ): Promise<ProcessVariable[]> {
-  const token = await fetchAuthToken();
-  const variables = await httpRequest(
-    `${CAMUNDA_OPERATE_API_URL}/variables/search`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        filter: { processInstanceKey },
-      }),
-    },
-  );
-  logger.debug(
-    'Variablen der Prozessinstanz erfolgreich abgerufen: %o',
-    variables,
-  );
-  return variables.items;
+  try {
+    logger.debug('Lade alle Funktionen');
+    const { data } = await client.query({
+      query: GET_PROCESS_VARIABLE_BY_PROCESS_INSTANCE_KEY,
+      variables: { processInstanceKey },
+    });
+    return data.getProcessDefinitionXmlByKey;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden aller Funktionen.');
+  }
 }
 
 /**
@@ -225,24 +129,16 @@ export async function fetchActiveElementId(
     processInstanceKey,
   );
 
-  const token = await fetchAuthToken();
-  const tasks = await httpRequest(`${CAMUNDA_TASKLIST_API_URL}/tasks/search`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      processInstanceKey,
-      state: 'CREATED',
-    }),
-  });
-
-  const activeTask = tasks.find(
-    (task: ProcessTask) => task.taskState === 'CREATED',
-  );
-
-  return activeTask ? activeTask.taskDefinitionId : null;
+  try {
+    logger.debug('Lade alle Funktionen');
+    const { data } = await client.query({
+      query: GET_ACTIVE_ELEMENT,
+      variables: { processInstanceKey },
+    });
+    return data.getTasks[0].taskDefinitionId;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden aller Funktionen.');
+  }
 }
 
 /**
@@ -254,15 +150,14 @@ export async function fetchActiveElementId(
 export async function fetchAllTasksByProcessInstance(
   processInstanceKey: string,
 ): Promise<ProcessTask[]> {
-  const token = await fetchAuthToken();
-  return await httpRequest(`${CAMUNDA_TASKLIST_API_URL}/tasks/search`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      processInstanceKey,
-    }),
-  });
+  try {
+    logger.debug('Lade alle Funktionen');
+    const { data } = await client.query({
+      query: GET_TASKS_BY_PROCESS_INSTANCE_KEY,
+      variables: { processInstanceKey },
+    });
+    return data.getTasks;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden aller Funktionen.');
+  }
 }
