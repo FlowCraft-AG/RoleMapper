@@ -6,6 +6,13 @@ type Query {
   getUsersByFunction(id: ID!): MandatePayload
   getAncestors(id: ID): [OrgUnit]
 
+  """
+  Ruft Prozessinstanzen basierend auf der Benutzer-ID ab.
+  @example
+  query {
+    getProcessInstancesBy
+  }
+  """
   getProcessInstancesByUserId(userId: String!): [ProcessInstance]
   getCamundaProcesses(filter: ProcessInstanceFilterInput): [ProcessInstance]
   getTasks(filter: TaskFilterInput): [Task!]!

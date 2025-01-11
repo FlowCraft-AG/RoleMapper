@@ -1,0 +1,651 @@
+"""
+Sortierreihenfolge für Abfragen, z. B. aufsteigend (ASC) oder absteigend (DESC).
+"""
+enum directionInput {
+  ASC
+  DESC
+}
+
+"""
+Mögliche Benutzertypen, z. B. 'student' oder 'employee'.
+"""
+enum UserType {
+  student
+  employee
+}
+
+"""
+Verfügbare Entitäten für dynamische Abfragen, z. B. Benutzer oder Organisationseinheiten.
+"""
+enum EntityType {
+  USERS
+  MANDATES
+  PROCESSES
+  ROLES
+  ORG_UNITS
+}
+
+"""
+Mögliche Vergleichsoperatoren für Filterbedingungen, z. B. 'EQ' für Gleichheit.
+"""
+enum Operator {
+  EQ
+  IN
+  GTE
+  LTE
+  LIKE
+}
+
+"""
+Filterbare Felder für dynamische Abfragen, spezifisch für verschiedene Entitäten.
+"""
+enum FilterOptions {
+  _id
+  name
+  type
+
+  # spezifisch für rollen
+  roleId
+
+  # spezifisch für funktionen
+  orgUnit
+  active
+  functionName
+  users
+  isImpliciteFunction
+  isSingleUser
+
+  # spezifisch für prozesse
+  processId
+  roles
+
+  # spezifisch für orgUnits
+  parentId
+  supervisor
+  alias
+  kostenstelleNr
+
+  # spezifisch für user
+  userId
+  userType
+  userRole
+
+  # spezifisch für employee
+  costCenter
+  department
+
+  # spezifisch für student
+  courseOfStudy
+  examRegulation
+  courseOfStudyUnique
+  courseOfStudyShort
+  courseOfStudyName
+  level
+
+  # spezifisch für profile
+  firstName
+  lastName
+}
+
+"""
+Repräsentiert die Rückgabedaten einer Mandatsabfrage.
+"""
+type MandatePayload {
+  """
+  Liste der Benutzer, die mit dem Mandat verknüpft sind.
+  """
+  users: [User!]
+
+  """
+  Name der Funktion, die mit dem Mandat verknüpft ist.
+  """
+  functionName: String
+
+  """
+  Gibt an, ob es sich um eine implizite Funktion handelt.
+  """
+  isImpliciteFunction: Boolean
+
+  """
+  Eindeutige ID des Mandats.
+  """
+  _id: ID
+
+  """
+  Organisationseinheit, die mit dem Mandat verknüpft ist.
+  """
+  orgUnit: ID
+}
+
+"""
+Rückgabewerte für Rollenabfragen.
+"""
+type RolePayload {
+  """
+  Liste der Rollenergebnisse.
+  """
+  roles: [RoleResult]
+}
+
+"""
+Repräsentiert das Ergebnis einer Rollenabfrage.
+"""
+type RoleResult {
+  """
+  Dynamischer Rollenname (z. B. "Antragssteller", "Rechnungsprüfung").
+  """
+  roleName: String!
+
+  """
+  Benutzer, die dieser Rolle zugeordnet sind.
+  """
+  users: [UserFunctionResult]
+}
+
+"""
+Ergebnisstruktur für spezialisierte Benutzerabfragen.
+"""
+type UserResult {
+  """
+  Liste der Benutzer, die den Filterbedingungen entsprechen.
+  """
+  users: [User!]!
+
+  """
+  Gesamte Anzahl der Treffer.
+  """
+  totalCount: Int!
+}
+
+"""
+Ergebnisstruktur für generische Abfragen.
+"""
+type DataPayload {
+  """
+  Liste der Ergebnisse basierend auf der Ziel-Entität.
+  """
+  data: [EntityResult!]!
+
+  """
+  Gesamte Anzahl der Treffer.
+  """
+  totalCount: Int!
+}
+
+"""
+Ergebnisstruktur für generische Entitätsabfragen.
+"""
+union EntityResult = User | Function | Process | OrgUnit | Role
+
+"""
+Repräsentiert die Zuweisung eines Benutzers zu einer Funktion.
+"""
+type UserFunctionResult {
+  """
+  Der Benutzer, der der Funktion zugeordnet ist.
+  """
+  user: User
+
+  """
+  Name der zugeordneten Funktion.
+  """
+  functionName: String
+}
+
+"""
+Repräsentiert einen Benutzer in der Organisation.
+"""
+type User {
+  """
+  Eindeutige ID des Benutzers.
+  """
+  _id: ID
+
+  """
+  Benutzer-ID, z. B. RZ-kennung oder Personalnummer.
+  """
+  userId: String
+
+  """
+  Typ des Benutzers, z. B. 'student' oder 'employee'.
+  """
+  userType: UserType
+
+  """
+  Rolle des Benutzers, z. B. 'admin' oder 'viewer'.
+  """
+  userRole: String
+
+  """
+  Organisationseinheit des Benutzers.
+  """
+  orgUnit: String
+
+  """
+  Gibt an, ob der Benutzer aktiv ist.
+  """
+  active: Boolean
+
+  """
+  Profil des Benutzers.
+  """
+  profile: Profile
+
+  """
+  Details zum Studenten (optional).
+  """
+  student: Student
+
+  """
+  Details zum Mitarbeiter (optional).
+  """
+  employee: Employee
+
+  """
+  Gültigkeitsdatum von.
+  """
+  validFrom: String
+
+  """
+  Gültigkeitsdatum bis.
+  """
+  validUntil: String
+}
+
+"""
+Details eines Benutzers, falls dieser ein Student ist.
+"""
+type Student {
+  """
+  Eindeutige ID des Studenten.
+  """
+  _id: ID
+
+  """
+  Studiengang des Studenten.
+  """
+  courseOfStudy: String!
+
+  """
+  Einzigartiger Studiengangscode.
+  """
+  courseOfStudyUnique: String!
+
+  """
+  Kurzbezeichnung des Studiengangs.
+  """
+  courseOfStudyShort: String!
+
+  """
+  Vollständiger Name des Studiengangs.
+  """
+  courseOfStudyName: String!
+
+  """
+  Studienniveau, z. B. Bachelor oder Master.
+  """
+  level: String!
+
+  """
+  Prüfungsordnung, die für den Studenten gilt.
+  """
+  examRegulation: String!
+}
+
+"""
+Details eines Benutzers, falls dieser ein Mitarbeiter ist.
+"""
+type Employee {
+  """
+  Kostenstelle des Mitarbeiters.
+  """
+  costCenter: String!
+
+  """
+  Abteilung, in der der Mitarbeiter tätig ist.
+  """
+  department: String!
+}
+
+"""
+Profilinformationen eines Benutzers.
+"""
+type Profile {
+  """
+  Vorname des Benutzers.
+  """
+  firstName: String
+
+  """
+  Nachname des Benutzers.
+  """
+  lastName: String
+}
+
+"""
+Repräsentiert eine Organisationseinheit, z. B. Fakultäten oder Abteilungen.
+"""
+type OrgUnit {
+  """
+  Eindeutige ID der Organisationseinheit.
+  """
+  _id: ID!
+
+  """
+  Name der Organisationseinheit.
+  """
+  name: String!
+
+  """
+  ID der übergeordneten Organisationseinheit (optional).
+  """
+  parentId: ID
+
+  """
+  Verantwortlicher der Organisationseinheit.
+  """
+  supervisor: String
+
+  """
+  Alias der Organisationseinheit.
+  """
+  alias: String
+
+  """
+  Kostenstellennummer der Organisationseinheit.
+  """
+  kostenstelleNr: String
+
+  """
+  Typ der Organisationseinheit, z. B. 'academic' oder 'administrative'.
+  """
+  type: String
+}
+
+"""
+Repräsentiert eine Funktion innerhalb der Organisation, z. B. 'Professor'.
+"""
+type Function {
+  """
+  Eindeutige ID der Funktion.
+  """
+  _id: ID!
+
+  """
+  Name der Funktion.
+  """
+  functionName: String!
+
+  """
+  Liste der Benutzer, die dieser Funktion zugeordnet sind.
+  """
+  users: [String!]!
+
+  """
+  Organisationseinheit, der die Funktion zugeordnet ist.
+  """
+  orgUnit: ID!
+
+  """
+  Typ der Funktion, z. B. 'academic' oder 'administrative'.
+  """
+  type: String
+
+  """
+  Gibt an, ob die Funktion nur von einem Benutzer besetzt werden kann.
+  """
+  isSingleUser: Boolean
+
+  """
+  Gibt an, ob die Funktion implizit ist und nicht manuell zugewiesen werden kann.
+  """
+  isImpliciteFunction: Boolean
+
+  """
+  Dynamische Abfrage, die mit dieser Funktion verknüpft ist.
+  """
+  query: GraphQlQuery
+}
+
+"""
+GraphQL-Abfragetyp für dynamische Funktionen.
+"""
+type GraphQlQuery {
+  """
+  Die Ziel-Entität der Abfrage, z. B. USERS, MANDATES.
+  """
+  entity: EntityType
+
+  """
+  Filterbedingungen der Abfrage.
+  """
+  filter: Filter
+
+  """
+  Pagination-Parameter der Abfrage.
+  """
+  pagination: Pagination
+
+  """
+  Sortierparameter der Abfrage.
+  """
+  sort: Sort
+}
+
+"""
+Filterbedingungen als Output-Typ.
+"""
+type Filter {
+  """
+  Das zu filternde Feld, z. B. userId oder orgUnit.
+  """
+  field: FilterOptions
+
+  """
+  Der Vergleichsoperator, z. B. EQ oder IN.
+  """
+  operator: Operator
+
+  """
+  Der Vergleichswert.
+  """
+  value: String
+
+  """
+  Logische UND-Verknüpfung mit weiteren Filtern.
+  """
+  AND: [Filter]
+
+  """
+  Logische ODER-Verknüpfung mit weiteren Filtern.
+  """
+  OR: [Filter]
+
+  """
+  Logische NOR-Verknüpfung mit weiteren Filtern.
+  """
+  NOR: [Filter]
+}
+
+"""
+Pagination-Parameter als Output-Typ.
+"""
+type Pagination {
+  """
+  Anzahl der zurückzugebenden Ergebnisse.
+  """
+  limit: Int
+  """
+  Startpunkt der Ergebnisse.
+  """
+  offset: Int
+}
+
+"""
+Sortierparameter als Output-Typ.
+"""
+type Sort {
+  """
+  Feld, nach dem sortiert werden soll.
+  """
+  field: FilterOptions
+  """
+  Sortierreihenfolge, z. B. ASC oder DESC.
+  """
+  direction: directionInput
+}
+
+"""
+Repräsentiert einen Prozess, z. B. 'Dienstreiseantrag'.
+"""
+type Process {
+  """
+  Eindeutige ID des Prozesses.
+  """
+  _id: ID!
+  """
+  Name des Prozesses.
+  """
+  parentId: String
+  name: String
+  """
+  Eindeutige Prozess-ID.
+  """
+  processId: String
+  """
+  Liste der Rollen, die mit dem Prozess verknüpft sind.
+  """
+  roles: [ProcessRole]
+}
+
+"""
+Definiert eine Rolle innerhalb eines Prozesses.
+"""
+type ProcessRole {
+  """
+  Eindeutiger Schlüssel der Rolle.
+  """
+  roleName: String
+  """
+  Eindeutige ID der Rolle.
+  """
+  roleId: String
+}
+
+# Rollen mit dynamischen Abfragen
+"""
+Definiert eine Rolle in der Organisation mit Abfragebedingungen.
+"""
+type Role {
+  """
+  Eindeutige ID der Rolle.
+  """
+  _id: ID!
+  """
+  Name der Rolle.
+  """
+  name: String!
+  """
+  Eindeutige ID der Rolle.
+  """
+  roleId: String!
+  """
+  Dynamische Abfragebedingungen für die Rolle.
+  """
+  query: [QueryStage!]!
+}
+
+"""
+Dynamische Abfragebedingungen für Rollen.
+"""
+type QueryStage {
+  """
+  Feldname der Abfragebedingung.
+  """
+  key: String!
+  """
+  Vergleichswert der Abfragebedingung.
+  """
+  value: String!
+}
+
+"""
+Rückgabe einer gespeicherten Abfrage.
+"""
+type SavedQueryPayload {
+  """
+  Gibt an, ob die Operation erfolgreich war.
+  """
+  success: Boolean!
+
+  """
+  Nachricht zur Operation, z. B. Fehlermeldung.
+  """
+  message: String
+
+  """
+  Das Ergebnis der gespeicherten Abfrage.
+  """
+  result: Function
+}
+
+"""
+Generisches Ergebnis für Mutations.
+"""
+type MutationResponse {
+  """
+  Gibt an, ob die Operation erfolgreich war.
+  """
+  success: Boolean!
+  """
+  Zusätzliche Informationen oder Fehlermeldungen.
+  """
+  message: String
+  """
+  Das Ergebnis der Mutation, z. B. die erstellte oder aktualisierte Entität.
+  """
+  result: EntityResult
+  """
+  Anzahl der betroffenen Entitäten.
+  """
+  affectedCount: Int
+  """
+  Warnungen oder Hinweise zur Operation.
+  """
+  warnings: [String]
+}
+
+"""
+Ergebnis einer Authentifizierungsoperation.
+"""
+type TokenResult {
+  """
+  Zugriffstoken für authentifizierte Operationen.
+  """
+  access_token: String!
+
+  """
+  Gültigkeitsdauer des Zugriffstokens (in Sekunden).
+  """
+  expires_in: Int!
+
+  """
+  Token zur Erneuerung des Zugriffstokens.
+  """
+  refresh_token: String!
+
+  """
+  Gültigkeitsdauer des Refresh-Tokens (in Sekunden).
+  """
+  refresh_expires_in: Int!
+
+  """
+  ID-Token, das Benutzerinformationen enthält.
+  """
+  id_token: String!
+
+  """
+  Gültigkeitsbereich des Tokens.
+  """
+  scope: String!
+}
