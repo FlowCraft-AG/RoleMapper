@@ -6,7 +6,7 @@
 
 # Class: LoggerModule
 
-Defined in: [src/logger/logger.module.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/0866b6f41cea733d4aaa92f0b3af0d2c56ad4eea/backend/src/logger/logger.module.ts#L18)
+Defined in: [src/logger/logger.module.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/logger/logger.module.ts#L18)
 
 Die dekorierte Modul-Klasse mit den Service-Klassen.
 

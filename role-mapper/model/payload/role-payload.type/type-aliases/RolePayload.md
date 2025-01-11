@@ -8,7 +8,7 @@
 
 > **RolePayload**: `object`
 
-Defined in: [src/role-mapper/model/payload/role-payload.type.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/0866b6f41cea733d4aaa92f0b3af0d2c56ad4eea/backend/src/role-mapper/model/payload/role-payload.type.ts#L15)
+Defined in: [src/role-mapper/model/payload/role-payload.type.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/role-mapper/model/payload/role-payload.type.ts#L15)
 
 Typ für die Nutzlast der Rollen-Abfrage.
 

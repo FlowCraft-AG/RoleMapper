@@ -8,7 +8,7 @@
 
 > **deployCamundaResources**(): `Promise`\<`void`\>
 
-Defined in: [src/config/deployment.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/0866b6f41cea733d4aaa92f0b3af0d2c56ad4eea/backend/src/config/deployment.ts#L40)
+Defined in: [src/config/deployment.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/c1dd70009b43cf6900b6bde6d6bd8b801c1074ab/backend/src/config/deployment.ts#L40)
 
 ## Returns
 
