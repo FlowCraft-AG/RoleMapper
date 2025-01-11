@@ -14,4 +14,4 @@ import { ZeebeService } from './service/zeebe.service.js';
     providers: [ProcessesResolver, ZeebeService, CamundaReadService, CamundaResolver],
     exports: [ZeebeService, CamundaReadService],
 })
-export class ZeebeModule {}
+export class CamundaModule {}
