@@ -6,159 +6,11 @@ type Query {
   getUsersByFunction(id: ID!): MandatePayload
   getAncestors(id: ID): [OrgUnit]
 
-  getProcessesByUserId(userId: String!): [ProzessInstanz]
-  getCamundaProcesses(filter: ProcessFilterInput): [ProzessInstanz!]!
+  getProcessInstancesByUserId(userId: String!): [ProcessInstance]
+  getCamundaProcesses(filter: ProcessInstanceFilterInput): [ProcessInstance]
   getTasks(filter: TaskFilterInput): [Task!]!
-  searchTaskVariables(filter: VariableFilterInput): [TaskVariable!]!
+  searchTaskVariables(filter: ProcessVariableFilterInput): [ProcessVariable]
   getProcessDefinitionXmlByKey(processDefinitionKey: ID!): String! # Ruft die Prozessdefinition als XML ab
-}
-
-
-input VariableFilterInput {
-  filter: FilterVariableFilterInput
-  size: Int
-  sort: [CamundaSortInput]
-}
-input FilterVariableFilterInput {
-key: ID # Eindeutige ID der Variablen
-  processInstanceKey: String
-  scopeKey: String
-  name: String # Name der Variablen
-  value: String # Wert der Variablen
-  truncated: Boolean # Gibt an, ob der Wert abgeschnitten wurde
-  tenantId: String
-}
-
-
-input IncludeVariableInput {
-  name: String! # Name der Variablen
-  alwaysReturnFullValue: Boolean! # Gibt an, ob der vollständige Wert zurückgegeben werden soll
-}
-
-type TaskVariable {
-  key: ID! # Eindeutige ID der Variablen
-  processInstanceKey: String
-  scopeKey: String
-  name: String! # Name der Variablen
-  value: String # Wert der Variablen
-  truncated: Boolean # Gibt an, ob der Wert abgeschnitten wurde
-  previewValue: String # Vorschau des Variablenwerts
-  tenantId: String
-}
-
-input TaskFilterInput {
-  state: String # Mögliche Werte: CREATED, COMPLETED, CANCELED, FAILED
-  assigned: Boolean # Gibt an, ob die Aufgabe zugewiesen ist
-  assignee: String # Benutzername oder ID des zugewiesenen Benutzers
-  assignees: [String] # Liste der Benutzer, die zugewiesen sind
-  taskDefinitionId: String # ID des BPMN-Flow-Nodes
-  candidateGroup: String # Gruppe, die in der Kandidatenliste ist
-  candidateGroups: [String] # Gruppen, die in der Kandidatenliste sind
-  candidateUser: String # Benutzer, der in der Kandidatenliste ist
-  candidateUsers: [String] # Benutzer, die in der Kandidatenliste sind
-  processDefinitionKey: String # Schlüssel der Prozessdefinition
-  processInstanceKey: String # Schlüssel der Prozessinstanz
-  pageSize: Int # Größe der Seite (Standard = 50)
-  followUpDate: DateRangeInput # Nachverfolgungsdatum
-  dueDate: DateRangeInput # Fälligkeitsdatum
-  taskVariables: [TaskVariableFilterInput] # Filter für Variablen
-  tenantIds: [String] # Liste der Mandanten-IDs
-  sort: [SortInput] # Sortieroptionen
-  searchAfter: [String] # Für Paginierung: Folgende Seite
-  searchAfterOrEqual: [String] # Für Paginierung: Folgende Seite (inklusive aktueller)
-  searchBefore: [String] # Für Paginierung: Vorherige Seite
-  searchBeforeOrEqual: [String] # Für Paginierung: Vorherige Seite (inklusive aktueller)
-  includeVariables: [IncludeVariableInput] # Eingeschlossene Variablen
-  implementation: String # Mögliche Werte: JOB_WORKER, ZEEBE_USER_TASK
-  priority: PriorityFilterInput # Prioritätsfilter
-}
-
-input DateRangeInput {
-  from: String # Startdatum im ISO-Format
-  to: String # Enddatum im ISO-Format
-}
-
-input TaskVariableFilterInput {
-  name: String # Name der Variablen
-  value: String # Wert der Variablen
-  operator: String # Vergleichsoperator: eq, neq, gt, gte, lt, lte
-}
-
-input IncludeVariableInput {
-  name: String # Name der Variablen
-  alwaysReturnFullValue: Boolean # Gibt an, ob der vollständige Wert zurückgegeben werden soll
-}
-
-input PriorityFilterInput {
-  eq: Int # Genau
-  gte: Int # Größer oder gleich
-  gt: Int # Größer
-  lt: Int # Kleiner
-  lte: Int # Kleiner oder gleich
-}
-
-
-type Task {
-  id: ID! # Eindeutige ID der Aufgabe
-  name: String! # Name der Aufgabe
-  taskDefinitionId: String! # ID der Aufgaben-Definition
-  processName: String! # Name des zugehörigen Prozesses
-  creationDate: String! # Erstellungsdatum der Aufgabe
-  completionDate: String # Abschlussdatum (null, wenn noch offen)
-  assignee: String # Benutzer, der die Aufgabe zugewiesen bekommen hat
-  taskState: String! # Zustand der Aufgabe (z. B. "CREATED")
-  formKey: String # Schlüssel des Formulars (wenn zugewiesen)
-  formId: String # ID des zugehörigen Formulars
-  formVersion: Int # Version des Formulars
-  isFormEmbedded: Boolean! # Gibt an, ob das Formular eingebettet ist
-  processDefinitionKey: String! # Schlüssel der Prozessdefinition
-  processInstanceKey: String! # Schlüssel der Prozessinstanz
-  tenantId: String! # Mandanten-ID (kann leer sein)
-  dueDate: String # Fälligkeitsdatum der Aufgabe (null, wenn nicht festgelegt)
-  followUpDate: String # Datum für Nachverfolgung (null, wenn nicht festgelegt)
-  candidateGroups: [String] # Kandidatengruppen für die Aufgabe
-  candidateUsers: [String] # Kandidatenbenutzer für die Aufgabe
-  variables: [TaskVariable] # Variablen der Aufgabe
-  implementation: String! # Implementierungstyp (z. B. "userTask")
-  priority: Int! # Priorität der Aufgabe
-}
-
-type TaskVariable {
-  name: String! # Name der Variablen
-  value: String # Wert der Variablen
-  type: String # Typ der Variablen (z. B. String, Integer)
-}
-
-type ProzessInstanz {
-  key: String
-  processVersion: Int
-  bpmnProcessId: String
-  startDate: String
-  state: String
-  incident: Boolean
-  processDefinitionKey: String
-  tenantId: String
-}
-
-input ProcessFilterInput {
-  filter: CamundaFilterInput
-  size: Int
-  sort: [CamundaSortInput]
-}
-
-input CamundaFilterInput {
-key: Int
-  processVersion: Int
-  processVersionTag: String
-  bpmnProcessId: String
-  parentKey: Int
-  parentFlowNodeInstanceKey: Int
-  startDate: String
-  endDate: String
-  state: ProcessState
-  incident: Boolean
-  processDefinitionKey: Int
-  tenantId: String
 }
 
 input CamundaSortInput {
@@ -175,6 +27,119 @@ enum ProcessState {
   ACTIVE
   COMPLETED
   CANCELED
+}
+
+enum TaskState {
+  CREATED
+  COMPLETED
+  CANCELED
+  FAILED
+}
+
+"""
+Eine Camunda-Prozessinstanz, die Informationen über Status, Version und Metadaten enthält.
+"""
+type ProcessInstance {
+  key: ID! # Eindeutiger Schlüssel der Prozessinstanz
+  processVersion: Int! # Version des Prozesses
+  bpmnProcessId: String! # BPMN-Prozess-ID
+  startDate: String! # Startdatum der Instanz (ISO-Format)
+  state: String! # Zustand der Prozessinstanz (z. B. "ACTIVE")
+  incident: Boolean! # Gibt an, ob ein Vorfall vorliegt
+  processDefinitionKey: String! # Schlüssel der Prozessdefinition
+  tenantId: String # Mandanten-ID (optional)
+}
+
+"""
+Eine Prozessvariable, die mit einer Prozessinstanz in Camunda verknüpft ist.
+"""
+type ProcessVariable {
+  key: ID! # Schlüssel der Variablen
+  processInstanceKey: String! # Schlüssel der zugehörigen Prozessinstanz
+  scopeKey: String! # Schlüssel des Geltungsbereichs
+  name: String! # Name der Variablen
+  value: String! # Wert der Variablen
+  truncated: Boolean! # Gibt an, ob der Wert abgeschnitten wurde
+  tenantId: String # Mandanten-ID (optional)
+}
+
+"""
+Eine Benutzeraufgabe in Camunda, einschließlich Status, Benutzer und zugehöriger Metadaten.
+"""
+type Task {
+  id: ID! # Eindeutige ID der Aufgabe
+  name: String! # Name der Aufgabe
+  taskDefinitionId: String! # ID der Aufgaben-Definition
+  processName: String! # Name des zugehörigen Prozesses
+  creationDate: String! # Erstellungsdatum der Aufgabe (ISO-Format)
+  completionDate: String # Abschlussdatum (optional, wenn nicht abgeschlossen)
+  assignee: String # Benutzer, dem die Aufgabe zugewiesen ist
+  taskState: String! # Zustand der Aufgabe (z. B. "CREATED", "COMPLETED")
+  formKey: String # Schlüssel des Formulars (optional)
+  formId: String # ID des zugehörigen Formulars (optional)
+  formVersion: Int # Version des Formulars (optional)
+  isFormEmbedded: Boolean! # Gibt an, ob das Formular eingebettet ist
+  processDefinitionKey: String! # Schlüssel der Prozessdefinition
+  processInstanceKey: String! # Schlüssel der Prozessinstanz
+  tenantId: String # Mandanten-ID (optional)
+  dueDate: String # Fälligkeitsdatum (optional)
+  followUpDate: String # Datum für Nachverfolgung (optional)
+  candidateGroups: [String] # Kandidatengruppen für die Aufgabe
+  candidateUsers: [String] # Kandidatenbenutzer für die Aufgabe
+  implementation: String # Implementierungstyp (z. B. "JOB_WORKER", "ZEEBE_USER_TASK")
+  priority: Int! # Priorität der Aufgabe
+}
+
+"""
+Filterkriterien für die Abfrage von Prozessinstanzen.
+"""
+input ProcessInstanceFilterInput {
+  key: ID # Eindeutiger Schlüssel der Instanz
+  processVersion: String # Version der Prozessinstanz
+  bpmnProcessId: String # BPMN-Prozess-ID
+  state: ProcessState # Zustand der Prozessinstanz (z. B. "ACTIVE", "COMPLETED")
+  incident: Boolean # Gibt an, ob ein Vorfall vorliegt
+  tenantId: String # Mandanten-ID (optional)
+  startDate: String # Startdatum im ISO-Format
+  endDate: String # Enddatum im ISO-Format
+}
+
+"""
+Filterkriterien für die Abfrage von Aufgaben.
+"""
+input TaskFilterInput {
+  state: TaskState # Zustand der Aufgabe (z. B. "CREATED", "COMPLETED")
+  assigned: Boolean # Gibt an, ob die Aufgabe zugewiesen ist
+  assignee: String # Benutzer, dem die Aufgabe zugewiesen ist
+  processDefinitionKey: String # Schlüssel der Prozessdefinition
+  processInstanceKey: String # Schlüssel der Prozessinstanz
+  followUpDate: DateRangeInput # Zeitraum für Nachverfolgungsdatum
+  dueDate: DateRangeInput # Zeitraum für Fälligkeitsdatum
+  candidateGroups: [String] # Kandidatengruppen für die Aufgabe
+  candidateUser: String # Kandidatbenutzer für die Aufgabe
+  candidateUsers: [String] # Kandidatenbenutzer für die Aufgabe
+  priority: Int # Priorität der Aufgabe
+}
+
+"""
+Filterkriterien für Prozessvariablen.
+"""
+input ProcessVariableFilterInput {
+  key: String # Schlüssel der Variablen
+  processInstanceKey: String # Schlüssel der zugehörigen Prozessinstanz
+  scopeKey: String # Schlüssel des Geltungsbereichs
+  name: String # Name der Variable
+  value: String # Wert der Variable
+  truncated: Boolean # Gibt an, ob der Wert abgeschnitten wurde
+  tenantId: String # Mandanten-ID (optional)
+}
+
+"""
+Zeitraum für die Filterung nach Daten.
+"""
+input DateRangeInput {
+  from: String # Startdatum im ISO-Format
+  to: String # Enddatum im ISO-Format
 }
 
 type MandatePayload {

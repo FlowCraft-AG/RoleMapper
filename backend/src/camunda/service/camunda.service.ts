@@ -4,12 +4,12 @@ import { AxiosResponse } from 'axios';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../../config/environment.js';
 import { getLogger } from '../../logger/logger.js';
-import {
-    ProcessFilterInput,
-    TaskSearchRequest,
-    VariableFilterInput,
-} from '../types/input/process-filter.Input.js';
-import { ProcessInstance, ProcessVariable, Task } from '../types/process.type.js';
+import { ProcessInstanceFilter } from '../types/input-filter/process-instance-filter.js';
+import { TaskFilter } from '../types/input-filter/task-filter.js';
+import { VariableFilter } from '../types/input-filter/variable-filter.js';
+import { ProcessInstance } from '../types/process-instance.type.js';
+import { ProcessVariable } from '../types/process-variable.type.js';
+import { Task } from '../types/task.type.js';
 
 const { CAMUNDA_TASKLIST_API_URL, CAMUNDA_OPERATE_API_URL, REQUEST_TIMEOUT_MS } = environment;
 
@@ -29,14 +29,16 @@ export class CamundaReadService {
      * @returns Eine Liste von Prozessinstanzen.
      */
     async fetchProcessInstances(
-        filter: ProcessFilterInput,
+        filter: ProcessInstanceFilter,
         token: string,
     ): Promise<ProcessInstance[]> {
         this.#logger.debug('fetchProcessInstances: Suche Prozessinstanzen mit Filter: %o', filter);
+
         const operateApiUrl = `${CAMUNDA_OPERATE_API_URL}/process-instances/search`;
+        const body = { filter };
         const response = await this.#sendPostRequest<{ items: ProcessInstance[] }>(
             operateApiUrl,
-            filter,
+            body,
             token,
         );
         const instanzen = response.items;
@@ -50,7 +52,7 @@ export class CamundaReadService {
      * @param token - Der Bearer-Token für die Authentifizierung.
      * @returns Eine Liste von Aufgaben.
      */
-    async fetchProcessTasks(filter: TaskSearchRequest, token: string): Promise<Task[]> {
+    async fetchProcessTasks(filter: TaskFilter, token: string): Promise<Task[]> {
         this.#logger.debug('fetchProcessTasks: Suche Aufgaben mit Filter: %o', filter);
         const tasklistApiUrl = `${CAMUNDA_TASKLIST_API_URL}/tasks/search`;
         const tasks = await this.#sendPostRequest<Task[]>(tasklistApiUrl, filter, token);
@@ -64,15 +66,14 @@ export class CamundaReadService {
      * @param token - Der Bearer-Token für die Authentifizierung.
      * @returns Eine Liste von Variablen.
      */
-    async fetchProcessVariables(
-        filter: VariableFilterInput,
-        token: string,
-    ): Promise<ProcessVariable[]> {
+    async fetchProcessVariables(filter: VariableFilter, token: string): Promise<ProcessVariable[]> {
         this.#logger.debug('fetchProcessVariables: Suche Variablen mit Filter: %o', filter);
+
         const apiUrl = `${CAMUNDA_OPERATE_API_URL}/variables/search`;
+        const body = { filter };
         const response = await this.#sendPostRequest<{ items: ProcessVariable[] }>(
             apiUrl,
-            filter,
+            body,
             token,
         );
         const variables = response.items;
@@ -122,7 +123,7 @@ export class CamundaReadService {
             this.#logger.debug('#sendPostRequest: response=%s', JSON.stringify(response.data));
             return response.data as T;
         } catch (error: any) {
-            this.#handleError(`POST-Request fehlgeschlagen für URL ${url}`, error);
+            this.#handleError('POST-Request fehlgeschlagen für den Operate Service', error);
         }
     }
 
@@ -148,7 +149,7 @@ export class CamundaReadService {
             this.#logger.debug('sendGetRequest: response=%o', response.data);
             return response.data as T;
         } catch (error: any) {
-            this.#handleError(`GET-Request fehlgeschlagen für URL ${url}`, error);
+            this.#handleError('GET-Request fehlgeschlagen für den Tasklist Servic', error);
         }
     }
 
