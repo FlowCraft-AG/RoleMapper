@@ -36,6 +36,13 @@ type Query {
   Diese Abfrage liefert die vollständige XML-Definition eines Prozesses, basierend auf seinem Schlüssel.
   """
   getProcessDefinitionXmlByKey(processDefinitionKey: ID!): String!
+
+  """
+  Ruft den FlowNode für einen Incident anhand des Prozessinstanz-Schlüssels ab.
+
+  Diese Abfrage liefert den FlowNode, der mit einem Incident verknüpft ist, basierend auf der angegebenen Prozessinstanz.
+  """
+  getIncidentFlowNodeByProcessInstanceKey(processInstanceKey: String!): String
 }
 
 ###############################################################################################G

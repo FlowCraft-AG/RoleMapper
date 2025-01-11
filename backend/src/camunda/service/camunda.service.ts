@@ -4,6 +4,10 @@ import { AxiosResponse } from 'axios';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../../config/environment.js';
 import { getLogger } from '../../logger/logger.js';
+import { FlowNode } from '../types/flownode.type.js';
+import { Incident } from '../types/incident.type.js';
+import { FlowNodeFilter } from '../types/input-filter/flownode-filter.js';
+import { IncidentFilter } from '../types/input-filter/incident-filter.js';
 import { ProcessInstanceFilter } from '../types/input-filter/process-instance-filter.js';
 import { TaskFilter } from '../types/input-filter/task-filter.js';
 import { VariableFilter } from '../types/input-filter/variable-filter.js';
@@ -98,6 +102,82 @@ export class CamundaReadService {
         const response = await this.#sendGetRequest<string>(apiUrl, token);
         this.#logger.debug('fetchProcessDefinitionXml: xml=%s', response);
         return response;
+    }
+
+    /**
+     * Ruft eine Liste von Incidents basierend auf den angegebenen Filterkriterien ab.
+     *
+     * @param {IncidentFilter} filter - Die Filterkriterien zur Einschränkung der Incidentsuche.
+     * @param {string} token - Der Bearer-Token für die Authentifizierung.
+     * @returns {Promise<Incident[]>} Ein Promise, das eine Liste von Incident-Objekten zurückgibt.
+     *
+     * @throws {Error} Wenn die Anfrage fehlschlägt oder eine ungültige Antwort zurückgegeben wird.
+     *
+     * @example
+     * ```typescript
+     * const filter: IncidentFilter = {
+     *   processInstanceKey: '12345',
+     *   state: 'ACTIVE',
+     * };
+     * const token = 'Bearer eyJ...';
+     * const incidents = await fetchIncidents(filter, token);
+     * console.log(incidents);
+     * ```
+     */
+    async fetchIncidents(filter: IncidentFilter, token: string): Promise<Incident[]> {
+        this.#logger.debug('fetchIncidents: Suche Incidents mit Filter: %o', filter);
+
+        const apiUrl = `${CAMUNDA_OPERATE_API_URL}/incidents/search`;
+        const body = { filter };
+
+        const response = await this.#sendPostRequest<{ items: Incident[] }>(apiUrl, body, token);
+        const incidents = response.items;
+
+        this.#logger.debug('fetchIncidents: incidents=%o', incidents);
+        return incidents;
+    }
+
+    /**
+     * Ruft FlowNodes basierend auf den angegebenen Filterkriterien ab.
+     *
+     * @param {FlowNodeFilter} filter - Die Filterkriterien für die Suche nach FlowNodes.
+     *  - `processInstanceKey` (optional): Der Schlüssel der zugehörigen Prozessinstanz.
+     *  - `processDefinitionKey` (optional): Der Schlüssel der Prozessdefinition.
+     *  - `startDate` (optional): Das Startdatum im ISO-Format, um FlowNodes zu finden, die nach diesem Zeitpunkt gestartet wurden.
+     *  - `endDate` (optional): Das Enddatum im ISO-Format, um FlowNodes zu finden, die vor diesem Zeitpunkt beendet wurden.
+     *  - `flowNodeId` (optional): Die eindeutige ID der FlowNode.
+     *  - `flowNodeName` (optional): Der Name der FlowNode.
+     *  - `incidentKey` (optional): Der Schlüssel des zugehörigen Incidents.
+     *  - `type` (optional): Der Typ der FlowNode (z. B. "User Task", "Service Task").
+     *  - `state` (optional): Der Zustand der FlowNode (z. B. "ACTIVE", "COMPLETED").
+     *  - `incident` (optional): Gibt an, ob ein Incident mit der FlowNode verknüpft ist.
+     *
+     * @param {string} token - Das Bearer-Token zur Authentifizierung der Anfrage.
+     * @returns {Promise<FlowNode[]>} Ein Promise, das eine Liste von FlowNodes zurückgibt.
+     *
+     * @example
+     * ```typescript
+     * const filter: FlowNodeFilter = {
+     *     processInstanceKey: 12345,
+     *     state: 'ACTIVE',
+     * };
+     * const token = 'Bearer eyJ...';
+     * const flowNodes = await service.fetchFlowNodes(filter, token);
+     * console.log(flowNodes);
+     * ```
+     *
+     * @throws {Error} Wenn die Anfrage fehlschlägt oder keine FlowNodes gefunden werden.
+     */
+    async fetchFlowNodes(filter: FlowNodeFilter, token: string): Promise<FlowNode[]> {
+        this.#logger.debug('fetchFlowNodes: Suche FlowNodes mit Filter: %o', filter);
+
+        const apiUrl = `${CAMUNDA_OPERATE_API_URL}/flownode-instances/search`;
+        const body = { filter };
+
+        const response = await this.#sendPostRequest<{ items: FlowNode[] }>(apiUrl, body, token);
+        const flowNodes = response.items;
+        this.#logger.debug('fetchFlowNodes: flowNodes=%o', flowNodes);
+        return flowNodes;
     }
 
     /**

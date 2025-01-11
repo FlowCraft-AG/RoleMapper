@@ -17,13 +17,14 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
-  fetchAllTasksByProcessInstance,
-  fetchProcessInstanceDetails,
-  fetchVariablesByProcessInstance,
-} from '../../../lib/camunda/camunda.api';
+  getProcessInstanceDetails,
+  getProcessInstanceVariables,
+  getTasksByProcessInstance,
+} from '../../../lib/api/camunda.api';
 import {
   ProcessInstance,
   ProcessTask,
@@ -68,6 +69,7 @@ export default function ProcessInstanceDetailsContent({
   const [tabIndex, setTabIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     /**
@@ -80,12 +82,18 @@ export default function ProcessInstanceDetailsContent({
     async function fetchData() {
       try {
         setLoading(true);
+        if (session === undefined || session?.access_token === undefined) {
+          throw new Error('Keine Session vorhanden.');
+        }
         setError(null); // Fehlerzustand zurücksetzen
 
-        const details = await fetchProcessInstanceDetails(processKey);
-        const variablesResponse =
-          await fetchVariablesByProcessInstance(processKey);
-        const tasks = await fetchAllTasksByProcessInstance(processKey);
+        const token = session.access_token;
+        const details = await getProcessInstanceDetails(processKey, token);
+        const variablesResponse = await getProcessInstanceVariables(
+          processKey,
+          token,
+        );
+        const tasks = await getTasksByProcessInstance(processKey, token);
 
         setDetails(details);
         setVariables(variablesResponse);

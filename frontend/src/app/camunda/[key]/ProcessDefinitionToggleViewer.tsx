@@ -8,15 +8,16 @@
 'use client';
 
 import { Box, Button, Container, Typography } from '@mui/material';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BpmnViewer from '../../../components/bpmn/BpmnViewer';
 import ProcessDefinitionXmlViewer from '../../../components/bpmn/ProcessDefinitionXmlViewer';
 import {
-  fetchActiveElementId,
-  fetchProcessDefinitionXml,
-  fetchProcessInstanceDetails,
-} from '../../../lib/camunda/camunda.api';
+  getActiveElementId,
+  getProcessDefinitionXml,
+  getProcessInstanceDetails,
+} from '../../../lib/api/camunda.api';
 import { ProcessInstance } from '../../../types/process.type';
 
 /**
@@ -52,7 +53,9 @@ const ProcessDefinitionToggleViewer = ({
   const [isXmlView, setIsXmlView] = useState(false);
   const [diagramUrl, setDiagramUrl] = useState<string | null>(null);
   const [instanz, setInstanz] = useState<ProcessInstance | null>(null);
-  const [activeElementId, setActiveElementId] = useState<string | null>(null);
+    const [activeElementId, setActiveElementId] = useState<string | null>(null);
+    const [incidentElementId, setIncidentElementId] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   /**
    * Lädt die Prozessinstanz-Details, die XML-Definition und die aktive Element-ID.
@@ -60,17 +63,29 @@ const ProcessDefinitionToggleViewer = ({
   useEffect(() => {
     const loadDiagramUrl = async () => {
       try {
-        const instanz = await fetchProcessInstanceDetails(processInstanceKey);
-        setInstanz(instanz);
+        if (session === undefined || session?.access_token === undefined) {
+          throw new Error('Keine Session vorhanden.');
+        }
+        const token = session.access_token;
+        const instanz = await getProcessInstanceDetails(
+          processInstanceKey,
+          token,
+        );
+          setInstanz(instanz);
+          if (instanz.incident !== undefined) {
+              const incidentFlowNode = await getIncidentFlowNode(instanz.key, token)
+              setIncidentElementId(incidentFlowNode);
+          }
         console.log('Instanz:', instanz);
-        const url = await fetchProcessDefinitionXml(
+        const url = await getProcessDefinitionXml(
           instanz.processDefinitionKey,
+          token,
         );
         //const url = `/${processDefinitionKey}.bpmn`;
         setDiagramUrl(url);
 
         // Aktive Element-ID abrufen
-        const activeId = await fetchActiveElementId(processInstanceKey);
+        const activeId = await getActiveElementId(processInstanceKey, token);
         console.log('Active Element ID:', activeId);
         setActiveElementId(activeId);
       } catch (error) {
@@ -136,7 +151,8 @@ const ProcessDefinitionToggleViewer = ({
             <h1>BPMN Diagram Sicht</h1>
             <BpmnViewer
               diagramXML={diagramUrl}
-              activeElementId={activeElementId ?? ''}
+                              activeElementId={activeElementId ?? ''}
+                                incidentElementId={incidentElementId ?? ''}
               onLoading={() => console.log('Lädt das BPMN-Diagramm...')}
               onError={(err) => console.error('Fehler beim Rendern:', err)}
               onShown={() => console.log('Diagramm erfolgreich geladen!')}

@@ -26,10 +26,9 @@ export const GET_ALL_PROCESS_INSTANCES = gql`
  * @param $key Der Schlüssel der Prozessinstanz, die abgefragt werden soll.
  */
 export const GET_PROCESS_INSTANCE_BY_PROCESS_INSTANCE_KEY = gql`
-  query GetCamundaProcesses($key: String!) {
+  query GetCamundaProcesses($key: ID!) {
     getCamundaProcesses(
-      filter: { key: $key }
-      sort: [{ field: "bpmnProcessId", order: ASC }]
+      filter: { key: $key, sortBy: [{ field: "bpmnProcessId", order: ASC }] }
     ) {
       key
       processVersion
@@ -48,7 +47,7 @@ export const GET_PROCESS_INSTANCE_BY_PROCESS_INSTANCE_KEY = gql`
  * @param $processDefinitionKey Der Schlüssel der Prozessdefinition, deren XML abgefragt werden soll.
  */
 export const GET_PROCESS_DEFINITION_XML_BY_PROCESS_DEFINITION_KEY = gql`
-  query GetProcessDefinitionXmlByKey($processDefinitionKey: String!) {
+  query GetProcessDefinitionXmlByKey($processDefinitionKey: ID!) {
     getProcessDefinitionXmlByKey(processDefinitionKey: $processDefinitionKey)
   }
 `;

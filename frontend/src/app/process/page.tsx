@@ -27,7 +27,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { fetchProcessInstances } from '../../lib/camunda/camunda.api';
+import { getAllProcessInstances } from '../../lib/api/camunda.api';
 import { ProcessInstance } from '../../types/process.type';
 
 /**
@@ -74,7 +74,7 @@ export default function ProcessInstances() {
           throw new Error('Keine Session vorhanden.');
         }
         console.log('ProcessInstances: token=', session);
-        const instanzen = await fetchProcessInstances(session.access_token);
+        const instanzen = await getAllProcessInstances(session.access_token);
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(

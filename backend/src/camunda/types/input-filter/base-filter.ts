@@ -10,7 +10,7 @@
 export type BaseFilter = {
     /**
      * Eindeutiger Schlüssel des zu filternden Objekts.
-     * Beispiel: Prozessinstanz-, Prozessdefinition oder Variablenschlüssel.
+     * Beispiel: Prozessinstanz-, Prozessdefinition-, FlowNode-Instanz-, Incident- oder Variablenschlüssel.
      */
     key?: string;
 
