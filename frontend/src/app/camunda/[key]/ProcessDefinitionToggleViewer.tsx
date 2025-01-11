@@ -15,6 +15,7 @@ import BpmnViewer from '../../../components/bpmn/BpmnViewer';
 import ProcessDefinitionXmlViewer from '../../../components/bpmn/ProcessDefinitionXmlViewer';
 import {
   getActiveElementId,
+  getIncidentFlowNode,
   getProcessDefinitionXml,
   getProcessInstanceDetails,
 } from '../../../lib/api/camunda.api';
@@ -51,10 +52,16 @@ const ProcessDefinitionToggleViewer = ({
 }: ProcessDefinitionToggleViewerProps) => {
   const router = useRouter(); // Router-Hook für Navigation
   const [isXmlView, setIsXmlView] = useState(false);
-  const [diagramUrl, setDiagramUrl] = useState<string | null>(null);
-  const [instanz, setInstanz] = useState<ProcessInstance | null>(null);
-    const [activeElementId, setActiveElementId] = useState<string | null>(null);
-    const [incidentElementId, setIncidentElementId] = useState<string | null>(null);
+  const [diagramUrl, setDiagramUrl] = useState<string | undefined>(undefined);
+  const [instanz, setInstanz] = useState<ProcessInstance | undefined>(
+    undefined,
+  );
+  const [activeElementId, setActiveElementId] = useState<string | undefined>(
+    undefined,
+  );
+  const [incidentElementId, setIncidentElementId] = useState<
+    string | undefined
+  >(undefined);
   const { data: session } = useSession();
 
   /**
@@ -71,11 +78,16 @@ const ProcessDefinitionToggleViewer = ({
           processInstanceKey,
           token,
         );
-          setInstanz(instanz);
-          if (instanz.incident !== undefined) {
-              const incidentFlowNode = await getIncidentFlowNode(instanz.key, token)
-              setIncidentElementId(incidentFlowNode);
-          }
+        setInstanz(instanz);
+        if (instanz.incident) {
+          const incidentFlowNode = await getIncidentFlowNode(
+            instanz.key,
+            token,
+          );
+          setIncidentElementId(incidentFlowNode);
+        } else {
+          setIncidentElementId(undefined);
+        }
         console.log('Instanz:', instanz);
         const url = await getProcessDefinitionXml(
           instanz.processDefinitionKey,
@@ -96,7 +108,7 @@ const ProcessDefinitionToggleViewer = ({
     loadDiagramUrl();
   }, [processInstanceKey]);
 
-  if (diagramUrl === null) {
+  if (diagramUrl === undefined) {
     return (
       <Container maxWidth="md">
         <Typography variant="h4" gutterBottom>
@@ -151,8 +163,8 @@ const ProcessDefinitionToggleViewer = ({
             <h1>BPMN Diagram Sicht</h1>
             <BpmnViewer
               diagramXML={diagramUrl}
-                              activeElementId={activeElementId ?? ''}
-                                incidentElementId={incidentElementId ?? ''}
+              activeElementId={activeElementId ?? ''}
+              incidentElementId={incidentElementId ?? ''}
               onLoading={() => console.log('Lädt das BPMN-Diagramm...')}
               onError={(err) => console.error('Fehler beim Rendern:', err)}
               onShown={() => console.log('Diagramm erfolgreich geladen!')}

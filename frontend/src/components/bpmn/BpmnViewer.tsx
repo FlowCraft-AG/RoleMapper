@@ -29,8 +29,8 @@ import styles from '../../styles/BpmnViewer.module.css';
 interface BpmnViewerProps {
   diagramXML?: string;
   diagramURL?: string;
-    activeElementId?: string;
-    incidentElementId?: string;
+  activeElementId?: string;
+  incidentElementId?: string;
   onLoading?: () => void;
   onError?: (err: Error) => void;
   onShown?: (warnings: string[]) => void;
@@ -58,7 +58,7 @@ interface BpmnViewerProps {
 const BpmnViewer: React.FC<BpmnViewerProps> = ({
   diagramXML,
   diagramURL,
-    activeElementId,
+  activeElementId,
   incidentElementId,
   onLoading,
   onError,
@@ -105,6 +105,26 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
         // Diagramm anpassen
         canvas.zoom('fit-viewport');
 
+        // Falls keine spezifischen IDs definiert sind, alle Elemente grün hervorheben
+        if (!activeElementId && !incidentElementId) {
+          const elementRegistry: ElementRegistry =
+            bpmnViewer.get('elementRegistry');
+          const elements = elementRegistry.getAll(); // Alle Elemente abrufen
+
+          elements.forEach((element) => {
+            const gfx = canvas.getGraphics(element.id); // Grafik des Elements abrufen
+            const visual = gfx.querySelector('.djs-visual');
+            if (visual) {
+              visual.querySelectorAll('*').forEach((child) => {
+                const styledChild = child as HTMLElement & {
+                  style: { stroke: string };
+                };
+                styledChild.style.stroke = 'green'; // Elemente grün hervorheben
+              });
+            }
+          });
+        }
+
         // Aktive Aktivität hervorheben
         if (activeElementId) {
           console.log('BpmnViewer: activeElementID=', activeElementId);
@@ -120,14 +140,14 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
               const styledChild = child as HTMLElement & {
                 style: { stroke: string };
               };
-              styledChild.style.stroke = 'green';
+              styledChild.style.stroke = 'blue';
               //child.style.stroke = 'green';
               // child.style.strokeWidth = '2px';
             });
           }
         }
 
-        // Warnungen anzeigen
+        // Warnungen (Incidents) hervorheben
         if (incidentElementId) {
           console.log('BpmnViewer: incidentElementId=', incidentElementId);
           const element = elementRegistry.get(incidentElementId);

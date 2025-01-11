@@ -13,6 +13,7 @@ import {
 import { GET_PROCESS_VARIABLE_BY_PROCESS_INSTANCE_KEY } from '../../graphql/processes/query/get-process-variable.query';
 import {
   GET_ACTIVE_ELEMENT,
+  GET_INCIDENT_FLOW_NODE,
   GET_TASKS_BY_PROCESS_INSTANCE_KEY,
 } from '../../graphql/processes/query/get-tasks.query';
 import {
@@ -31,24 +32,31 @@ const logger = getLogger('camunda-api');
  *
  * @param processDefinitionKey - Der eindeutige Schlüssel der Prozessdefinition.
  * @param token - Das Authentifizierungs-Token für die API.
- * @returns Das XML der Prozessdefinition als `string` oder `null`, wenn ein Fehler auftritt.
+ * @returns Das XML der Prozessdefinition als `string` oder `undefined`, wenn ein Fehler auftritt.
  */
 export async function getProcessDefinitionXml(
   processDefinitionKey: string,
   token: string,
-): Promise<string | null> {
-    logger.debug('getProcessDefinitionXml: key=%s, token=%s', processDefinitionKey, token);
+): Promise<string | undefined> {
+  logger.debug(
+    'getProcessDefinitionXml: key=%s, token=%s',
+    processDefinitionKey,
+    token,
+  );
 
-    try {
+  try {
     const client = getApolloClient(token);
     const { data } = await client.query({
       query: GET_PROCESS_DEFINITION_XML_BY_PROCESS_DEFINITION_KEY,
-        variables: { processDefinitionKey },
+      variables: { processDefinitionKey },
     });
 
-    logger.debug('getProcessDefinitionXml: xml=%o', data.getProcessDefinitionXmlByKey);
+    logger.debug(
+      'getProcessDefinitionXml: xml=%o',
+      data.getProcessDefinitionXmlByKey,
+    );
     return data.getProcessDefinitionXmlByKey;
-    } catch (error) {
+  } catch (error) {
     handleGraphQLError(error, 'Fehler beim Abrufen des Prozess-XML.');
   }
 }
@@ -64,9 +72,9 @@ export async function getAllProcessInstances(
   token: string,
   activeOnly = false,
 ): Promise<ProcessInstance[]> {
-    logger.debug('getAllProcessInstances: token=%s', token);
+  logger.debug('getAllProcessInstances: token=%s', token);
 
-    try {
+  try {
     const client = getApolloClient(token);
     const { data } = await client.query({
       query: GET_ALL_PROCESS_INSTANCES,
@@ -83,13 +91,17 @@ export async function getAllProcessInstances(
  *
  * @param instanceKey - Der eindeutige Schlüssel der Prozessinstanz.
  * @param token - Das Authentifizierungs-Token für die API.
- * @returns Die Details der Prozessinstanz als Objekt oder `null`, wenn ein Fehler auftritt.
+ * @returns Die Details der Prozessinstanz als Objekt oder `undefined`, wenn ein Fehler auftritt.
  */
 export async function getProcessInstanceDetails(
   instanceKey: string,
   token: string,
 ): Promise<ProcessInstance> {
-    logger.debug('getProcessInstanceDetails: key=%s, token=%s', instanceKey, token);
+  logger.debug(
+    'getProcessInstanceDetails: key=%s, token=%s',
+    instanceKey,
+    token,
+  );
   try {
     const client = getApolloClient(token);
     const { data } = await client.query({
@@ -97,7 +109,7 @@ export async function getProcessInstanceDetails(
       variables: { key: instanceKey },
     });
 
-      logger.debug('getProcessInstanceDetails: data=%o', data);
+    logger.debug('getProcessInstanceDetails: data=%o', data);
     return data.getCamundaProcesses?.[0];
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Abrufen der Prozessinstanzdetails.');
@@ -133,13 +145,13 @@ export async function getProcessInstanceVariables(
  *
  * @param instanceKey - Der eindeutige Schlüssel der Prozessinstanz.
  * @param token - Das Authentifizierungs-Token für die API.
- * @returns Die aktive Element-ID als `string` oder `null`, wenn ein Fehler auftritt.
+ * @returns Die aktive Element-ID als `string` oder `undefined`, wenn ein Fehler auftritt.
  */
 export async function getActiveElementId(
   instanceKey: string,
   token: string,
-): Promise<string | null> {
-    logger.debug('getActiveElementId: key=%s, token=%s', instanceKey, token);
+): Promise<string | undefined> {
+  logger.debug('getActiveElementId: key=%s, token=%s', instanceKey, token);
 
   try {
     const client = getApolloClient(token);
@@ -147,11 +159,11 @@ export async function getActiveElementId(
       query: GET_ACTIVE_ELEMENT,
       variables: { processInstanceKey: instanceKey },
     });
-      logger.debug('getActiveElementId: data=%o', data.getTasks);
-    return data.getTasks?.[0]?.taskDefinitionId || null;
+    logger.debug('getActiveElementId: data=%o', data.getTasks);
+    return data.getTasks?.[0]?.taskDefinitionId || undefined;
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Abrufen des aktiven Elements.');
-    return null;
+    return undefined;
   }
 }
 
@@ -180,18 +192,17 @@ export async function getTasksByProcessInstance(
 }
 
 export async function getIncidentFlowNode(
-    instanceKey: string,
-    token: string,
-): Promise<ProcessTask[]> {
-    try {
-        const client = getApolloClient(token);
-        const { data } = await client.query({
-            query: GET_INCIDENT_FLOW_NODE,
-            variables: { processInstanceKey: instanceKey },
-        });
-        return data.getTasks || [];
-    } catch (error) {
-        handleGraphQLError(error, 'Fehler beim Abrufen der Aufgaben.');
-        return [];
-    }
+  processInstanceKey: string,
+  token: string,
+): Promise<string> {
+  try {
+    const client = getApolloClient(token);
+    const { data } = await client.query({
+      query: GET_INCIDENT_FLOW_NODE,
+      variables: { processInstanceKey },
+    });
+    return data.getIncidentFlowNodeByProcessInstanceKey;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Abrufen der Aufgaben.');
+  }
 }
