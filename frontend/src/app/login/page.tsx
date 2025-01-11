@@ -17,6 +17,13 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+/**
+ * Komponente für die Anmeldeseite.
+ * 
+ * Diese Seite ermöglicht die Anmeldung mit Benutzerdaten oder Keycloak.
+ *
+ * @returns JSX.Element - Die gerenderte Anmeldeseite‚.
+ */
 export default function SignInPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -26,6 +33,11 @@ export default function SignInPage() {
   const [loadingKeycloak, setLoadingKeycloak] = useState(false);
   const router = useRouter();
 
+  /**
+   * Handler für die Anmeldung mit Benutzerdaten.
+   *
+   * @param e - Das `React.FormEvent` welches beim Absenden des Formulars ausgelöst wird.
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -46,6 +58,9 @@ export default function SignInPage() {
     }
   };
 
+   /**
+   * Handler für die Anmeldung über Keycloak.
+   */
   const handleKeycloakLogin = async () => {
     setLoadingKeycloak(true);
     try {
@@ -58,6 +73,9 @@ export default function SignInPage() {
     }
   };
 
+  /**
+   * Wechselt die Passwortsichtbarkeit.
+   */
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };

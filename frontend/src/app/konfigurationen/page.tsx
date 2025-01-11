@@ -13,11 +13,24 @@ import Link from 'next/link';
 import { ENV } from '../../utils/env';
 import { getLogger } from '../../utils/logger';
 
+/**
+ * Schnittstelle für Konfigurationsdaten
+ */
 export interface ConfigData {
+  /**
+   * Der Schlüssel der Umgebungsvariablen
+   */
   key: string;
+  /**
+   * Der Wert der Umgebungsvariablen. Kann `undefined` sein. 
+   */
   value: string | undefined;
 }
-
+/**
+ * Eine Seite, die alle relevanten Konfigurationsvariablen anzeigt.
+ *
+ * @returns JSX.Element - Die gerenderte Konfigurationsseite.
+ */
 const ConfigPage = () => {
   const logger = getLogger('ConfigPage');
 
@@ -81,6 +94,7 @@ const ConfigPage = () => {
     },
   ];
 
+  // Logge die Konfigurationsvariablen
   configData.map((config) => logger.info('%s=%s', config.key, config.value));
 
   return (

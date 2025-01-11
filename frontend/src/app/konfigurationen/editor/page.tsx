@@ -4,6 +4,9 @@ import { Alert, Box, Button, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { ENV } from '../../../utils/env';
 
+/**
+ * Standardwerte für Umgebungsvariablen.
+ */
 const defaultEnvVars = {
   NODE_TLS_REJECT_UNAUTHORIZED: ENV.NODE_TLS_REJECT_UNAUTHORIZED || '',
   NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: ENV.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID || '',
@@ -18,15 +21,31 @@ const defaultEnvVars = {
   NEXT_PUBLIC_LOG_DIR: ENV.NEXT_PUBLIC_LOG_DIR || '',
 };
 
+/**
+ * Eine React-Komponente zur Bearbeitung von Umgebungsvariablen.
+ *
+ * @returns JSX.Element - Die gerenderte Seite für die Bearbeitung von Umgebungsvariablen.
+ */
 export default function EnvEditorPage() {
   const [envVars, setEnvVars] = useState(defaultEnvVars);
   const [message, setMessage] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
 
+  /**
+   * Handler um Umgebungsvariable zu ändern.
+   *
+   * @param key - Der Schlüssel der zu ändernden Umgebungsvariable.
+   * @param value - Der neue Wert der Umgebungsvariable.
+   */
   const handleChange = (key: string, value: string) => {
     setEnvVars((prev) => ({ ...prev, [key]: value }));
   };
 
+  /**
+   * Handler zum Speichern der Umgebungsvariablen auf dem Server.
+   *
+   * @async
+   */
   const handleSave = async () => {
     try {
       const response = await fetch('/api/update-env', {
