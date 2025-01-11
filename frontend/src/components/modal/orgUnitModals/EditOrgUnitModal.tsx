@@ -15,12 +15,12 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchAllFunctions } from '../../../lib/api/function.api';
+import { fetchAllFunctions } from '../../../lib/api/rolemapper/function.api';
 import {
   fetchAllOrgUnits,
   getOrgUnitById,
   updateOrgUnit,
-} from '../../../lib/api/orgUnit.api';
+} from '../../../lib/api/rolemapper/orgUnit.api';
 import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import FunctionAutocomplete from '../../FunctionAutocomplete';

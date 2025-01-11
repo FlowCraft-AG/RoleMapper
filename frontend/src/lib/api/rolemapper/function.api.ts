@@ -1,13 +1,13 @@
 'use server';
 
-import { ADD_FUNCTIONS } from '../../graphql/functions/mutation/add-to-function';
+import { ADD_FUNCTIONS } from '../../../graphql/functions/mutation/add-to-function';
 import {
   CREATE_EXPLICITE_FUNCTIONS,
   CREATE_IMPLICITE_FUNCTIONS,
-} from '../../graphql/functions/mutation/create-function';
-import { DELETE_FUNCTIONS } from '../../graphql/functions/mutation/delete-function';
-import { REMOVE_FUNCTIONS } from '../../graphql/functions/mutation/remove-to-function';
-import { UPDATE_FUNCTIONS } from '../../graphql/functions/mutation/update-function';
+} from '../../../graphql/functions/mutation/create-function';
+import { DELETE_FUNCTIONS } from '../../../graphql/functions/mutation/delete-function';
+import { REMOVE_FUNCTIONS } from '../../../graphql/functions/mutation/remove-to-function';
+import { UPDATE_FUNCTIONS } from '../../../graphql/functions/mutation/update-function';
 import {
   FUNCTIONS_BY_ORG_UNIT,
   GET_ALL_FUNCTIONS,
@@ -15,14 +15,14 @@ import {
   GET_FUNCTION_BY_ID,
   GET_SAVED_DATA,
   HAS_SINGLE_USERS,
-} from '../../graphql/functions/query/get-functions';
-import { GET_ALL_ORG_UNITS } from '../../graphql/orgUnits/query/get-orgUnits';
-import { GET_USERS_BY_FUNCTION } from '../../graphql/users/query/get-users';
-import { FunctionString, FunctionUser } from '../../types/function.type';
-import { OrgUnit } from '../../types/orgUnit.type';
-import { handleGraphQLError } from '../../utils/graphqlHandler.error';
-import { getLogger } from '../../utils/logger';
-import client from '../apolloClient';
+} from '../../../graphql/functions/query/get-functions';
+import { GET_ALL_ORG_UNITS } from '../../../graphql/orgUnits/query/get-orgUnits';
+import { GET_USERS_BY_FUNCTION } from '../../../graphql/users/query/get-users';
+import { FunctionString, FunctionUser } from '../../../types/function.type';
+import { OrgUnit } from '../../../types/orgUnit.type';
+import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
+import { getLogger } from '../../../utils/logger';
+import client from '../../apolloClient';
 import { getOrgUnitById } from './orgUnit.api';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'

@@ -6,10 +6,10 @@ import {
   GET_MEMBERS_BY_ALIAS_OR_COST_CENTER,
   GET_USER_BY_USER_ID,
   GET_USERS_BY_TYPE_EMPLOYEE,
-} from '../../graphql/users/query/get-users';
-import { ShortUser, User } from '../../types/user.type';
-import { getLogger } from '../../utils/logger';
-import client from '../apolloClient';
+} from '../../../graphql/users/query/get-users';
+import { ShortUser, User } from '../../../types/user.type';
+import { getLogger } from '../../../utils/logger';
+import client from '../../apolloClient';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'
 const logger = getLogger('user.api.ts');

@@ -19,7 +19,7 @@ import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import { JSXElementConstructor, useCallback, useEffect, useState } from 'react';
 import { FacultyTheme } from '../../interfaces/facultyTheme';
-import { fetchAllOrgUnits } from '../../lib/api/orgUnit.api';
+import { fetchAllOrgUnits } from '../../lib/api/rolemapper/orgUnit.api';
 import getFacultyTheme from '../../theme/fakultäten';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { OrgUnit } from '../../types/orgUnit.type';

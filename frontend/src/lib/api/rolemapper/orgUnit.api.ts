@@ -1,17 +1,17 @@
 'use server';
 
-import { CREATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/create-org-unit';
-import { DELETE_ORG_UNIT } from '../../graphql/orgUnits/mutation/delete-org-unit';
-import { UPDATE_ORG_UNIT } from '../../graphql/orgUnits/mutation/org-unit.mutation';
+import { CREATE_ORG_UNIT } from '../../../graphql/orgUnits/mutation/create-org-unit';
+import { DELETE_ORG_UNIT } from '../../../graphql/orgUnits/mutation/delete-org-unit';
+import { UPDATE_ORG_UNIT } from '../../../graphql/orgUnits/mutation/org-unit.mutation';
 import {
   GET_ALL_ORG_UNITS,
   GET_ORG_UNIT_BY_ID,
   GET_ORG_UNITS_SHORT,
-} from '../../graphql/orgUnits/query/get-orgUnits';
-import { OrgUnit, ShortOrgUnit } from '../../types/orgUnit.type';
-import { handleGraphQLError } from '../../utils/graphqlHandler.error';
-import { getLogger } from '../../utils/logger';
-import client from '../apolloClient';
+} from '../../../graphql/orgUnits/query/get-orgUnits';
+import { OrgUnit, ShortOrgUnit } from '../../../types/orgUnit.type';
+import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
+import { getLogger } from '../../../utils/logger';
+import client from '../../apolloClient';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'orgUnit.api.ts'
 const logger = getLogger('orgUnit.api.ts');

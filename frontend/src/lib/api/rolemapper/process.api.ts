@@ -1,17 +1,17 @@
 'use server';
 
-import { CREATE_PROCESS } from '../../graphql/processes/mutation/create-process';
-import { DELETE_PROCESS } from '../../graphql/processes/mutation/delete-process';
-import { UPDATE_PROCESS } from '../../graphql/processes/mutation/update-process';
+import { CREATE_PROCESS } from '../../../graphql/processes/mutation/create-process';
+import { DELETE_PROCESS } from '../../../graphql/processes/mutation/delete-process';
+import { UPDATE_PROCESS } from '../../../graphql/processes/mutation/update-process';
 import {
   GET_ALL_PROCESSES,
   GET_PROCESS_BY_ID,
   GET_PROCESSES_SHORT,
-} from '../../graphql/processes/query/get-processes';
-import { Process, ShortProcess } from '../../types/process.type';
-import { handleGraphQLError } from '../../utils/graphqlHandler.error';
-import { getLogger } from '../../utils/logger';
-import client from '../apolloClient';
+} from '../../../graphql/processes/query/get-processes';
+import { Process, ShortProcess } from '../../../types/process.type';
+import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
+import { getLogger } from '../../../utils/logger';
+import client from '../../apolloClient';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'processes.api.ts'
 const logger = getLogger('processes.api.ts');

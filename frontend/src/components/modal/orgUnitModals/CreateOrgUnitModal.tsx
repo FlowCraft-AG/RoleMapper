@@ -15,8 +15,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchAllFunctions } from '../../../lib/api/function.api';
-import { createOrgUnit, fetchAllOrgUnits } from '../../../lib/api/orgUnit.api';
+import { fetchAllFunctions } from '../../../lib/api/rolemapper/function.api';
+import { createOrgUnit, fetchAllOrgUnits } from '../../../lib/api/rolemapper/orgUnit.api';
 import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import FunctionAutocomplete from '../../FunctionAutocomplete';

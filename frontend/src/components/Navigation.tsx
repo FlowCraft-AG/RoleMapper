@@ -28,7 +28,7 @@ import { useEffect, useState } from 'react';
 import {
   fetchAncestors,
   getFunctionsWithoutUsers,
-} from '../lib/api/function.api';
+} from '../lib/api/rolemapper/function.api';
 import { useFacultyTheme } from '../theme/ThemeProviderWrapper';
 
 /**
