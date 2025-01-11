@@ -1,8 +1,8 @@
 /**
- * @file AddRoleModal.tsx
+ * @file AddNewRoleModal.tsx
  * @description Modal-Komponente zum Hinzufügen einer neuen Rolle.
  *
- * @module RoleModal
+ * @module NewRoleModal
  */
 
 'use client';
@@ -11,7 +11,7 @@ import { Box, Typography, Modal, TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import { JSX } from 'react';
 
-interface RoleModalProps {
+interface NewRoleModalProps {
   open: boolean;
   onClose: () => void;
 }
@@ -19,10 +19,10 @@ interface RoleModalProps {
 /**
  * Modal-Komponente für das Hinzufügen einer neuen Rolle.
  *
- * @param {RoleModalProps} props - Eigenschaften der Komponente.
+ * @param {NewRoleModalProps} props - Eigenschaften der Komponente.
  * @returns {JSX.Element} - JSX-Element für das Modal.
  */
-export default function RoleModal({ open, onClose }: RoleModalProps): JSX.Element {
+export default function NewRoleModal({ open, onClose }: NewRoleModalProps): JSX.Element {
   const [functionName, setFunctionName] = useState('');
   const [errors, setErrors] = useState<{ functionName?: string }>({});
 
@@ -70,6 +70,15 @@ export default function RoleModal({ open, onClose }: RoleModalProps): JSX.Elemen
           error={!!errors.functionName}
           helperText={errors.functionName}
         />
+        <TextField
+          label="Rollen ID"
+          value={functionName}
+          onChange={(e) => setFunctionName(e.target.value)}
+          fullWidth
+          error={!!errors.functionName}
+          helperText={errors.functionName}
+        />
+        
         <Button variant="contained" color="primary" onClick={handleSave}>
           Speichern
         </Button>

@@ -11,8 +11,9 @@ import { Box, Typography, useTheme, Button } from '@mui/material';
 import { Process } from '../../types/process.type';
 import { useState } from 'react';
 import { JSX } from 'react';
-import AddRoleModal from '../modal/processModals/AddRoleModal'
 import { Add } from '@mui/icons-material';
+import NewRoleModal from '../modal/processModals/AddNewRoleModal';
+import SelectAddRoleModal from '../modal/processModals/SelectAddRoleModal';
 
 interface RolesSpalteProps {
   selectedProcess: Process;
@@ -26,14 +27,24 @@ interface RolesSpalteProps {
  */
 export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.Element {
   const theme = useTheme(); // Theme verwenden
-  const [open, setOpen] = useState(false);
+  const [selectModalOpen, setSelectModalOpen] = useState(false);
+  const [newRoleModalOpen, setNewRoleModalOpen] = useState(false);
 
   const handleAddRole = () => {
-    setOpen(true);
+    setSelectModalOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleSelectModalClose = () => {
+    setSelectModalOpen(false);
+  };
+
+  const handleNewRoleModalOpen = () => {
+    setSelectModalOpen(false);
+    setNewRoleModalOpen(true);
+  };
+
+  const handleNewRoleModalClose = () => {
+    setNewRoleModalOpen(false);
   };
 
   return (
@@ -122,8 +133,20 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
         Rolle hinzufügen
       </Button>
 
-      {/* Modal-Komponente auslagern */}
-      <AddRoleModal open={open} onClose={handleClose} />
+      {/* Modal für Auswahl */}
+      <SelectAddRoleModal
+        open={selectModalOpen}
+        onClose={handleSelectModalClose}
+        onSelectType={(type) => {
+          if (type === 'explizite') {
+            handleNewRoleModalOpen();
+          }
+          // Weitere Logik für andere Typen kann hier eingefügt werden
+        }}
+      />
+
+      {/* Modal für neue Rolle */}
+      <NewRoleModal open={newRoleModalOpen} onClose={handleNewRoleModalClose} />
     </Box>
   );
 }
