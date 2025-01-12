@@ -8,7 +8,7 @@
 
 > **FlowNode**: `object`
 
-Defined in: [src/camunda/types/flownode.type.ts:107](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/types/flownode.type.ts#L107)
+Defined in: [src/camunda/types/flownode.type.ts:107](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/types/flownode.type.ts#L107)
 
 Beschreibt die Struktur einer FlowNode-Instanz innerhalb einer Prozessinstanz.
 

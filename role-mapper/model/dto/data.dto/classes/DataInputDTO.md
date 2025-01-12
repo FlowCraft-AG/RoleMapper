@@ -6,7 +6,7 @@
 
 # Class: DataInputDTO
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:4](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L4)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:4](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L4)
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:4](https://github.com/FlowCra
 
 > `optional` **active**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:21](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L21)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:21](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L21)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:21](https://github.com/FlowCr
 
 > `optional` **functionName**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L27)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L27)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:27](https://github.com/FlowCr
 
 > `optional` **name**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L30)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L30)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:30](https://github.com/FlowCr
 
 > `optional` **orgUnit**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L18)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L18)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:18](https://github.com/FlowCr
 
 > `optional` **parentId**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:39](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L39)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:39](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L39)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:39](https://github.com/FlowCr
 
 > `optional` **processId**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L9)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L9)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:9](https://github.com/FlowCra
 
 > `optional` **roleId**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:33](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L33)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:33](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L33)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:33](https://github.com/FlowCr
 
 > `optional` **roles**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L36)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L36)
 
 ***
 
@@ -88,7 +88,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:36](https://github.com/FlowCr
 
 > `optional` **supervisor**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L42)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L42)
 
 ***
 
@@ -96,7 +96,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:42](https://github.com/FlowCr
 
 > `optional` **userId**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L6)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L6)
 
 ***
 
@@ -104,7 +104,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:6](https://github.com/FlowCra
 
 > `optional` **userRole**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L15)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L15)
 
 ***
 
@@ -112,7 +112,7 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:15](https://github.com/FlowCr
 
 > `optional` **users**: `string`[]
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L24)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L24)
 
 ***
 
@@ -120,4 +120,4 @@ Defined in: [src/role-mapper/model/dto/data.dto.ts:24](https://github.com/FlowCr
 
 > `optional` **userType**: `string`
 
-Defined in: [src/role-mapper/model/dto/data.dto.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/data.dto.ts#L12)
+Defined in: [src/role-mapper/model/dto/data.dto.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/data.dto.ts#L12)

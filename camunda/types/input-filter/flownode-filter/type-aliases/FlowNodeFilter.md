@@ -8,7 +8,7 @@
 
 > **FlowNodeFilter**: [`BaseFilter`](../../base-filter/type-aliases/BaseFilter.md) & `object`
 
-Defined in: [src/camunda/types/input-filter/flownode-filter.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/types/input-filter/flownode-filter.ts#L26)
+Defined in: [src/camunda/types/input-filter/flownode-filter.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/types/input-filter/flownode-filter.ts#L26)
 
 ## Type declaration
 

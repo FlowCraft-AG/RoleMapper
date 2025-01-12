@@ -6,7 +6,7 @@
 
 # Class: ProcessesController
 
-Defined in: [src/camunda/controller/processes.controller.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/controller/processes.controller.ts#L7)
+Defined in: [src/camunda/controller/processes.controller.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/controller/processes.controller.ts#L7)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/camunda/controller/processes.controller.ts:7](https://github.co
 
 > **new ProcessesController**(`zeebeService`): [`ProcessesController`](ProcessesController.md)
 
-Defined in: [src/camunda/controller/processes.controller.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/controller/processes.controller.ts#L11)
+Defined in: [src/camunda/controller/processes.controller.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/controller/processes.controller.ts#L11)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/camunda/controller/processes.controller.ts:11](https://github.c
 
 > **startProcess**(`body`): `Promise`\<`CreateProcessInstanceResponse`\>
 
-Defined in: [src/camunda/controller/processes.controller.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/controller/processes.controller.ts#L17)
+Defined in: [src/camunda/controller/processes.controller.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/controller/processes.controller.ts#L17)
 
 #### Parameters
 

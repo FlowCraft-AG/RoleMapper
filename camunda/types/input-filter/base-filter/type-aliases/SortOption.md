@@ -8,7 +8,7 @@
 
 > **SortOption**: `object`
 
-Defined in: [src/camunda/types/input-filter/base-filter.ts:39](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/types/input-filter/base-filter.ts#L39)
+Defined in: [src/camunda/types/input-filter/base-filter.ts:39](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/types/input-filter/base-filter.ts#L39)
 
 Definiert die Optionen zur Sortierung der Filterergebnisse.
 

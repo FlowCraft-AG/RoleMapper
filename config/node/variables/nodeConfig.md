@@ -8,7 +8,7 @@
 
 > `const` **nodeConfig**: `object`
 
-Defined in: [src/config/node.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/config/node.ts#L14)
+Defined in: [src/config/node.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/config/node.ts#L14)
 
 ## Type declaration
 

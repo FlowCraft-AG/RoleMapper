@@ -8,6 +8,6 @@
 
 > **FlowNodeType**: `"UNSPECIFIED"` \| `"PROCESS"` \| `"SUB_PROCESS"` \| `"EVENT_SUB_PROCESS"` \| `"START_EVENT"` \| `"INTERMEDIATE_CATCH_EVENT"` \| `"INTERMEDIATE_THROW_EVENT"` \| `"BOUNDARY_EVENT"` \| `"END_EVENT"` \| `"SERVICE_TASK"` \| `"RECEIVE_TASK"` \| `"USER_TASK"` \| `"MANUAL_TASK"` \| `"TASK"` \| `"EXCLUSIVE_GATEWAY"` \| `"INCLUSIVE_GATEWAY"` \| `"PARALLEL_GATEWAY"` \| `"EVENT_BASED_GATEWAY"` \| `"SEQUENCE_FLOW"` \| `"MULTI_INSTANCE_BODY"` \| `"CALL_ACTIVITY"` \| `"BUSINESS_RULE_TASK"` \| `"SCRIPT_TASK"` \| `"SEND_TASK"` \| `"UNKNOWN"`
 
-Defined in: [src/camunda/types/flownode.type.ts:56](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/types/flownode.type.ts#L56)
+Defined in: [src/camunda/types/flownode.type.ts:56](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/types/flownode.type.ts#L56)
 
 Definiert die möglichen Typen von FlowNodes in einer Prozess-Engine.

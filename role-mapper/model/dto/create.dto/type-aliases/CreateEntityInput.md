@@ -8,7 +8,7 @@
 
 > **CreateEntityInput**: `object`
 
-Defined in: [src/role-mapper/model/dto/create.dto.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/dto/create.dto.ts#L17)
+Defined in: [src/role-mapper/model/dto/create.dto.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/model/dto/create.dto.ts#L17)
 
 Eingabetyp für die Erstellung von Entitäten.
 

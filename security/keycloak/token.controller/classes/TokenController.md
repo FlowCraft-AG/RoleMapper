@@ -6,7 +6,7 @@
 
 # Class: TokenController
 
-Defined in: [src/security/keycloak/token.controller.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.controller.ts#L35)
+Defined in: [src/security/keycloak/token.controller.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/security/keycloak/token.controller.ts#L35)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/security/keycloak/token.controller.ts:35](https://github.com/Fl
 
 > **new TokenController**(`keycloakService`): [`TokenController`](TokenController.md)
 
-Defined in: [src/security/keycloak/token.controller.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.controller.ts#L40)
+Defined in: [src/security/keycloak/token.controller.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/security/keycloak/token.controller.ts#L40)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/security/keycloak/token.controller.ts:40](https://github.com/Fl
 
 > **refresh**(`body`, `response`): `Promise`\<`Response`\<`any`, `Record`\<`string`, `any`\>\>\>
 
-Defined in: [src/security/keycloak/token.controller.ts:74](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.controller.ts#L74)
+Defined in: [src/security/keycloak/token.controller.ts:74](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/security/keycloak/token.controller.ts#L74)
 
 #### Parameters
 
@@ -54,7 +54,7 @@ Defined in: [src/security/keycloak/token.controller.ts:74](https://github.com/Fl
 
 > **token**(`__namedParameters`, `response`): `Promise`\<`Response`\<`any`, `Record`\<`string`, `any`\>\>\>
 
-Defined in: [src/security/keycloak/token.controller.ts:53](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.controller.ts#L53)
+Defined in: [src/security/keycloak/token.controller.ts:53](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/security/keycloak/token.controller.ts#L53)
 
 #### Parameters
 

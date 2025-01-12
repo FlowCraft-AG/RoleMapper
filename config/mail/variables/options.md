@@ -8,4 +8,4 @@
 
 > `const` **options**: `Options`
 
-Defined in: [src/config/mail.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/config/mail.ts#L17)
+Defined in: [src/config/mail.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/config/mail.ts#L17)

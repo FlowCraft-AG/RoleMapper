@@ -6,7 +6,7 @@
 
 # Class: InvalidOperatorException
 
-Defined in: [src/role-mapper/error/exceptions.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/error/exceptions.ts#L12)
+Defined in: [src/role-mapper/error/exceptions.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/error/exceptions.ts#L12)
 
 Fehler bei der Verwendung eines ungültigen Operators in der Filter-Query.
 
@@ -20,7 +20,7 @@ Fehler bei der Verwendung eines ungültigen Operators in der Filter-Query.
 
 > **new InvalidOperatorException**(`operator`): [`InvalidOperatorException`](InvalidOperatorException.md)
 
-Defined in: [src/role-mapper/error/exceptions.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/error/exceptions.ts#L13)
+Defined in: [src/role-mapper/error/exceptions.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/error/exceptions.ts#L13)
 
 #### Parameters
 
