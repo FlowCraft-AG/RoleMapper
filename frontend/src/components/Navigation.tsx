@@ -104,6 +104,22 @@ export default function Navigation() {
     }
   };
 
+  // Manuelle Token-Aktualisierung
+  const handleRefreshToken = useCallback(async () => {
+    setLoading(true);
+    setError(undefined);
+
+    try {
+      await update();
+      setError(undefined);
+    } catch (err) {
+      console.error('Fehler beim Aktualisieren des Tokens:', err);
+      setError('Fehler beim Aktualisieren des Tokens');
+    } finally {
+      setLoading(false);
+    }
+  }, [update]);
+
   /**
    * Ruft Benachrichtigungen ab, die Funktionen ohne zugewiesene Benutzer anzeigen.
    * Aktualisiert die Benachrichtigungen alle 10 Sekunden.
@@ -129,6 +145,13 @@ export default function Navigation() {
       return () => clearInterval(interval);
     }
   }, [session]);
+
+  // Automatische Aktualisierung bei Ablauf
+  //   useEffect(() => {
+  //     if (remainingTime !== undefined && remainingTime <= 10) {
+  //       handleRefreshToken();
+  //     }
+  //   }, [remainingTime, handleRefreshToken]);
 
   /**
    * Handhabt das Klicken auf eine Benachrichtigung und navigiert zur entsprechenden Organisationseinheit.
@@ -196,22 +219,6 @@ export default function Navigation() {
     router.push('/startseite');
     signOut();
   };
-
-  // Manuelle Token-Aktualisierung
-  const handleRefreshToken = useCallback(async () => {
-    setLoading(true);
-    setError(undefined);
-
-    try {
-      await update();
-      setError(undefined);
-    } catch (err) {
-      console.error('Fehler beim Aktualisieren des Tokens:', err);
-      setError('Fehler beim Aktualisieren des Tokens');
-    } finally {
-      setLoading(false);
-    }
-  }, [update]);
 
   return (
     <AppBar

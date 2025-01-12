@@ -8,6 +8,11 @@
 'use client';
 
 import {
+  CheckCircle,
+  Error as ErrorIcon,
+  PlayCircle,
+} from '@mui/icons-material';
+import {
   Alert,
   Box,
   Button,
@@ -177,6 +182,30 @@ export default function ProcessInstances() {
             {instances.map((instance: ProcessInstance) => (
               <Grid item xs={12} sm={6} md={4} key={instance.key}>
                 <Card variant="outlined">
+                  {instance.state === 'COMPLETED' && (
+                    <CheckCircle
+                      sx={{
+                        position: 'absolute',
+                        color: 'green',
+                      }}
+                    />
+                  )}
+                  {instance.incident && (
+                    <ErrorIcon
+                      sx={{
+                        position: 'absolute',
+                        color: 'red',
+                      }}
+                    />
+                  )}
+                  {instance.state === 'ACTIVE' && !instance.incident && (
+                    <PlayCircle
+                      sx={{
+                        position: 'absolute',
+                        color: 'blue',
+                      }}
+                    />
+                  )}
                   <CardContent>
                     <Typography variant="h6" component="div" gutterBottom>
                       Prozess-ID: {instance.bpmnProcessId}
