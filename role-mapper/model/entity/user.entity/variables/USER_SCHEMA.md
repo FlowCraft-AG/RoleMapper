@@ -8,7 +8,7 @@
 
 > `const` **USER\_SCHEMA**: `Schema`\<[`User`](../classes/User.md), `Model`\<[`User`](../classes/User.md), `any`, `any`, `any`, `Document`\<`unknown`, `any`, [`User`](../classes/User.md)\> & [`User`](../classes/User.md) & `Required`\<\{\}\> & `object`, `any`\>, \{\}, \{\}, \{\}, \{\}, `DefaultSchemaOptions`, [`User`](../classes/User.md), `Document`\<`unknown`, \{\}, `FlatRecord`\<[`User`](../classes/User.md)\>\> & `FlatRecord`\<[`User`](../classes/User.md)\> & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:171](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/role-mapper/model/entity/user.entity.ts#L171)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:171](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/entity/user.entity.ts#L171)
 
 ## Const
 

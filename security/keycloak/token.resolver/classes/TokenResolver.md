@@ -6,7 +6,7 @@
 
 # Class: TokenResolver
 
-Defined in: [src/security/keycloak/token.resolver.ts:25](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/keycloak/token.resolver.ts#L25)
+Defined in: [src/security/keycloak/token.resolver.ts:25](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.resolver.ts#L25)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/security/keycloak/token.resolver.ts:25](https://github.com/Flow
 
 > **new TokenResolver**(`keycloakService`): [`TokenResolver`](TokenResolver.md)
 
-Defined in: [src/security/keycloak/token.resolver.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/keycloak/token.resolver.ts#L30)
+Defined in: [src/security/keycloak/token.resolver.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.resolver.ts#L30)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/security/keycloak/token.resolver.ts:30](https://github.com/Flow
 
 > **refresh**(`input`): `Promise`\<`Record`\<`string`, `string` \| `number`\>\>
 
-Defined in: [src/security/keycloak/token.resolver.ts:53](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/keycloak/token.resolver.ts#L53)
+Defined in: [src/security/keycloak/token.resolver.ts:53](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.resolver.ts#L53)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [src/security/keycloak/token.resolver.ts:53](https://github.com/Flow
 
 > **token**(`__namedParameters`): `Promise`\<`Record`\<`string`, `string` \| `number`\>\>
 
-Defined in: [src/security/keycloak/token.resolver.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/keycloak/token.resolver.ts#L36)
+Defined in: [src/security/keycloak/token.resolver.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.resolver.ts#L36)
 
 #### Parameters
 

@@ -8,7 +8,7 @@
 
 > **getBaseUri**(`__namedParameters`): `string`
 
-Defined in: [src/role-mapper/utils/uri-helper.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/role-mapper/utils/uri-helper.ts#L12)
+Defined in: [src/role-mapper/utils/uri-helper.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/utils/uri-helper.ts#L12)
 
 ## Parameters
 

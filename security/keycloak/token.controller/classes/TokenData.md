@@ -6,7 +6,7 @@
 
 # Class: TokenData
 
-Defined in: [src/security/keycloak/token.controller.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/keycloak/token.controller.ts#L18)
+Defined in: [src/security/keycloak/token.controller.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.controller.ts#L18)
 
 Entity-Klasse für Token-Daten.
 
@@ -26,7 +26,7 @@ Entity-Klasse für Token-Daten.
 
 > **password**: `undefined` \| `string`
 
-Defined in: [src/security/keycloak/token.controller.ts:23](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/keycloak/token.controller.ts#L23)
+Defined in: [src/security/keycloak/token.controller.ts:23](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.controller.ts#L23)
 
 ***
 
@@ -34,4 +34,4 @@ Defined in: [src/security/keycloak/token.controller.ts:23](https://github.com/Fl
 
 > **username**: `undefined` \| `string`
 
-Defined in: [src/security/keycloak/token.controller.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/keycloak/token.controller.ts#L20)
+Defined in: [src/security/keycloak/token.controller.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/security/keycloak/token.controller.ts#L20)

@@ -8,7 +8,7 @@
 
 > **BaseFilter**: `object`
 
-Defined in: [src/camunda/types/input-filter/base-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/camunda/types/input-filter/base-filter.ts#L10)
+Defined in: [src/camunda/types/input-filter/base-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/camunda/types/input-filter/base-filter.ts#L10)
 
 Basistyp für Filteroptionen, die in mehreren APIs verwendet werden.
 

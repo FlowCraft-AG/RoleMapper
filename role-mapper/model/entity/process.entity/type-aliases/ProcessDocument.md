@@ -8,4 +8,4 @@
 
 > **ProcessDocument**: [`Process`](../classes/Process.md) & `Document`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:60](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/role-mapper/model/entity/process.entity.ts#L60)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:60](https://github.com/FlowCraft-AG/RoleMapper/blob/536244048d4b335d6a9047c5d05cfa1a8bc97efb/backend/src/role-mapper/model/entity/process.entity.ts#L60)
