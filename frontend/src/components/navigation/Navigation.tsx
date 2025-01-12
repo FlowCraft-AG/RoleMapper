@@ -12,11 +12,21 @@ import {
   AppBar,
   Badge,
   Box,
+  Button,
+  Card,
+  CardActionArea,
   Divider,
+  FormControl,
   IconButton,
+  InputLabel,
   Menu,
   MenuItem,
+  Select,
+  SelectChangeEvent,
   Switch,
+  Tab,
+  Tabs,
+  TextField,
   Toolbar,
   Tooltip,
   Typography,
@@ -28,10 +38,11 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import {
   fetchAncestors,
-  getFunctionsWithoutUsers,
-} from '../lib/api/rolemapper/function.api';
-import { useFacultyTheme } from '../theme/ThemeProviderWrapper';
-import { formatTime } from '../utils/counter-format.util';
+  fetchFunctionsWithNoUsersOrRetiringUsers,
+} from '../../lib/api/rolemapper/function.api';
+import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
+import { FunctionString } from '../../types/function.type';
+import { formatTime } from '../../utils/counter-format.util';
 
 /**
  * Typ für eine einzelne Benachrichtigung.
@@ -45,6 +56,19 @@ interface Notification {
   message: string;
   nodeId: string;
   orgUnit: string;
+}
+
+/**
+ * Typ für eine Benachrichtigung.
+ */
+interface Notification {
+  function: FunctionString;
+  userList: UserRetirementInfo[];
+}
+
+interface UserRetirementInfo {
+  userId: string;
+  timeLeft: number;
 }
 
 /**
@@ -77,7 +101,7 @@ export default function Navigation() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   //   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [notificationAnchor, setNotificationAnchor] =
     useState<null | HTMLElement>(null);
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(
@@ -86,21 +110,54 @@ export default function Navigation() {
   const [remainingTime, setRemainingTime] = useState<number | undefined>(
     undefined,
   );
+  const [notificationsGrouped, setNotificationsGrouped] = useState<
+    NotificationGroup[]
+  >([]);
+  const [notificationsSingleUser, setNotificationsSingleUser] = useState<
+    Notification[]
+  >([]);
+  const [notificationsMultiUser, setNotificationsMultiUser] = useState<
+    Notification[]
+  >([]);
+  const [activeTab, setActiveTab] = useState(0); // Tab-Index
+  const [lookaheadPeriod, setLookaheadPeriod] = useState(5); // Standardwert
+  const [timeUnit, setTimeUnit] = useState('JAHRE'); // Standardwert
 
   const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
 
-  // Funktion zur Benachrichtigungsaktualisierung
+  /**
+   * Ruft Benachrichtigungen ab und teilt sie nach `isSingleUser`.
+   */
   const fetchNotifications = async () => {
+    setLoadingNotifications(true);
     try {
-      const functionsWithoutUsers = await getFunctionsWithoutUsers();
-      const newNotifications = functionsWithoutUsers.map((func) => ({
-        message: `Die Funktion "${func.functionName}" hat keinen zugewiesenen Benutzer.`,
-        nodeId: func.id,
-        orgUnit: func.orgUnit,
-      }));
-      setNotifications(newNotifications);
+      const functionsInfo = await fetchFunctionsWithNoUsersOrRetiringUsers(
+        lookaheadPeriod,
+        timeUnit,
+      );
+
+      const singleUserNotifications: Notification[] = [];
+      const multiUserNotifications: Notification[] = [];
+
+      functionsInfo.forEach((func) => {
+        const notification = {
+          function: func.function,
+          userList: func.userList,
+        };
+
+        if (func.function.isSingleUser) {
+          singleUserNotifications.push(notification);
+        } else {
+          multiUserNotifications.push(notification);
+        }
+      });
+
+      setNotificationsSingleUser(singleUserNotifications);
+      setNotificationsMultiUser(multiUserNotifications);
     } catch (error) {
       console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
+    } finally {
+      setLoadingNotifications(false);
     }
   };
 
@@ -121,8 +178,7 @@ export default function Navigation() {
   }, [update]);
 
   /**
-   * Ruft Benachrichtigungen ab, die Funktionen ohne zugewiesene Benutzer anzeigen.
-   * Aktualisiert die Benachrichtigungen alle 10 Sekunden.
+   * Effekt zum Laden der Benachrichtigungen.
    */
   useEffect(() => {
     fetchNotifications();
@@ -130,7 +186,6 @@ export default function Navigation() {
       fetchNotifications,
       NOTIFICATION_UPDATE_INTERVAL,
     );
-
     return () => clearInterval(interval);
   }, []);
 
@@ -161,14 +216,14 @@ export default function Navigation() {
   const handleNotificationClick = async (notification: Notification) => {
     handleCloseNotificationMenu();
     try {
-      const ancestors = await fetchAncestors(notification.orgUnit);
+      const ancestors = await fetchAncestors(notification.function.orgUnit);
       const ancestorIds = ancestors.map((ancestor) => ancestor._id);
 
       // Navigiere zu /organisationseinheiten mit den geöffneten Knoten
       router.push(
         `/organisationseinheiten?openNodes=${encodeURIComponent(
           ancestorIds.join(','),
-        )}&selectedNode=${notification.nodeId}&parentOrgUnitId=${notification.orgUnit}`,
+        )}&selectedNode=${notification.function._id}&parentOrgUnitId=${notification.function.orgUnit}`,
       );
     } catch (error) {
       console.error('Fehler beim Laden der Ancestors:', error);
@@ -219,6 +274,82 @@ export default function Navigation() {
     router.push('/startseite');
     signOut();
   };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
+
+  const handleLookaheadPeriodChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setLookaheadPeriod(parseInt(event.target.value, 10) || 0);
+  };
+
+  const handleTimeUnitChange = (event: SelectChangeEvent) => {
+    setTimeUnit(event.target.value);
+  };
+
+  const renderNotifications = (notifications: Notification[]) => (
+    <Box sx={{ maxHeight: '60vh', overflowY: 'auto' }}>
+      {notifications.length > 0 ? (
+        notifications.map((notification, index) => (
+          <Card
+            key={index}
+            variant="outlined"
+            sx={{
+              margin: '1rem',
+              marginBottom: '0.75rem',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              boxShadow: 3,
+              transition: 'transform 0.2s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.02)',
+                boxShadow: 6,
+              },
+            }}
+          >
+            <CardActionArea
+              onClick={() => handleNotificationClick(notification)}
+              sx={{
+                padding: '1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                backgroundColor: theme.palette.background.paper,
+              }}
+            >
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                {notification.function.functionName}
+              </Typography>
+              <Divider sx={{ width: '100%', marginY: 1 }} />
+              {notification.userList.length > 0 ? (
+                notification.userList.map((user, userIndex) => (
+                  <Typography
+                    key={userIndex}
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ marginBottom: '0.5rem' }}
+                  >
+                    Benutzer: <strong>{user.userId}</strong> – verbleibend:{' '}
+                    <strong>{user.timeLeft} Tage</strong>
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2" color="textSecondary">
+                  Kein Benutzer zugewiesen.
+                </Typography>
+              )}
+            </CardActionArea>
+          </Card>
+        ))
+      ) : (
+        <Typography variant="body2" color="textSecondary">
+          Keine Benachrichtigungen vorhanden.
+        </Typography>
+      )}
+    </Box>
+  );
 
   return (
     <AppBar
@@ -276,7 +407,14 @@ export default function Navigation() {
                   onClick={handleOpenMenu}
                   aria-label="notifications"
                 >
-                  <Badge badgeContent={notifications.length} color="error">
+                  <Badge
+                    badgeContent={
+                      notificationsSingleUser.length +
+                      notificationsMultiUser.length
+                    }
+                    color="error"
+                    max={99}
+                  >
                     <Notifications />
                   </Badge>
                 </IconButton>
@@ -288,39 +426,60 @@ export default function Navigation() {
             anchorEl={notificationAnchor}
             open={Boolean(notificationAnchor)}
             onClose={handleCloseNotificationMenu}
-            sx={{ mt: '45px' }}
+            PaperProps={{
+              style: {
+                maxHeight: '80vh',
+                width: '500px',
+                padding: '1rem',
+                borderRadius: '50px',
+              },
+            }}
           >
-            <MenuItem disableRipple>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  width: '100%',
-                }}
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs
+                value={activeTab}
+                onChange={handleTabChange}
+                aria-label="Benachrichtigungen-Tabs"
               >
-                <Typography variant="subtitle1">Benachrichtigungen</Typography>
-                <Tooltip title="Aktualisieren">
-                  <IconButton onClick={fetchNotifications}>
-                    <Refresh />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </MenuItem>
-            <Divider />
-            {notifications.length > 0 ? (
-              notifications.map((notification, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={() => handleNotificationClick(notification)}
+                <Tab label="Einzelnutzer-Funktionen" />
+                <Tab label="Mehrbenutzer-Funktionen" />
+              </Tabs>
+            </Box>
+            <Box sx={{ padding: '1rem' }}>
+              <Box sx={{ display: 'flex', gap: 2, marginBottom: '1rem' }}>
+                <TextField
+                  label="Lookahead Period"
+                  type="number"
+                  value={lookaheadPeriod}
+                  onChange={handleLookaheadPeriodChange}
+                  size="small"
+                  fullWidth
+                />
+                <FormControl fullWidth size="small">
+                  <InputLabel id="time-unit-label">Zeiteinheit</InputLabel>
+                  <Select
+                    labelId="time-unit-label"
+                    value={timeUnit}
+                    onChange={handleTimeUnitChange}
+                  >
+                    <MenuItem value="TAGE">Tage</MenuItem>
+                    <MenuItem value="MONATE">Monate</MenuItem>
+                    <MenuItem value="JAHRE">Jahre</MenuItem>
+                  </Select>
+                </FormControl>
+                <Button
+                  variant="contained"
+                  sx={{ ml: 2 }}
+                  onClick={fetchNotifications}
+                  disabled={loadingNotifications}
+                  fullWidth
                 >
-                  {notification.message}
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem onClick={handleCloseNotificationMenu}>
-                Keine Meldungen
-              </MenuItem>
-            )}
+                  {loadingNotifications ? 'Lädt...' : 'Anwenden'}
+                </Button>
+              </Box>
+              {activeTab === 0 && renderNotifications(notificationsSingleUser)}
+              {activeTab === 1 && renderNotifications(notificationsMultiUser)}
+            </Box>
           </Menu>
 
           <Tooltip title="Toggle Styles">

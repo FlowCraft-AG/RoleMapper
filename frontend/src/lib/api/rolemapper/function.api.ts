@@ -13,12 +13,17 @@ import {
   GET_ALL_FUNCTIONS,
   GET_ANCESTORS,
   GET_FUNCTION_BY_ID,
+  GET_FUNCTIONS_WITH_NO_USERS_OR_RETIRING_USERES,
   GET_SAVED_DATA,
   HAS_SINGLE_USERS,
 } from '../../../graphql/functions/query/get-functions';
 import { GET_ALL_ORG_UNITS } from '../../../graphql/orgUnits/query/get-orgUnits';
 import { GET_USERS_BY_FUNCTION } from '../../../graphql/users/query/get-users';
-import { FunctionString, FunctionUser } from '../../../types/function.type';
+import {
+  FunctionString,
+  FunctionUser,
+  UnassignedFunctionsPayload,
+} from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 import { getLogger } from '../../../utils/logger';
@@ -433,7 +438,9 @@ export async function getFunctionsWithoutUsers(): Promise<
   { id: string; functionName: string; orgUnit: string }[]
 > {
   try {
-      logger.debug('getFunctionsWithoutUsers: Prüfe, welche Funktionen keine Benutzer haben');
+    logger.debug(
+      'getFunctionsWithoutUsers: Prüfe, welche Funktionen keine Benutzer haben',
+    );
 
     // GraphQL-Abfrage
     const { data } = await client.query({
@@ -445,7 +452,7 @@ export async function getFunctionsWithoutUsers(): Promise<
     if (!Array.isArray(functions)) {
       throw new Error('Unerwartetes Datenformat von der API');
     }
-      logger.debug('getFunctionsWithoutUsers: functions: %o', functions);
+    logger.debug('getFunctionsWithoutUsers: functions: %o', functions);
 
     // Filtern der Funktionen ohne Benutzer
     const noUserFunctions = functions
@@ -504,5 +511,36 @@ export async function fetchAncestors(nodeId: string) {
   } catch (error) {
     console.error('Fehler beim Abrufen der Ancestors:', error);
     throw error;
+  }
+}
+
+export async function fetchFunctionsWithNoUsersOrRetiringUsers(
+  lookaheadPeriod: number,
+  timeUnit: string,
+): Promise<UnassignedFunctionsPayload[]> {
+  logger.debug(
+    'fetchFunctionsWithNoUsersOrRetiringUsers: lookaheadPeriod=%s, timeUnit=%s',
+    lookaheadPeriod,
+    timeUnit,
+  );
+
+  try {
+    const { data } = await client.query({
+      query: GET_FUNCTIONS_WITH_NO_USERS_OR_RETIRING_USERES,
+      variables: { lookaheadPeriod, timeUnit },
+    });
+
+    const functionsInfo: UnassignedFunctionsPayload[] =
+      data?.getUnassignedFunctions;
+    logger.debug(
+      'fetchFunctionsWithNoUsersOrRetiringUsers: functionsInfo: %o',
+      functionsInfo,
+    );
+    return functionsInfo;
+  } catch (error) {
+    handleGraphQLError(
+      error,
+      'Fehler beim Abrufen der Funktionen ohne Benutzer oder mit ausscheidenden Benutzern.',
+    );
   }
 }
