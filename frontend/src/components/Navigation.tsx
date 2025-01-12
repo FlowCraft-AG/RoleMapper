@@ -143,6 +143,7 @@ export default function Navigation() {
     { href: '/konfigurationen', label: 'Konfigurationen' },
     { href: '/models', label: 'Modele' },
     { href: '/process', label: 'Aktive Prozesses' },
+    { href: '/myProcesses', label: 'Meine Prozesse' },
   ];
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {

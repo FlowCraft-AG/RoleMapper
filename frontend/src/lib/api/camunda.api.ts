@@ -9,6 +9,7 @@ import {
   GET_ALL_PROCESS_INSTANCES,
   GET_PROCESS_DEFINITION_XML_BY_PROCESS_DEFINITION_KEY,
   GET_PROCESS_INSTANCE_BY_PROCESS_INSTANCE_KEY,
+  GET_PROCESS_INSTANCE_BY_USER,
 } from '../../graphql/processes/query/get-process-instance.query';
 import { GET_PROCESS_VARIABLE_BY_PROCESS_INSTANCE_KEY } from '../../graphql/processes/query/get-process-variable.query';
 import {
@@ -116,6 +117,29 @@ export async function getProcessInstanceDetails(
   }
 }
 
+export async function getProcessInstancesByUser(
+    userId: string,
+    token: string,
+): Promise<ProcessInstance[]> {
+    logger.debug(
+        'getProcessInstancesByUser: userId=%s, token=%s',
+        userId,
+        token,
+    );
+    try {
+        const client = getApolloClient(token);
+        const { data } = await client.query({
+            query: GET_PROCESS_INSTANCE_BY_USER,
+            variables: { userId },
+        });
+
+        logger.debug('getProcessInstancesByUser: data=%o', data);
+        return data.getProcessInstancesByUserId;
+    } catch (error) {
+        handleGraphQLError(error, 'Fehler beim Abrufen der Prozessinstanzdetails.');
+    }
+}
+
 /**
  * Ruft die Variablen einer spezifischen Prozessinstanz von der Camunda API ab.
  *
@@ -191,6 +215,38 @@ export async function getTasksByProcessInstance(
   }
 }
 
+/**
+ * Ruft den FlowNode für einen Incident anhand eines Prozessinstanz-Schlüssels ab.
+ *
+ * Diese Funktion verwendet eine GraphQL-Abfrage, um den FlowNode zu ermitteln,
+ * der mit einem Incident verknüpft ist. Sie ist hilfreich, um Details zu spezifischen
+ * Incidents innerhalb einer Prozessinstanz zu finden.
+ *
+ * @async
+ * @function getIncidentFlowNode
+ *
+ * @param {string} processInstanceKey - Der eindeutige Schlüssel der Prozessinstanz,
+ *                                       für die der FlowNode abgefragt werden soll.
+ * @param {string} token - Das Authentifizierungs-Token, das für den Zugriff auf
+ *                         die API erforderlich ist.
+ *
+ * @returns {Promise<string>} Gibt einen String zurück, der den FlowNode beschreibt,
+ *                            der mit dem Incident verknüpft ist.
+ *
+ * @throws {Error} Löst einen Fehler aus, wenn die GraphQL-Abfrage fehlschlägt.
+ *
+ * @example
+ * ```typescript
+ * const processInstanceKey = "12345";
+ * const token = "Bearer xyz";
+ * try {
+ *   const flowNode = await getIncidentFlowNode(processInstanceKey, token);
+ *   console.log('FlowNode:', flowNode);
+ * } catch (error) {
+ *   console.error('Fehler beim Abrufen des FlowNodes:', error);
+ * }
+ * ```
+ */
 export async function getIncidentFlowNode(
   processInstanceKey: string,
   token: string,

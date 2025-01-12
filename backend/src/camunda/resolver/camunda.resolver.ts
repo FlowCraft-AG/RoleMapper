@@ -353,13 +353,30 @@ export class CamundaResolver {
      * @returns {Promise<Task[]>} Eine Liste der Aufgaben des Benutzers.
      */
     async #fetchUserTasks(userId: string, token: string): Promise<Task[]> {
-        const filter: TaskFilter = { assignee: userId };
-        this.#logger.debug('#fetchUserTasks: filter=%o', filter);
+        const filter1: TaskFilter = { assignee: userId };
+        const filter2: TaskFilter = { candidateUser: userId };
 
-        const tasks = await this.#camundaService.fetchProcessTasks(filter, token);
-        this.#logger.debug('#fetchUserTasks: tasks=%o', tasks);
+        this.#logger.debug('#fetchUserTasks: filter1=%o, filter2=%o', filter1, filter2);
 
-        return tasks;
+        // Parallel Anfragen senden
+        const [tasks1, tasks2] = await Promise.all([
+            this.#camundaService.fetchProcessTasks(filter1, token),
+            this.#camundaService.fetchProcessTasks(filter2, token),
+        ]);
+
+        // Aufgaben kombinieren und Duplikate entfernen
+        const combinedTasks: Task[] = [];
+        const taskMap: Record<string, boolean> = {};
+
+        for (const task of [...tasks1, ...tasks2]) {
+            if (!(taskMap[task.id] ?? false)) {
+                taskMap[task.id] = true;
+                combinedTasks.push(task);
+            }
+        }
+
+        this.#logger.debug('#fetchUserTasks: combinedTasks=%o', combinedTasks);
+        return combinedTasks;
     }
 
     /**
