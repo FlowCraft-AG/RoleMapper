@@ -1,4 +1,12 @@
-'use client';
+/**
+ * @file rolesPage.tsx
+ * Diese Komponente ermöglicht es Benutzern, Rollen für einen bestimmten Prozess und Benutzer abzufragen.
+ * Sie verwendet GraphQL-Anfragen, um Daten vom Server zu laden.
+ *
+ * @module RolesPage
+ */
+
+ 'use client';
 
 import { useLazyQuery } from '@apollo/client';
 import { useRouter } from 'next/navigation';
@@ -31,6 +39,15 @@ interface GetProcessRolesVariables {
   userId: string;
 }
 
+/**
+ * Hauptkomponente zur Rollenabfrage.
+ * 
+ * Diese Komponente stellt ein Formular bereit, mit dem Benutzer eine Process ID und eine User ID eingeben können, 
+ * um Rolleninformationen abzufragen. Die Anfrage wird mit Apollo Client und GraphQL ausgeführt.
+ * 
+ * @component
+ * @returns {JSX.Element} Die gerenderte Rollenabfrage-Komponente.
+ */
 export default function RolesPage() {
   // Setze Anfangswerte für processId und userId
   const [processId, setProcessId] = useState('');
@@ -47,7 +64,11 @@ export default function RolesPage() {
     client,
   });
 
-  // Handle input changes
+  /**
+   * Handler für Eingabeänderungen.
+   * 
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Das Eingabe-Event.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'userId') {
@@ -57,7 +78,13 @@ export default function RolesPage() {
     }
   };
 
-  // Funktion zum Handhaben der Formulareingabe
+  /**
+  * Handler für das Formular-Submit-Event.
+  * 
+  * Führt die GraphQL-Abfrage aus, wenn beide Eingaben valide sind.
+  * 
+  * @param {React.FormEvent} event - Das Submit-Event.
+  */
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (processId && userId) {

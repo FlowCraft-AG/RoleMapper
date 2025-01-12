@@ -1,6 +1,6 @@
 /**
  * @module GeneralInfoCard
- * @description Diese Komponente zeigt allgemeine Informationen zu einer Prozessinstanz an.
+ * Diese Komponente zeigt allgemeine Informationen zu einer Prozessinstanz an.
  */
 
 import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material';

@@ -1,6 +1,6 @@
 /**
  * @file CamundaPage.tsx
- * @description Seite zum Abrufen und Anzeigen von Camunda-Dateien (BPMN, DMN, Formulare).
+ * Seite zum Abrufen und Anzeigen von Camunda-Dateien (BPMN, DMN, Formulare).
  *
  * @module CamundaPage
  */

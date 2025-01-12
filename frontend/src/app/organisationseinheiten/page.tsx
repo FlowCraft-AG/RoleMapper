@@ -1,6 +1,6 @@
 /**
  * @file Page.tsx
- * @description Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HSKA).
+ * Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HSKA).
  * Diese Seite bietet Navigation zu verschiedenen Ansichten des Organigramms
  * und zeigt eine eingebettete Organigramm-Komponente.
  *

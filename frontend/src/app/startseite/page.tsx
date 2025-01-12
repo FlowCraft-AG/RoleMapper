@@ -1,5 +1,10 @@
 'use client';
 
+/**
+ * Startseite.
+ * Verwalten und Anzeigen des Sitzungsstatus und der Token-Verfallszeit.
+ */
+
 import { Button, Container, Typography } from '@mui/material';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';

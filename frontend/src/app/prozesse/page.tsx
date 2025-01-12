@@ -1,6 +1,6 @@
 /**
  * @file Page.tsx
- * @description Hauptseite für die Prozesse der Hochschule Karlsruhe (HSKA).
+ * Hauptseite für die Prozesse der Hochschule Karlsruhe (HSKA).
  * Diese Seite zeigt direkt die `ProcessPage`-Komponente an.
  *
  * @module ProzessePage

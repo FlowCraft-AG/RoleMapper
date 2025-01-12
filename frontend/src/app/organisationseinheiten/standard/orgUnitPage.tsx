@@ -12,6 +12,11 @@ import { FunctionString, FunctionUser } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { User } from '../../../types/user.type';
 
+/**
+ * Organigramm-Seite zur Anzeige und Verwaltung von Organisationseinheiten,
+ * Funktionen, Benutzern und Benutzerinformationen.
+ */
+
 export default function OrganigrammPage() {
   // Zustände für ausgewählte Elemente
   const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | undefined>(
@@ -43,7 +48,12 @@ export default function OrganigrammPage() {
     console.log('Aktualisiertes Theme:', theme.palette);
   }, [setFacultyTheme, theme.palette]);
 
-  // Mitglieder laden
+  /**
+   * Lädt Mitglieder der Organisationseinheit basierend auf Alias und Kostenstellennummer.
+   * @param alias - Der Alias der Organisationseinheit
+   * @param kostenstelleNr - Die Kostenstellennummer der Organisationseinheit
+   * @returns Eine Liste der Mitglieder-IDs
+   */
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     try {
       return await fetchMitglieder(alias, kostenstelleNr);
@@ -53,7 +63,10 @@ export default function OrganigrammPage() {
     }
   };
 
-  // Organisationseinheit auswählen
+  /**
+   * Handelt die Auswahl einer Organisationseinheit.
+   * @param orgUnitDTO - Die ausgewählte Organisationseinheit
+   */
   const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
     setSelectedOrgUnit(orgUnit);
     setSelectedFunctionId(undefined); // Reset selection
@@ -69,7 +82,10 @@ export default function OrganigrammPage() {
     }
   };
 
-  // Funktion auswählen
+  /**
+   * Handelt die Auswahl einer Funktion.
+   * @param functionInfo - Informationen zur ausgewählten Funktion
+   */
   const handleFunctionSelect = (func: FunctionString) => {
     setSelectedFunctionId(func._id);
     //setSelectedFunction(functionInfo);
@@ -86,12 +102,18 @@ export default function OrganigrammPage() {
     setIsImpliciteFunction(false);
   };
 
-  // Benutzer auswählen
+  /**
+   * Handelt die Auswahl eines Benutzers.
+   * @param userId - Die ID des ausgewählten Benutzers
+   */
   const handleUserSelect = (userId: string) => {
     setSelectedUserId(userId);
   };
 
-  // Benutzer oder Funktion entfernen
+  /**
+   * Entfernt ein ausgewähltes Element (Organisationseinheit, Funktion oder Benutzer).
+   * @param ids - Eine Liste von IDs der zu entfernenden Elemente
+   */
   const handleRemove = (ids: string[]) => {
     if (ids.includes(selectedUserId!)) {
       setSelectedUserId(undefined);
@@ -109,7 +131,11 @@ export default function OrganigrammPage() {
     }
   };
 
-  // Mitgliederfunktion generieren
+  /**
+   * Erstellt eine Mitgliederfunktion für eine Organisationseinheit.
+   * @param orgUnitId - Die ID der Organisationseinheit
+   * @returns Die Mitgliederfunktion
+   */
   const mitglied = (orgUnitId: string | undefined) => {
     return {
       _id: 'mitglieder',

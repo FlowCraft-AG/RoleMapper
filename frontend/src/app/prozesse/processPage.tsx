@@ -1,6 +1,6 @@
 /**
  * @file ProcessPage.tsx
- * @description Stellt die Prozess-Seite der Hochschule Karlsruhe (HSKA) dar. Diese Seite erlaubt es,
+ * Stellt die Prozess-Seite der Hochschule Karlsruhe (HSKA) dar. Diese Seite erlaubt es,
  * Prozesse hierarchisch zu durchsuchen und auszuwählen.
  *
  * @module ProcessPage
