@@ -41,7 +41,7 @@ import { ProcessInstance } from '../../types/process.type';
  * <ProcessInstances />
  * ```
  */
-export default function ProcessInstances() {
+export default function UserProcessInstancesPage() {
   // Zustand für Prozessinstanzen
   const [instances, setInstances] = useState<ProcessInstance[]>([]);
   // Zustand für den Filter nach Prozessnamen
@@ -76,7 +76,7 @@ export default function ProcessInstances() {
         ) {
           throw new Error('Keine Session vorhanden.');
         }
-        console.log('ProcessInstances: token=', session);
+        console.log('UserProcessInstancesPage: token=', session.access_token);
         const instanzen = await getProcessInstancesByUser(
           session.user.username,
           session.access_token,

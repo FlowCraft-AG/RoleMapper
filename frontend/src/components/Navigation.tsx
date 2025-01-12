@@ -32,7 +32,6 @@ import {
 } from '../lib/api/rolemapper/function.api';
 import { useFacultyTheme } from '../theme/ThemeProviderWrapper';
 import { formatTime } from '../utils/counter-format.util';
-import getFacultyTheme from '../theme/fakultäten';
 
 /**
  * Typ für eine einzelne Benachrichtigung.
@@ -77,7 +76,7 @@ export default function Navigation() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-//   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
+  //   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [notificationAnchor, setNotificationAnchor] =
     useState<null | HTMLElement>(null);
@@ -106,13 +105,6 @@ export default function Navigation() {
   };
 
   /**
-   * Aktualisiert das Thema, wenn Änderungen auftreten.
-   */
-  useEffect(() => {
-    console.log('Aktualisiertes Theme:', theme.palette);
-  }, [theme.palette]);
-
-  /**
    * Ruft Benachrichtigungen ab, die Funktionen ohne zugewiesene Benutzer anzeigen.
    * Aktualisiert die Benachrichtigungen alle 10 Sekunden.
    */
@@ -123,6 +115,10 @@ export default function Navigation() {
       NOTIFICATION_UPDATE_INTERVAL,
     );
 
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     if (session?.expires_in) {
       const now = Math.floor(Date.now() / 1000);
       setRemainingTime(session?.expires_in - now);
@@ -130,8 +126,8 @@ export default function Navigation() {
       const interval = setInterval(() => {
         setRemainingTime((prev) => (prev !== undefined ? prev - 1 : undefined));
       }, 1000);
+      return () => clearInterval(interval);
     }
-    return () => clearInterval(interval);
   }, [session]);
 
   /**
@@ -196,13 +192,10 @@ export default function Navigation() {
     setUserMenuAnchor(null);
   };
 
-  /**
-   * Wechselt das Theme und setzt es auf das Default-Theme.
-   */
-//   const handleToggleTheme = () => {
-//     setUseCustomStyles(!useCustomStyles);
-//     setFacultyTheme(getFacultyTheme('default'));
-//   };
+  const handleLogout = () => {
+    router.push('/startseite');
+    signOut();
+  };
 
   // Manuelle Token-Aktualisierung
   const handleRefreshToken = useCallback(async () => {
@@ -390,7 +383,7 @@ export default function Navigation() {
                   Refresh Token
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={() => signOut()}>
+                <MenuItem onClick={handleLogout}>
                   <Logout fontSize="small" sx={{ marginRight: 1 }} />
                   Logout
                 </MenuItem>

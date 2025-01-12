@@ -5,14 +5,17 @@ import { ENV } from '../utils/env';
 // Globale Variable für die Apollo Client Instanz
 let client: ApolloClient<any> | null = null;
 
+// Aktuell verwendeter Token
+let currentToken: string | undefined = undefined;
+
 /**
  * Erstellt oder gibt eine existierende Apollo Client Instanz zurück.
  * @param {string} token - Der Authentifizierungstoken.
  * @returns {ApolloClient} Die Singleton Apollo Client Instanz.
  */
 const getApolloClient = (token: string | undefined): ApolloClient<any> => {
-  if (client) {
-    return client; // Gibt die existierende Instanz zurück
+  if (client && currentToken === token) {
+    return client; // Gibt die existierende Instanz zurück, wenn der Token gleich ist
   }
 
   const uri = ENV.NEXT_PUBLIC_BACKEND_SERVER_URL;
@@ -56,6 +59,9 @@ const getApolloClient = (token: string | undefined): ApolloClient<any> => {
       },
     },
   });
+
+  // Aktualisiere den aktuellen Token
+  currentToken = token;
 
   return client;
 };

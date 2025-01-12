@@ -233,13 +233,13 @@ export default function OrgUnitsSpalte({
    * @param {OrgUnit} unit - Die Organisationseinheit.
    * @param {FacultyTheme} theme - Das anzuwendende Theme.
    */
-    const applyThemeToOrgUnit = (unit: OrgUnit, theme: FacultyTheme) => {
-      if (!useCustomStyles) return; // Keine Theme-Änderung, wenn Toggle deaktiviert ist
-      setFacultyTheme(theme); // Setze das Theme für das aktuelle Element
+  const applyThemeToOrgUnit = (unit: OrgUnit, theme: FacultyTheme) => {
+    if (!useCustomStyles) return; // Keine Theme-Änderung, wenn Toggle deaktiviert ist
+    setFacultyTheme(theme); // Setze das Theme für das aktuelle Element
 
-      // Rekursiv auf alle Kinder und Enkelkinder anwenden
-      unit.children?.forEach((child) => applyThemeToOrgUnit(child, theme));
-    };
+    // Rekursiv auf alle Kinder und Enkelkinder anwenden
+    unit.children?.forEach((child) => applyThemeToOrgUnit(child, theme));
+  };
 
   /**
    * Findet die Fakultät für eine gegebene Organisationseinheit.

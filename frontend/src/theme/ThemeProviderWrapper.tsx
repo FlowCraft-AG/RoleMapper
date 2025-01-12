@@ -4,7 +4,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { FacultyTheme } from '../interfaces/facultyTheme';
 import getFacultyTheme from './fakultäten';
-import { get } from 'http';
 
 /**
  * ThemeContext: Kontext für das Thema (Theme) und den Toggle.
@@ -91,7 +90,7 @@ const ThemeProviderWrapper = ({ children }: { children: React.ReactNode }) => {
               divider: defaultTheme.divider,
               custom: defaultTheme.custom,
               primary: { main: defaultTheme.primary },
-              secondary: {main: defaultTheme.secondary },
+              secondary: { main: defaultTheme.secondary },
             },
         typography: {
           fontFamily: 'Roboto, Arial, sans-serif',

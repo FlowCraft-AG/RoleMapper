@@ -73,7 +73,7 @@ export const authOptions: AuthOptions = {
      */
     async jwt({ token, user, account, trigger }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
-      logger.trace('JWT: %o', token);
+      logger.debug('JWT: %o', token);
 
       if (user && account?.provider !== 'keycloak') {
         logger.trace('USER-LogIn');
@@ -148,7 +148,7 @@ export const authOptions: AuthOptions = {
      * Ergänzt die Session-Daten um Benutzer- und Token-Informationen.
      */
     async session({ session, token }) {
-      logger.trace('Session Token: %o', token);
+      logger.debug('Session Token: %o', token);
 
       session.user = token.user || {
         name: token.name as string,
