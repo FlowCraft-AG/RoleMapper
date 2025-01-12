@@ -8,6 +8,6 @@
 
 > `const` **httpsAgent**: `Agent`
 
-Defined in: [src/config/keycloak.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/config/keycloak.ts#L42)
+Defined in: [src/config/keycloak.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/config/keycloak.ts#L42)
 
 Agent für Axios für Requests bei selbstsigniertem Zertifikat

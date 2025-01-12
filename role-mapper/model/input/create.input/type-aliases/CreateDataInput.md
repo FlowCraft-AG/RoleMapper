@@ -8,4 +8,4 @@
 
 > **CreateDataInput**: [`CreateUserInput`](CreateUserInput.md) \| [`CreateFunctionInput`](CreateFunctionInput.md) \| [`CreateProcessInput`](CreateProcessInput.md) \| [`CreateOrgUnitInput`](CreateOrgUnitInput.md) \| [`CreateRoleInput`](CreateRoleInput.md)
 
-Defined in: [src/role-mapper/model/input/create.input.ts:58](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/input/create.input.ts#L58)
+Defined in: [src/role-mapper/model/input/create.input.ts:58](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/role-mapper/model/input/create.input.ts#L58)

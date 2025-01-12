@@ -8,7 +8,7 @@
 
 > `const` **helmetHandlers**: (`_req`, `res`, `next`) => `void`[]
 
-Defined in: [src/security/http/helmet.handler.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/security/http/helmet.handler.ts#L6)
+Defined in: [src/security/http/helmet.handler.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/security/http/helmet.handler.ts#L6)
 
 Security-Funktionen für z.B. CSP, XSS, Click-Jacking, HSTS und MIME-Sniffing.
 

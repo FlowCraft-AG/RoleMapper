@@ -8,7 +8,7 @@
 
 > **getLogger**(`context`, `kind`?): `Logger`\<`string`, `boolean`\>
 
-Defined in: [src/logger/logger.ts:4](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/logger/logger.ts#L4)
+Defined in: [src/logger/logger.ts:4](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/logger/logger.ts#L4)
 
 ## Parameters
 

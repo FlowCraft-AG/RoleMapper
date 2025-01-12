@@ -8,7 +8,7 @@
 
 > **retiringUsersPipeline**(`now`, `lookaheadDate`): `PipelineStage`[]
 
-Defined in: [src/role-mapper/service/pipeline/retiring-users.pipeline.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/service/pipeline/retiring-users.pipeline.ts#L14)
+Defined in: [src/role-mapper/service/pipeline/retiring-users.pipeline.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/role-mapper/service/pipeline/retiring-users.pipeline.ts#L14)
 
 Erstellt eine Aggregationspipeline, um Funktionen und Benutzer mit einer
 verbleibenden Zeit (`timeLeft`) innerhalb des angegebenen `lookaheadPeriod` zu finden.

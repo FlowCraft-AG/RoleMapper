@@ -6,7 +6,7 @@
 
 # Class: AppModule
 
-Defined in: [src/app.module.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/app.module.ts#L27)
+Defined in: [src/app.module.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/app.module.ts#L27)
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: [src/app.module.ts:27](https://github.com/FlowCraft-AG/RoleMapper/bl
 
 > **configure**(`consumer`): `void`
 
-Defined in: [src/app.module.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/app.module.ts#L28)
+Defined in: [src/app.module.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/app.module.ts#L28)
 
 #### Parameters
 

@@ -8,4 +8,4 @@
 
 > `const` **BASEDIR**: `"src"` \| `"dist"`
 
-Defined in: [src/config/app.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/config/app.ts#L5)
+Defined in: [src/config/app.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/06e4dcac36a95931bf2da64d0f18219d502c1d38/backend/src/config/app.ts#L5)
