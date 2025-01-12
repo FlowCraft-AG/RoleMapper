@@ -25,12 +25,14 @@ import {
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   fetchAncestors,
   getFunctionsWithoutUsers,
 } from '../lib/api/rolemapper/function.api';
 import { useFacultyTheme } from '../theme/ThemeProviderWrapper';
+import { formatTime } from '../utils/counter-format.util';
+import getFacultyTheme from '../theme/fakultäten';
 
 /**
  * Typ für eine einzelne Benachrichtigung.
@@ -70,16 +72,21 @@ export default function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
-  const { setFacultyTheme } = useFacultyTheme();
-  const { data: session } = useSession();
+  const { useCustomStyles, toggleCustomStyles } = useFacultyTheme();
+  const { data: session, update } = useSession();
 
-  const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-      const [notificationAnchor, setNotificationAnchor] =
-        useState<null | HTMLElement>(null);
-    const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(
-      null,
-    );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+//   const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationAnchor, setNotificationAnchor] =
+    useState<null | HTMLElement>(null);
+  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(
+    null,
+  );
+  const [remainingTime, setRemainingTime] = useState<number | undefined>(
+    undefined,
+  );
 
   const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
 
@@ -103,7 +110,7 @@ export default function Navigation() {
    */
   useEffect(() => {
     console.log('Aktualisiertes Theme:', theme.palette);
-  }, [setFacultyTheme, theme.palette]);
+  }, [theme.palette]);
 
   /**
    * Ruft Benachrichtigungen ab, die Funktionen ohne zugewiesene Benutzer anzeigen.
@@ -115,8 +122,17 @@ export default function Navigation() {
       fetchNotifications,
       NOTIFICATION_UPDATE_INTERVAL,
     );
+
+    if (session?.expires_in) {
+      const now = Math.floor(Date.now() / 1000);
+      setRemainingTime(session?.expires_in - now);
+
+      const interval = setInterval(() => {
+        setRemainingTime((prev) => (prev !== undefined ? prev - 1 : undefined));
+      }, 1000);
+    }
     return () => clearInterval(interval);
-  }, []);
+  }, [session]);
 
   /**
    * Handhabt das Klicken auf eine Benachrichtigung und navigiert zur entsprechenden Organisationseinheit.
@@ -172,13 +188,37 @@ export default function Navigation() {
     setNotificationAnchor(null);
   };
 
-      const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setUserMenuAnchor(event.currentTarget);
-      };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setUserMenuAnchor(event.currentTarget);
+  };
 
-      const handleCloseUserMenu = () => {
-        setUserMenuAnchor(null);
-      };
+  const handleCloseUserMenu = () => {
+    setUserMenuAnchor(null);
+  };
+
+  /**
+   * Wechselt das Theme und setzt es auf das Default-Theme.
+   */
+//   const handleToggleTheme = () => {
+//     setUseCustomStyles(!useCustomStyles);
+//     setFacultyTheme(getFacultyTheme('default'));
+//   };
+
+  // Manuelle Token-Aktualisierung
+  const handleRefreshToken = useCallback(async () => {
+    setLoading(true);
+    setError(undefined);
+
+    try {
+      await update();
+      setError(undefined);
+    } catch (err) {
+      console.error('Fehler beim Aktualisieren des Tokens:', err);
+      setError('Fehler beim Aktualisieren des Tokens');
+    } finally {
+      setLoading(false);
+    }
+  }, [update]);
 
   return (
     <AppBar
@@ -286,7 +326,7 @@ export default function Navigation() {
           <Tooltip title="Toggle Styles">
             <Switch
               checked={useCustomStyles}
-              onChange={() => setUseCustomStyles(!useCustomStyles)}
+              onChange={toggleCustomStyles}
               sx={{
                 '& .MuiSwitch-thumb': {
                   backgroundColor: useCustomStyles
@@ -308,7 +348,6 @@ export default function Navigation() {
               <Tooltip title="Profil">
                 <IconButton onClick={handleOpenUserMenu}>
                   <Typography
-                    //   variant="body2"
                     variant="body1"
                     //   sx={{ fontWeight: 'bold', color: '#fff' }}
                     sx={{
@@ -330,9 +369,25 @@ export default function Navigation() {
                 sx={{ mt: '45px' }}
               >
                 <MenuItem>
-                  <Typography variant="subtitle1">
-                    Token Counter: 3600s
-                  </Typography>
+                  {remainingTime !== undefined ? (
+                    <Typography variant="subtitle1" align="center">
+                      {/* Dein Token läuft in
+                      <br /> */}
+                      {/* // Umwandlung in HH:MM:SS */}
+                      {formatTime(remainingTime)}
+                      {/* <br />
+                      Sekunden ab. */}
+                    </Typography>
+                  ) : (
+                    <Typography variant="subtitle1" align="center">
+                      Dein Token läuft ist abgelaufen.
+                    </Typography>
+                  )}
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={() => handleRefreshToken()}>
+                  <Refresh fontSize="small" sx={{ marginRight: 1 }} />
+                  Refresh Token
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={() => signOut()}>
