@@ -24,7 +24,7 @@ import {
 } from '../../types/process.type';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
-import getApolloClient from '../apolloClient2';
+import getApolloClient from '../apolloClient';
 
 const logger = getLogger('camunda-api');
 

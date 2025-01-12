@@ -8,9 +8,10 @@ import { OAuthConfig } from 'next-auth/providers/oauth';
 import { LOGIN, REFRESH_TOKEN } from '../graphql/auth/auth';
 import { ENV, logEnvironmentVariables } from '../utils/env';
 import { getLogger } from '../utils/logger';
-import client from './apolloClient';
+import getApolloClient from './apolloClient';
 
 const logger = getLogger('authOptions');
+const client = getApolloClient(undefined);
 
 // Logge die Umgebungsvariablen (nützlich für Debugging und Validierung)
 logEnvironmentVariables();
@@ -156,7 +157,6 @@ export const authOptions: AuthOptions = {
         username: token.name as string,
       };
       session.role = token.isAdmin ? 'Admin' : 'User';
-      session.isAdmin = token.isAdmin;
       session.access_token = token.access_token;
       session.id_token = token.id_token;
       session.expires_in = token.expires_in || undefined;

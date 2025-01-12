@@ -9,10 +9,11 @@ import {
 } from '../../../graphql/users/query/get-users';
 import { ShortUser, User } from '../../../types/user.type';
 import { getLogger } from '../../../utils/logger';
-import client from '../../apolloClient';
+import getApolloClient from '../../apolloClient';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'
 const logger = getLogger('user.api.ts');
+const client = getApolloClient(undefined);
 /**
  * Ruft Mitglieder aus dem Backend ab.
  * Diese Funktion führt eine GraphQL-Abfrage aus, um eine Liste von Mitgliedern basierend

@@ -11,10 +11,11 @@ import {
 import { OrgUnit, ShortOrgUnit } from '../../../types/orgUnit.type';
 import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 import { getLogger } from '../../../utils/logger';
-import client from '../../apolloClient';
+import getApolloClient from '../../apolloClient';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'orgUnit.api.ts'
 const logger = getLogger('orgUnit.api.ts');
+const client = getApolloClient(undefined);
 
 /**
  * Ruft alle Organisationseinheiten ab.

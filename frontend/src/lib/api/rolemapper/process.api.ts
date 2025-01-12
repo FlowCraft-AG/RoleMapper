@@ -11,10 +11,11 @@ import {
 import { Process, ShortProcess } from '../../../types/process.type';
 import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 import { getLogger } from '../../../utils/logger';
-import client from '../../apolloClient';
+import getApolloClient from '../../apolloClient';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'processes.api.ts'
 const logger = getLogger('processes.api.ts');
+const client = getApolloClient(undefined);
 
 /**
  * Ruft alle Prozesse ab.

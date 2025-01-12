@@ -22,11 +22,12 @@ import { FunctionString, FunctionUser } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 import { getLogger } from '../../../utils/logger';
-import client from '../../apolloClient';
+import getApolloClient from '../../apolloClient';
 import { getOrgUnitById } from './orgUnit.api';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'
 const logger = getLogger('function.api.ts');
+const client = getApolloClient(undefined);
 
 export async function fetchAllFunctions(): Promise<FunctionString[]> {
   try {
