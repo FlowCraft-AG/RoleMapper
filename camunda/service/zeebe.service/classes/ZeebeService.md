@@ -6,7 +6,7 @@
 
 # Class: ZeebeService
 
-Defined in: [src/camunda/service/zeebe.service.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/camunda/service/zeebe.service.ts#L14)
+Defined in: [src/camunda/service/zeebe.service.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/service/zeebe.service.ts#L14)
 
 ## Implements
 
@@ -19,7 +19,7 @@ Defined in: [src/camunda/service/zeebe.service.ts:14](https://github.com/FlowCra
 
 > **new ZeebeService**(`service`): [`ZeebeService`](ZeebeService.md)
 
-Defined in: [src/camunda/service/zeebe.service.ts:22](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/camunda/service/zeebe.service.ts#L22)
+Defined in: [src/camunda/service/zeebe.service.ts:22](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/service/zeebe.service.ts#L22)
 
 #### Parameters
 
@@ -37,7 +37,7 @@ Defined in: [src/camunda/service/zeebe.service.ts:22](https://github.com/FlowCra
 
 > **onModuleDestroy**(): `Promise`\<`void`\>
 
-Defined in: [src/camunda/service/zeebe.service.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/camunda/service/zeebe.service.ts#L40)
+Defined in: [src/camunda/service/zeebe.service.ts:40](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/service/zeebe.service.ts#L40)
 
 #### Returns
 
@@ -53,7 +53,7 @@ Defined in: [src/camunda/service/zeebe.service.ts:40](https://github.com/FlowCra
 
 > **onModuleInit**(): `void`
 
-Defined in: [src/camunda/service/zeebe.service.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/camunda/service/zeebe.service.ts#L28)
+Defined in: [src/camunda/service/zeebe.service.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/service/zeebe.service.ts#L28)
 
 #### Returns
 
@@ -69,7 +69,7 @@ Defined in: [src/camunda/service/zeebe.service.ts:28](https://github.com/FlowCra
 
 > **startProcess**(`processKey`, `variables`): `Promise`\<`CreateProcessInstanceResponse`\>
 
-Defined in: [src/camunda/service/zeebe.service.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/camunda/service/zeebe.service.ts#L54)
+Defined in: [src/camunda/service/zeebe.service.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/service/zeebe.service.ts#L54)
 
 #### Parameters
 

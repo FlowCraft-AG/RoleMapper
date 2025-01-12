@@ -8,6 +8,6 @@
 
 > **IncidentType**: `"UNSPECIFIED"` \| `"UNKNOWN"` \| `"IO_MAPPING_ERROR"` \| `"JOB_NO_RETRIES"` \| `"EXECUTION_LISTENER_NO_RETRIES"` \| `"CONDITION_ERROR"` \| `"EXTRACT_VALUE_ERROR"` \| `"CALLED_ELEMENT_ERROR"` \| `"UNHANDLED_ERROR_EVENT"` \| `"MESSAGE_SIZE_EXCEEDED"` \| `"CALLED_DECISION_ERROR"` \| `"DECISION_EVALUATION_ERROR"` \| `"FORM_NOT_FOUND"`
 
-Defined in: [src/camunda/types/incident.type.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/camunda/types/incident.type.ts#L27)
+Defined in: [src/camunda/types/incident.type.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/types/incident.type.ts#L27)
 
 Definiert die möglichen Typen von Incidents.

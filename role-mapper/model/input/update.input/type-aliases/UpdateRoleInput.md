@@ -8,7 +8,7 @@
 
 > **UpdateRoleInput**: `object`
 
-Defined in: [src/role-mapper/model/input/update.input.ts:213](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/role-mapper/model/input/update.input.ts#L213)
+Defined in: [src/role-mapper/model/input/update.input.ts:213](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/input/update.input.ts#L213)
 
 Eingabetyp für die Aktualisierung von Rollen.
 

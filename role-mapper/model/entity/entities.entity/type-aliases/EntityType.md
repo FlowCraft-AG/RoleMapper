@@ -8,6 +8,6 @@
 
 > **EntityType**: [`User`](../../user.entity/classes/User.md) \| [`Mandates`](../../mandates.entity/classes/Mandates.md) \| [`OrgUnit`](../../org-unit.entity/classes/OrgUnit.md) \| [`Process`](../../process.entity/classes/Process.md) \| [`Role`](../../roles.entity/classes/Role.md)
 
-Defined in: [src/role-mapper/model/entity/entities.entity.ts:48](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/role-mapper/model/entity/entities.entity.ts#L48)
+Defined in: [src/role-mapper/model/entity/entities.entity.ts:48](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/entity/entities.entity.ts#L48)
 
 Unterstützte Entitätstypen im System.

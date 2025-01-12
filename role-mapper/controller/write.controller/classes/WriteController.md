@@ -6,7 +6,7 @@
 
 # Class: WriteController
 
-Defined in: [src/role-mapper/controller/write.controller.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/role-mapper/controller/write.controller.ts#L35)
+Defined in: [src/role-mapper/controller/write.controller.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/controller/write.controller.ts#L35)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/role-mapper/controller/write.controller.ts:35](https://github.c
 
 > **new WriteController**(`writeService`): [`WriteController`](WriteController.md)
 
-Defined in: [src/role-mapper/controller/write.controller.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/role-mapper/controller/write.controller.ts#L38)
+Defined in: [src/role-mapper/controller/write.controller.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/controller/write.controller.ts#L38)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/role-mapper/controller/write.controller.ts:38](https://github.c
 
 > **createEntity**(`entityType`, `body`): `Promise`\<[`MutationPayload`](../../../model/payload/mutation.payload/classes/MutationPayload.md)\>
 
-Defined in: [src/role-mapper/controller/write.controller.ts:71](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/role-mapper/controller/write.controller.ts#L71)
+Defined in: [src/role-mapper/controller/write.controller.ts:71](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/controller/write.controller.ts#L71)
 
 Erstellen einer neuen Entität.
 
@@ -62,7 +62,7 @@ Erfolgs- oder Fehlermeldung.
 
 > **deleteEntity**(`entityType`, `body`): `Promise`\<[`MutationPayload`](../../../model/payload/mutation.payload/classes/MutationPayload.md)\>
 
-Defined in: [src/role-mapper/controller/write.controller.ts:183](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/role-mapper/controller/write.controller.ts#L183)
+Defined in: [src/role-mapper/controller/write.controller.ts:183](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/controller/write.controller.ts#L183)
 
 Löschen einer Entität.
 
@@ -92,7 +92,7 @@ Erfolgs- oder Fehlermeldung.
 
 > **updateEntity**(`entityType`, `body`): `Promise`\<[`MutationPayload`](../../../model/payload/mutation.payload/classes/MutationPayload.md)\>
 
-Defined in: [src/role-mapper/controller/write.controller.ts:127](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/role-mapper/controller/write.controller.ts#L127)
+Defined in: [src/role-mapper/controller/write.controller.ts:127](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/controller/write.controller.ts#L127)
 
 Aktualisieren einer bestehenden Entität.
 

@@ -6,7 +6,7 @@
 
 # Class: Refresh
 
-Defined in: [src/security/keycloak/token.controller.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/security/keycloak/token.controller.ts#L26)
+Defined in: [src/security/keycloak/token.controller.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/security/keycloak/token.controller.ts#L26)
 
 ## Constructors
 
@@ -24,6 +24,6 @@ Defined in: [src/security/keycloak/token.controller.ts:26](https://github.com/Fl
 
 > **refresh\_token**: `undefined` \| `string`
 
-Defined in: [src/security/keycloak/token.controller.ts:29](https://github.com/FlowCraft-AG/RoleMapper/blob/145632709283208e820d3cdbc6b2193b07b9900d/backend/src/security/keycloak/token.controller.ts#L29)
+Defined in: [src/security/keycloak/token.controller.ts:29](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/security/keycloak/token.controller.ts#L29)
 
 Refresh Token
