@@ -8,7 +8,7 @@
 
 > **ProcessInstance**: `object`
 
-Defined in: [src/camunda/types/process-instance.type.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/types/process-instance.type.ts#L5)
+Defined in: [src/camunda/types/process-instance.type.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/camunda/types/process-instance.type.ts#L5)
 
 Typ für eine Camunda-Prozessinstanz.
 Repräsentiert eine einzelne Instanz eines Prozesses, einschließlich Status, Startdatum und zugehöriger Metadaten.

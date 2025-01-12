@@ -6,7 +6,7 @@
 
 # Class: CamundaModule
 
-Defined in: [src/camunda/camunda.module.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/camunda.module.ts#L17)
+Defined in: [src/camunda/camunda.module.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/camunda/camunda.module.ts#L17)
 
 ## Constructors
 

@@ -8,7 +8,7 @@
 
 > **UpdateDataInput**: [`UpdateUserInput`](UpdateUserInput.md) \| [`UpdateFunctionInput`](UpdateFunctionInput.md) \| [`UpdateProcessInput`](UpdateProcessInput.md) \| [`UpdateOrgUnitInput`](UpdateOrgUnitInput.md) \| [`UpdateRoleInput`](UpdateRoleInput.md)
 
-Defined in: [src/role-mapper/model/input/update.input.ts:242](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/input/update.input.ts#L242)
+Defined in: [src/role-mapper/model/input/update.input.ts:242](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/input/update.input.ts#L242)
 
 Typ für allgemeine Aktualisierungsdaten.
 

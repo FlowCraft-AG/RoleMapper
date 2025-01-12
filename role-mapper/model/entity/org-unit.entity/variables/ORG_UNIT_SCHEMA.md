@@ -8,6 +8,6 @@
 
 > `const` **ORG\_UNIT\_SCHEMA**: `Schema`\<[`OrgUnit`](../classes/OrgUnit.md), `Model`\<[`OrgUnit`](../classes/OrgUnit.md), `any`, `any`, `any`, `Document`\<`unknown`, `any`, [`OrgUnit`](../classes/OrgUnit.md)\> & [`OrgUnit`](../classes/OrgUnit.md) & `Required`\<\{\}\> & `object`, `any`\>, \{\}, \{\}, \{\}, \{\}, `DefaultSchemaOptions`, [`OrgUnit`](../classes/OrgUnit.md), `Document`\<`unknown`, \{\}, `FlatRecord`\<[`OrgUnit`](../classes/OrgUnit.md)\>\> & `FlatRecord`\<[`OrgUnit`](../classes/OrgUnit.md)\> & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:68](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/entity/org-unit.entity.ts#L68)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:68](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L68)
 
 Schema für die Organisationseinheit.

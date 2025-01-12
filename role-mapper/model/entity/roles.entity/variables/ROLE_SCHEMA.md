@@ -8,4 +8,4 @@
 
 > `const` **ROLE\_SCHEMA**: `Schema`\<[`Role`](../classes/Role.md), `Model`\<[`Role`](../classes/Role.md), `any`, `any`, `any`, `Document`\<`unknown`, `any`, [`Role`](../classes/Role.md)\> & [`Role`](../classes/Role.md) & `Required`\<\{\}\> & `object`, `any`\>, \{\}, \{\}, \{\}, \{\}, `DefaultSchemaOptions`, [`Role`](../classes/Role.md), `Document`\<`unknown`, \{\}, `FlatRecord`\<[`Role`](../classes/Role.md)\>\> & `FlatRecord`\<[`Role`](../classes/Role.md)\> & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/model/entity/roles.entity.ts:37](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/entity/roles.entity.ts#L37)
+Defined in: [src/role-mapper/model/entity/roles.entity.ts:37](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/roles.entity.ts#L37)

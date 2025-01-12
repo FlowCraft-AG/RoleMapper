@@ -6,7 +6,7 @@
 
 # Class: BannerService
 
-Defined in: [src/logger/banner.service.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/logger/banner.service.ts#L10)
+Defined in: [src/logger/banner.service.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/logger/banner.service.ts#L10)
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: [src/logger/banner.service.ts:10](https://github.com/FlowCraft-AG/Ro
 
 > **onApplicationBootstrap**(): `void`
 
-Defined in: [src/logger/banner.service.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/logger/banner.service.ts#L16)
+Defined in: [src/logger/banner.service.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/logger/banner.service.ts#L16)
 
 Beim Bootstrap der Anwendung Informationen und ein Banner ausgeben.
 

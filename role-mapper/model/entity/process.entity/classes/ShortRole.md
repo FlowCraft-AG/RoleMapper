@@ -6,7 +6,7 @@
 
 # Class: ShortRole
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/entity/process.entity.ts#L7)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/process.entity.ts#L7)
 
 Definiert das Schema für die Role-Entität innerhalb eines Prozesses.
 
@@ -26,7 +26,7 @@ Definiert das Schema für die Role-Entität innerhalb eines Prozesses.
 
 > **roleId**: `string`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/entity/process.entity.ts#L14)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/process.entity.ts#L14)
 
 Eindeutige ID der Rolle.
 
@@ -36,6 +36,6 @@ Eindeutige ID der Rolle.
 
 > **roleName**: `string`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/role-mapper/model/entity/process.entity.ts#L10)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/process.entity.ts#L10)
 
 Schlüssel der Rolle (z. B. "Reviewer").

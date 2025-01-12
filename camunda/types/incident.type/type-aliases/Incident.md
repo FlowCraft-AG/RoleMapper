@@ -8,7 +8,7 @@
 
 > **Incident**: `object`
 
-Defined in: [src/camunda/types/incident.type.ts:56](https://github.com/FlowCraft-AG/RoleMapper/blob/431ad1c9b0d708a278f2d2969907ccf8ac66ccc1/backend/src/camunda/types/incident.type.ts#L56)
+Defined in: [src/camunda/types/incident.type.ts:56](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/camunda/types/incident.type.ts#L56)
 
 Beschreibt die Struktur eines Incident-Objekts.
 
