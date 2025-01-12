@@ -11,7 +11,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid,
+  Grid2,
   List,
   ListItemButton,
   ListItemText,
@@ -120,8 +120,8 @@ export default function ClientPage({ bpmnFiles, formFiles, dmnFiles }: Props) {
         <Tab value="dmn" label="DMNs" />
       </Tabs>
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={4}>
+      <Grid2 container spacing={4}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           <Paper elevation={3} sx={{ padding: 2 }}>
             <Typography variant="h6" gutterBottom>
               Dateien
@@ -152,9 +152,9 @@ export default function ClientPage({ bpmnFiles, formFiles, dmnFiles }: Props) {
               </List>
             )}
           </Paper>
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={12} md={8}>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
           {selectedFile ? (
             <Card elevation={3} sx={{ height: '100%' }}>
               <CardHeader
@@ -197,8 +197,8 @@ export default function ClientPage({ bpmnFiles, formFiles, dmnFiles }: Props) {
               </Typography>
             </Card>
           )}
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Box>
   );
 }

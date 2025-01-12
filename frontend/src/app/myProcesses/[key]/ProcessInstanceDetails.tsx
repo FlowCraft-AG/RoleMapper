@@ -107,7 +107,7 @@ export default function ProcessInstanceDetailsContent({
     }
 
     fetchData();
-  }, [processKey]);
+  }, [session, processKey]);
 
   if (loading) {
     return (

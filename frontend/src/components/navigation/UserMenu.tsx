@@ -34,8 +34,6 @@ export default function UserMenu({
   update,
   router,
 }: UserMenuProps) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | undefined>(undefined);
   const [userMenuAnchor, setUserMenuAnchor] = useState<undefined | HTMLElement>(
     undefined,
   );
@@ -58,17 +56,10 @@ export default function UserMenu({
 
   // Manuelle Token-Aktualisierung
   const handleRefreshToken = useCallback(async () => {
-    setLoading(true);
-      setError(undefined);
-
     try {
       await update();
-      setError(undefined);
     } catch (err) {
       console.error('Fehler beim Aktualisieren des Tokens:', err);
-      setError('Fehler beim Aktualisieren des Tokens');
-    } finally {
-      setLoading(false);
     }
   }, [update]);
 

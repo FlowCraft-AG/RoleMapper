@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { REFRESH_TOKEN } from '../../../../graphql/auth/auth';
-import client from '../../../../lib/apolloClient';
+import getApolloClient from '../../../../lib/apolloClient';
 
 export async function POST(req: Request) {
   try {
+    const client = getApolloClient(undefined);
     const body = await req.json();
     const { refreshToken } = body;
 

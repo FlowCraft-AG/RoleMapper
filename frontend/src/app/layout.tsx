@@ -4,7 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SessionProvider } from 'next-auth/react';
 import localFont from 'next/font/local';
 import React from 'react';
-import Navigation from '../components/navigation/Navigation1';
+import Navigation from '../components/navigation/Navigation';
 import ThemeProviderWrapper from '../theme/ThemeProviderWrapper';
 import './globals.css';
 

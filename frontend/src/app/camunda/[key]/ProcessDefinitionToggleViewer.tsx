@@ -104,7 +104,7 @@ const ProcessDefinitionToggleViewer = ({
     };
 
     loadDiagramUrl();
-  }, [processInstanceKey]);
+  }, [processInstanceKey, session]);
 
   if (diagramUrl === undefined) {
     return (

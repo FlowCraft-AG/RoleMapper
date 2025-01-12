@@ -76,8 +76,12 @@ const ConfigPage = () => {
       value: ENV.CAMUNDA_TASKLIST_API_URL || undefined,
     },
     {
-      key: 'CAMUNDA_KEYCLOAK_API_URL ',
+      key: 'CAMUNDA_KEYCLOAK_API_URL',
       value: ENV.CAMUNDA_KEYCLOAK_API_URL || undefined,
+    },
+    {
+      key: 'NOTIFICATION_UPDATE_INTERVAL',
+      value: ENV.NOTIFICATION_UPDATE_INTERVAL || undefined,
     },
   ];
 
