@@ -25,7 +25,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getAllProcessInstances, getProcessInstancesByUser } from '../../lib/api/camunda.api';
+import { getProcessInstancesByUser } from '../../lib/api/camunda.api';
 import { ProcessInstance } from '../../types/process.type';
 
 /**
@@ -68,11 +68,19 @@ export default function ProcessInstances() {
       setError(undefined); // Fehler zurücksetzen
 
       try {
-        if (session === undefined || session?.access_token === undefined || session?.user === undefined || session?.user.username === undefined) {
+        if (
+          session === undefined ||
+          session?.access_token === undefined ||
+          session?.user === undefined ||
+          session?.user.username === undefined
+        ) {
           throw new Error('Keine Session vorhanden.');
         }
         console.log('ProcessInstances: token=', session);
-        const instanzen = await getProcessInstancesByUser(session.user.username, session.access_token);
+        const instanzen = await getProcessInstancesByUser(
+          session.user.username,
+          session.access_token,
+        );
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(
@@ -92,7 +100,7 @@ export default function ProcessInstances() {
               (statusFilter === 'ACTIVE' && instance.state === 'ACTIVE') ||
               (statusFilter === 'COMPLETED' &&
                 instance.state === 'COMPLETED') ||
-                (statusFilter === 'CANCELED' && instance.state === 'CANCELED') ||
+              (statusFilter === 'CANCELED' && instance.state === 'CANCELED') ||
               (statusFilter === 'FAILED' && instance.incident === true);
             const matchesProcessName =
               !filter ||
@@ -150,8 +158,8 @@ export default function ProcessInstances() {
               <MenuItem value="ALL">Alle Prozesse</MenuItem>
               <MenuItem value="ACTIVE">Aktive Prozesse</MenuItem>
               <MenuItem value="COMPLETED">Abgeschlossene Prozesse</MenuItem>
-                          <MenuItem value="CANCELED">Abgebrochene Prozesse</MenuItem>
-                            <MenuItem value="FAILED">Fehlgeschlagene Prozesse</MenuItem>
+              <MenuItem value="CANCELED">Abgebrochene Prozesse</MenuItem>
+              <MenuItem value="FAILED">Fehlgeschlagene Prozesse</MenuItem>
             </Select>
           </FormControl>
 

@@ -7,11 +7,12 @@
  */
 'use client';
 
-import { Login, Notifications } from '@mui/icons-material';
+import { Login, Logout, Notifications, Refresh } from '@mui/icons-material';
 import {
   AppBar,
   Badge,
   Box,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -21,7 +22,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -46,6 +47,12 @@ interface Notification {
 }
 
 /**
+ * Konfigurationskonstante für das Intervall zur Aktualisierung von Benachrichtigungen.
+ * HIER ÄNDERN SIE DIE ZEIT
+ */
+const NOTIFICATION_UPDATE_INTERVAL = 86400000; // 24 Stunde
+
+/**
  * `Navigation`-Komponente
  *
  * Diese Komponente implementiert die Haupt-Navigationsleiste der Anwendung.
@@ -63,11 +70,33 @@ export default function Navigation() {
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { setFacultyTheme } = useFacultyTheme();
-  const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
   const { data: session } = useSession();
+
+  const [useCustomStyles, setUseCustomStyles] = useState(true); // Toggle state
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+      const [notificationAnchor, setNotificationAnchor] =
+        useState<null | HTMLElement>(null);
+    const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(
+      null,
+    );
+
+  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+
+  // Funktion zur Benachrichtigungsaktualisierung
+  const fetchNotifications = async () => {
+    try {
+      const functionsWithoutUsers = await getFunctionsWithoutUsers();
+      const newNotifications = functionsWithoutUsers.map((func) => ({
+        message: `Die Funktion "${func.functionName}" hat keinen zugewiesenen Benutzer.`,
+        nodeId: func.id,
+        orgUnit: func.orgUnit,
+      }));
+      setNotifications(newNotifications);
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
+    }
+  };
 
   /**
    * Aktualisiert das Thema, wenn Änderungen auftreten.
@@ -81,25 +110,11 @@ export default function Navigation() {
    * Aktualisiert die Benachrichtigungen alle 10 Sekunden.
    */
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const functionsWithoutUsers = await getFunctionsWithoutUsers();
-
-        if (functionsWithoutUsers.length > 0) {
-          const newNotifications = functionsWithoutUsers.map((func) => ({
-            message: `Die Funktion "${func.functionName}" hat keinen zugewiesenen Benutzer.`,
-            nodeId: func.id,
-            orgUnit: func.orgUnit,
-          }));
-          setNotifications(newNotifications);
-        }
-      } catch (error) {
-        console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
-      }
-    };
-
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); // Alle 10 Sekunden aktualisieren HIER ÄNDERN SIE DIE ZEIT
+    const interval = setInterval(
+      fetchNotifications,
+      NOTIFICATION_UPDATE_INTERVAL,
+    );
     return () => clearInterval(interval);
   }, []);
 
@@ -109,7 +124,7 @@ export default function Navigation() {
    * @param {Notification} notification - Die ausgewählte Benachrichtigung.
    */
   const handleNotificationClick = async (notification: Notification) => {
-    handleCloseMenu();
+    handleCloseNotificationMenu();
     try {
       const ancestors = await fetchAncestors(notification.orgUnit);
       const ancestorIds = ancestors.map((ancestor) => ancestor._id);
@@ -142,17 +157,28 @@ export default function Navigation() {
     { href: '/prozesse', label: 'Prozesse' },
     { href: '/konfigurationen', label: 'Konfigurationen' },
     { href: '/models', label: 'Modele' },
-    { href: '/process', label: 'Aktive Prozesses' },
     { href: '/myProcesses', label: 'Meine Prozesse' },
   ];
 
+  if (isAdmin) {
+    navLinks.push({ href: '/process', label: 'Alle Prozesse' });
+  }
+
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setNotificationAnchor(event.currentTarget);
   };
 
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
+  const handleCloseNotificationMenu = () => {
+    setNotificationAnchor(null);
   };
+
+      const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setUserMenuAnchor(event.currentTarget);
+      };
+
+      const handleCloseUserMenu = () => {
+        setUserMenuAnchor(null);
+      };
 
   return (
     <AppBar
@@ -202,39 +228,45 @@ export default function Navigation() {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {/* Benutzername */}
-          {session?.user.username && (
-            <Typography
-              variant="body1"
-              sx={{
-                color: useCustomStyles
-                  ? theme.palette.custom?.navbar?.secondary || '#fff'
-                  : theme.palette.text.primary,
-                fontWeight: 'bold',
-              }}
-            >
-              {session.user.name}
-            </Typography>
+          {isAdmin && (
+            <>
+              <Tooltip title="Benachrichtigungen">
+                <IconButton
+                  color="inherit"
+                  onClick={handleOpenMenu}
+                  aria-label="notifications"
+                >
+                  <Badge badgeContent={notifications.length} color="error">
+                    <Notifications />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+            </>
           )}
 
-          <Tooltip title="Benachrichtigungen">
-            <IconButton
-              color="inherit"
-              onClick={handleOpenMenu}
-              aria-label="notifications"
-            >
-              <Badge badgeContent={notifications.length} color="error">
-                <Notifications />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-
           <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleCloseMenu}
+            anchorEl={notificationAnchor}
+            open={Boolean(notificationAnchor)}
+            onClose={handleCloseNotificationMenu}
             sx={{ mt: '45px' }}
           >
+            <MenuItem disableRipple>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}
+              >
+                <Typography variant="subtitle1">Benachrichtigungen</Typography>
+                <Tooltip title="Aktualisieren">
+                  <IconButton onClick={fetchNotifications}>
+                    <Refresh />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </MenuItem>
+            <Divider />
             {notifications.length > 0 ? (
               notifications.map((notification, index) => (
                 <MenuItem
@@ -245,7 +277,9 @@ export default function Navigation() {
                 </MenuItem>
               ))
             ) : (
-              <MenuItem onClick={handleCloseMenu}>Keine Meldungen</MenuItem>
+              <MenuItem onClick={handleCloseNotificationMenu}>
+                Keine Meldungen
+              </MenuItem>
             )}
           </Menu>
 
@@ -268,33 +302,74 @@ export default function Navigation() {
             />
           </Tooltip>
 
-          <Tooltip title="Login">
-            <Link
-              href="/login"
-              style={{
-                color: useCustomStyles
-                  ? pathname === '/login'
-                    ? theme.palette.custom?.navbar?.primary || '#000'
-                    : theme.palette.custom?.navbar?.secondary || '#fff'
-                  : pathname === '/login'
-                    ? theme.palette.primary.main
-                    : theme.palette.text.secondary,
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                fontWeight: pathname === '/login' ? 'bold' : 'normal',
-                transition: !useCustomStyles
-                  ? 'color 0.3s ease-in-out'
-                  : undefined,
-              }}
-            >
-              <Login />
-              <Typography variant="body2" component="span">
-                Login
-              </Typography>
-            </Link>
-          </Tooltip>
+          {/* Benutzername */}
+          {session?.user.username ? (
+            <>
+              <Tooltip title="Profil">
+                <IconButton onClick={handleOpenUserMenu}>
+                  <Typography
+                    //   variant="body2"
+                    variant="body1"
+                    //   sx={{ fontWeight: 'bold', color: '#fff' }}
+                    sx={{
+                      color: useCustomStyles
+                        ? theme.palette.custom?.navbar?.secondary || '#fff'
+                        : theme.palette.text.primary,
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {session.user.name}
+                  </Typography>
+                </IconButton>
+              </Tooltip>
+
+              <Menu
+                anchorEl={userMenuAnchor}
+                open={Boolean(userMenuAnchor)}
+                onClose={handleCloseUserMenu}
+                sx={{ mt: '45px' }}
+              >
+                <MenuItem>
+                  <Typography variant="subtitle1">
+                    Token Counter: 3600s
+                  </Typography>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={() => signOut()}>
+                  <Logout fontSize="small" sx={{ marginRight: 1 }} />
+                  Logout
+                </MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Tooltip title="Login">
+              <Link
+                href="/login"
+                style={{
+                  color: useCustomStyles
+                    ? pathname === '/login'
+                      ? theme.palette.custom?.navbar?.primary || '#000'
+                      : theme.palette.custom?.navbar?.secondary || '#fff'
+                    : pathname === '/login'
+                      ? theme.palette.primary.main
+                      : theme.palette.text.secondary,
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontWeight: pathname === '/login' ? 'bold' : 'normal',
+                  transition: !useCustomStyles
+                    ? 'color 0.3s ease-in-out'
+                    : undefined,
+                }}
+              >
+                <Login />
+                <Typography variant="body2" component="span">
+                  Login
+                </Typography>
+              </Link>
+            </Tooltip>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

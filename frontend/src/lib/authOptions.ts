@@ -91,6 +91,7 @@ export const authOptions: AuthOptions = {
             name: userData?.name || user.name,
             email: userData?.email || user.email,
             username: userData?.preferred_username || user.username,
+            roles: userData?.roles || [],
           },
         };
       }
@@ -210,6 +211,7 @@ const logPayload = (
   given_name?: string;
   family_name?: string;
   email?: string;
+  roles?: string[];
 } | null => {
   try {
     const [, payloadString] = access_token.split('.');
@@ -224,8 +226,16 @@ const logPayload = (
     );
     const payload = JSON.parse(payloadDecoded);
 
-    const { name, preferred_username, given_name, family_name, email } =
-      payload;
+    const {
+      name,
+      preferred_username,
+      given_name,
+      family_name,
+      email,
+      realm_access,
+    } = payload;
+
+    const roles = realm_access?.roles || [];
     logger.debug(
       'logPayload: name=%s, preferred_username=%s, given_name=%s, family_name=%s, email=%s',
       name,
@@ -235,7 +245,9 @@ const logPayload = (
       email,
     );
 
-    return { name, preferred_username, given_name, family_name, email };
+    logger.debug('logPayload: Rollen: %o', roles);
+
+    return { name, preferred_username, given_name, family_name, email, roles };
   } catch (error) {
     logger.error('Fehler beim Decodieren des Access-Tokens:', error);
     return null;

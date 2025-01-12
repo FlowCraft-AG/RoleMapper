@@ -168,7 +168,11 @@ export default function ClientPage({ bpmnFiles, formFiles, dmnFiles }: Props) {
                 }}
               >
                 {selectedType === 'bpmn' && (
-                  <BpmnViewer diagramXML={selectedFile.content} activeElementId='n/a' incidentElementId='n/a'/>
+                  <BpmnViewer
+                    diagramXML={selectedFile.content}
+                    activeElementId="n/a"
+                    incidentElementId="n/a"
+                  />
                 )}
                 {selectedType === 'form' && (
                   <FormViewer formJSON={selectedFile.content} />

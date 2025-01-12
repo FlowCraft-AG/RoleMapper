@@ -52,18 +52,17 @@ export const GET_PROCESS_DEFINITION_XML_BY_PROCESS_DEFINITION_KEY = gql`
   }
 `;
 
-
 export const GET_PROCESS_INSTANCE_BY_USER = gql`
   query GetProcessInstancesByUserId($userId: String!) {
     getProcessInstancesByUserId(userId: $userId) {
-        key
-        processVersion
-        bpmnProcessId
-        startDate
-        state
-        incident
-        processDefinitionKey
-        tenantId
+      key
+      processVersion
+      bpmnProcessId
+      startDate
+      state
+      incident
+      processDefinitionKey
+      tenantId
     }
-}
+  }
 `;

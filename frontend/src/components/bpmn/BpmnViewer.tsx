@@ -146,7 +146,6 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
               });
             }
           }
-
         }
 
         // Warnungen (Incidents) hervorheben
@@ -170,7 +169,6 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
               });
             }
           }
-
         }
 
         onShown?.([]);

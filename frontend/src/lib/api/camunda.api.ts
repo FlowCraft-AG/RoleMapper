@@ -118,26 +118,22 @@ export async function getProcessInstanceDetails(
 }
 
 export async function getProcessInstancesByUser(
-    userId: string,
-    token: string,
+  userId: string,
+  token: string,
 ): Promise<ProcessInstance[]> {
-    logger.debug(
-        'getProcessInstancesByUser: userId=%s, token=%s',
-        userId,
-        token,
-    );
-    try {
-        const client = getApolloClient(token);
-        const { data } = await client.query({
-            query: GET_PROCESS_INSTANCE_BY_USER,
-            variables: { userId },
-        });
+  logger.debug('getProcessInstancesByUser: userId=%s, token=%s', userId, token);
+  try {
+    const client = getApolloClient(token);
+    const { data } = await client.query({
+      query: GET_PROCESS_INSTANCE_BY_USER,
+      variables: { userId },
+    });
 
-        logger.debug('getProcessInstancesByUser: data=%o', data);
-        return data.getProcessInstancesByUserId;
-    } catch (error) {
-        handleGraphQLError(error, 'Fehler beim Abrufen der Prozessinstanzdetails.');
-    }
+    logger.debug('getProcessInstancesByUser: data=%o', data);
+    return data.getProcessInstancesByUserId;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Abrufen der Prozessinstanzdetails.');
+  }
 }
 
 /**
