@@ -131,20 +131,22 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
           const element = elementRegistry.get(activeElementId);
           if (element) {
             canvas.addMarker(activeElementId, styles['bpmn-highlight']);
+
+            // Debug: Grafik direkt bearbeiten
+            const gfx = canvas.getGraphics(activeElementId);
+            const visual = gfx.querySelector('.djs-visual');
+            if (visual) {
+              visual.querySelectorAll('*').forEach((child) => {
+                const styledChild = child as HTMLElement & {
+                  style: { stroke: string };
+                };
+                styledChild.style.stroke = 'blue';
+                //child.style.stroke = 'green';
+                // child.style.strokeWidth = '2px';
+              });
+            }
           }
-          // Debug: Grafik direkt bearbeiten
-          const gfx = canvas.getGraphics(activeElementId);
-          const visual = gfx.querySelector('.djs-visual');
-          if (visual) {
-            visual.querySelectorAll('*').forEach((child) => {
-              const styledChild = child as HTMLElement & {
-                style: { stroke: string };
-              };
-              styledChild.style.stroke = 'blue';
-              //child.style.stroke = 'green';
-              // child.style.strokeWidth = '2px';
-            });
-          }
+
         }
 
         // Warnungen (Incidents) hervorheben
@@ -153,20 +155,22 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
           const element = elementRegistry.get(incidentElementId);
           if (element) {
             canvas.addMarker(incidentElementId, styles['bpmn-highlight']);
+
+            // Debug: Grafik direkt bearbeiten
+            const gfx = canvas.getGraphics(incidentElementId);
+            const visual = gfx.querySelector('.djs-visual');
+            if (visual) {
+              visual.querySelectorAll('*').forEach((child) => {
+                const styledChild = child as HTMLElement & {
+                  style: { stroke: string };
+                };
+                styledChild.style.stroke = 'red';
+                //child.style.stroke = 'green';
+                // child.style.strokeWidth = '2px';
+              });
+            }
           }
-          // Debug: Grafik direkt bearbeiten
-          const gfx = canvas.getGraphics(incidentElementId);
-          const visual = gfx.querySelector('.djs-visual');
-          if (visual) {
-            visual.querySelectorAll('*').forEach((child) => {
-              const styledChild = child as HTMLElement & {
-                style: { stroke: string };
-              };
-              styledChild.style.stroke = 'red';
-              //child.style.stroke = 'green';
-              // child.style.strokeWidth = '2px';
-            });
-          }
+
         }
 
         onShown?.([]);
