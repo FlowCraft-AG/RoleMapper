@@ -17,7 +17,7 @@ import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchAllProcesses } from '../../lib/api/process.api';
+import { fetchAllProcesses } from '../../lib/api/rolemapper/process.api';
 import { Process } from '../../types/process.type';
 import { getListItemStyles } from '../../utils/styles';
 

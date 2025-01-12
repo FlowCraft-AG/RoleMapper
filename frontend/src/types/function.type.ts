@@ -24,3 +24,13 @@ export type FunctionUser = {
   isImpliciteFunction: boolean; // Gibt an, ob die Funktion implizit (automatisch generiert) ist
   orgUnit: string; // ID der Organisationseinheit, zu der die Funktion gehört
 };
+
+export type UnassignedFunctionsPayload = {
+  function: FunctionString;
+  userList: UserRetirementInfo[];
+};
+
+export type UserRetirementInfo = {
+  userId: string;
+  timeLeft: number;
+};

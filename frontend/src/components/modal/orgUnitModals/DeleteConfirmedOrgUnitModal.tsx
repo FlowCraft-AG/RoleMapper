@@ -15,8 +15,8 @@ import {
   Typography,
 } from '@mui/material';
 import { JSX, useState } from 'react';
-import { removeFunction } from '../../../lib/api/function.api';
-import { removeOrgUnit } from '../../../lib/api/orgUnit.api';
+import { removeFunction } from '../../../lib/api/rolemapper/function.api';
+import { removeOrgUnit } from '../../../lib/api/rolemapper/orgUnit.api';
 import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ItemToRender } from '../../customs/CustomTreeItem';

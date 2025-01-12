@@ -48,6 +48,11 @@ input ProcessInstanceFilterInput {
   Enddatum der Prozessinstanz im ISO-Format.
   """
   endDate: String
+
+  """
+  Sortierkriterien für die Abfrage.
+  """
+  sortBy: [CamundaSortInput]
 }
 
 """
@@ -147,3 +152,120 @@ input DateRangeInput {
   """
   to: String
 }
+
+"""
+Definiert die Filteroptionen für die Suche nach Incidents.
+"""
+input FilterInput {
+  """
+  Eindeutiger Schlüssel des Incidents.
+  """
+  key: Int
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: Int
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: Int
+
+  """
+  Typ des Incidents, z. B. IO_MAPPING_ERROR oder JOB_NO_RETRIES.
+  """
+  type: IncidentType
+
+  """
+  Nachricht oder Beschreibung des Incidents.
+  """
+  message: String
+
+  """
+  Erstellungszeit des Incidents (ISO-Format).
+  """
+  creationTime: String
+
+  """
+  Zustand des Incidents, z. B. ACTIVE oder RESOLVED.
+  """
+  state: IncidentState
+
+  """
+  Schlüssel des zugehörigen Jobs, falls zutreffend.
+  """
+  jobKey: Int
+
+  """
+  Mandanten-ID, falls zutreffend.
+  """
+  tenantId: String
+}
+
+"""
+FlowNodeFilterInput: Definiert die Filteroptionen für die Suche nach FlowNode-Instanzen.
+Dieses Input-Objekt wird verwendet, um FlowNodes basierend auf verschiedenen Kriterien zu filtern.
+"""
+input FlowNodeFilterInput {
+  """
+  Eindeutige ID der FlowNode-Instanz.
+  """
+  key: Int
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: Int
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: Int
+
+  """
+  Startzeitpunkt der FlowNode im ISO-Format.
+  """
+  startDate: String
+
+  """
+  Endzeitpunkt der FlowNode im ISO-Format.
+  """
+  endDate: String
+
+  """
+  ID der FlowNode innerhalb der Prozessdefinition.
+  """
+  flowNodeId: String
+
+  """
+  Name der FlowNode, wie sie im BPMN-Modell definiert ist.
+  """
+  flowNodeName: String
+
+  """
+  Schlüssel eines Incidents, der mit der FlowNode verknüpft ist.
+  """
+  incidentKey: Int
+
+  """
+  Typ der FlowNode (z. B. TASK, START_EVENT, EXCLUSIVE_GATEWAY).
+  """
+  type: FlowNodeType
+
+  """
+  Zustand der FlowNode (z. B. ACTIVE, COMPLETED, TERMINATED).
+  """
+  state: FlowNodeState
+
+  """
+  Gibt an, ob die FlowNode mit einem Incident verknüpft ist.
+  """
+  incident: Boolean
+
+  """
+  Mandanten-ID der FlowNode (optional, falls Multitenancy verwendet wird).
+  """
+  tenantId: String
+}
+

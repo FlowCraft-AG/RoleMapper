@@ -30,6 +30,7 @@ interface BpmnViewerProps {
   diagramXML?: string;
   diagramURL?: string;
   activeElementId?: string;
+  incidentElementId?: string;
   onLoading?: () => void;
   onError?: (err: Error) => void;
   onShown?: (warnings: string[]) => void;
@@ -58,6 +59,7 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
   diagramXML,
   diagramURL,
   activeElementId,
+  incidentElementId,
   onLoading,
   onError,
   onShown,
@@ -103,24 +105,69 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
         // Diagramm anpassen
         canvas.zoom('fit-viewport');
 
+        // Falls keine spezifischen IDs definiert sind, alle Elemente grün hervorheben
+        if (!activeElementId && !incidentElementId) {
+          const elementRegistry: ElementRegistry =
+            bpmnViewer.get('elementRegistry');
+          const elements = elementRegistry.getAll(); // Alle Elemente abrufen
+
+          elements.forEach((element) => {
+            const gfx = canvas.getGraphics(element.id); // Grafik des Elements abrufen
+            const visual = gfx.querySelector('.djs-visual');
+            if (visual) {
+              visual.querySelectorAll('*').forEach((child) => {
+                const styledChild = child as HTMLElement & {
+                  style: { stroke: string };
+                };
+                styledChild.style.stroke = 'green'; // Elemente grün hervorheben
+              });
+            }
+          });
+        }
+
         // Aktive Aktivität hervorheben
         if (activeElementId) {
+          console.log('BpmnViewer: activeElementID=', activeElementId);
           const element = elementRegistry.get(activeElementId);
           if (element) {
             canvas.addMarker(activeElementId, styles['bpmn-highlight']);
+
+            // Debug: Grafik direkt bearbeiten
+            const gfx = canvas.getGraphics(activeElementId);
+            const visual = gfx.querySelector('.djs-visual');
+            if (visual) {
+              visual.querySelectorAll('*').forEach((child) => {
+                const styledChild = child as HTMLElement & {
+                  style: { stroke: string };
+                };
+                styledChild.style.stroke = 'blue';
+                //child.style.stroke = 'green';
+                // child.style.strokeWidth = '2px';
+              });
+            }
           }
-          // Debug: Grafik direkt bearbeiten
-          const gfx = canvas.getGraphics(activeElementId);
-          const visual = gfx.querySelector('.djs-visual');
-          if (visual) {
-            visual.querySelectorAll('*').forEach((child) => {
-              const styledChild = child as HTMLElement & {
-                style: { stroke: string };
-              };
-              styledChild.style.stroke = 'green';
-              //child.style.stroke = 'green';
-              // child.style.strokeWidth = '2px';
-            });
+        }
+
+        // Warnungen (Incidents) hervorheben
+        if (incidentElementId) {
+          console.log('BpmnViewer: incidentElementId=', incidentElementId);
+          const element = elementRegistry.get(incidentElementId);
+          if (element) {
+            canvas.addMarker(incidentElementId, styles['bpmn-highlight']);
+
+            // Debug: Grafik direkt bearbeiten
+            const gfx = canvas.getGraphics(incidentElementId);
+            const visual = gfx.querySelector('.djs-visual');
+            if (visual) {
+              visual.querySelectorAll('*').forEach((child) => {
+                const styledChild = child as HTMLElement & {
+                  style: { stroke: string };
+                };
+                styledChild.style.stroke = 'red';
+                //child.style.stroke = 'green';
+                // child.style.strokeWidth = '2px';
+              });
+            }
           }
         }
 
@@ -139,7 +186,15 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
     return () => {
       bpmnViewer.destroy();
     };
-  }, [diagramXML, diagramURL, onLoading, onError, onShown, activeElementId]);
+  }, [
+    diagramXML,
+    diagramURL,
+    onLoading,
+    onError,
+    onShown,
+    activeElementId,
+    incidentElementId,
+  ]);
 
   if (loading) {
     return (

@@ -13,6 +13,8 @@ import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { HttpExceptionFilter } from '../../role-mapper/utils/http-exception.filter.js';
 import { CamundaReadService } from '../service/camunda.service.js';
+import { FlowNodeFilter } from '../types/input-filter/flownode-filter.js';
+import { IncidentFilter } from '../types/input-filter/incident-filter.js';
 import { ProcessInstanceFilter } from '../types/input-filter/process-instance-filter.js';
 import { TaskFilter } from '../types/input-filter/task-filter.js';
 import { VariableFilter } from '../types/input-filter/variable-filter.js';
@@ -274,6 +276,51 @@ export class CamundaResolver {
         return xml;
     }
 
+    @Public()
+    @Query('getIncidentFlowNodeByProcessInstanceKey')
+    async getIncidentFlowNodeByProcessInstanceKey(
+        @Args('processInstanceKey') key: string,
+        @Context() context: GraphQLContext,
+    ): Promise<string> {
+        this.#logger.debug('getIncidentFlowNodeByProcessInstanceKey: processInstanceKey=%s', key);
+
+        const token = this.#extractToken(context);
+        const incidentFilter: IncidentFilter = { processInstanceKey: key };
+        const incidents = await this.#camundaService.fetchIncidents(incidentFilter, token);
+        this.#logger.debug('getIncidentFlowNodeByProcessInstanceKey: incidents=%o', incidents);
+
+        if (incidents.length === 0 || incidents[0] === undefined) {
+            this.#logger.debug(
+                'getIncidentFlowNodeByProcessInstanceKey: Kein Incident gefunden. für den Prozess mit dem Schlüssel %s',
+                key,
+            );
+            return '';
+        }
+
+        const incident = incidents[0];
+
+        const flowNodeFilter: FlowNodeFilter = { incidentKey: incident?.key };
+        const flowNodes = await this.#camundaService.fetchFlowNodes(flowNodeFilter, token);
+        this.#logger.debug('getIncidentFlowNodeByProcessInstanceKey: flowNodes=%o', flowNodes);
+
+        if (flowNodes.length === 0 || flowNodes[0] === undefined) {
+            this.#logger.debug(
+                'getIncidentFlowNodeByProcessInstanceKey: Keine FlowNode gefunden. für den Incident mit dem Schlüssel %s',
+                incident?.key,
+            );
+            return '';
+        }
+
+        const flowNode = flowNodes[0];
+
+        const incidentTaskId = flowNode.flowNodeId;
+        this.#logger.debug(
+            'getIncidentFlowNodeByProcessInstanceKey: incidentTaskId=%s',
+            incidentTaskId,
+        );
+        return incidentTaskId;
+    }
+
     /**
      * **Bearer-Token extrahieren**
      *
@@ -306,13 +353,30 @@ export class CamundaResolver {
      * @returns {Promise<Task[]>} Eine Liste der Aufgaben des Benutzers.
      */
     async #fetchUserTasks(userId: string, token: string): Promise<Task[]> {
-        const filter: TaskFilter = { assignee: userId };
-        this.#logger.debug('#fetchUserTasks: filter=%o', filter);
+        const filter1: TaskFilter = { assignee: userId };
+        const filter2: TaskFilter = { candidateUser: userId };
 
-        const tasks = await this.#camundaService.fetchProcessTasks(filter, token);
-        this.#logger.debug('#fetchUserTasks: tasks=%o', tasks);
+        this.#logger.debug('#fetchUserTasks: filter1=%o, filter2=%o', filter1, filter2);
 
-        return tasks;
+        // Parallel Anfragen senden
+        const [tasks1, tasks2] = await Promise.all([
+            this.#camundaService.fetchProcessTasks(filter1, token),
+            this.#camundaService.fetchProcessTasks(filter2, token),
+        ]);
+
+        // Aufgaben kombinieren und Duplikate entfernen
+        const combinedTasks: Task[] = [];
+        const taskMap: Record<string, boolean> = {};
+
+        for (const task of [...tasks1, ...tasks2]) {
+            if (!(taskMap[task.id] ?? false)) {
+                taskMap[task.id] = true;
+                combinedTasks.push(task);
+            }
+        }
+
+        this.#logger.debug('#fetchUserTasks: combinedTasks=%o', combinedTasks);
+        return combinedTasks;
     }
 
     /**

@@ -7,8 +7,9 @@
 
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import { fetchProcessDefinitionXml } from '../../lib/camunda/camunda.api';
+import { getProcessDefinitionXml } from '../../lib/api/camunda.api';
 
 /**
  * Props für die `ProcessDefinitionXmlViewer`-Komponente.
@@ -39,6 +40,7 @@ const ProcessDefinitionXmlViewer: React.FC<ProcessDefinitionXmlViewerProps> = ({
 }) => {
   const [xml, setXml] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   /**
    * Effekt, der das XML der Prozessdefinition lädt.
@@ -48,11 +50,15 @@ const ProcessDefinitionXmlViewer: React.FC<ProcessDefinitionXmlViewerProps> = ({
   useEffect(() => {
     async function loadXml() {
       try {
+        if (session === undefined || session?.access_token === undefined) {
+          throw new Error('Keine Session vorhanden.');
+        }
         if (!processDefinitionKey) {
           console.error('Kein Prozessschlüssel angegeben');
           return;
         }
-        const data = await fetchProcessDefinitionXml(processDefinitionKey);
+        const token = session.access_token;
+        const data = await getProcessDefinitionXml(processDefinitionKey, token);
         // const response = await fetch(processDefinitionKey);
         // const xml = await response.text();
         setXml(data);

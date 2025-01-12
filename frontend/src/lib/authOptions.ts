@@ -8,9 +8,10 @@ import { OAuthConfig } from 'next-auth/providers/oauth';
 import { LOGIN, REFRESH_TOKEN } from '../graphql/auth/auth';
 import { ENV, logEnvironmentVariables } from '../utils/env';
 import { getLogger } from '../utils/logger';
-import client from './apolloClient';
+import getApolloClient from './apolloClient';
 
 const logger = getLogger('authOptions');
+const client = getApolloClient(undefined);
 
 // Logge die Umgebungsvariablen (nützlich für Debugging und Validierung)
 logEnvironmentVariables();
@@ -73,7 +74,7 @@ export const authOptions: AuthOptions = {
      */
     async jwt({ token, user, account, trigger }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
-      logger.trace('JWT: %o', token);
+      logger.debug('JWT: %o', token);
 
       if (user && account?.provider !== 'keycloak') {
         logger.trace('USER-LogIn');
@@ -91,6 +92,7 @@ export const authOptions: AuthOptions = {
             name: userData?.name || user.name,
             email: userData?.email || user.email,
             username: userData?.preferred_username || user.username,
+            roles: userData?.roles || [],
           },
         };
       }
@@ -147,7 +149,7 @@ export const authOptions: AuthOptions = {
      * Ergänzt die Session-Daten um Benutzer- und Token-Informationen.
      */
     async session({ session, token }) {
-      logger.trace('Session Token: %o', token);
+      logger.debug('Session Token: %o', token);
 
       session.user = token.user || {
         name: token.name as string,
@@ -155,7 +157,6 @@ export const authOptions: AuthOptions = {
         username: token.name as string,
       };
       session.role = token.isAdmin ? 'Admin' : 'User';
-      session.isAdmin = token.isAdmin;
       session.access_token = token.access_token;
       session.id_token = token.id_token;
       session.expires_in = token.expires_in || undefined;
@@ -210,6 +211,7 @@ const logPayload = (
   given_name?: string;
   family_name?: string;
   email?: string;
+  roles?: string[];
 } | null => {
   try {
     const [, payloadString] = access_token.split('.');
@@ -224,8 +226,16 @@ const logPayload = (
     );
     const payload = JSON.parse(payloadDecoded);
 
-    const { name, preferred_username, given_name, family_name, email } =
-      payload;
+    const {
+      name,
+      preferred_username,
+      given_name,
+      family_name,
+      email,
+      realm_access,
+    } = payload;
+
+    const roles = realm_access?.roles || [];
     logger.debug(
       'logPayload: name=%s, preferred_username=%s, given_name=%s, family_name=%s, email=%s',
       name,
@@ -235,7 +245,9 @@ const logPayload = (
       email,
     );
 
-    return { name, preferred_username, given_name, family_name, email };
+    logger.debug('logPayload: Rollen: %o', roles);
+
+    return { name, preferred_username, given_name, family_name, email, roles };
   } catch (error) {
     logger.error('Fehler beim Decodieren des Access-Tokens:', error);
     return null;

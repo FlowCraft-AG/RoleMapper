@@ -23,7 +23,7 @@ export function handleGraphQLError(error: unknown, message: string): never {
     const originalMessage =
       graphqlError?.message ||
       graphqlError?.extensions?.originalError?.message ||
-      'Unbekannter GraphQL-Fehler';
+      `Unbekannter GraphQL-Fehler ${message}`;
 
     // Loggen des Fehlers
     logger.error(

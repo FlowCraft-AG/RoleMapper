@@ -8,6 +8,11 @@
 'use client';
 
 import {
+  CheckCircle,
+  Error as ErrorIcon,
+  PlayCircle,
+} from '@mui/icons-material';
+import {
   Alert,
   Box,
   Button,
@@ -27,7 +32,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { fetchProcessInstances } from '../../lib/camunda/camunda.api';
+import { getAllProcessInstances } from '../../lib/api/camunda.api';
 import { ProcessInstance } from '../../types/process.type';
 
 /**
@@ -70,8 +75,11 @@ export default function ProcessInstances() {
       setError(null); // Fehler zurücksetzen
 
       try {
-        console.log('ProcessInstances: token=', session);
-        const instanzen = await fetchProcessInstances(session?.access_token);
+        if (session === undefined || session?.access_token === undefined) {
+          throw new Error('Keine Session vorhanden.');
+        }
+        console.log('ProcessInstances: token=', session.access_token);
+        const instanzen = await getAllProcessInstances(session.access_token);
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(
@@ -174,6 +182,30 @@ export default function ProcessInstances() {
             {instances.map((instance: ProcessInstance) => (
               <Grid item xs={12} sm={6} md={4} key={instance.key}>
                 <Card variant="outlined">
+                  {instance.state === 'COMPLETED' && (
+                    <CheckCircle
+                      sx={{
+                        position: 'absolute',
+                        color: 'green',
+                      }}
+                    />
+                  )}
+                  {instance.incident && (
+                    <ErrorIcon
+                      sx={{
+                        position: 'absolute',
+                        color: 'red',
+                      }}
+                    />
+                  )}
+                  {instance.state === 'ACTIVE' && !instance.incident && (
+                    <PlayCircle
+                      sx={{
+                        position: 'absolute',
+                        color: 'blue',
+                      }}
+                    />
+                  )}
                   <CardContent>
                     <Typography variant="h6" component="div" gutterBottom>
                       Prozess-ID: {instance.bpmnProcessId}

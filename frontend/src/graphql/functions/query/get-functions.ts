@@ -117,3 +117,26 @@ export const GET_ANCESTORS = gql`
     }
   }
 `;
+
+export const GET_FUNCTIONS_WITH_NO_USERS_OR_RETIRING_USERES = gql`
+  query GetUnassignedFunctions(
+    $lookaheadPeriod: Int
+    $timeUnit: TimeUnit = JAHRE
+  ) {
+    getUnassignedFunctions(
+      lookaheadPeriod: $lookaheadPeriod
+      timeUnit: $timeUnit
+    ) {
+      userList {
+        userId
+        timeLeft
+      }
+      function {
+        _id
+        functionName
+        orgUnit
+        isSingleUser
+      }
+    }
+  }
+`;

@@ -19,7 +19,7 @@ import {
 import {
   checkForFunctions,
   fetchFunctionsByOrgUnit,
-} from '../../lib/api/function.api';
+} from '../../lib/api/rolemapper/function.api';
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
 import { FunctionString } from '../../types/function.type';
 import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';
