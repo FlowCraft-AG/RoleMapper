@@ -1,4 +1,5 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/operator-linebreak */
 import { NotFoundException, UseFilters, UseInterceptors } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Types } from 'mongoose';
@@ -15,6 +16,7 @@ import { DataPayload } from '../model/payload/data.payload.js';
 import { GetUsersByFunctionResult } from '../model/payload/get-users.payload.js';
 import { MandatePayload } from '../model/payload/mandate.payload.js';
 import { RolePayload } from '../model/payload/role-payload.type.js';
+import { UnassignedFunctionsPayload } from '../model/payload/unassigned-functions.payload.js';
 import { ReadService } from '../service/read.service.js';
 import { HttpExceptionFilter } from '../utils/http-exception.filter.js';
 
@@ -218,5 +220,42 @@ export class QueryResolver {
         const ancestors = await this.#service.findAncestors(id);
         this.#logger.debug('getAncestors: Ancestors:', ancestors);
         return ancestors;
+    }
+
+    @Public()
+    @Query('getUnassignedFunctions')
+    async getUnassignedFunctions(
+        @Args('lookaheadPeriod') lookaheadPeriod: number,
+        @Args('timeUnit') timeUnit: string,
+    ): Promise<UnassignedFunctionsPayload[]> {
+        this.#logger.debug(
+            'getUnassignedFunctions: lookaheadPeriod=%s timeUnit=%s',
+            lookaheadPeriod,
+            timeUnit,
+        );
+
+        // Schritt 1: Hole unzugewiesene Funktionen
+        const unassignedFunctions: Mandates[] = await this.#service.findUnassignedFunctions();
+        this.#logger.debug('getUnassignedFunctions: unassignedFunctions=%o', unassignedFunctions);
+
+        // Schritt 2: Hole Funktionen mit Benutzern, die in der angegebenen Zeit ausscheiden
+        const functionsWithRetiringUsers: UnassignedFunctionsPayload[] =
+            await this.#service.findFunctionsWithRetiringUsers(lookaheadPeriod, timeUnit);
+        this.#logger.debug(
+            'getUnassignedFunctions: functionsWithRetiringUsers=%o',
+            functionsWithRetiringUsers,
+        );
+
+        // Schritt 3: Kombiniere Ergebnisse (Unassigned + Retiring Users)
+        const combinedResults: UnassignedFunctionsPayload[] = [
+            ...unassignedFunctions.map((mandate) => ({
+                function: mandate,
+                userList: [], // Keine Benutzer zugewiesen
+            })),
+            ...functionsWithRetiringUsers,
+        ] as UnassignedFunctionsPayload[];
+
+        this.#logger.debug('getUnassignedFunctions: combinedResults=%o', combinedResults);
+        return combinedResults;
     }
 }

@@ -433,7 +433,7 @@ export async function getFunctionsWithoutUsers(): Promise<
   { id: string; functionName: string; orgUnit: string }[]
 > {
   try {
-    logger.debug('Prüfe, welche SingleUser-Funktionen keine Benutzer haben');
+      logger.debug('getFunctionsWithoutUsers: Prüfe, welche Funktionen keine Benutzer haben');
 
     // GraphQL-Abfrage
     const { data } = await client.query({
@@ -445,7 +445,7 @@ export async function getFunctionsWithoutUsers(): Promise<
     if (!Array.isArray(functions)) {
       throw new Error('Unerwartetes Datenformat von der API');
     }
-    console.log(functions);
+      logger.debug('getFunctionsWithoutUsers: functions: %o', functions);
 
     // Filtern der Funktionen ohne Benutzer
     const noUserFunctions = functions

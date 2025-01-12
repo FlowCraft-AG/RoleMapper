@@ -23,8 +23,13 @@ import { PaginationParameters } from '../model/input/pagination-parameters.js';
 import { SortInput } from '../model/input/sort.input.js';
 import { GetUsersByFunctionResult } from '../model/payload/get-users.payload.js';
 import { RoleResult } from '../model/payload/role-payload.type.js';
+import {
+    UnassignedFunctionsPayload,
+    UserRetirementInfo,
+} from '../model/payload/unassigned-functions.payload.js';
 import { FilterField, FilterFields } from '../model/types/filter.type.js';
 import { operatorMap } from '../model/types/map.type.js';
+import { retiringUsersPipeline } from './pipeline/retiring-users.pipeline.js';
 
 /**
  * Service für Leseoperationen von Entitäten.
@@ -193,6 +198,80 @@ export class ReadService {
 
         // Nur Mandates zurückgeben
         return { savedQuery, data };
+    }
+
+    /**
+     * Findet alle Funktionen (Mandates), bei denen:
+     * - Das `users`-Array leer ist oder nicht existiert.
+     * - `isImpliciteFunction` auf `false` gesetzt ist.
+     *
+     * @returns {Promise<Mandates[]>} Eine Liste von Funktionen ohne Benutzer und ohne implizite Zuordnung.
+     */
+    async findUnassignedFunctions(): Promise<Mandates[]> {
+        this.#logger.debug('findUnassignedFunctions');
+        const unassignedFunctions: Mandates[] = await this.#modelMap.MANDATES.find({
+            $and: [
+                { isImpliciteFunction: false }, // Nur Funktionen, die nicht implizit sind
+                {
+                    $or: [
+                        { users: { $exists: false } }, // `users` existiert nicht
+                        { users: { $size: 0 } }, // `users` ist ein leeres Array
+                    ],
+                },
+            ],
+        });
+        this.#logger.debug('findUnassignedFunctions: unassignedFunctions=%o', unassignedFunctions);
+        return unassignedFunctions;
+    }
+
+    /**
+     * Findet alle Funktionen, denen keine Benutzer zugewiesen sind,
+     * oder deren Benutzer innerhalb eines definierten Zeitraums ausscheiden.
+     *
+     * @param {number} lookaheadPeriod - Der Zeitraum für die Betrachtung.
+     * @param {"TAGE" | "MONATE" | "JAHRE"} timeUnit - Die Zeiteinheit (TAGE, MONATE, JAHRE).
+     * @returns {Promise<any[]>} Liste von Funktionen mit relevanten Benutzern.
+     */
+    async findFunctionsWithRetiringUsers(
+        lookaheadPeriod = 0,
+        // timeUnit: 'TAGE' | 'MONATE' | 'JAHRE' = 'JAHRE',
+        timeUnit = 'JAHRE',
+    ): Promise<UnassignedFunctionsPayload[]> {
+        const now = new Date();
+        const lookaheadDate = new Date();
+
+        // Zeitraum basierend auf der Zeiteinheit berechnen
+        switch (timeUnit) {
+            case 'TAGE': {
+                lookaheadDate.setDate(now.getDate() + lookaheadPeriod);
+                break;
+            }
+            case 'MONATE': {
+                lookaheadDate.setMonth(now.getMonth() + lookaheadPeriod);
+                break;
+            }
+            case 'JAHRE': {
+                lookaheadDate.setFullYear(now.getFullYear() + lookaheadPeriod);
+                break;
+            }
+            default: {
+                throw new Error('default case');
+            }
+        }
+
+        // Verwende die Aggregationspipeline für die Abfrage
+        const results = await this.#modelMap.MANDATES.aggregate(
+            retiringUsersPipeline(now, lookaheadDate),
+        );
+
+        // Formatierte Ergebnisse zurückgeben
+        return results.map((result: UnassignedFunctionsPayload) => ({
+            function: result.function,
+            userList: result.userList.map((user: UserRetirementInfo) => ({
+                userId: user.userId,
+                timeLeft: Math.ceil(user.timeLeft),
+            })),
+        }));
     }
 
     /**

@@ -1,3 +1,20 @@
+enum TimeUnit {
+  """
+  Zeitraum in Jahren.
+  """
+  JAHRE
+
+  """
+  Zeitraum in Monaten.
+  """
+  MONATE
+
+  """
+  Zeitraum in Tagen.
+  """
+  TAGE
+}
+
 """
 Sortierreihenfolge für Abfragen, z. B. aufsteigend (ASC) oder absteigend (DESC).
 """
@@ -85,6 +102,36 @@ enum FilterOptions {
   # spezifisch für profile
   firstName
   lastName
+}
+
+"""
+Repräsentiert das Ergebnis der Query `getUnassignedFunctions`.
+"""
+type UnassignedFunctionsPayload {
+  """
+  Name der Funktion (z. B. "Professor", "Manager").
+  """
+  function: Function!
+
+  """
+  Liste der Benutzer, die der Funktion zugeordnet sind und in einem definierten Zeitraum ausscheiden.
+  """
+  userList: [UserRetirementInfo!]!
+}
+
+"""
+Repräsentiert einen Benutzer, der in einem definierten Zeitraum ausscheidet.
+"""
+type UserRetirementInfo {
+  """
+  Die eindeutige ID des Benutzers.
+  """
+  userId: String!
+
+  """
+  Verbleibende Zeit in Tagen, bis der Benutzer ausscheidet.
+  """
+  timeLeft: Int!
 }
 
 """
