@@ -6,7 +6,7 @@
 
 # Class: OrgUnit
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L11)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/entity/org-unit.entity.ts#L11)
 
 Repräsentiert eine Organisationseinheit innerhalb des Systems.
 
@@ -50,7 +50,7 @@ Defined in: node\_modules/mongoose/types/document.d.ts:22
 
 > `optional` **alias**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:46](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L46)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:46](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/entity/org-unit.entity.ts#L46)
 
 Der Alias der Organisationseinheit.
 
@@ -60,7 +60,7 @@ Der Alias der Organisationseinheit.
 
 > `optional` **kostenstelleNr**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:53](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L53)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:53](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/entity/org-unit.entity.ts#L53)
 
 Die Kostenstellennummer der Organisationseinheit.
 
@@ -70,7 +70,7 @@ Die Kostenstellennummer der Organisationseinheit.
 
 > **name**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:22](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L22)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:22](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/entity/org-unit.entity.ts#L22)
 
 Der Name der Organisationseinheit.
 
@@ -80,7 +80,7 @@ Der Name der Organisationseinheit.
 
 > `optional` **parentId**: `ObjectId`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L30)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/entity/org-unit.entity.ts#L30)
 
 Die ID der übergeordneten Organisationseinheit.
 
@@ -90,7 +90,7 @@ Die ID der übergeordneten Organisationseinheit.
 
 > `optional` **supervisor**: `ObjectId`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L38)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/entity/org-unit.entity.ts#L38)
 
 Der Vorgesetzte der Organisationseinheit.
 
@@ -100,6 +100,6 @@ Der Vorgesetzte der Organisationseinheit.
 
 > `optional` **type**: `string`
 
-Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:59](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/entity/org-unit.entity.ts#L59)
+Defined in: [src/role-mapper/model/entity/org-unit.entity.ts:59](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/entity/org-unit.entity.ts#L59)
 
 Der Typ der Organisationseinheit.

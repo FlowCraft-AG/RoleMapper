@@ -8,7 +8,7 @@
 
 > **TokenData**: `object`
 
-Defined in: [src/security/keycloak/keycloak.service.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/security/keycloak/keycloak.service.ts#L18)
+Defined in: [src/security/keycloak/keycloak.service.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/security/keycloak/keycloak.service.ts#L18)
 
 Typdefinition für Eingabedaten zu einem Token.
 

@@ -8,6 +8,6 @@
 
 > **FilterFields**: `"userId"` \| `"userType"` \| `"userRole"` \| `"orgUnit"` \| `"active"` \| `"functionName"` \| `"name"` \| `"roleId"` \| `"processId"` \| `"parentId"` \| `"courseOfStudy"` \| `"level"` \| `"isSingleUser"` \| `"supervisor"`
 
-Defined in: [src/role-mapper/model/types/filter.type.ts:8](https://github.com/FlowCraft-AG/RoleMapper/blob/ac5d66f12f967d3e6cc401aba4d232c3d8d25cca/backend/src/role-mapper/model/types/filter.type.ts#L8)
+Defined in: [src/role-mapper/model/types/filter.type.ts:8](https://github.com/FlowCraft-AG/RoleMapper/blob/c9acdd00838c66d920e7b437b70c88dfa20c9c4e/backend/src/role-mapper/model/types/filter.type.ts#L8)
 
 Mögliche Filterfelder für alle Entitäten.
