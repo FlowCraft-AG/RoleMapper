@@ -22,18 +22,19 @@ import {
   Typography,
 } from '@mui/material';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   fetchAncestors,
   fetchFunctionsWithNoUsersOrRetiringUsers,
 } from '../../lib/api/rolemapper/function.api';
 import { FunctionString } from '../../types/function.type';
+import { ENV } from '../../utils/env';
 
 /**
  * Konfigurationskonstante für das Intervall zur Aktualisierung von Benachrichtigungen.
  * HIER ÄNDERN SIE DIE ZEIT
  */
-const NOTIFICATION_UPDATE_INTERVAL = 86400000; // 24 Stunde
+const NOTIFICATION_UPDATE_INTERVAL = parseInt(ENV.NOTIFICATION_UPDATE_INTERVAL); //Default 86400000 = 24 Stunden
 
 interface NotificationMenuProps {
   theme: Theme;
@@ -60,8 +61,9 @@ export default function NotificationMenu({
   theme,
   router,
 }: NotificationMenuProps) {
-  const [notificationAnchor, setNotificationAnchor] =
-    useState<null | HTMLElement>(null);
+  const [notificationAnchor, setNotificationAnchor] = useState<
+    undefined | HTMLElement
+  >(undefined);
   const [notificationsSingleUser, setNotificationsSingleUser] = useState<
     Notification[]
   >([]);
@@ -71,14 +73,13 @@ export default function NotificationMenu({
   const [lookaheadPeriod, setLookaheadPeriod] = useState(5);
   const [timeUnit, setTimeUnit] = useState('JAHRE');
   const [activeTab, setActiveTab] = useState(0);
-  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setNotificationAnchor(event.currentTarget);
   };
 
   const handleCloseMenu = () => {
-    setNotificationAnchor(null);
+    setNotificationAnchor(undefined);
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -88,8 +89,7 @@ export default function NotificationMenu({
   /**
    * Ruft Benachrichtigungen ab und teilt sie nach `isSingleUser`.
    */
-  const fetchNotifications = async () => {
-    setLoadingNotifications(true);
+  const fetchNotifications = useCallback(async () => {
     try {
       const functionsInfo = await fetchFunctionsWithNoUsersOrRetiringUsers(
         lookaheadPeriod,
@@ -116,32 +116,33 @@ export default function NotificationMenu({
       setNotificationsMultiUser(multiUserNotifications);
     } catch (error) {
       console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
-    } finally {
-      setLoadingNotifications(false);
     }
-  };
+  }, [lookaheadPeriod, timeUnit]);
 
   /**
    * Handhabt das Klicken auf eine Benachrichtigung und navigiert zur entsprechenden Organisationseinheit.
    *
    * @param {Notification} notification - Die ausgewählte Benachrichtigung.
    */
-  const handleNotificationClick = async (notification: Notification) => {
-    handleCloseMenu();
-    try {
-      const ancestors = await fetchAncestors(notification.function.orgUnit);
-      const ancestorIds = ancestors.map((ancestor) => ancestor._id);
+  const handleNotificationClick = useCallback(
+    async (notification: Notification) => {
+      handleCloseMenu();
+      try {
+        const ancestors = await fetchAncestors(notification.function.orgUnit);
+        const ancestorIds = ancestors.map((ancestor) => ancestor._id);
 
-      // Navigiere zu /organisationseinheiten mit den geöffneten Knoten
-      router.push(
-        `/organisationseinheiten?openNodes=${encodeURIComponent(
-          ancestorIds.join(','),
-        )}&selectedNode=${notification.function._id}&parentOrgUnitId=${notification.function.orgUnit}`,
-      );
-    } catch (error) {
-      console.error('Fehler beim Laden der Ancestors:', error);
-    }
-  };
+        // Navigiere zu /organisationseinheiten mit den geöffneten Knoten
+        router.push(
+          `/organisationseinheiten?openNodes=${encodeURIComponent(
+            ancestorIds.join(','),
+          )}&selectedNode=${notification.function._id}&parentOrgUnitId=${notification.function.orgUnit}`,
+        );
+      } catch (error) {
+        console.error('Fehler beim Laden der Ancestors:', error);
+      }
+    },
+    [router],
+  );
 
   /**
    * Effekt zum Laden der Benachrichtigungen.
@@ -153,7 +154,7 @@ export default function NotificationMenu({
       NOTIFICATION_UPDATE_INTERVAL,
     );
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchNotifications]);
 
   const renderNotifications = (notifications: Notification[]) => (
     <Box sx={{ maxHeight: '60vh', overflowY: 'auto' }}>
@@ -235,11 +236,13 @@ export default function NotificationMenu({
         anchorEl={notificationAnchor}
         open={Boolean(notificationAnchor)}
         onClose={handleCloseMenu}
-        PaperProps={{
-          style: {
-            width: '500px',
-            padding: '1rem',
-            maxHeight: '80vh',
+        slotProps={{
+          paper: {
+            style: {
+              width: '500px',
+              padding: '1rem',
+              maxHeight: '80vh',
+            },
           },
         }}
       >

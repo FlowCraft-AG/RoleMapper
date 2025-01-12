@@ -38,8 +38,8 @@ interface ProcessDefinitionXmlViewerProps {
 const ProcessDefinitionXmlViewer: React.FC<ProcessDefinitionXmlViewerProps> = ({
   processDefinitionKey,
 }) => {
-  const [xml, setXml] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [xml, setXml] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
   const { data: session } = useSession();
 
   /**
@@ -67,7 +67,7 @@ const ProcessDefinitionXmlViewer: React.FC<ProcessDefinitionXmlViewerProps> = ({
       }
     }
     loadXml();
-  }, [processDefinitionKey]);
+  }, [session, processDefinitionKey]);
 
   // Fehleranzeige
   if (error) return <div>Error: {error}</div>;

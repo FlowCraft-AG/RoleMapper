@@ -6,15 +6,12 @@ import KeycloakProvider, {
 } from 'next-auth/providers/keycloak';
 import { OAuthConfig } from 'next-auth/providers/oauth';
 import { LOGIN, REFRESH_TOKEN } from '../graphql/auth/auth';
-import { ENV, logEnvironmentVariables } from '../utils/env';
+import { ENV } from '../utils/env';
 import { getLogger } from '../utils/logger';
 import getApolloClient from './apolloClient';
 
 const logger = getLogger('authOptions');
 const client = getApolloClient(undefined);
-
-// Logge die Umgebungsvariablen (nützlich für Debugging und Validierung)
-logEnvironmentVariables();
 
 export const authOptions: AuthOptions = {
   // Geheimnis für die Token-Generierung

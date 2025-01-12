@@ -21,7 +21,7 @@ import {
   CardContent,
   CircularProgress,
   FormControl,
-  Grid,
+  Grid2,
   InputLabel,
   MenuItem,
   Select,
@@ -142,7 +142,7 @@ export default function ProcessInstances() {
         </Box>
       )}
 
-      {/* Restliche Komponenten wie Filter und Grid */}
+      {/* Restliche Komponenten wie Filter und Grid2 */}
       {!loading && !error && (
         <>
           {/* Filter für Status */}
@@ -178,9 +178,9 @@ export default function ProcessInstances() {
           />
 
           {/* Instanzen anzeigen */}
-          <Grid container spacing={3}>
+          <Grid2 container spacing={3}>
             {instances.map((instance: ProcessInstance) => (
-              <Grid item xs={12} sm={6} md={4} key={instance.key}>
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={instance.key}>
                 <Card variant="outlined">
                   {instance.state === 'COMPLETED' && (
                     <CheckCircle
@@ -232,9 +232,9 @@ export default function ProcessInstances() {
                     </Link>
                   </CardActions>
                 </Card>
-              </Grid>
+              </Grid2>
             ))}
-          </Grid>
+          </Grid2>
         </>
       )}
     </Box>

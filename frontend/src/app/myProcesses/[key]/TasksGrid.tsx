@@ -1,5 +1,11 @@
 import { CheckCircle, Error, PendingActions } from '@mui/icons-material';
-import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Grid2,
+  Typography,
+} from '@mui/material';
 import { ProcessTask } from '../../../types/process.type';
 
 /**
@@ -14,7 +20,7 @@ interface TasksGridProps {
 /**
  * `TasksGrid`-Komponente
  *
- * Zeigt ein Grid mit den Aufgaben einer Prozessinstanz an.
+ * Zeigt ein Grid2 mit den Aufgaben einer Prozessinstanz an.
  *
  * @component
  * @param {Object} props - Eigenschaften der Komponente
@@ -28,9 +34,9 @@ interface TasksGridProps {
  */
 export default function TasksGrid({ tasks }: TasksGridProps) {
   return (
-    <Grid container spacing={3}>
+    <Grid2 container spacing={3}>
       {tasks.map((task) => (
-        <Grid item xs={12} sm={6} md={4} key={task.id}>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={task.id}>
           <Card
             sx={{
               backgroundColor:
@@ -73,8 +79,8 @@ export default function TasksGrid({ tasks }: TasksGridProps) {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid2>
       ))}
-    </Grid>
+    </Grid2>
   );
 }

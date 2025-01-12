@@ -96,7 +96,7 @@ const ThemeProviderWrapper = ({ children }: { children: React.ReactNode }) => {
           fontFamily: 'Roboto, Arial, sans-serif',
         },
       }),
-    [facultyTheme, useCustomStyles],
+    [facultyTheme, useCustomStyles, defaultTheme],
   );
 
   return (

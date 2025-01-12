@@ -1,9 +1,14 @@
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  NormalizedCacheObject,
+  createHttpLink,
+} from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { ENV } from '../utils/env';
 
 // Globale Variable für die Apollo Client Instanz
-let client: ApolloClient<any> | null = null;
+let client: ApolloClient<NormalizedCacheObject> | null = null;
 
 // Aktuell verwendeter Token
 let currentToken: string | undefined = undefined;
@@ -11,9 +16,11 @@ let currentToken: string | undefined = undefined;
 /**
  * Erstellt oder gibt eine existierende Apollo Client Instanz zurück.
  * @param {string} token - Der Authentifizierungstoken.
- * @returns {ApolloClient} Die Singleton Apollo Client Instanz.
+ * @returns {ApolloClient<NormalizedCacheObject>} Die Singleton Apollo Client Instanz.
  */
-const getApolloClient = (token: string | undefined): ApolloClient<any> => {
+const getApolloClient = (
+  token: string | undefined,
+): ApolloClient<NormalizedCacheObject> => {
   if (client && currentToken === token) {
     return client; // Gibt die existierende Instanz zurück, wenn der Token gleich ist
   }
