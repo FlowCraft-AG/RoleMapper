@@ -39,31 +39,6 @@ export default async function HKAPage() {
           marginBottom: 4,
         }}
       >
-        <Link href="/organisationseinheiten/slider" passHref>
-          <Card
-            sx={{
-              transition: 'transform 0.3s, box-shadow 0.3s',
-              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
-            }}
-          >
-            <CardActionArea>
-              <CardContent>
-                <Typography variant="h6" align="center" gutterBottom>
-                  Slider
-                </Typography>
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="text.secondary"
-                >
-                  Entdecken Sie das Organigramm in einer interaktiven
-                  Slider-Darstellung.
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </Link>
-
         <Link href="/organisationseinheiten" passHref>
           <Card
             sx={{

@@ -38,9 +38,7 @@ services:
       retries: 5
       start_period: 30s
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/zeebe/data
-        target: /usr/local/zeebe/data
+      - zeebe:/usr/local/zeebe/data
     networks:
       - camunda-platform
       - hka-network
@@ -84,9 +82,7 @@ services:
       retries: 5
       start_period: 30s
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/operate/operate_tmp
-        target: /tmp
+      - operate_tmp:/tmp
     networks:
       - camunda-platform
       - hka-network
@@ -132,9 +128,7 @@ services:
       retries: 5
       start_period: 30s
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/tasklist/tasklist_tmp
-        target: /tmp
+      - tasklist_tmp:/tmp
     networks:
       - camunda-platform
       - hka-network
@@ -215,9 +209,7 @@ services:
       retries: 5
       start_period: 30s
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/optimize/environment-config.yaml
-        target: /optimize/config/environment-config.yaml
+      - "./.optimize/environment-config.yaml:/optimize/config/environment-config.yaml"
     restart: on-failure
     networks:
       - camunda-platform
@@ -288,10 +280,7 @@ services:
       start_period: 60s
     restart: on-failure
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/keycloak/keycloak-theme
-        target: /app/keycloak-theme
-        read_only: true
+      - keycloak-theme:/app/keycloak-theme
     networks:
       - camunda-platform
       - identity-network
@@ -317,9 +306,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/postgres/data
-        target: /var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     networks:
       - identity-network
 
@@ -327,12 +314,10 @@ services:
     container_name: keycloak
     image: bitnami/keycloak:${KEYCLOAK_SERVER_VERSION}
     volumes:
+      - keycloak-theme:/opt/bitnami/keycloak/themes/identity
       - type: bind
         source: ./realm-config.json
         target: /opt/bitnami/keycloak/data/import/realm-config.json
-      - type: bind
-        source: ../../../../.volumes/camunda/keycloak/keycloak-theme
-        target: /opt/bitnami/keycloak/themes/identity
     ports:
       - "18080:18080"
     environment:
@@ -382,9 +367,7 @@ services:
       timeout: 5s
       retries: 3
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/elastic/data
-        target: /usr/share/elasticsearch/data
+      - elastic:/usr/share/elasticsearch/data
     networks:
       - camunda-platform
     deploy:
@@ -400,9 +383,7 @@ services:
     ports:
       - 5601:5601
     volumes:
-      - type: bind
-        source: ../../../../.volumes/camunda/kibana/data
-        target: /usr/share/kibana/data
+      - kibana:/usr/share/kibana/data
     networks:
       - camunda-platform
       - hka-network
@@ -422,12 +403,14 @@ services:
         target: 80
     volumes:
       - postgres:/var/lib/pgadmin4
-      - type: bind
-        source: ../../../../.volumes/camunda/postgres/pgadmin
-        target: /var/lib/pgadmin4
-      - type: bind
-        source: ../../../../.volumes/camunda/postgres/pgadmin4
-        target: /var/lib/pgadmin4
+      # - type: bind
+      #   source: /Users/gentlebookpro/Projekte/UNI/SWE/zimmermann/volumes/postgres/pgadmin
+      #   # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
+      #   # enthaelt u.a. pgadmin4.db als SQLite-DB mit z.B. der Tabelle "user"
+      #   target: /var/lib/pgadmin
+      # - type: bind
+      #   source: /Users/gentlebookpro/Projekte/UNI/SWE/zimmermann/volumes/postgres/pgadmin4
+      #   target: /var/lib/pgadmin4
     env_file: pgadmin.env
     user: 'pgadmin:5050'
     hostname: pgadmin
@@ -448,6 +431,15 @@ services:
           memory: 2G
     networks:
       - identity-network
+
+volumes:
+  zeebe:
+  elastic:
+  postgres:
+  keycloak-theme:
+  kibana:
+  operate_tmp:
+  tasklist_tmp:
 
 networks:
   # Note there are two bridge networks: One for Camunda Platform and one for Identity.

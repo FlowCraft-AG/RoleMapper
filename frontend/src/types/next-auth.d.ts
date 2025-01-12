@@ -18,7 +18,6 @@ declare module 'next-auth' {
       roles?: string[]; // Benutzerrollen (z. B. "Admin", "User")
     } & DefaultSession['user']; // Enthält alle Felder aus der Standard-User-Definition von `next-auth`
     role?: string; // Benutzerrolle (z. B. "Admin", "User")
-    isAdmin?: boolean; // Gibt an, ob der Benutzer Administratorrechte hat
   }
 
   /**
