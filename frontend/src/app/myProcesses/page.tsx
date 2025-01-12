@@ -31,7 +31,7 @@ import { ProcessInstance } from '../../types/process.type';
 /**
  * `ProcessInstances`-Komponente
  *
- * Diese Komponente zeigt Prozessinstanzen aus dem Camunda-System an. Sie bietet Filtermöglichkeiten nach Status und Prozessnamen.
+ * Diese Komponente zeigt user spezifische Prozessinstanzen aus dem Camunda-System an. Sie bietet Filtermöglichkeiten nach Status und Prozessnamen.
  *
  * @component
  * @returns {JSX.Element} Die JSX-Struktur der Prozessinstanzliste.
@@ -57,7 +57,7 @@ export default function ProcessInstances() {
 
   useEffect(() => {
     /**
-     * Lädt die Prozessinstanzen und filtert diese basierend auf den gesetzten Filtern.
+     * Lädt die Prozessinstanzen eines Users und filtert diese basierend auf den gesetzten Filtern.
      *
      * @async
      * @function fetchData
