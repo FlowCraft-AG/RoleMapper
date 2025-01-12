@@ -59,7 +59,7 @@ export default function UserMenu({
   // Manuelle Token-Aktualisierung
   const handleRefreshToken = useCallback(async () => {
     setLoading(true);
-    setError(undefined);
+      setError(undefined);
 
     try {
       await update();
@@ -121,12 +121,8 @@ export default function UserMenu({
               )}
             </MenuItem>
             <Divider />
-            <MenuItem>
-              <Refresh
-                fontSize="small"
-                sx={{ marginRight: 1 }}
-                onClick={() => handleRefreshToken()}
-              />
+            <MenuItem onClick={() => handleRefreshToken()}>
+              <Refresh fontSize="small" sx={{ marginRight: 1 }} />
               Token aktualisieren
             </MenuItem>
             <Divider />
