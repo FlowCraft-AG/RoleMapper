@@ -6,7 +6,7 @@
 
 # Class: ResponseTimeInterceptor
 
-Defined in: [src/logger/response-time.interceptor.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/logger/response-time.interceptor.ts#L15)
+Defined in: [src/logger/response-time.interceptor.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/logger/response-time.interceptor.ts#L15)
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: [src/logger/response-time.interceptor.ts:15](https://github.com/Flow
 
 > **intercept**(`context`, `next`): `Observable`\<`any`\>
 
-Defined in: [src/logger/response-time.interceptor.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/logger/response-time.interceptor.ts#L18)
+Defined in: [src/logger/response-time.interceptor.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/logger/response-time.interceptor.ts#L18)
 
 Method to implement a custom interceptor.
 

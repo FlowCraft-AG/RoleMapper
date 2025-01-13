@@ -8,7 +8,7 @@
 
 > **ProcessDefinitionFilter**: [`BaseFilter`](../../base-filter/type-aliases/BaseFilter.md) & `object`
 
-Defined in: [src/camunda/types/input-filter/process-definition-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/camunda/types/input-filter/process-definition-filter.ts#L10)
+Defined in: [src/camunda/types/input-filter/process-definition-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/camunda/types/input-filter/process-definition-filter.ts#L10)
 
 Erweiterter Filter für die Suche nach Prozessdefinitionen.
 

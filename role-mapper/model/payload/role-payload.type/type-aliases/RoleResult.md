@@ -8,7 +8,7 @@
 
 > **RoleResult**: `object`
 
-Defined in: [src/role-mapper/model/payload/role-payload.type.ts:25](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/role-mapper/model/payload/role-payload.type.ts#L25)
+Defined in: [src/role-mapper/model/payload/role-payload.type.ts:25](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/role-mapper/model/payload/role-payload.type.ts#L25)
 
 Interface für die Rückgabe einzelner Rollen und deren zugeordneter Benutzer.
 

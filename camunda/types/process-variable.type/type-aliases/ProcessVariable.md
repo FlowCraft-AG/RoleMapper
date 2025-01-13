@@ -8,7 +8,7 @@
 
 > **ProcessVariable**: `object`
 
-Defined in: [src/camunda/types/process-variable.type.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/camunda/types/process-variable.type.ts#L5)
+Defined in: [src/camunda/types/process-variable.type.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/camunda/types/process-variable.type.ts#L5)
 
 Typ für eine Prozessvariable in Camunda.
 Beschreibt eine einzelne Variable, die mit einer Prozessinstanz verknüpft ist.

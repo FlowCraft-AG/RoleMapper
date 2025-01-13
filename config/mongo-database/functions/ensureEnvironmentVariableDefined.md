@@ -8,7 +8,7 @@
 
 > **ensureEnvironmentVariableDefined**(`variable`, `variableName`): `string`
 
-Defined in: [src/config/mongo-database.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/config/mongo-database.ts#L11)
+Defined in: [src/config/mongo-database.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/config/mongo-database.ts#L11)
 
 ## Parameters
 

@@ -8,6 +8,6 @@
 
 > **EntitySchemaType**: *typeof* [`USER_SCHEMA`](../../user.entity/variables/USER_SCHEMA.md) \| *typeof* [`MANDATE_SCHEMA`](../../mandates.entity/variables/MANDATE_SCHEMA.md) \| *typeof* [`ORG_UNIT_SCHEMA`](../../org-unit.entity/variables/ORG_UNIT_SCHEMA.md) \| *typeof* [`PROCESS_SCHEMA`](../../process.entity/variables/PROCESS_SCHEMA.md) \| *typeof* [`ROLE_SCHEMA`](../../roles.entity/variables/ROLE_SCHEMA.md)
 
-Defined in: [src/role-mapper/model/entity/entities.entity.ts:52](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/role-mapper/model/entity/entities.entity.ts#L52)
+Defined in: [src/role-mapper/model/entity/entities.entity.ts:52](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/role-mapper/model/entity/entities.entity.ts#L52)
 
 Schematypen für die Entitäten.

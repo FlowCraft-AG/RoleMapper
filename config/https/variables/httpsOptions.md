@@ -8,7 +8,7 @@
 
 > `const` **httpsOptions**: `object`
 
-Defined in: [src/config/https.ts:19](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/config/https.ts#L19)
+Defined in: [src/config/https.ts:19](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/config/https.ts#L19)
 
 ## Type declaration
 

@@ -8,7 +8,7 @@
 
 > **UpdateOrgUnitInput**: `object`
 
-Defined in: [src/role-mapper/model/input/update.input.ts:180](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/role-mapper/model/input/update.input.ts#L180)
+Defined in: [src/role-mapper/model/input/update.input.ts:180](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/role-mapper/model/input/update.input.ts#L180)
 
 Eingabetyp für die Aktualisierung von Organisationseinheiten.
 

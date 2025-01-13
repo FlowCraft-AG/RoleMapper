@@ -8,6 +8,6 @@
 
 > **IncidentState**: `"ACTIVE"` \| `"MIGRATED"` \| `"RESOLVED"` \| `"PENDING"`
 
-Defined in: [src/camunda/types/input-filter/incident-filter.ts:48](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/camunda/types/input-filter/incident-filter.ts#L48)
+Defined in: [src/camunda/types/input-filter/incident-filter.ts:48](https://github.com/FlowCraft-AG/RoleMapper/blob/3e868f79db107a551dfeead02a7fe70366ab79da/backend/src/camunda/types/input-filter/incident-filter.ts#L48)
 
 Mögliche Zustände eines Incidents in Camunda.
