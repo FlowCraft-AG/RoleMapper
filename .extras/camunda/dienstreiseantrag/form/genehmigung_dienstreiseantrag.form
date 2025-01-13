@@ -1,0 +1,187 @@
+{
+  "components": [
+    {
+      "text": " # Dienstreiseantrag",
+      "type": "text",
+      "layout": {
+        "row": "Row_0utg3ej",
+        "columns": null
+      },
+      "id": "Field_1375obg"
+    },
+    {
+      "label": "Vorname des Antragstellers",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1rjegyf",
+        "columns": null
+      },
+      "id": "Field_1tc2igm",
+      "key": "vorname",
+      "readonly": true
+    },
+    {
+      "label": "Nachname des Antragstellers",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1rjegyf",
+        "columns": null
+      },
+      "id": "Field_0gywzz2",
+      "key": "name",
+      "readonly": true
+    },
+    {
+      "label": "Kostenstelle des Antragstellers",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0mx4q2v",
+        "columns": null
+      },
+      "id": "Field_07xj5ko",
+      "key": "kostenstelle",
+      "readonly": true
+    },
+    {
+      "label": "UserRole",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0mx4q2v",
+        "columns": null
+      },
+      "id": "Field_1sfdyda",
+      "key": "userRole",
+      "readonly": true
+    },
+    {
+      "label": "User Type",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0mx4q2v",
+        "columns": null
+      },
+      "id": "Field_1bp262w",
+      "key": "userType",
+      "readonly": true
+    },
+    {
+      "label": "Reiseziel",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_15zvvf8",
+        "columns": null
+      },
+      "id": "Field_0q5jng6",
+      "key": "reiseziel",
+      "description": "Zielort der Dienstreise.",
+      "validate": {
+        "required": true
+      },
+      "readonly": true
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Reisebeginn",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1q8kspt",
+        "columns": null
+      },
+      "id": "Field_18qylww",
+      "key": "reisebeginn",
+      "description": "Startdatum der Reise.",
+      "validate": {
+        "required": true
+      },
+      "readonly": true
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Reiseende",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1q8kspt",
+        "columns": null
+      },
+      "id": "Field_06hs6oa",
+      "key": "reiseende",
+      "description": "Enddatum der Reise.",
+      "readonly": true
+    },
+    {
+      "label": "Reisezweck",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_067hmlw",
+        "columns": null
+      },
+      "id": "Field_0koomwc",
+      "key": "zweck",
+      "description": "Beschreibe den Zweck der Reise.",
+      "validate": {
+        "required": true,
+        "minLength": 10
+      },
+      "readonly": true
+    },
+    {
+      "type": "separator",
+      "layout": {
+        "row": "Row_0b52ckc",
+        "columns": null
+      },
+      "id": "Field_1bk9ur0"
+    },
+    {
+      "label": "Entscheidung",
+      "values": [
+        {
+          "label": "Genehmigen",
+          "value": "genehmigt"
+        },
+        {
+          "label": "Ablehnen",
+          "value": "abgelehnt"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_1ep7ito",
+        "columns": null
+      },
+      "id": "Field_0qrd28z",
+      "key": "entscheidung",
+      "description": "Treffe eine Entscheidung für den Antrag",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Kommentar (bei Ablehnung)",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_1ep7ito",
+        "columns": 11
+      },
+      "id": "Field_1jsoke9",
+      "key": "kommentar",
+      "description": "Optional: Gib einen Grund für die Ablehnung an",
+      "properties": {},
+      "conditional": {
+        "show": {
+          "when": "entscheidung",
+          "is": "abgelehnt"
+        }
+      }
+    }
+  ],
+  "type": "default",
+  "id": "genehmigung_antrag_diestreise_form",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}

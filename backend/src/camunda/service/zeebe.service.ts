@@ -28,9 +28,10 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
     onModuleInit() {
         if (this.#isZeebeEnabled) {
             this.#zbClient = zbClient; // Zeebe Gateway-Adresse
-            this.registerOutputWorker();
-            this.registerNoteWorker();
-            this.registerGetRolesWorker();
+            this.#registerOutputWorker();
+            this.#registerNoteWorker();
+            this.#registerGetRolesWorker();
+            this.#registerSendMail();
             this.#logger.debug('Zeebe Worker gestartet.');
         } else {
             this.#logger.debug('Zeebe ist deaktiviert. Keine Worker registriert.');
@@ -70,7 +71,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
-    private registerOutputWorker() {
+    #registerOutputWorker() {
         this.#logger.debug('Registriere Worker für "output"');
         this.#outputWorker = this.#zbClient!.createWorker({
             taskType: 'output',
@@ -91,7 +92,7 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         });
     }
 
-    private registerNoteWorker() {
+    #registerNoteWorker() {
         this.#logger.debug('Registriere Worker für "note"');
         this.#noteWorker = this.#zbClient!.createWorker({
             taskType: 'note',
@@ -112,13 +113,12 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         });
     }
 
-    private registerGetRolesWorker() {
+    #registerGetRolesWorker() {
         this.#logger.debug('Registriere Worker um Rollen zu ermitteln');
         this.#noteWorker = this.#zbClient!.createWorker({
             taskType: 'getRoles',
             taskHandler: async (job) => {
-                const userId: string = job.variables.userId;
-                const processId: string = job.variables.procesId;
+                const { userId, processId } = job.variables;
 
                 if (userId) {
                     this.#logger.debug(
@@ -128,9 +128,24 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
                     );
                     const result = await this.#service.findProcessRoles(processId, userId);
                     this.#logger.debug('Rollen für den Benutzer: %o', result);
-                    const vorgesetzter = result?.roles[0];
+
+                    const antragsteller = result?.roles[1]?.users[0]?.user;
+                    if (!antragsteller) {
+                        this.#logger.error(
+                            'Antragsteller konnte nicht ermittelt werden. Rollen-Ergebnis: %o',
+                            result,
+                        );
+                        throw new Error('Antragsteller konnte nicht ermittelt werden.');
+                    }
+
+                    this.#logger.debug('Antragsteller: %s', antragsteller);
+                    const { userType, userRole, profile, employee } = antragsteller;
+                    const { firstName, lastName } = profile;
+                    const { costCenter } = employee!;
+                    const vorgesetzter = result?.roles[0]?.users[0]?.user;
                     this.#logger.debug('Vorgesetzter für den Benutzer: %o', vorgesetzter);
-                    const assignee = [vorgesetzter?.users[0]?.user?.userId];
+
+                    const assignee = [vorgesetzter?.userId];
                     if (!assignee) {
                         this.#logger.error(
                             'Assignee konnte nicht ermittelt werden. Rollen-Ergebnis: %o',
@@ -142,12 +157,40 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
                     await job.complete({
                         assignee: assignee,
                         assigneeLocked: true,
+                        userRole,
+                        userType,
+                        firstName,
+                        lastName,
+                        costCenter,
                     });
                     this.#logger.debug('Job abgeschlossen mit assignee: %o', assignee);
                     this.#logger.debug('Prozess-Variablen vor Abschluss: %o', job.variables);
                 } else {
                     this.#logger.debug('Variable "note" nicht gefunden.');
                 }
+                return 'JOB_ACTION_ACKNOWLEDGEMENT' as const;
+            },
+        });
+    }
+
+    #registerSendMail() {
+        this.#logger.debug('Registriere Worker um E-Mails zu versenden');
+        this.#noteWorker = this.#zbClient!.createWorker({
+            taskType: 'sendMail',
+            taskHandler: async (job) => {
+                const { receiver } = job.variables;
+
+                if (receiver) {
+                    this.#logger.debug('Versende E-Mail an: %s', receiver);
+                    // this.#logger.debug('Betreff: %s', subject);
+                    // this.#logger.debug('Inhalt: %s', content);
+                } else {
+                    this.#logger.debug('Variable "receiver" nicht gefunden.');
+                }
+
+                await job.complete({
+                    result: `E-Mail an ${receiver} versendet.`,
+                });
                 return 'JOB_ACTION_ACKNOWLEDGEMENT' as const;
             },
         });

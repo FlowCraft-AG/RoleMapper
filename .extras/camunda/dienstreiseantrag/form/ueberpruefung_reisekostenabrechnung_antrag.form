@@ -1,0 +1,261 @@
+{
+  "components": [
+    {
+      "text": " # Dienstreiseantrag",
+      "type": "text",
+      "layout": {
+        "row": "Row_0utg3ej",
+        "columns": null
+      },
+      "id": "Field_1375obg"
+    },
+    {
+      "label": "Vorname des Antragstellers",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1rjegyf",
+        "columns": null
+      },
+      "id": "Field_1tc2igm",
+      "key": "vorname",
+      "readonly": true
+    },
+    {
+      "label": "Nachname des Antragstellers",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1rjegyf",
+        "columns": null
+      },
+      "id": "Field_0gywzz2",
+      "key": "name",
+      "readonly": true
+    },
+    {
+      "label": "Kostenstelle des Antragstellers",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0mx4q2v",
+        "columns": null
+      },
+      "id": "Field_07xj5ko",
+      "key": "kostenstelle",
+      "readonly": true
+    },
+    {
+      "label": "UserRole",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0mx4q2v",
+        "columns": null
+      },
+      "id": "Field_1sfdyda",
+      "key": "userRole",
+      "readonly": true
+    },
+    {
+      "label": "User Type",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0mx4q2v",
+        "columns": null
+      },
+      "id": "Field_1bp262w",
+      "key": "userType",
+      "readonly": true
+    },
+    {
+      "label": "Reiseziel",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_15zvvf8",
+        "columns": null
+      },
+      "id": "Field_0q5jng6",
+      "key": "reiseziel",
+      "description": "Zielort der Dienstreise.",
+      "validate": {
+        "required": true
+      },
+      "readonly": true
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Reisebeginn",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1q8kspt",
+        "columns": null
+      },
+      "id": "Field_18qylww",
+      "key": "reisebeginn",
+      "description": "Startdatum der Reise.",
+      "validate": {
+        "required": true
+      },
+      "readonly": true
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Reiseende",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1q8kspt",
+        "columns": null
+      },
+      "id": "Field_06hs6oa",
+      "key": "reiseende",
+      "description": "Enddatum der Reise.",
+      "readonly": true
+    },
+    {
+      "label": "Reisezweck",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_067hmlw",
+        "columns": null
+      },
+      "id": "Field_0koomwc",
+      "key": "zweck",
+      "description": "Beschreibe den Zweck der Reise.",
+      "validate": {
+        "required": true,
+        "minLength": 10
+      },
+      "readonly": true
+    },
+    {
+      "type": "separator",
+      "layout": {
+        "row": "Row_0b52ckc",
+        "columns": null
+      },
+      "id": "Field_1bk9ur0"
+    },
+    {
+      "label": "Unterkunftskosten",
+      "type": "number",
+      "layout": {
+        "row": "Row_0araf77",
+        "columns": null
+      },
+      "id": "Field_0tvtbaf",
+      "key": "unterkunftskosten",
+      "description": "Kosten für Unterkunft (z. B. Hotel, Airbnb).",
+      "validate": {
+        "required": true,
+        "min": 0
+      },
+      "readonly": false
+    },
+    {
+      "label": "Verpflegungsmehraufwand",
+      "type": "number",
+      "layout": {
+        "row": "Row_0araf77",
+        "columns": null
+      },
+      "id": "Field_1af3nde",
+      "key": "verpflegungskosten",
+      "description": "Zusätzliche Kosten für Verpflegung während der Reise.",
+      "validation": {
+        "required": false,
+        "min": 0
+      },
+      "readonly": false
+    },
+    {
+      "label": "Transportkosten",
+      "key": "transportkosten",
+      "type": "number",
+      "layout": {
+        "row": "Row_0araf77",
+        "columns": null
+      },
+      "id": "Field_14jnln4",
+      "description": "Kosten für Transportmittel (z. B. Bahn, Flugzeug, Taxi).",
+      "validation": {
+        "required": true,
+        "min": 0
+      },
+      "readonly": false
+    },
+    {
+      "label": "Sonstige Ausgaben",
+      "key": "sonstige_ausgaben",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_1m55c28",
+        "columns": null
+      },
+      "id": "Field_1e9a66k",
+      "description": "Beschreibung und Höhe weiterer Ausgaben (z. B. Konferenzgebühren, Parkgebühren).",
+      "validation": {
+        "required": false
+      },
+      "readonly": false
+    },
+    {
+      "type": "separator",
+      "layout": {
+        "row": "Row_1l3qu27",
+        "columns": null
+      },
+      "id": "Field_10seady"
+    },
+    {
+      "label": "Kommentar (optional bei Ablehnung)",
+      "key": "kommentar",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_0gcssp5",
+        "columns": null
+      },
+      "id": "Field_0yp6s3a",
+      "description": "Fügen Sie bei Ablehnung eine Erklärung hinzu.",
+      "conditional": {
+        "show": {
+          "when": "entscheidung",
+          "is": "ablehnen"
+        }
+      },
+      "readonly": true,
+      "disabled": true
+    },
+    {
+      "label": "Entscheidung",
+      "values": [
+        {
+          "label": "Genehmigen",
+          "value": "genehmigen"
+        },
+        {
+          "label": "Ablehnen",
+          "value": "ablehnen"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_1p65x5g",
+        "columns": null
+      },
+      "id": "Field_0nsupkl",
+      "key": "entscheidung",
+      "description": "Treffen Sie eine Entscheidung über die Reisekostenabrechnung.",
+      "validate": {
+        "required": true
+      },
+      "readonly": true,
+      "disabled": true
+    }
+  ],
+  "type": "default",
+  "id": "ueberpruefung_reisekostenabrechnung_antrag",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}
