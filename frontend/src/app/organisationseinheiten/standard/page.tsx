@@ -39,7 +39,6 @@ export default async function HKAPage() {
           marginBottom: 4,
         }}
       >
-        
         <Link href="/organisationseinheiten" passHref>
           <Card
             sx={{

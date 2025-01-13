@@ -79,7 +79,6 @@ export default async function HKAPage() {
           marginBottom: 4,
         }}
       >
-      
         {/* Link zur Standard-Darstellung */}
         <Link href="/organisationseinheiten/standard" passHref>
           <Card

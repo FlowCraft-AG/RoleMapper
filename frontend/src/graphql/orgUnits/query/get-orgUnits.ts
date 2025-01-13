@@ -3,7 +3,11 @@ import { gql } from '@apollo/client';
 export const GET_ALL_ORG_UNITS = gql`
   query GetData {
     getData(
-      input: { entity: ORG_UNITS, sort: { field: name, direction: ASC } }
+      input: {
+        entity: ORG_UNITS
+        sort: { field: name, direction: ASC }
+        pagination: { limit: 0, offset: 0 }
+      }
     ) {
       totalCount
       data {
@@ -24,7 +28,11 @@ export const GET_ALL_ORG_UNITS = gql`
 export const GET_ORG_UNITS_SHORT = gql`
   query GetData {
     getData(
-      input: { entity: ORG_UNITS, sort: { field: name, direction: ASC } }
+      input: {
+        entity: ORG_UNITS
+        sort: { field: name, direction: ASC }
+        pagination: { limit: 0, offset: 0 }
+      }
     ) {
       totalCount
       data {
@@ -44,6 +52,7 @@ export const GET_ORG_UNIT_BY_ID = gql`
       input: {
         entity: ORG_UNITS
         filter: { field: _id, operator: EQ, value: $id }
+        pagination: { limit: 0, offset: 0 }
       }
     ) {
       totalCount

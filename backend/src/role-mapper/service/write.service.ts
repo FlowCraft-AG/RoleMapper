@@ -151,7 +151,7 @@ export class WriteService {
         };
     }
 
-    async addUserToFunction(functionName: string, userId: string) {
+    async addUserToFunction(functionName: string, userId: string): Promise<Mandates> {
         this.#logger.debug('addUserToFunction: functionName=%s, userId=%s', functionName, userId);
 
         // Funktion basierend auf functionName finden
@@ -161,28 +161,28 @@ export class WriteService {
             throw new NotFoundException(`Funktion mit dem Namen "${functionName}" nicht gefunden.`);
         }
 
-        let updatedMandate;
+        let updatedMandate: Mandates;
 
         if ((mandate as MandateDocument).isSingleUser) {
             // Einzelbenutzer-Mandant: Ersetze den Benutzer
             this.#logger.debug('Einzelbenutzer-Mandant erkannt. Ersetze den Benutzer.');
-            updatedMandate = await this.#modelMap
+            updatedMandate = (await this.#modelMap
                 .MANDATES!.findByIdAndUpdate(
                     mandate._id, // ID des Mandanten
                     { $set: { users: [userId] } }, // Ersetze den gesamten Benutzer-Array
                     { new: true }, // Gibt das aktualisierte Dokument zurück
                 )
-                .exec();
+                .exec()) as Mandates;
         } else {
             // Mehrbenutzer-Mandant: Füge Benutzer hinzu, falls noch nicht vorhanden
             this.#logger.debug('Mehrbenutzer-Mandant erkannt. Füge Benutzer hinzu.');
-            updatedMandate = await this.#modelMap
+            updatedMandate = (await this.#modelMap
                 .MANDATES!.findByIdAndUpdate(
                     mandate._id,
                     { $addToSet: { users: userId } }, // Verhindert Duplikate
                     { new: true }, // Gibt das aktualisierte Dokument zurück
                 )
-                .exec();
+                .exec()) as Mandates;
         }
 
         if (!updatedMandate) {
@@ -198,7 +198,11 @@ export class WriteService {
         return updatedMandate;
     }
 
-    async removeUserFromFunction(functionName: string, userId: string, newUserId?: string) {
+    async removeUserFromFunction(
+        functionName: string,
+        userId: string,
+        newUserId?: string,
+    ): Promise<Mandates> {
         this.#logger.debug(
             'removeUserFromFunction: functionName=%s, userId=%s, newUserId=%s',
             functionName,
@@ -252,7 +256,7 @@ export class WriteService {
                 (updatedMandate as MandateDocument).users,
             );
 
-            return updatedMandate;
+            return updatedMandate as Mandates;
         } else {
             // Mehrbenutzer-Mandant: Benutzer entfernen
             this.#logger.debug('Mehrbenutzer-Mandant erkannt. Entferne Benutzer "%s".', userId);
@@ -276,7 +280,7 @@ export class WriteService {
                 (updatedMandate as MandateDocument).users,
             );
 
-            return updatedMandate;
+            return updatedMandate as Mandates;
         }
     }
 
@@ -286,7 +290,7 @@ export class WriteService {
         entity: EntityCategoryType,
         filter?: FilterInput,
         sort?: SortInput,
-    ) {
+    ): Promise<{ success: boolean; result: Mandates }> {
         this.#logger.debug('saveQuery: functionName=%s, orgUnit=%s', functionName, orgUnitId);
 
         this.#logger.debug(
@@ -313,7 +317,7 @@ export class WriteService {
 
         try {
             // Speichern der Query in der Datenbank
-            const result = await model.create(data);
+            const result: Mandates = (await model.create(data)) as Mandates;
             this.#logger.debug('saveQuery: Data saved successfully: %o', result);
             return { success: true, result }; // Rückgabe der gespeicherten Daten
         } catch (error) {

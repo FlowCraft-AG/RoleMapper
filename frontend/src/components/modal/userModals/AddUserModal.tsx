@@ -15,8 +15,8 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
-import { addUserToFunction } from '../../../lib/api/function.api';
-import { fetchUserIds } from '../../../lib/api/user.api';
+import { addUserToFunction } from '../../../lib/api/rolemapper/function.api';
+import { fetchUserIds } from '../../../lib/api/rolemapper/user.api';
 import { FunctionUser } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';

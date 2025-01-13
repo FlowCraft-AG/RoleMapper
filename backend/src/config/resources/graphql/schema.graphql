@@ -1,19 +1,152 @@
 # Hauptabfragen
 type Query {
-  """
-  Dynamische Abfrage: Ruft Daten basierend auf der Zielentität und Filtern ab.
-  Unterstützt Pagination für eine effiziente Datenabfrage.
-
-  @args:
-    - input (DataInput!): Enthält die Entität, Filterbedingungen und Paginierungsparameter.
-  @returns:
-    - DataPayload!: Eine strukturierte Antwort mit den abgerufenen Daten und der Gesamtzahl der Treffer.
-  """
   getData(input: DataInput!): DataPayload!
   getProcessRoles(processId: ID!, userId: String!): RolePayload!
   getSavedData(id: ID!): MandatePayload
   getUsersByFunction(id: ID!): MandatePayload
   getAncestors(id: ID): [OrgUnit]
+
+  """
+  Ruft Prozessinstanzen basierend auf der Benutzer-ID ab.
+  @example
+  query {
+    getProcessInstancesBy
+  }
+  """
+  getProcessInstancesByUserId(userId: String!): [ProcessInstance]
+  getCamundaProcesses(filter: ProcessInstanceFilterInput): [ProcessInstance]
+  getTasks(filter: TaskFilterInput): [Task!]!
+  searchTaskVariables(filter: ProcessVariableFilterInput): [ProcessVariable]
+  getProcessDefinitionXmlByKey(processDefinitionKey: ID!): String! # Ruft die Prozessdefinition als XML ab
+}
+
+input CamundaSortInput {
+  field: String
+  order: OrderOptions
+}
+
+enum OrderOptions {
+  ASC
+  DESC
+}
+
+enum ProcessState {
+  ACTIVE
+  COMPLETED
+  CANCELED
+}
+
+enum TaskState {
+  CREATED
+  COMPLETED
+  CANCELED
+  FAILED
+}
+
+"""
+Eine Camunda-Prozessinstanz, die Informationen über Status, Version und Metadaten enthält.
+"""
+type ProcessInstance {
+  key: ID! # Eindeutiger Schlüssel der Prozessinstanz
+  processVersion: Int! # Version des Prozesses
+  bpmnProcessId: String! # BPMN-Prozess-ID
+  startDate: String! # Startdatum der Instanz (ISO-Format)
+  state: String! # Zustand der Prozessinstanz (z. B. "ACTIVE")
+  incident: Boolean! # Gibt an, ob ein Vorfall vorliegt
+  processDefinitionKey: String! # Schlüssel der Prozessdefinition
+  tenantId: String # Mandanten-ID (optional)
+}
+
+"""
+Eine Prozessvariable, die mit einer Prozessinstanz in Camunda verknüpft ist.
+"""
+type ProcessVariable {
+  key: ID! # Schlüssel der Variablen
+  processInstanceKey: String! # Schlüssel der zugehörigen Prozessinstanz
+  scopeKey: String! # Schlüssel des Geltungsbereichs
+  name: String! # Name der Variablen
+  value: String! # Wert der Variablen
+  truncated: Boolean! # Gibt an, ob der Wert abgeschnitten wurde
+  tenantId: String # Mandanten-ID (optional)
+}
+
+"""
+Eine Benutzeraufgabe in Camunda, einschließlich Status, Benutzer und zugehöriger Metadaten.
+"""
+type Task {
+  id: ID! # Eindeutige ID der Aufgabe
+  name: String! # Name der Aufgabe
+  taskDefinitionId: String! # ID der Aufgaben-Definition
+  processName: String! # Name des zugehörigen Prozesses
+  creationDate: String! # Erstellungsdatum der Aufgabe (ISO-Format)
+  completionDate: String # Abschlussdatum (optional, wenn nicht abgeschlossen)
+  assignee: String # Benutzer, dem die Aufgabe zugewiesen ist
+  taskState: String! # Zustand der Aufgabe (z. B. "CREATED", "COMPLETED")
+  formKey: String # Schlüssel des Formulars (optional)
+  formId: String # ID des zugehörigen Formulars (optional)
+  formVersion: Int # Version des Formulars (optional)
+  isFormEmbedded: Boolean! # Gibt an, ob das Formular eingebettet ist
+  processDefinitionKey: String! # Schlüssel der Prozessdefinition
+  processInstanceKey: String! # Schlüssel der Prozessinstanz
+  tenantId: String # Mandanten-ID (optional)
+  dueDate: String # Fälligkeitsdatum (optional)
+  followUpDate: String # Datum für Nachverfolgung (optional)
+  candidateGroups: [String] # Kandidatengruppen für die Aufgabe
+  candidateUsers: [String] # Kandidatenbenutzer für die Aufgabe
+  implementation: String # Implementierungstyp (z. B. "JOB_WORKER", "ZEEBE_USER_TASK")
+  priority: Int! # Priorität der Aufgabe
+}
+
+"""
+Filterkriterien für die Abfrage von Prozessinstanzen.
+"""
+input ProcessInstanceFilterInput {
+  key: ID # Eindeutiger Schlüssel der Instanz
+  processVersion: String # Version der Prozessinstanz
+  bpmnProcessId: String # BPMN-Prozess-ID
+  state: ProcessState # Zustand der Prozessinstanz (z. B. "ACTIVE", "COMPLETED")
+  incident: Boolean # Gibt an, ob ein Vorfall vorliegt
+  tenantId: String # Mandanten-ID (optional)
+  startDate: String # Startdatum im ISO-Format
+  endDate: String # Enddatum im ISO-Format
+}
+
+"""
+Filterkriterien für die Abfrage von Aufgaben.
+"""
+input TaskFilterInput {
+  state: TaskState # Zustand der Aufgabe (z. B. "CREATED", "COMPLETED")
+  assigned: Boolean # Gibt an, ob die Aufgabe zugewiesen ist
+  assignee: String # Benutzer, dem die Aufgabe zugewiesen ist
+  processDefinitionKey: String # Schlüssel der Prozessdefinition
+  processInstanceKey: String # Schlüssel der Prozessinstanz
+  followUpDate: DateRangeInput # Zeitraum für Nachverfolgungsdatum
+  dueDate: DateRangeInput # Zeitraum für Fälligkeitsdatum
+  candidateGroups: [String] # Kandidatengruppen für die Aufgabe
+  candidateUser: String # Kandidatbenutzer für die Aufgabe
+  candidateUsers: [String] # Kandidatenbenutzer für die Aufgabe
+  priority: Int # Priorität der Aufgabe
+}
+
+"""
+Filterkriterien für Prozessvariablen.
+"""
+input ProcessVariableFilterInput {
+  key: String # Schlüssel der Variablen
+  processInstanceKey: String # Schlüssel der zugehörigen Prozessinstanz
+  scopeKey: String # Schlüssel des Geltungsbereichs
+  name: String # Name der Variable
+  value: String # Wert der Variable
+  truncated: Boolean # Gibt an, ob der Wert abgeschnitten wurde
+  tenantId: String # Mandanten-ID (optional)
+}
+
+"""
+Zeitraum für die Filterung nach Daten.
+"""
+input DateRangeInput {
+  from: String # Startdatum im ISO-Format
+  to: String # Enddatum im ISO-Format
 }
 
 type MandatePayload {
@@ -21,7 +154,7 @@ type MandatePayload {
   functionName: String
   isImpliciteFunction: Boolean
   _id: ID
-  orgUnit: String
+  orgUnit: ID
 }
 
 # Abfrageparameter

@@ -1,0 +1,123 @@
+###############################################################################################
+# Q U E R I E S
+###############################################################################################
+type Query {
+  """
+  Ruft die Daten basierend auf einem spezifischen Input ab.
+
+  Der Input enthält die Kriterien, nach denen die Daten gefiltert werden.
+  """
+  getData(input: DataInput!): DataPayload!
+
+  """
+  Ruft die Rollen für einen bestimmten Prozess und Benutzer ab.
+
+  Diese Abfrage liefert die Rollen, die ein Benutzer innerhalb eines bestimmten Prozesses besitzt.
+  """
+  getProcessRoles(processId: ID!, userId: String!): RolePayload!
+
+  """
+  Ruft gespeicherte Daten (z. B. ein Mandat) basierend auf einer eindeutigen ID ab.
+
+  Diese Abfrage wird verwendet, um Informationen zu spezifischen gespeicherten Entitäten abzurufen.
+  """
+  getSavedData(id: ID!): MandatePayload
+
+  """
+  Ruft Benutzer basierend auf ihrer Funktion ab.
+
+  Diese Abfrage liefert eine Liste von Benutzern, die einer bestimmten Funktion zugeordnet sind.
+  """
+  getUsersByFunction(id: ID!): MandatePayload
+
+  """
+  Ruft die Hierarchie (Vorfahren) einer Organisationseinheit ab.
+
+  Diese Abfrage liefert alle übergeordneten Einheiten für eine spezifische Organisationseinheit.
+  """
+  getAncestors(id: ID): [OrgUnit]
+
+"""
+Ruft eine Liste von Funktionen ab, denen derzeit keine Benutzer zugewiesen sind
+und/oder deren Benutzer in einem definierten Zeitraum ausscheiden (z. B. Rente).
+Die Ergebnisse basieren auf einem angegebenen Zeitraum und einer Zeiteinheit.
+"""
+  getUnassignedFunctions(
+    """
+    Der Zeitraum, für den zukünftige Ereignisse (z. B. Rente oder Pension) betrachtet werden sollen.
+    Der Zeitraum ist abhängig von der angegebenen Zeiteinheit.
+    Standard: 0 (keine zeitliche Betrachtung).
+    """
+    lookaheadPeriod: Int = 0
+
+    """
+    Die Zeiteinheit für den Zeitraum:
+    - "TAGE": Betrachtung in ganzen Tagen.
+    - "MONATE": Betrachtung in ganzen Monaten.
+    - "JAHRE": Betrachtung in ganzen Jahren.
+    Standard: "JAHRE".
+    """
+    timeUnit: TimeUnit = JAHRE
+  ): [UnassignedFunctionsPayload]
+}
+
+###############################################################################################G
+# M U T A T I O N S
+###############################################################################################
+type Mutation {
+  """
+  Erstellt eine neue Entität, z. B. einen Benutzer, eine Funktion oder eine Organisationseinheit.
+
+  Der Input enthält die notwendigen Daten für die Erstellung der Entität.
+  """
+  createEntity(input: CreateEntityInput!): MutationResponse!
+
+  """
+  Aktualisiert eine vorhandene Entität basierend auf Filtern und übergebenen Daten.
+
+  Diese Mutation wird verwendet, um bestehende Daten zu aktualisieren.
+  """
+  updateEntity(input: UpdateEntityInput!): MutationResponse!
+
+  """
+  Löscht eine oder mehrere Entitäten basierend auf Filterbedingungen.
+
+  Diese Mutation entfernt spezifische Daten aus der Datenbank.
+  """
+  deleteEntity(input: DeleteEntityInput!): MutationResponse!
+
+  """
+  Authentifiziert einen Benutzer und gibt ein Token zurück.
+
+  Der Benutzername und das Passwort werden verwendet, um ein Zugriffstoken zu generieren.
+  """
+  authenticate(username: String!, password: String!): TokenResult!
+
+  """
+  Erneuert ein abgelaufenes Token basierend auf einem gültigen Refresh-Token.
+
+  Diese Mutation liefert ein neues Zugriffstoken, wenn das aktuelle abgelaufen ist.
+  """
+  refreshToken(refreshToken: String!): TokenResult!
+
+  """
+  Fügt einen Benutzer zu einer Funktion hinzu.
+
+  Der Benutzer wird basierend auf seiner ID zu einer spezifischen Funktion hinzugefügt.
+  """
+  addUserToFunction(functionName: String!, userId: String!): Function
+
+  """
+  Entfernt einen Benutzer aus einer Funktion.
+
+  Der Benutzer wird basierend auf seiner ID aus einer spezifischen Funktion entfernt.
+  """
+  removeUserFromFunction(functionName: String!, userId: String!): Function
+
+  """
+  Speichert eine spezifische Abfrage für eine Organisationseinheit.
+
+  Diese Mutation wird verwendet, um eine benutzerdefinierte Abfrage zu speichern, die später erneut ausgeführt werden kann.
+  """
+  saveQuery(functionName: String!, orgUnitId: ID!, input: DataInput!): SavedQueryPayload
+}

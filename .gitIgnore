@@ -207,6 +207,7 @@ snyk-*.log
 # Volumes
 volumes/**
 .volumes/keycloak
+.volumes/camunda
 
 #skripte
 .extras/datenbank/**

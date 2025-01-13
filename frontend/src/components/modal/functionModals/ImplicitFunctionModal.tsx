@@ -17,7 +17,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { createImpliciteFunction } from '../../../lib/api/function.api';
+import { createImpliciteFunction } from '../../../lib/api/rolemapper/function.api';
 import { FunctionString } from '../../../types/function.type';
 import { getEnumValues } from '../../../types/user.type';
 

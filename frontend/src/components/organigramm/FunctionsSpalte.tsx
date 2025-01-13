@@ -33,7 +33,7 @@ import {
   fetchFunctionById,
   fetchFunctionsByOrgUnit,
   removeFunction,
-} from '../../lib/api/function.api';
+} from '../../lib/api/rolemapper/function.api';
 import { FunctionString } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';

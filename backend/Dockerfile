@@ -19,11 +19,7 @@ set -eux
 apt-get update
 apt-get upgrade --yes
 
-# Installiere Python und Abhängigkeiten
-apt-get install --no-install-recommends --yes python3.11=3.11.2-6+deb12u4 python3.11-dev=3.11.2-6+deb12u4 python3.11-minimal=3.11.2-6+deb12u4
-ln -s /usr/bin/python3.11 /usr/bin/python3
-ln -s /usr/bin/python3.11 /usr/bin/python
-
+# Installiere die neueste npm-Version
 npm i -g --no-audit --no-fund npm
 EOF
 
@@ -54,11 +50,6 @@ RUN <<EOF
 set -eux
 apt-get update
 apt-get upgrade --yes
-
-# Installiere Python und Abhängigkeiten
-apt-get install --no-install-recommends --yes python3.11=3.11.2-6+deb12u4 python3.11-dev=3.11.2-6+deb12u4 python3.11-minimal=3.11.2-6+deb12u4
-ln -s /usr/bin/python3.11 /usr/bin/python3
-ln -s /usr/bin/python3.11 /usr/bin/python
 
 npm i -g --no-audit --no-fund npm
 EOF

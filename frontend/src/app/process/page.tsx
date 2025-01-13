@@ -8,6 +8,11 @@
 'use client';
 
 import {
+  CheckCircle,
+  Error as ErrorIcon,
+  PlayCircle,
+} from '@mui/icons-material';
+import {
   Alert,
   Box,
   Button,
@@ -16,7 +21,7 @@ import {
   CardContent,
   CircularProgress,
   FormControl,
-  Grid,
+  Grid2,
   InputLabel,
   MenuItem,
   Select,
@@ -27,7 +32,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { fetchProcessInstances } from '../../lib/camunda/camunda.api';
+import { getAllProcessInstances } from '../../lib/api/camunda.api';
 import { ProcessInstance } from '../../types/process.type';
 
 /**
@@ -70,8 +75,11 @@ export default function ProcessInstances() {
       setError(null); // Fehler zurücksetzen
 
       try {
-        console.log('ProcessInstances: token=', session);
-        const instanzen = await fetchProcessInstances(session?.access_token);
+        if (session === undefined || session?.access_token === undefined) {
+          throw new Error('Keine Session vorhanden.');
+        }
+        console.log('ProcessInstances: token=', session.access_token);
+        const instanzen = await getAllProcessInstances(session.access_token);
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(
@@ -89,7 +97,9 @@ export default function ProcessInstances() {
             const matchesStatus =
               statusFilter === 'ALL' ||
               (statusFilter === 'ACTIVE' && instance.state === 'ACTIVE') ||
-              (statusFilter === 'COMPLETED' && instance.state === 'COMPLETED');
+              (statusFilter === 'COMPLETED' &&
+                instance.state === 'COMPLETED') ||
+              (statusFilter === 'CANCELED' && instance.state === 'CANCELED');
             const matchesProcessName =
               !filter ||
               instance.bpmnProcessId
@@ -132,7 +142,7 @@ export default function ProcessInstances() {
         </Box>
       )}
 
-      {/* Restliche Komponenten wie Filter und Grid */}
+      {/* Restliche Komponenten wie Filter und Grid2 */}
       {!loading && !error && (
         <>
           {/* Filter für Status */}
@@ -147,7 +157,6 @@ export default function ProcessInstances() {
               <MenuItem value="ACTIVE">Aktive Prozesse</MenuItem>
               <MenuItem value="COMPLETED">Abgeschlossene Prozesse</MenuItem>
               <MenuItem value="CANCELED">Abgebrochene Prozesse</MenuItem>
-              <MenuItem value="FAILED">Fehlgeschlagene Prozesse</MenuItem>
             </Select>
           </FormControl>
 
@@ -169,10 +178,34 @@ export default function ProcessInstances() {
           />
 
           {/* Instanzen anzeigen */}
-          <Grid container spacing={3}>
+          <Grid2 container spacing={3}>
             {instances.map((instance: ProcessInstance) => (
-              <Grid item xs={12} sm={6} md={4} key={instance.key}>
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={instance.key}>
                 <Card variant="outlined">
+                  {instance.state === 'COMPLETED' && (
+                    <CheckCircle
+                      sx={{
+                        position: 'absolute',
+                        color: 'green',
+                      }}
+                    />
+                  )}
+                  {instance.incident && (
+                    <ErrorIcon
+                      sx={{
+                        position: 'absolute',
+                        color: 'red',
+                      }}
+                    />
+                  )}
+                  {instance.state === 'ACTIVE' && !instance.incident && (
+                    <PlayCircle
+                      sx={{
+                        position: 'absolute',
+                        color: 'blue',
+                      }}
+                    />
+                  )}
                   <CardContent>
                     <Typography variant="h6" component="div" gutterBottom>
                       Prozess-ID: {instance.bpmnProcessId}
@@ -199,9 +232,9 @@ export default function ProcessInstances() {
                     </Link>
                   </CardActions>
                 </Card>
-              </Grid>
+              </Grid2>
             ))}
-          </Grid>
+          </Grid2>
         </>
       )}
     </Box>

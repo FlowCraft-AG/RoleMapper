@@ -9,8 +9,10 @@ node:
 # ==============================================================================
 keycloak:
   authServerUrl: http://keycloak:18080/auth
-  realm: flowcraft
-  clientId: rolemapper
+  # realm: flowcraft
+  # clientId: rolemapper
+  realm: camunda-platform
+  clientId: camunda-identity
   #tokenValidation: online
 
 # ==============================================================================

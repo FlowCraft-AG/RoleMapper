@@ -26,19 +26,31 @@ declare module 'bpmn-js/dist/bpmn-navigated-viewer.production.min.js' {
   import Viewer from 'bpmn-js';
   export default Viewer;
 
+  export interface Element {
+    id: string;
+    businessObject: unknown;
+  }
+
   export interface ElementRegistry {
     /**
      * Sucht ein Element anhand seiner ID.
      * @param elementId - Die ID des Elements.
-     * @returns Das Element oder `null`, falls es nicht gefunden wird.
+     * @returns Das Element oder `undefined`, falls es nicht gefunden wird.
      */
-    get(elementId: string): unknown | null;
+    get(elementId: string): Element | undefined;
+
+    /**
+     * Gibt alle registrierten Elemente zurück.
+     * @returns Eine Liste aller registrierten Elemente.
+     */
+    getAll(): Element[];
+
     /**
      * Filtert Elemente basierend auf einer bereitgestellten Funktion.
      * @param fn - Die Filterfunktion.
      * @returns Eine Liste von Elementen, die dem Filter entsprechen.
      */
-    filter(fn: (element: unknown) => boolean): unknown[];
+    filter(fn: (element: Element) => boolean): Element[];
   }
 
   export interface Canvas {

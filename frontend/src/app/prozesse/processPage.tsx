@@ -12,9 +12,9 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import ProcessSpalte from '../../components/prozess/ProcessSpalte';
-import RolesSpalte from '../../components/prozess/RolesSpalte';
-import { getProcessById } from '../../lib/api/process.api';
+import { getProcessById } from '../../lib/api/rolemapper/process.api';
 import { Process } from '../../types/process.type';
+import RolesSpalte from '../../components/prozess/RolesSpalte';
 
 export default function ProcessPage() {
   const theme = useTheme();
