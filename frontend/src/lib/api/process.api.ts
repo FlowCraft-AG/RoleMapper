@@ -2,7 +2,8 @@
 
 import { CREATE_PROCESS } from '../../graphql/processes/mutation/create-process';
 import { DELETE_PROCESS } from '../../graphql/processes/mutation/delete-process';
-import { UPDATE_PROCESS } from '../../graphql/processes/mutation/update-process';
+import { UPDATE_PROCESS, UPDATE_PROCESS_ROLES } from '../../graphql/processes/mutation/update-process';
+import { GET_ROLES_BY_PROCESS } from '../../graphql/processes/query/get-roles';
 import {
   GET_ALL_PROCESSES,
   GET_PROCESS_BY_ID,
@@ -123,6 +124,72 @@ export async function updateProcess(
     return await fetchAllProcesses();
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Aktualisieren des Prozesses.');
+  }
+}
+
+/**
+ * Holt die bestehenden Rollen eines Prozesses.
+ *
+ * @param {string} processId - Die ID des Prozesses.
+ * @returns {Promise<{ roleName: string; roleId: string }[]>} - Die Rollen des Prozesses.
+ */
+async function fetchRolesByProcess(processId: string): Promise<{ roleName: string; roleId: string }[]> {
+  try {
+    const { data } = await client.query({
+      query: GET_ROLES_BY_PROCESS,
+      variables: { id: processId },
+    });
+    return data?.roles || [];
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Abrufen der Rollen des Prozesses.');
+    return [];
+  }
+}
+
+
+/**
+ * Fügt neue Rollen zu einem bestehenden Prozess hinzu, ohne die bestehenden Rollen zu überschreiben.
+ *
+ * @param {string} processId - Die ID des Prozesses.
+ * @param {object[]} newRoles - Die neuen Rollen, die hinzugefügt werden sollen.
+ * @returns {Promise<Process[]>} - Die aktualisierte Liste der Prozesse.
+ * @throws {ApolloError} - Wird geworfen, wenn die Mutation fehlschlägt.
+ */
+export async function addRolesToProcess(
+  processId: string,
+  newRoles: { roleName: string; roleId: string }[]
+): Promise<Process[]> {
+  try {
+    // Bestehende Rollen des Prozesses abrufen
+    const existingRoles = await fetchRolesByProcess(processId);
+
+    // Nur neue Rollen hinzufügen, die noch nicht existieren
+    const combinedRoles = [
+      ...existingRoles,
+      ...newRoles.filter(
+        (newRole) =>
+          !existingRoles.some(
+            (existingRole) => existingRole.roleId === newRole.roleId
+          )
+      ),
+    ];
+
+    logger.debug('Füge Rollen zum Prozess hinzu: %o', {
+      processId,
+      combinedRoles,
+    });
+
+    // Mutation ausführen, um die kombinierten Rollen zu speichern
+    await client.mutate({
+      mutation: UPDATE_PROCESS_ROLES,
+      variables: { id: processId, roles: combinedRoles },
+      refetchQueries: [{ query: GET_ALL_PROCESSES }],
+      awaitRefetchQueries: true,
+    });
+
+    return await fetchAllProcesses(); // Aktualisierte Prozesse abrufen
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Hinzufügen der Rollen zum Prozess.');
   }
 }
 

@@ -14,6 +14,7 @@ import { JSX } from 'react';
 import { Add } from '@mui/icons-material';
 import NewRoleModal from '../modal/processModals/AddNewRoleModal';
 import SelectAddRoleModal from '../modal/processModals/SelectAddRoleModal';
+import ExistingRolesModal from '../modal/processModals/AddExistingRoleModal';
 
 interface RolesSpalteProps {
   selectedProcess: Process;
@@ -29,7 +30,9 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
   const theme = useTheme(); // Theme verwenden
   const [selectModalOpen, setSelectModalOpen] = useState(false);
   const [newRoleModalOpen, setNewRoleModalOpen] = useState(false);
+  const [existingRolesModalOpen, setExistingRolesModalOpen] = useState(false);
 
+  // Handler für das Öffnen und Schließen der Modale
   const handleAddRole = () => {
     setSelectModalOpen(true);
   };
@@ -45,6 +48,15 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
 
   const handleNewRoleModalClose = () => {
     setNewRoleModalOpen(false);
+  };
+
+  const handleExistingRolesModalOpen = () => {
+    setSelectModalOpen(false);
+    setExistingRolesModalOpen(true);
+  };
+
+  const handleExistingRolesModalClose = () => {
+    setExistingRolesModalOpen(false);
   };
 
   return (
@@ -140,13 +152,36 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
         onSelectType={(type) => {
           if (type === 'explizite') {
             handleNewRoleModalOpen();
+          } else if (type === 'implizite') {
+            handleExistingRolesModalOpen();
           }
-          // Weitere Logik für andere Typen kann hier eingefügt werden
         }}
       />
 
       {/* Modal für neue Rolle */}
       <NewRoleModal open={newRoleModalOpen} onClose={handleNewRoleModalClose} />
+
+      {/* Modal für existierende Rollen */}
+      <ExistingRolesModal open={existingRolesModalOpen} onClose={handleExistingRolesModalClose} />
+
+      {/* Button zum Zuweisen der Funktionen */}
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          marginTop: 2,
+          width: '100%',
+          padding: '10px',
+          fontWeight: 'bold',
+          textTransform: 'none',
+        }}
+        startIcon={<Add />}
+      >
+        Funktionen zuweisen
+      </Button>
+
+      {/* Platz für zukünftige Modale für "Funktionen zuweisen" */}
+      {/* Hier Modale für "Funktionen zuweisen" einfügen */}
     </Box>
   );
 }
