@@ -1,0 +1,78 @@
+{
+  "components": [
+    {
+      "text": " # Dienstreiseantrag",
+      "type": "text",
+      "layout": {
+        "row": "Row_0utg3ej",
+        "columns": null
+      },
+      "id": "Field_1375obg"
+    },
+    {
+      "label": "Reiseziel",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_15zvvf8",
+        "columns": null
+      },
+      "id": "Field_0q5jng6",
+      "key": "reiseziel",
+      "description": "Zielort der Dienstreise.",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Reisebeginn",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1q8kspt",
+        "columns": null
+      },
+      "id": "Field_18qylww",
+      "key": "reisebeginn",
+      "description": "Startdatum der Reise.",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "subtype": "date",
+      "dateLabel": "Reiseende",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1q8kspt",
+        "columns": null
+      },
+      "id": "Field_06hs6oa",
+      "key": "reiseende",
+      "description": "Enddatum der Reise."
+    },
+    {
+      "label": "Reisezweck",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_067hmlw",
+        "columns": null
+      },
+      "id": "Field_0koomwc",
+      "key": "zweck",
+      "description": "Beschreibe den Zweck der Reise.",
+      "validate": {
+        "required": true,
+        "minLength": 10
+      }
+    }
+  ],
+  "type": "default",
+  "id": "antrag_diestreise_form",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.29.0"
+  },
+  "schemaVersion": 17
+}
