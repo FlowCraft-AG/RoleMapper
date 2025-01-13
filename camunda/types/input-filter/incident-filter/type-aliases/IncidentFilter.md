@@ -8,7 +8,7 @@
 
 > **IncidentFilter**: [`BaseFilter`](../../base-filter/type-aliases/BaseFilter.md) & `object`
 
-Defined in: [src/camunda/types/input-filter/incident-filter.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/camunda/types/input-filter/incident-filter.ts#L17)
+Defined in: [src/camunda/types/input-filter/incident-filter.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/camunda/types/input-filter/incident-filter.ts#L17)
 
 Erweiterter Filter für die Suche nach Incidents in Camunda.
 

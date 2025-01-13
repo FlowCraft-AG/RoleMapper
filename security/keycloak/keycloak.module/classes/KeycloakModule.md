@@ -6,7 +6,7 @@
 
 # Class: KeycloakModule
 
-Defined in: [src/security/keycloak/keycloak.module.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/security/keycloak/keycloak.module.ts#L38)
+Defined in: [src/security/keycloak/keycloak.module.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/security/keycloak/keycloak.module.ts#L38)
 
 ## Constructors
 

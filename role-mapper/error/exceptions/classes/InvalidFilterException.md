@@ -6,7 +6,7 @@
 
 # Class: InvalidFilterException
 
-Defined in: [src/role-mapper/error/exceptions.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/role-mapper/error/exceptions.ts#L27)
+Defined in: [src/role-mapper/error/exceptions.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/role-mapper/error/exceptions.ts#L27)
 
 Fehler bei unvollständigen oder ungültigen Filterbedingungen.
 
@@ -20,7 +20,7 @@ Fehler bei unvollständigen oder ungültigen Filterbedingungen.
 
 > **new InvalidFilterException**(`missingFields`): [`InvalidFilterException`](InvalidFilterException.md)
 
-Defined in: [src/role-mapper/error/exceptions.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/role-mapper/error/exceptions.ts#L28)
+Defined in: [src/role-mapper/error/exceptions.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/role-mapper/error/exceptions.ts#L28)
 
 #### Parameters
 

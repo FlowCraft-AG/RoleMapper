@@ -8,6 +8,6 @@
 
 > **FilterOperator**: `"EQ"` \| `"IN"` \| `"GTE"` \| `"LTE"` \| `"LIKE"`
 
-Defined in: [src/role-mapper/model/types/filter.type.ts:4](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/role-mapper/model/types/filter.type.ts#L4)
+Defined in: [src/role-mapper/model/types/filter.type.ts:4](https://github.com/FlowCraft-AG/RoleMapper/blob/60ae5b0c50e531d470a492fa6758544dd7523d6f/backend/src/role-mapper/model/types/filter.type.ts#L4)
 
 Mögliche Operatoren für Filterbedingungen.
