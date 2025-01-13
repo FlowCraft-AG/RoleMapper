@@ -8,7 +8,7 @@
 
 > **RefreshInput**: `object`
 
-Defined in: [src/security/keycloak/token.resolver.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/security/keycloak/token.resolver.ts#L18)
+Defined in: [src/security/keycloak/token.resolver.ts:18](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/security/keycloak/token.resolver.ts#L18)
 
 Typdefinition für Refresh-Daten bei GraphQL
 

@@ -8,7 +8,7 @@
 
 > `const` **mailConfig**: `object`
 
-Defined in: [src/config/mail.ts:32](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/config/mail.ts#L32)
+Defined in: [src/config/mail.ts:32](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/config/mail.ts#L32)
 
 ## Type declaration
 

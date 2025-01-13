@@ -8,4 +8,4 @@
 
 > `const` **DUPLICATE\_KEY\_ERROR\_CODE**: `11000` = `11_000`
 
-Defined in: [src/role-mapper/utils/konstanten.ts:1](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/utils/konstanten.ts#L1)
+Defined in: [src/role-mapper/utils/konstanten.ts:1](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/role-mapper/utils/konstanten.ts#L1)

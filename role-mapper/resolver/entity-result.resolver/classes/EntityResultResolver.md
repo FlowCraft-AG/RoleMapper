@@ -6,7 +6,7 @@
 
 # Class: EntityResultResolver
 
-Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/resolver/entity-result.resolver.ts#L16)
+Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/role-mapper/resolver/entity-result.resolver.ts#L16)
 
 Resolver für die Union `EntityResult`.
 
@@ -29,7 +29,7 @@ der Union `EntityResult`, basierend auf dessen Eigenschaften.
 
 > **resolveType**(`object`): `undefined` \| `string`
 
-Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:34](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/role-mapper/resolver/entity-result.resolver.ts#L34)
+Defined in: [src/role-mapper/resolver/entity-result.resolver.ts:34](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/role-mapper/resolver/entity-result.resolver.ts#L34)
 
 Bestimmt den konkreten Typ eines Objekts innerhalb der Union `EntityResult`.
 

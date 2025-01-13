@@ -8,6 +8,6 @@
 
 > `const` **graphQlModuleOptions**: `ApolloDriverConfig`
 
-Defined in: [src/config/graphql.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/config/graphql.ts#L28)
+Defined in: [src/config/graphql.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/config/graphql.ts#L28)
 
 Das Konfigurationsobjekt für GraphQL (siehe src\app.module.ts).

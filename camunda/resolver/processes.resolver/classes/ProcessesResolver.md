@@ -6,7 +6,7 @@
 
 # Class: ProcessesResolver
 
-Defined in: [src/camunda/resolver/processes.resolver.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/resolver/processes.resolver.ts#L7)
+Defined in: [src/camunda/resolver/processes.resolver.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/camunda/resolver/processes.resolver.ts#L7)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/camunda/resolver/processes.resolver.ts:7](https://github.com/Fl
 
 > **new ProcessesResolver**(`zeebeService`): [`ProcessesResolver`](ProcessesResolver.md)
 
-Defined in: [src/camunda/resolver/processes.resolver.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/resolver/processes.resolver.ts#L11)
+Defined in: [src/camunda/resolver/processes.resolver.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/camunda/resolver/processes.resolver.ts#L11)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/camunda/resolver/processes.resolver.ts:11](https://github.com/F
 
 > **startProcess**(`processKey`, `variables`): `Promise`\<`string`\>
 
-Defined in: [src/camunda/resolver/processes.resolver.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/2e49de298fb7aea6638be4e21aef4b51c0753b47/backend/src/camunda/resolver/processes.resolver.ts#L17)
+Defined in: [src/camunda/resolver/processes.resolver.ts:17](https://github.com/FlowCraft-AG/RoleMapper/blob/a27a4625e026a9ad2c24db2d223617539cb70099/backend/src/camunda/resolver/processes.resolver.ts#L17)
 
 #### Parameters
 
