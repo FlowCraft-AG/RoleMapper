@@ -1,3 +1,10 @@
+/**
+ * @file LoggerModule - Modul für allgemeine Services wie BannerService und ResponseTimeInterceptor.
+ * @module LoggerModule
+ * @description Dieses Modul stellt allgemeine Services wie den BannerService und den ResponseTimeInterceptor zur Verfügung.
+ * @packageDocumentation
+ */
+
 import { Global, Module } from '@nestjs/common';
 import { BannerService } from './banner.service.js';
 import { ResponseTimeInterceptor } from './response-time.interceptor.js';
@@ -16,3 +23,4 @@ import { ResponseTimeInterceptor } from './response-time.interceptor.js';
     exports: [BannerService, ResponseTimeInterceptor],
 })
 export class LoggerModule {}
+

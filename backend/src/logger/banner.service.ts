@@ -1,3 +1,9 @@
+/**
+ * @file BannerService - Service zur Anzeige von Anwendungsinformationen und einem Startbanner.
+ * @module BannerService
+ * @description Dieser Service gibt beim Start der Anwendung ein Banner und wichtige Anwendungsinformationen aus.
+ */
+
 import { Injectable, type OnApplicationBootstrap } from '@nestjs/common';
 import cFonts from 'cfonts';
 import chalk from 'chalk';
@@ -6,12 +12,17 @@ import process from 'node:process';
 import { nodeConfig } from '../config/node.js';
 import { getLogger } from './logger.js';
 
+/**
+ * BannerService - Service zum Generieren und Ausgeben von Anwendungsinformationen sowie einem Banner.
+ * Dieser Service wird beim Bootstrap der Anwendung verwendet, um sowohl ein benutzerdefiniertes Banner 
+ * als auch wichtige Systeminformationen auszugeben.
+ */
 @Injectable()
 export class BannerService implements OnApplicationBootstrap {
     readonly #logger = getLogger(BannerService.name);
 
     /**
-     * Beim Bootstrap der Anwendung Informationen und ein Banner ausgeben.
+     * @description Wird beim Bootstrap der Anwendung ausgeführt, um Anwendungsinformationen und ein Banner auszugeben.
      */
     onApplicationBootstrap() {
         const { host, nodeEnv, port, databaseName, httpsOptions } = nodeConfig;
@@ -36,20 +47,20 @@ export class BannerService implements OnApplicationBootstrap {
         );
         this.#logger.info(chalk.cyan('Benutzer: ') + chalk.yellow(userInfo().username));
         this.#logger.info(chalk.cyan('Swagger UI: ') + chalk.yellowBright('/swagger'));
-        this.#logger.info(chalk.green('==============================='));
+        this.#logger.info(chalk.green('==============================='));  // Endmarkierung für die Anwendungsinformationen
     }
 
     /**
-     * Banner generieren und ausgeben.
+     * @description Banner generieren und ausgeben.
      */
     #generateBanner() {
         cFonts.say('RoleMapper', {
-            font: 'block',
-            align: 'left',
-            gradient: ['white', 'black'],
-            background: 'transparent',
-            letterSpacing: 1,
-            lineHeight: 1,
+            font: 'block',         // Schriftart des Banners
+            align: 'left',         // Ausrichtung des Textes
+            gradient: ['white', 'black'],  // Farbverlauf für das Banner
+            background: 'transparent',    // Hintergrund des Banners
+            letterSpacing: 1,      // Buchstabenabstand
+            lineHeight: 1,         // Zeilenhöhe
         });
     }
 }
