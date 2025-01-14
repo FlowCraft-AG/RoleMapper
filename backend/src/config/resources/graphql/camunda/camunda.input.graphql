@@ -156,7 +156,7 @@ input DateRangeInput {
 """
 Definiert die Filteroptionen für die Suche nach Incidents.
 """
-input FilterInput {
+input IncodentFilterInput {
   """
   Eindeutiger Schlüssel des Incidents.
   """

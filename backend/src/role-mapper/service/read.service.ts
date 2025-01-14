@@ -107,7 +107,19 @@ export class ReadService {
         }
 
         // Extrahieren der Rollen-IDs aus dem Prozess
-        const roleIds = process.roles.flatMap((role: ShortRole) => role.roleId);
+        const roleIds = process.roles.flatMap((role: ShortRole) => {
+            if (role.roleType === 'COLLECTION') {
+                return role.roleId;
+            }
+            return [];
+        });
+
+        if (roleIds.length === 0) {
+            throw new NotFoundException(
+                `Keine Rolleninformationen gefunden für Prozess-ID: ${_id}`,
+            );
+        }
+
         this.#logger.debug('findProcessRoles: Rollen-IDs aus Prozess: %o', roleIds);
 
         // Abrufen der Rollen aus der Datenbank anhand der IDs

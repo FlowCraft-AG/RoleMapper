@@ -20,10 +20,7 @@ export const UPDATE_PROCESS = gql`
 `;
 
 export const UPDATE_PROCESS_ROLES = gql`
-  mutation UpdateProcessRoles(
-    $id: String
-    $roles: [RoleInput!]
-  ) {
+  mutation UpdateProcessRoles($id: String, $roles: [RoleInput!]) {
     updateEntity(
       input: {
         entity: PROCESSES

@@ -2,10 +2,7 @@ import { gql } from '@apollo/client';
 
 export const GET_ALL_USERS = gql`
   query GetData {
-    getData(input: {
-        entity: USERS
-        pagination: { limit: 0 }
-         }) {
+    getData(input: { entity: USERS, pagination: { limit: 0 } }) {
       totalCount
       data {
         ... on User {

@@ -7,9 +7,8 @@
 
 'use client';
 
-import { Box, Typography, Modal, TextField, Button } from '@mui/material';
-import { useState } from 'react';
-import { JSX } from 'react';
+import { Box, Button, Modal, TextField, Typography } from '@mui/material';
+import { JSX, useState } from 'react';
 
 interface NewRoleModalProps {
   open: boolean;
@@ -22,7 +21,10 @@ interface NewRoleModalProps {
  * @param {NewRoleModalProps} props - Eigenschaften der Komponente.
  * @returns {JSX.Element} - JSX-Element für das Modal.
  */
-export default function NewRoleModal({ open, onClose }: NewRoleModalProps): JSX.Element {
+export default function NewRoleModal({
+  open,
+  onClose,
+}: NewRoleModalProps): JSX.Element {
   const [functionName, setFunctionName] = useState('');
   const [errors, setErrors] = useState<{ functionName?: string }>({});
 
@@ -78,7 +80,7 @@ export default function NewRoleModal({ open, onClose }: NewRoleModalProps): JSX.
           error={!!errors.functionName}
           helperText={errors.functionName}
         />
-        
+
         <Button variant="contained" color="primary" onClick={handleSave}>
           Speichern
         </Button>

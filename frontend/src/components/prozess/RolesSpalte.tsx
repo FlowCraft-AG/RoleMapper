@@ -7,14 +7,13 @@
 
 'use client';
 
-import { Box, Typography, useTheme, Button } from '@mui/material';
-import { Process } from '../../types/process.type';
-import { useState } from 'react';
-import { JSX } from 'react';
 import { Add } from '@mui/icons-material';
+import { Box, Button, Typography, useTheme } from '@mui/material';
+import { JSX, useState } from 'react';
+import { Process } from '../../types/process.type';
+import ExistingRolesModal from '../modal/processModals/AddExistingRoleModal';
 import NewRoleModal from '../modal/processModals/AddNewRoleModal';
 import SelectAddRoleModal from '../modal/processModals/SelectAddRoleModal';
-import ExistingRolesModal from '../modal/processModals/AddExistingRoleModal';
 
 interface RolesSpalteProps {
   selectedProcess: Process;
@@ -26,7 +25,9 @@ interface RolesSpalteProps {
  * @param {RolesSpalteProps} props - Eigenschaften der Komponente.
  * @returns {JSX.Element} - JSX-Element für die Rollen-Details.
  */
-export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.Element {
+export default function RolesSpalte({
+  selectedProcess,
+}: RolesSpalteProps): JSX.Element {
   const theme = useTheme(); // Theme verwenden
   const [selectModalOpen, setSelectModalOpen] = useState(false);
   const [newRoleModalOpen, setNewRoleModalOpen] = useState(false);
@@ -98,15 +99,33 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
-            <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left' }}>Rollen</th>
-            <th style={{ border: '1px solid #ccc', padding: '8px', textAlign: 'left' }}>Funktionen</th>
+            <th
+              style={{
+                border: '1px solid #ccc',
+                padding: '8px',
+                textAlign: 'left',
+              }}
+            >
+              Rollen
+            </th>
+            <th
+              style={{
+                border: '1px solid #ccc',
+                padding: '8px',
+                textAlign: 'left',
+              }}
+            >
+              Funktionen
+            </th>
           </tr>
         </thead>
         <tbody>
           {selectedProcess.roles && selectedProcess.roles.length > 0 ? (
             selectedProcess.roles.map((role, index) => (
               <tr key={index}>
-                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{role.roleName}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>
+                  {role.roleName}
+                </td>
                 <td style={{ border: '1px solid #ccc', padding: '8px' }}></td>
               </tr>
             ))
@@ -162,7 +181,10 @@ export default function RolesSpalte({ selectedProcess }: RolesSpalteProps): JSX.
       <NewRoleModal open={newRoleModalOpen} onClose={handleNewRoleModalClose} />
 
       {/* Modal für existierende Rollen */}
-      <ExistingRolesModal open={existingRolesModalOpen} onClose={handleExistingRolesModalClose} />
+      <ExistingRolesModal
+        open={existingRolesModalOpen}
+        onClose={handleExistingRolesModalClose}
+      />
 
       {/* Button zum Zuweisen der Funktionen */}
       <Button

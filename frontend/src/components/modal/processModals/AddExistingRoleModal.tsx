@@ -5,9 +5,16 @@
  * @module ExistingRolesModal
  */
 
-import { Box, Typography, Modal, List, ListItem, ListItemText, Button } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { JSX } from 'react';
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from '@mui/material';
+import { JSX, useState } from 'react';
 
 interface ExistingRolesModalProps {
   open: boolean;
@@ -18,7 +25,10 @@ interface Role {
   name: string;
 }
 
-const ExistingRolesModal = ({ open, onClose }: ExistingRolesModalProps): JSX.Element => {
+const ExistingRolesModal = ({
+  open,
+  onClose,
+}: ExistingRolesModalProps): JSX.Element => {
   const [roles] = useState<Role[]>([]);
 
   return (

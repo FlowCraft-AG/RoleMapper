@@ -56,7 +56,8 @@ export default async function HKAPage() {
                   align="center"
                   color="text.secondary"
                 >
-                  Hervorgehobene Ansicht des Organigramms mit Fokus auf Einfachheit.
+                  Hervorgehobene Ansicht des Organigramms mit Fokus auf
+                  Einfachheit.
                 </Typography>
               </CardContent>
             </CardActionArea>

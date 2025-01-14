@@ -176,6 +176,9 @@ const ImplicitFunctionModal = ({
           }}
         >
           <Typography variant="h6">Implizite Funktion</Typography>
+
+          {/* Eingabefelder */}
+          {/* Funktionsname */}
           <TextField
             label="Funktionsname"
             value={functionName}
@@ -185,6 +188,7 @@ const ImplicitFunctionModal = ({
             helperText={errors.functionName}
           />
 
+          {/* Attribut */}
           <FormControl fullWidth>
             <InputLabel id="select-user-label">Attribut</InputLabel>
             <Select
@@ -212,6 +216,7 @@ const ImplicitFunctionModal = ({
             </Select>
           </FormControl>
 
+          {/* Wert */}
           <TextField
             label="wert"
             value={value}

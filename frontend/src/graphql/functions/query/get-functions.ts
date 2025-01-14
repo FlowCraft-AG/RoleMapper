@@ -6,7 +6,8 @@ export const GET_ALL_FUNCTIONS = gql`
       input: {
         entity: MANDATES
         sort: { field: functionName, direction: ASC }
-        pagination: { limit: 0 } }
+        pagination: { limit: 0 }
+      }
     ) {
       totalCount
       data {
@@ -16,6 +17,7 @@ export const GET_ALL_FUNCTIONS = gql`
           users
           isImpliciteFunction
           orgUnit
+          isSingleUser
         }
       }
     }

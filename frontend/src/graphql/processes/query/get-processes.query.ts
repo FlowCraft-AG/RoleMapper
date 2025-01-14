@@ -18,6 +18,7 @@ export const GET_ALL_PROCESSES = gql`
           roles {
             roleName
             roleId
+            roleType
           }
         }
       }

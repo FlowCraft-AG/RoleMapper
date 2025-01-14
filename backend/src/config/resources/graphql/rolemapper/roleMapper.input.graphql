@@ -246,12 +246,17 @@ input ProcessRoleInput {
   """
   Schlüssel der Rolle.
   """
-  roleKey: String!
+  roleName: String!
 
   """
   Eindeutige ID der Rolle.
   """
   roleId: String!
+
+  """
+  Typ der Rolle, z. B. COLLECTION.
+  """
+  roleType: RoleType!
 }
 
 """

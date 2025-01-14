@@ -2,7 +2,10 @@
 
 import { CREATE_PROCESS } from '../../../graphql/processes/mutation/create-process';
 import { DELETE_PROCESS } from '../../../graphql/processes/mutation/delete-process';
-import { UPDATE_PROCESS, UPDATE_PROCESS_ROLES } from '../../../graphql/processes/mutation/update-process';
+import {
+  UPDATE_PROCESS,
+  UPDATE_PROCESS_ROLES,
+} from '../../../graphql/processes/mutation/update-process';
 import {
   GET_ALL_PROCESSES,
   GET_PROCESS_BY_ID,
@@ -134,7 +137,9 @@ export async function updateProcess(
  * @param {string} processId - Die ID des Prozesses.
  * @returns {Promise<{ roleName: string; roleId: string }[]>} - Die Rollen des Prozesses.
  */
-async function fetchRolesByProcess(processId: string): Promise<{ roleName: string; roleId: string }[]> {
+async function fetchRolesByProcess(
+  processId: string,
+): Promise<{ roleName: string; roleId: string }[]> {
   try {
     const { data } = await client.query({
       query: GET_ROLES_BY_PROCESS,
@@ -147,7 +152,6 @@ async function fetchRolesByProcess(processId: string): Promise<{ roleName: strin
   }
 }
 
-
 /**
  * Fügt neue Rollen zu einem bestehenden Prozess hinzu, ohne die bestehenden Rollen zu überschreiben.
  *
@@ -158,7 +162,7 @@ async function fetchRolesByProcess(processId: string): Promise<{ roleName: strin
  */
 export async function addRolesToProcess(
   processId: string,
-  newRoles: { roleName: string; roleId: string }[]
+  newRoles: { roleName: string; roleId: string }[],
 ): Promise<Process[]> {
   try {
     // Bestehende Rollen des Prozesses abrufen
@@ -170,8 +174,8 @@ export async function addRolesToProcess(
       ...newRoles.filter(
         (newRole) =>
           !existingRoles.some(
-            (existingRole) => existingRole.roleId === newRole.roleId
-          )
+            (existingRole) => existingRole.roleId === newRole.roleId,
+          ),
       ),
     ];
 

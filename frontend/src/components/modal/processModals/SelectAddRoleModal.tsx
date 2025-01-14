@@ -5,7 +5,6 @@
  * @module SelectAddRoleModal
  */
 
-import { Add } from '@mui/icons-material';
 import { Box, Button, Modal, Stack, Typography } from '@mui/material';
 
 /**
