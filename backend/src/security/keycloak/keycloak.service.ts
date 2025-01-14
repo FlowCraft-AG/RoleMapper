@@ -1,7 +1,9 @@
-/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
-
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable camelcase, @typescript-eslint/naming-convention */
+/**
+ * @file keycloak.service.ts
+ * @description Implementierung eines Keycloak-Services für die Integration von Keycloak in eine NestJS-Anwendung.
+ * Der Service umfasst Methoden zur Token-Generierung, Token-Aktualisierung und Log-Ausgabe des Payloads.
+ * @module KeycloakService
+ */
 
 import { Injectable } from '@nestjs/common';
 import axios, { type AxiosInstance, type AxiosResponse, type RawAxiosRequestHeaders } from 'axios';
@@ -14,19 +16,35 @@ import { getLogger } from '../../logger/logger.js';
 
 const { authServerUrl, clientId, secret } = keycloakConnectOptions;
 
-/** Typdefinition für Eingabedaten zu einem Token. */
+/** 
+ * Typdefinition für Eingabedaten zu einem Token.
+ * 
+ * @typedef {Object} TokenData
+ * @property {string | undefined} username - Der Benutzername für die Authentifizierung.
+ * @property {string | undefined} password - Das Passwort für die Authentifizierung.
+ */
 export type TokenData = {
     readonly username: string | undefined;
     readonly password: string | undefined;
 };
 
+/**
+ * @class KeycloakService
+ * @implements {KeycloakConnectOptionsFactory}
+ * @description Diese Klasse stellt Methoden zur Kommunikation mit dem Keycloak-Server bereit, einschließlich
+ * Token-Erstellung, Token-Aktualisierung und Optionen für die KeycloakConnect-Integration.
+ */
 @Injectable()
 export class KeycloakService implements KeycloakConnectOptionsFactory {
+    /** Header für Token-Anfragen ohne Authentifizierung. */
     readonly #headers: RawAxiosRequestHeaders;
+    /** Header für Token-Anfragen mit Basic Authentifizierung. */
     readonly #headersAuthorization: RawAxiosRequestHeaders;
 
+    /** Axios-Instanz für HTTP-Anfragen an den Keycloak-Server. */
     readonly #keycloakClient: AxiosInstance;
 
+    /** Logger-Instanz zur Ausgabe von Debug- und Warnmeldungen. */
     readonly #logger = getLogger(KeycloakService.name);
 
     constructor() {
@@ -42,15 +60,24 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
 
         this.#keycloakClient = axios.create({
             baseURL: authServerUrl!,
-            // ggf. httpsAgent fuer HTTPS bei selbst-signiertem Zertifikat
         });
-        // this.#logger.debug('keycloakClient=%o', this.#keycloakClient.defaults);
     }
 
+    /**
+     * Erstellt und gibt die KeycloakConnect-Optionen zurück.
+     * 
+     * @returns {KeycloakConnectOptions} Die Konfigurationsoptionen für Keycloak.
+     */
     createKeycloakConnectOptions(): KeycloakConnectOptions {
         return keycloakConnectOptions;
     }
 
+    /**
+     * Generiert ein Zugriffstoken basierend auf dem Benutzernamen und Passwort.
+     * 
+     * @param {TokenData} param0 - Die Eingabedaten für die Token-Generierung.
+     * @returns {Promise<Record<string, number | string> | undefined>} Die Antwortdaten des Keycloak-Servers oder undefined im Fehlerfall.
+     */
     async token({ username, password }: TokenData) {
         this.#logger.debug('token: username=%s', username);
         if (username === undefined || password === undefined) {
@@ -73,6 +100,12 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         return response.data;
     }
 
+    /**
+     * Aktualisiert ein Zugriffstoken mithilfe eines Refresh-Tokens.
+     * 
+     * @param {string | undefined} refresh_token - Das Refresh-Token.
+     * @returns {Promise<Record<string, number | string> | undefined>} Die Antwortdaten des Keycloak-Servers oder undefined im Fehlerfall.
+     */
     async refresh(refresh_token: string | undefined) {
         this.#logger.debug('refresh: refresh_token=%o', refresh_token);
         if (refresh_token === undefined) {
@@ -86,7 +119,6 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
                 paths.accessToken,
                 body,
                 { headers: this.#headersAuthorization },
-                // { headers: this.#headersBasic },
             );
         } catch (error) {
             this.#logger.warn('err=%o', error);
@@ -101,31 +133,21 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         return response.data;
     }
 
+    /**
+     * Loggt den Payload eines Tokens.
+     * 
+     * @param {AxiosResponse<Record<string, string | number>>} response - Die Antwort des Keycloak-Servers mit dem Token-Payload.
+     */
     #logPayload(response: AxiosResponse<Record<string, string | number>>) {
         const { access_token } = response.data;
-        // Payload ist der mittlere Teil zwischen 2 Punkten und mit Base64 codiert
         const [, payloadString] = (access_token as string).split('.');
 
-        // Base64 decodieren
         if (payloadString === undefined) {
             return;
         }
         const payloadDecoded = atob(payloadString);
-
-        // JSON-Objekt fuer Payload aus dem decodierten String herstellen
         const payload = JSON.parse(payloadDecoded);
 
-        /**
-         *  Mit RoleMapper client ID
-         */
-
-        // const { azp, exp, resource_access } = payload;
-        // this.#logger.debug('#logPayload: exp=%s', exp);
-        // const { roles } = resource_access[azp]; // eslint-disable-line security/detect-object-injection
-
-        /**
-         *  Mit Camunda client ID
-         */
         const { exp, realm_access } = payload;
         this.#logger.debug('#logPayload: exp=%s', exp);
 
@@ -133,4 +155,3 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
         this.#logger.debug('#logPayload: roles=%o', roles);
     }
 }
-/* eslint-enable camelcase, @typescript-eslint/naming-convention */
