@@ -1,5 +1,4 @@
 import { FunctionString } from '../types/function.type';
-import { ShortOrgUnit } from '../types/orgUnit.type';
 
 /**
  * Erzeugt einen anzeigbaren Namen für Organisationseinheiten.

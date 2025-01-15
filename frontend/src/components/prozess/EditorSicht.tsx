@@ -196,11 +196,11 @@ export default function EditorView({
     } catch (err) {
       console.error('Fehler beim Laden der Rollen:', err);
     }
-  }, [selectedProcess, selectedProcessRoles]);
+  }, [selectedProcess]);
 
   useEffect(() => {
     loadRoles();
-  }, [selectedProcess, selectedProcessRoles]);
+  }, [selectedProcess, selectedProcessRoles, loadRoles]);
 
   return (
     <>

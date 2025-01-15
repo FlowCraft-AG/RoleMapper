@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+       - dev/keycloak
     tags:
       - 'v*' # Nur für Versionstags (z. B. v1.0.0)
 

@@ -154,7 +154,7 @@ export default function ProcessInstanceDetailsContent({
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => router.push('/process')} // Navigiert zur `/process`-Seite
+          onClick={() => router.push('/myProcess')} // Navigiert zur `/myPprocess`-Seite
         >
           Zurück zur Prozessliste
         </Button>

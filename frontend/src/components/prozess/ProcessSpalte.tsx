@@ -30,7 +30,6 @@ import { getListItemStyles } from '../../utils/styles';
  * @property {function} onRemove - Callback-Funktion, um Elemente zu entfernen.
  */
 interface ExtendedSlotProps extends TreeItem2Props {
-  refetch: () => Promise<void>; // Die refetch-Methode
   onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
@@ -44,7 +43,6 @@ interface ExtendedSlotProps extends TreeItem2Props {
  */
 interface ProcessRichTreeViewProps {
   onSelect: (process: Process) => void;
-  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
 /**
@@ -60,14 +58,10 @@ interface ProcessRichTreeViewProps {
  * @example
  * <ProcessSpalte
  *   onSelect={(process) => console.log(process)}
- *   onRemove={(ids) => console.log(ids)}
  *   expandedNodes={['node1', 'node2']}
  * />
  */
-export default function ProcessSpalte({
-  onSelect,
-  onRemove,
-}: ProcessRichTreeViewProps) {
+export default function ProcessSpalte({ onSelect }: ProcessRichTreeViewProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const [processes, setProcesses] = useState<Process[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -93,16 +87,6 @@ export default function ProcessSpalte({
       setLoading(false);
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
-
-  /**
-   * Aktualisiert die Prozesse in der Komponente.
-   *
-   * @function refetch
-   * @param {Process[]} processList - Die aktualisierte Liste der Prozesse.
-   */
-  const refetch = (processList: Process[]) => {
-    setProcesses(processList);
-  };
 
   useEffect(() => {
     loadProcesses();

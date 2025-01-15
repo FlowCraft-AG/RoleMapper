@@ -87,7 +87,11 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
 
         try {
-            this.#logger.debug(`Starte Prozess mit Key: ${processKey} und Variablen:`, variables);
+            this.#logger.debug(
+                `Starte Prozess mit Key: %s und Variablen: %o`,
+                processKey,
+                variables,
+            );
 
             return await this.#zbClient!.createProcessInstance({
                 bpmnProcessId: processKey,
@@ -95,6 +99,21 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
             });
         } catch (error) {
             this.#logger.error('Fehler beim Starten des Prozesses:', error);
+            throw error;
+        }
+    }
+
+    async cancelProcessInstance(processInstanceKey: string) {
+        if (!this.#isZeebeEnabled) {
+            this.#logger.warn('Zeebe ist deaktiviert. Prozesse können nicht abgebrochen werden.');
+            throw new Error('Zeebe ist deaktiviert.');
+        }
+
+        try {
+            this.#logger.debug('Breche Prozess ab mit Instanzschlüssel: %s', processInstanceKey);
+            await this.#zbClient!.cancelProcessInstance(processInstanceKey);
+        } catch (error) {
+            this.#logger.error('Fehler beim Abbrechen des Prozesses:', error);
             throw error;
         }
     }

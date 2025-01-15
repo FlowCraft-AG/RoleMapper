@@ -15,3 +15,13 @@ export const DELETE_PROCESS = gql`
     }
   }
 `;
+export const DELETE_PROCESS_INSTANCE = gql`
+  mutation DeleteProcessInstance($processInstanceKey: String!) {
+    deleteProcessInstance(processInstanceKey: $processInstanceKey)
+  }
+`;
+export const CANCEL_PROCESS_INSTANCE = gql`
+  mutation CancelProcessInstance($processInstanceKey: String!) {
+    cancelProcessInstance(processInstanceKey: $processInstanceKey)
+  }
+`;

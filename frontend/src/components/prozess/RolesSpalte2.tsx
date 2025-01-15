@@ -1,7 +1,8 @@
 'use client';
 
 import { BugReport, Edit } from '@mui/icons-material';
-import { Box, Tab, Tabs, useTheme } from '@mui/material';
+import { Box, Tab, Tabs, Typography, useTheme } from '@mui/material';
+import { useSession } from 'next-auth/react';
 import { JSX, useEffect, useState } from 'react';
 import { Process } from '../../types/process.type';
 import DebuggerView from './DebuggerSicht';
@@ -15,7 +16,11 @@ export default function RolesSpalte({
   selectedProcess,
 }: RolesSpalteProps): JSX.Element {
   const theme = useTheme();
-  const [activeTab, setActiveTab] = useState<'editor' | 'debugger'>('editor');
+  const { data: session } = useSession();
+  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+  const [activeTab, setActiveTab] = useState<'editor' | 'debugger'>(
+    isAdmin ? 'editor' : 'debugger',
+  );
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue as 'editor' | 'debugger');
@@ -23,7 +28,11 @@ export default function RolesSpalte({
 
   useEffect(() => {
     setActiveTab(activeTab);
-  }, [selectedProcess]);
+  }, [selectedProcess, activeTab]);
+
+  useEffect(() => {
+    setActiveTab(isAdmin ? 'editor' : 'debugger'); // Tab abhängig vom Admin-Status setzen
+  }, [isAdmin]);
 
   return (
     <Box
@@ -38,42 +47,52 @@ export default function RolesSpalte({
       }}
     >
       {/* Tab-Navigation */}
-      <Tabs
-        value={activeTab}
-        onChange={handleTabChange}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-        sx={{
-          marginBottom: 3,
-          '& .MuiTabs-flexContainer': {
-            justifyContent: 'center',
-          },
-          '& .MuiTab-root': {
-            fontWeight: 'bold',
-            textTransform: 'none',
-          },
-        }}
-      >
-        <Tab
-          label="Editor-Sicht"
-          value="editor"
-          icon={<Edit />} // Icon für den Editor-Tab
-          iconPosition="start" // Icon vor dem Text
-        />
-        <Tab
-          label="Debugger-Sicht"
-          value="debugger"
-          icon={<BugReport />} // Icon für den Debugger-Tab
-          iconPosition="start" // Icon vor dem Text
-        />
-      </Tabs>
+      {isAdmin ? (
+        <Tabs
+          value={activeTab}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+          sx={{
+            marginBottom: 3,
+            '& .MuiTabs-flexContainer': {
+              justifyContent: 'center',
+            },
+            '& .MuiTab-root': {
+              fontWeight: 'bold',
+              textTransform: 'none',
+            },
+          }}
+        >
+          <Tab
+            label="Editor-Sicht"
+            value="editor"
+            icon={<Edit />} // Icon für den Editor-Tab
+            iconPosition="start" // Icon vor dem Text
+          />
+          <Tab
+            label="Debugger-Sicht"
+            value="debugger"
+            icon={<BugReport />} // Icon für den Debugger-Tab
+            iconPosition="start" // Icon vor dem Text
+          />
+        </Tabs>
+      ) : (
+        <Typography
+          variant="h6"
+          align="center"
+          sx={{ marginBottom: 3, fontWeight: 'bold' }}
+        >
+          Debugger-Sicht
+        </Typography>
+      )}
 
-      {activeTab === 'editor' && (
+      {activeTab === 'editor' && isAdmin && (
         <EditorView selectedProcess={selectedProcess} />
       )}
       {activeTab === 'debugger' && (
-        <DebuggerView selectedProcess={selectedProcess} />
+        <DebuggerView selectedProcess={selectedProcess} session={session} />
       )}
     </Box>
   );

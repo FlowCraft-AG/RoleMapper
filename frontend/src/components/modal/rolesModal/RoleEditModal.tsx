@@ -11,11 +11,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
   Snackbar,
   Tab,
   Tabs,
@@ -24,10 +20,7 @@ import {
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import { JSX, useEffect, useState } from 'react';
-import {
-  createImpliciteFunction,
-  fetchAllFunctions,
-} from '../../../lib/api/rolemapper/function.api';
+import { fetchAllFunctions } from '../../../lib/api/rolemapper/function.api';
 import { fetchAllOrgUnits } from '../../../lib/api/rolemapper/orgUnit.api';
 import { fetchRoles } from '../../../lib/api/rolemapper/roles.api';
 import { GroupHeader, GroupItems } from '../../../styles/GroupStyles';
@@ -35,7 +28,6 @@ import { FunctionString } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';
 import { ShortRole } from '../../../types/process.type';
 import { Role } from '../../../types/role.type';
-import { getEnumValues } from '../../../types/user.type';
 import {
   buildFunctionDisplayName,
   buildOrgUnitDisplayName,
@@ -64,7 +56,6 @@ export default function RoleEditModal({
   const [selectedFunctionType, setSelectedFunctionType] = useState<
     string | null
   >(null);
-  const [selectedValue, setSelectedValue] = useState<string | null>(null);
 
   const [updatedRole, setUpdatedRole] = useState<ShortRole | undefined>(role);
 
@@ -72,96 +63,13 @@ export default function RoleEditModal({
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
   const [functions, setFunctions] = useState<FunctionString[]>([]);
   const [activeTab, setActiveTab] = useState(0); // Tab-Index
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>(
-    {},
-  );
+  const [loading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-
-  const [newImpliciteFunction, setNewImpliciteFunction] = useState({
-    functionName: '',
-    field: '',
-    value: '',
-  });
 
   const [filters, setFilters] = useState({
     isImplicite: false,
     isSingleUser: false,
   });
-
-  // Extrahieren der Enum-Werte des UserAttributes
-  const availableFields = getEnumValues(); // Hier erhalten wir alle Attributnamen des Enums
-
-  /**
-   * Validiert die Benutzereingaben und zeigt Fehlermeldungen an, falls erforderlich.
-   *
-   * @function validateInputs
-   * @returns {boolean} Gibt `true` zurück, wenn alle Eingaben gültig sind.
-   */
-  const validateInputs = () => {
-    const newErrors: { [key: string]: string | undefined } = {};
-    const functionNameRegex = /^[a-zA-Z\s]+$/; // Nur Buchstaben und Leerzeichen erlaubt
-
-    if (!newImpliciteFunction.functionName.trim()) {
-      newErrors.functionName = 'Funktionsname darf nicht leer sein.';
-    } else if (!functionNameRegex.test(newImpliciteFunction.functionName)) {
-      newErrors.functionName =
-        'Funktionsname darf nur Buchstaben und Leerzeichen enthalten.';
-    }
-
-    if (!newImpliciteFunction.field.trim()) {
-      newErrors.field = 'Attribut muss ausgewählt sein.';
-    }
-
-    if (!newImpliciteFunction.value.trim()) {
-      newErrors.value = 'Wert darf nicht leer sein.';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  /**
-   * Setzt alle Eingabefelder und Fehlermeldungen zurück.
-   *
-   * @function resetFields
-   */
-  const resetFields = () => {
-    setNewImpliciteFunction({ functionName: '', field: '', value: '' });
-    setErrors({});
-  };
-
-  /**
-   * Speichert die neue Funktion, wenn die Eingaben gültig sind.
-   *
-   * @function handleSave
-   * @async
-   */
-  const handleSaveImpliciteFunction = async () => {
-    if (!validateInputs()) return;
-
-    try {
-      const newFunction = await createImpliciteFunction({
-        functionName: newImpliciteFunction.functionName,
-        orgUnitId: selectedValue!,
-        field: newImpliciteFunction.field,
-        value: newImpliciteFunction.value,
-      });
-      setSnackbar({
-        open: true,
-        message: 'Implizite Funktion erfolgreich erstellt.',
-      });
-
-      resetFields(); // Eingabefelder zurücksetzen
-      onClose();
-    } catch (err) {
-      console.error('Fehler beim Erstellen der Funktion.', err);
-      setSnackbar({
-        open: true,
-        message: 'Fehler beim Erstellen der Funktion.',
-      });
-    }
-  };
 
   useEffect(() => {
     async function fetchData() {
@@ -191,15 +99,7 @@ export default function RoleEditModal({
     (unit: OrgUnit) => unit.alias !== null || unit.kostenstelleNr !== null,
   );
 
-  const optionsForAllOrgUnits = orgUnits.map((unit) => ({
-    ...unit,
-    displayName: buildOrgUnitDisplayName(
-      unit,
-      new Map(orgUnits.map((u) => [u._id, u])),
-    ),
-  }));
-
-  const optionsForOrgUnits = filteredOrgUnits.map((unit) => ({
+  const options = filteredOrgUnits.map((unit) => ({
     ...unit,
     displayName: buildOrgUnitDisplayName(
       unit,
@@ -358,7 +258,7 @@ export default function RoleEditModal({
               </Tabs>
               {activeTab === 0 && (
                 <Autocomplete
-                  options={optionsForOrgUnits}
+                  options={options}
                   loading={loading}
                   groupBy={
                     (option) => option.name[0].toUpperCase() // Gruppiert basierend auf dem ersten Buchstaben des Nachnamens
@@ -380,7 +280,7 @@ export default function RoleEditModal({
                     />
                   )}
                   value={
-                    optionsForOrgUnits.find(
+                    options.find(
                       (option) => option._id === updatedRole?.roleId,
                     ) || null
                   }
@@ -571,116 +471,6 @@ export default function RoleEditModal({
                 </>
               )}
             </Box>
-          )}
-
-          {selectedFunctionType === 'implizite' && (
-            <>
-              {/* Funktionsname */}
-              <TextField
-                label="Funktionsname"
-                value={newImpliciteFunction.functionName}
-                onChange={(e) =>
-                  setNewImpliciteFunction((prev) => ({
-                    ...prev,
-                    functionName: e.target.value,
-                  }))
-                }
-                fullWidth
-                error={!!errors.functionName}
-                sx={{
-                  '& .MuiFormHelperText-root': {
-                    color: '#d32f2f',
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                }}
-                helperText={errors.functionName}
-              />
-
-              {/* Attribut */}
-              <FormControl fullWidth>
-                <InputLabel id="select-user-label">Attribut</InputLabel>
-                <Select
-                  labelId="select-user-label"
-                  value={newImpliciteFunction.field}
-                  onChange={(e) => {
-                    setNewImpliciteFunction((prev) => ({
-                      ...prev,
-                      field: e.target.value,
-                    }));
-                  }}
-                  fullWidth
-                  error={!!errors.value}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 300, // Maximale Höhe des Menüs
-                        overflowY: 'auto', // Scrollbar für das Menü aktivieren
-                      },
-                    },
-                  }}
-                >
-                  {availableFields.map((user) => (
-                    <MenuItem key={user} value={user}>
-                      {user}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              {/* Wert */}
-              <TextField
-                label="wert"
-                value={newImpliciteFunction.value}
-                onChange={(e) =>
-                  setNewImpliciteFunction((prev) => ({
-                    ...prev,
-                    value: e.target.value,
-                  }))
-                }
-                fullWidth
-              />
-              <Autocomplete
-                options={optionsForAllOrgUnits}
-                loading={loading}
-                getOptionLabel={(option) => option.displayName}
-                renderInput={(params) => (
-                  <TextField {...params} label="Organisationseinheit" />
-                )}
-                onChange={(_, value) => setSelectedValue(value?._id || null)}
-                groupBy={
-                  (option) => option.name[0].toUpperCase() // Gruppiert basierend auf dem ersten Buchstaben des Nachnamens
-                }
-                renderGroup={(params) => (
-                  <li key={params.key}>
-                    <GroupHeader>{params.group}</GroupHeader>
-                    <GroupItems>{params.children}</GroupItems>
-                  </li>
-                )}
-                renderOption={(props, option, { inputValue }) => {
-                  const matches = match(option.displayName, inputValue);
-                  const parts = parse(option.displayName, matches);
-
-                  return (
-                    <li {...props}>
-                      <div>
-                        {parts.map((part, index) => (
-                          <span
-                            key={index}
-                            style={{
-                              fontWeight: part.highlight ? 700 : 400,
-                              color: part.highlight ? '#1976d2' : 'inherit',
-                            }}
-                          >
-                            {part.text}
-                          </span>
-                        ))}
-                      </div>
-                    </li>
-                  );
-                }}
-              />
-            </>
           )}
         </DialogContent>
         <DialogActions>

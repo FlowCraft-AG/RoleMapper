@@ -65,6 +65,7 @@ export const GET_ACTIVE_ELEMENT = gql`
     }
   }
 `;
+
 export const GET_INCIDENT_FLOW_NODE = gql`
   query GetIncidentFlowNodeByProcessInstanceKey($processInstanceKey: String!) {
     getIncidentFlowNodeByProcessInstanceKey(

@@ -6,24 +6,28 @@
 'use client';
 
 import {
+  Cancel as CancelIcon,
   CheckCircle,
   Error as ErrorIcon,
+  Info as InfoIcon,
   PlayCircle,
+  Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import {
   Alert,
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
   CircularProgress,
   FormControl,
   Grid2,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -214,6 +218,14 @@ export default function UserProcessInstancesPage() {
                       }}
                     />
                   )}
+                  {instance.state === 'CANCELED' && (
+                    <CancelIcon
+                      sx={{
+                        position: 'absolute',
+                        color: 'orange', // Farbe für abgebrochene Prozesse
+                      }}
+                    />
+                  )}
                   <CardContent>
                     <Typography variant="h6" component="div" gutterBottom>
                       Prozess-ID: {instance.bpmnProcessId}
@@ -226,18 +238,20 @@ export default function UserProcessInstancesPage() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Link href={`/camunda/${instance.key}`} passHref>
-                      <Button variant="contained" color="primary" size="small">
-                        BPMN ansehen
-                      </Button>
-                    </Link>
-                  </CardActions>
-                  <CardActions>
-                    <Link href={`/process/${instance.key}`} passHref>
-                      <Button variant="contained" color="primary" size="small">
-                        Details ansehen
-                      </Button>
-                    </Link>
+                    <Tooltip title="BPMN ansehen">
+                      <Link href={`/camunda/${instance.key}`} passHref>
+                        <IconButton color="primary">
+                          <VisibilityIcon />
+                        </IconButton>
+                      </Link>
+                    </Tooltip>
+                    <Tooltip title="Details ansehen">
+                      <Link href={`/myProcess/${instance.key}`} passHref>
+                        <IconButton color="info">
+                          <InfoIcon />
+                        </IconButton>
+                      </Link>
+                    </Tooltip>
                   </CardActions>
                 </Card>
               </Grid2>

@@ -4,7 +4,7 @@ import { GET_ALL_ROLES } from '../../graphql/rollen/query/get-roles';
 import { Role } from '../../types/role.type';
 import { handleGraphQLError } from '../../utils/graphqlHandler.error';
 import { getLogger } from '../../utils/logger';
-import client from '../apolloClient';
+import getApolloClient from '../apolloClient';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'processes.api.ts'
 const logger = getLogger('role.api.ts');
@@ -21,6 +21,7 @@ export async function fetchAllRoles(): Promise<Map<string, string>> {
   try {
     logger.debug('Lade alle Rollen');
 
+    const client = getApolloClient(undefined);
     const { data } = await client.query({
       query: GET_ALL_ROLES,
     });

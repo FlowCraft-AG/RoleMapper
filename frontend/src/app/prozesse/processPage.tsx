@@ -9,11 +9,9 @@
 'use client';
 
 import { Box, Typography, useTheme } from '@mui/material';
-import { useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import ProcessSpalte from '../../components/prozess/ProcessSpalte';
 import RolesSpalte from '../../components/prozess/RolesSpalte2';
-import { getProcessById } from '../../lib/api/rolemapper/process.api';
 import { Process } from '../../types/process.type';
 
 export default function ProcessPage() {
@@ -23,54 +21,12 @@ export default function ProcessPage() {
     expandedNodes: [] as string[],
   });
 
-  const searchParams = useSearchParams();
-  const openNodesParam = searchParams.get('openNodes') || '';
-  const parentProcessIdParam = searchParams.get('parentProcessId') || '';
-
-  const resetUrlParams = () => {
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.delete('openNodes');
-    currentUrl.searchParams.delete('parentProcessId');
-    window.history.replaceState(null, '', currentUrl.toString());
-  };
-
-  const initializePageState = useCallback(async () => {
-    try {
-      const expandedNodes = openNodesParam.split(',').filter(Boolean);
-      const selectedProcess = parentProcessIdParam
-        ? await getProcessById(parentProcessIdParam)
-        : undefined;
-
-      setState((prev) => ({
-        ...prev,
-        expandedNodes,
-        selectedProcess,
-      }));
-    } catch (error) {
-      console.error('Fehler beim Initialisieren der Daten:', error);
-    }
-  }, [openNodesParam, parentProcessIdParam]);
-
-  useEffect(() => {
-    initializePageState();
-  }, [initializePageState]);
-
   const handleProcessSelect = (process: Process) => {
     setState({
       ...state,
       selectedProcess: process,
       expandedNodes: [],
     });
-    resetUrlParams();
-  };
-
-  const handleRemoveSelection = (ids: string[]) => {
-    setState((prev) => ({
-      ...prev,
-      selectedProcess: ids.includes(prev.selectedProcess?._id || '')
-        ? undefined
-        : prev.selectedProcess,
-    }));
   };
 
   return (
@@ -116,10 +72,7 @@ export default function ProcessPage() {
         >
           Prozesse
         </Typography>
-        <ProcessSpalte
-          onSelect={handleProcessSelect}
-          onRemove={handleRemoveSelection}
-        />
+        <ProcessSpalte onSelect={handleProcessSelect} />
         {/* Bereich für zusätzliche Details */}
       </Box>
       {state.selectedProcess && state.selectedProcess.parentId && (

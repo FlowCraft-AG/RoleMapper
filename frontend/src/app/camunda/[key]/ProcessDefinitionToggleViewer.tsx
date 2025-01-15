@@ -7,7 +7,6 @@
 
 import { Box, Button, Container, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BpmnViewer from '../../../components/bpmn/BpmnViewer';
 import ProcessDefinitionXmlViewer from '../../../components/bpmn/ProcessDefinitionXmlViewer';
@@ -48,7 +47,7 @@ interface ProcessDefinitionToggleViewerProps {
 const ProcessDefinitionToggleViewer = ({
   processInstanceKey,
 }: ProcessDefinitionToggleViewerProps) => {
-  const router = useRouter(); // Router-Hook für Navigation
+  //const router = useRouter(); // Router-Hook für Navigation
   const [isXmlView, setIsXmlView] = useState(false);
   const [diagramUrl, setDiagramUrl] = useState<string | undefined>(undefined);
   const [instanz, setInstanz] = useState<ProcessInstance | undefined>(
@@ -120,13 +119,13 @@ const ProcessDefinitionToggleViewer = ({
     <Container maxWidth="md">
       <Box mb={3}>
         {/* Zurück-Button */}
-        <Button
+        {/* <Button
           variant="outlined"
           color="secondary"
           onClick={() => router.push('/process')}
         >
           Zurück zur Prozessliste
-        </Button>
+        </Button> */}
       </Box>
 
       <Typography variant="h4" gutterBottom>

@@ -22,7 +22,7 @@ export default function NavLinks({
     { href: '/prozesse', label: 'Prozesse' },
     { href: '/konfigurationen', label: 'Konfigurationen' },
     { href: '/models', label: 'Modelle' },
-    { href: '/myProcesses', label: 'Meine Prozesse' },
+    { href: '/myProcess', label: 'Meine Prozesse' },
   ];
 
   if (isAdmin) {

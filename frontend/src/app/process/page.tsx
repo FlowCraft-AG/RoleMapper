@@ -8,31 +8,41 @@
 'use client';
 
 import {
+  Cancel as CancelIcon,
   CheckCircle,
+  Delete as DeleteIcon,
   Error as ErrorIcon,
+  Info as InfoIcon,
   PlayCircle,
+  Stop as StopIcon,
+  Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import {
   Alert,
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
   CircularProgress,
   FormControl,
   Grid2,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getAllProcessInstances } from '../../lib/api/camunda.api';
+import {
+  cancelProcessInstance,
+  deleteProcessInstance,
+  getAllProcessInstances,
+} from '../../lib/api/camunda.api';
 import { ProcessInstance } from '../../types/process.type';
 
 /**
@@ -61,6 +71,41 @@ export default function ProcessInstances() {
   const { data: session } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+
+  const handleCancelProcess = async (instanceKey: string) => {
+    try {
+      if (!session?.access_token || !isAdmin)
+        throw new Error('Keine Berechtigung.');
+      await cancelProcessInstance(instanceKey, session.access_token);
+      console.log('Prozess abgebrochen:', instanceKey);
+
+      // Status der Instanz in der Liste aktualisieren
+      setInstances((prevInstances) =>
+        prevInstances.map((instance) =>
+          instance.key === instanceKey
+            ? { ...instance, state: 'CANCELED' } // Status auf "CANCELED" setzen
+            : instance,
+        ),
+      );
+    } catch (error) {
+      setError((error as Error).message || 'Abbrechen fehlgeschlagen.');
+    }
+  };
+
+  const handleDeleteProcess = async (instanceKey: string) => {
+    try {
+      if (!session?.access_token || !isAdmin)
+        throw new Error('Keine Berechtigung.');
+      await deleteProcessInstance(instanceKey, session.access_token);
+      setInstances((prev) =>
+        prev.filter((instance) => instance.key !== instanceKey),
+      );
+      console.log('Prozess gelöscht:', instanceKey);
+    } catch (error) {
+      setError((error as Error).message || 'Löschen fehlgeschlagen.');
+    }
+  };
 
   useEffect(() => {
     /**
@@ -206,6 +251,14 @@ export default function ProcessInstances() {
                       }}
                     />
                   )}
+                  {instance.state === 'CANCELED' && (
+                    <CancelIcon
+                      sx={{
+                        position: 'absolute',
+                        color: 'orange', // Farbe für abgebrochene Prozesse
+                      }}
+                    />
+                  )}
                   <CardContent>
                     <Typography variant="h6" component="div" gutterBottom>
                       Prozess-ID: {instance.bpmnProcessId}
@@ -218,18 +271,40 @@ export default function ProcessInstances() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Link href={`/camunda/${instance.key}`} passHref>
-                      <Button variant="contained" color="primary" size="small">
-                        BPMN ansehen
-                      </Button>
-                    </Link>
-                  </CardActions>
-                  <CardActions>
-                    <Link href={`/process/${instance.key}`} passHref>
-                      <Button variant="contained" color="primary" size="small">
-                        Details ansehen
-                      </Button>
-                    </Link>
+                    <Tooltip title="BPMN ansehen">
+                      <Link href={`/camunda/${instance.key}`} passHref>
+                        <IconButton color="primary">
+                          <VisibilityIcon />
+                        </IconButton>
+                      </Link>
+                    </Tooltip>
+                    <Tooltip title="Details ansehen">
+                      <Link href={`/process/${instance.key}`} passHref>
+                        <IconButton color="info">
+                          <InfoIcon />
+                        </IconButton>
+                      </Link>
+                    </Tooltip>
+                    <>
+                      {instance.state === 'ACTIVE' && (
+                        <Tooltip title="Prozess abbrechen">
+                          <IconButton
+                            onClick={() => handleCancelProcess(instance.key)}
+                            color="warning"
+                          >
+                            <StopIcon />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </>
+                    <Tooltip title="Prozess Löschen">
+                      <IconButton
+                        onClick={() => handleDeleteProcess(instance.key)}
+                        color="error"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
                   </CardActions>
                 </Card>
               </Grid2>

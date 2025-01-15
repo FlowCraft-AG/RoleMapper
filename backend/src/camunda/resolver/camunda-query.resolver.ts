@@ -1,3 +1,5 @@
+/* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
+/* eslint-disable @stylistic/operator-linebreak */
 /**
  * @file camunda.resolver.ts
  * @description
@@ -12,7 +14,7 @@ import { AuthGuard, Public } from 'nest-keycloak-connect';
 import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { HttpExceptionFilter } from '../../role-mapper/utils/http-exception.filter.js';
-import { CamundaReadService } from '../service/camunda.service.js';
+import { CamundaReadService } from '../service/camunda-read.service.js';
 import { FlowNodeFilter } from '../types/input-filter/flownode-filter.js';
 import { IncidentFilter } from '../types/input-filter/incident-filter.js';
 import { ProcessInstanceFilter } from '../types/input-filter/process-instance-filter.js';
@@ -59,12 +61,12 @@ export type GraphQLContext = {
 @UseGuards(AuthGuard)
 @UseFilters(HttpExceptionFilter)
 @UseInterceptors(ResponseTimeInterceptor)
-export class CamundaResolver {
+export class CamundaQueryResolver {
     /**
      * Logger-Instanz zur Protokollierung von Resolver-Aktivitäten.
      * @private
      */
-    readonly #logger = getLogger(CamundaResolver.name);
+    readonly #logger = getLogger(CamundaQueryResolver.name);
     /**
      * Service für den Zugriff auf die Camunda API.
      * @private
@@ -391,11 +393,21 @@ export class CamundaResolver {
         this.#logger.debug('#fetchProcessInstancesByKeys: keys=%o', keys);
 
         const processInstances: ProcessInstance[] = [];
+        const bekannteInstanzIds = new Set<string>(); // Set, um Duplikate zu vermeiden = new Set<string>(); // Set, um Duplikate zu vermeiden
         for (const key of keys) {
             const filter: ProcessInstanceFilter = { key: key };
-            const instances = await this.#camundaService.fetchProcessInstances(filter, token);
-            if (instances.length > 0 && instances[0] !== undefined) {
-                processInstances.push(instances[0]);
+            const instanzen = await this.#camundaService.fetchProcessInstances(filter, token);
+
+            // Jede Instanz prüfen und hinzufügen, falls sie noch nicht bekannt is
+            for (const instanz of instanzen) {
+                if (
+                    instanzen.length > 0 &&
+                    instanzen[0] !== undefined &&
+                    !bekannteInstanzIds.has(instanz.key)
+                ) {
+                    processInstances.push(instanzen[0]);
+                    bekannteInstanzIds.add(instanz.key); // ID im Set speichern
+                }
             }
         }
 
