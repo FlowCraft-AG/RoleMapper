@@ -28,6 +28,13 @@ import { getOrgUnitById } from './orgUnit.api';
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'
 const logger = getLogger('function.api.ts');
 
+/**
+ * Ruft alle Funktionen ab.
+ * Diese Funktion führt eine Abfrage aus, um alle Funktionen abzurufen.
+ * 
+ * @returns {Promise<FunctionString[]>} Eine Liste von Funktionen als `FunctionString`-Objekte.
+ * @throws {ApolloError} Wird geworfen, wenn die GraphQL-Abfrage fehlschlägt.
+ */
 export async function fetchAllFunctions(): Promise<FunctionString[]> {
   try {
     logger.debug('Lade alle Funktionen');
@@ -42,8 +49,10 @@ export async function fetchAllFunctions(): Promise<FunctionString[]> {
 
 /**
  * Prüft, ob Funktionen für eine Organisationseinheit existieren.
- * @param orgUnitId Die ID der Organisationseinheit
- * @returns {Promise<boolean>} True, wenn Funktionen existieren, sonst False
+ *
+ * @param {string} orgUnitId - Die ID der Organisationseinheit.
+ * @returns {Promise<boolean>} Gibt `true` zurück, wenn Funktionen existieren, andernfalls `false`.
+ * @throws {ApolloError} Wird geworfen, wenn die GraphQL-Abfrage fehlschlägt.
  */
 export async function checkForFunctions(orgUnitId: string): Promise<boolean> {
   try {
@@ -63,9 +72,12 @@ export async function checkForFunctions(orgUnitId: string): Promise<boolean> {
 
 /**
  * Ruft Funktionen für eine Organisationseinheit ab.
- * @param orgUnitId Die ID der Organisationseinheit
- * @returns {Promise<FunctionString[]>} Liste der Funktionen
+ *
+ * @param {string} orgUnitId - Die ID der Organisationseinheit.
+ * @returns {Promise<FunctionString[]>} Eine Liste der Funktionen als `FunctionString`-Objekte.
+ * @throws {ApolloError} Wird geworfen, wenn die GraphQL-Abfrage fehlschlägt.
  */
+
 export async function fetchFunctionsByOrgUnit(
   orgUnitId: string,
 ): Promise<FunctionString[]> {
@@ -84,6 +96,14 @@ export async function fetchFunctionsByOrgUnit(
     );
   }
 }
+
+/**
+ * Ruft eine Funktion anhand ihrer ID ab.
+ *
+ * @param {string} functionId - Die ID der Funktion.
+ * @returns {Promise<FunctionString>} Die angeforderte Funktion.
+ * @throws {ApolloError} Wird geworfen, wenn die GraphQL-Abfrage fehlschlägt.
+ */
 
 export async function fetchFunctionById(
   functionId: string,
@@ -107,9 +127,16 @@ export async function fetchFunctionById(
 
 /**
  * Erstellt eine implizite Funktion.
- * @param params Parameter für die Funktionserstellung
- * @returns {Promise<FunctionString[]>} Liste der aktualisierten Funktionen
+ *
+ * @param {object} params - Parameter für die Funktionserstellung.
+ * @param {string} params.functionName - Der Name der Funktion.
+ * @param {string} params.field - Das Feld der Funktion.
+ * @param {string} params.value - Der Wert der Funktion.
+ * @param {string} params.orgUnitId - Die ID der Organisationseinheit.
+ * @returns {Promise<FunctionString[]>} Eine Liste der aktualisierten Funktionen.
+ * @throws {ApolloError} Wird geworfen, wenn die Mutation fehlschlägt.
  */
+
 export async function createImpliciteFunction({
   functionName,
   field,
@@ -144,9 +171,15 @@ export async function createImpliciteFunction({
 /**
  * Erstellt eine explizite Funktion.
  *
- * @param params Parameter für die Funktionserstellung
- * @returns {Promise<FunctionString[]>} Liste der aktualisierten Funktionen
+ * @param {object} params - Parameter für die Funktionserstellung.
+ * @param {string} params.functionName - Der Name der Funktion.
+ * @param {string} params.orgUnitId - Die ID der Organisationseinheit.
+ * @param {string[]} params.users - Eine Liste der Benutzer-IDs.
+ * @param {boolean} params.isSingleUser - Gibt an, ob die Funktion für nur einen Benutzer vorgesehen ist.
+ * @returns {Promise<FunctionString[]>} Eine Liste der aktualisierten Funktionen.
+ * @throws {ApolloError} Wird geworfen, wenn die Mutation fehlschlägt.
  */
+
 export async function createExplicitFunction({
   functionName,
   orgUnitId,
@@ -178,11 +211,13 @@ export async function createExplicitFunction({
 }
 
 /**
- * Ruft Benutzer einer Funktion ab.
+ * Ruft die Benutzer einer Funktion ab.
  *
- * @param functionId Die ID der Funktion
- * @returns {Promise<FunctionUser>} Informationen über die Benutzer in der Funktion
+ * @param {string} functionId - Die ID der Funktion.
+ * @returns {Promise<FunctionUser>} Die Benutzer der Funktion.
+ * @throws {ApolloError} Wird geworfen, wenn die GraphQL-Abfrage fehlschlägt.
  */
+
 export async function fetchUsersByFunction(
   functionId: string,
 ): Promise<FunctionUser> {
@@ -209,14 +244,13 @@ export async function fetchUsersByFunction(
     );
   }
 }
-
 /**
  * Entfernt eine Funktion aus einer Organisationseinheit.
  *
  * @param {string} functionId - Die ID der zu entfernenden Funktion.
  * @param {string} orgUnitId - Die ID der Organisationseinheit, aus der die Funktion entfernt wird.
- * @returns {Promise<boolean>} - True, wenn die Funktion erfolgreich gelöscht wurde.
- * @throws {ApolloError} - Wird geworfen, wenn die Mutation fehlschlägt.
+ * @returns {Promise<boolean>} `true`, wenn die Funktion erfolgreich entfernt wurde.
+ * @throws {ApolloError} Wird geworfen, wenn die Mutation fehlschlägt.
  */
 export async function removeFunction(
   functionId: string,
@@ -426,7 +460,10 @@ export async function removeUserFromFunction(
 
 /**
  * Überprüft, welche SingleUser-Funktionen keine Benutzer haben.
- * @returns Promise<{ id: string; functionName: string }[]> - Liste der Funktionen ohne Benutzer mit Name und ID.
+ * 
+ * @returns {Promise<{ id: string; functionName: string; orgUnit: string }[]>} Eine Liste von Funktionen ohne Benutzer, 
+ *          die die ID, den Funktionsnamen und die Organisationseinheit enthalten.
+ * @throws {Error} Wird geworfen, wenn die API-Antwort unerwartet ist oder ein Fehler bei der Abfrage auftritt.
  */
 export async function getFunctionsWithoutUsers(): Promise<
   { id: string; functionName: string; orgUnit: string }[]
@@ -480,7 +517,13 @@ export async function getFunctionsWithoutUsers(): Promise<
   }
 }
 
-// Funktion zum Abrufen der Ancestors
+/**
+ * Ruft die Vorgänger (Ancestors) einer Organisationseinheit ab.
+ * 
+ * @param {string} nodeId - Die ID der Organisationseinheit, deren Vorgänger abgerufen werden sollen.
+ * @returns {Promise<OrgUnit[]>} Eine Liste von Organisationseinheiten, die die Vorgänger und die aktuelle Organisationseinheit enthalten.
+ * @throws {Error} Wird geworfen, wenn die API-Antwort unerwartet ist oder ein Fehler bei der Abfrage auftritt.
+ */
 export async function fetchAncestors(nodeId: string) {
   try {
     const { data } = await client.query({

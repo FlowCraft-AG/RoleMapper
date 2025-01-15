@@ -1,6 +1,13 @@
 import Image from 'next/image';
 import styles from './page.module.css';
 
+/**
+ * Die `Home`-Komponente ist die Hauptseite der Anwendung.
+ * Sie bietet eine einfache Übersicht mit Links zur Dokumentation, zu Beispielen und zur Bereitstellung der App.
+ *
+ * @returns {JSX.Element} Die gerenderte Startseite.
+ */
+
 export default function Home() {
   return (
     <div className={styles.page}>

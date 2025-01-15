@@ -1,8 +1,7 @@
 'use client';
 
 /**
- * Startseite.
- * Verwalten und Anzeigen des Sitzungsstatus und der Token-Verfallszeit.
+ * Startseite: Verwalten und Anzeigen des Sitzungsstatus und der Token-Verfallszeit.
  */
 
 import { Button, Container, Typography } from '@mui/material';

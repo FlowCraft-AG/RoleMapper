@@ -62,7 +62,7 @@ export default function OrganigrammPage() {
   };
 
  /**
-   * Handelt die Auswahl einer Organisationseinheit.
+   * Handelt die Auswahl einer Organisationseinheit
    * @param orgUnitDTO - Die ausgewählte Organisationseinheit
    */
   const handleOrgUnitSelect = async (orgUnitDTO: OrgUnit) => {
@@ -81,7 +81,7 @@ export default function OrganigrammPage() {
   };
 
   /**
-   * Handelt die Auswahl einer Funktion.
+   * Handelt die Auswahl einer Funktion
    * @param functionInfo - Informationen zur ausgewählten Funktion
    */
   const handleFunctionSelect = (functionInfo: FunctionString) => {
@@ -100,7 +100,7 @@ export default function OrganigrammPage() {
   };
 
   /**
-   * Handelt die Auswahl eines Benutzers.
+   * Handelt die Auswahl eines Benutzers
    * @param userId - Die ID des ausgewählten Benutzers
    */
   const handleUserSelect = (userId: string) => {
@@ -108,7 +108,7 @@ export default function OrganigrammPage() {
   };
 
   /**
-   * Entfernt ein ausgewähltes Element (Organisationseinheit, Funktion oder Benutzer).
+   * Entfernt ein ausgewähltes Element 
    * @param ids - Eine Liste von IDs der zu entfernenden Elemente
    */
   const handleRemove = (ids: string[]) => {
