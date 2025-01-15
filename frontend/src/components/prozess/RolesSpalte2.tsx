@@ -1,11 +1,11 @@
 'use client';
 
+import { BugReport, Edit } from '@mui/icons-material';
 import { Box, Tab, Tabs, useTheme } from '@mui/material';
 import { JSX, useEffect, useState } from 'react';
 import { Process } from '../../types/process.type';
 import DebuggerView from './DebuggerSicht';
 import EditorView from './EditorSicht';
-import { BugReport, Edit } from '@mui/icons-material';
 
 interface RolesSpalteProps {
   selectedProcess: Process;
@@ -21,9 +21,9 @@ export default function RolesSpalte({
     setActiveTab(newValue as 'editor' | 'debugger');
   };
 
-    useEffect(() => {
-          setActiveTab(activeTab)
-      }, [selectedProcess]);
+  useEffect(() => {
+    setActiveTab(activeTab);
+  }, [selectedProcess]);
 
   return (
     <Box

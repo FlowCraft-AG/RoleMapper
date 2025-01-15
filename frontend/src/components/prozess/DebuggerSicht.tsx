@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Alert,
   Box,
   Button,
   Paper,
@@ -27,16 +28,43 @@ export default function DebuggerView({
 }: DebuggerViewProps): JSX.Element {
   const [userId, setUserId] = useState<string>('');
   const [data, setData] = useState<RoleResult[]>();
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const handleFetchRoles = async () => {
-    if (userId.trim()) {
-      const data = await getRoles(selectedProcess._id, userId);
-      setData(data);
+    setError(undefined); //  error state zurücksetzen
+    setData(undefined); // Reset data zurücksetzen
+    try {
+      if (userId.trim()) {
+        const fetchedData: RoleResult[] = await getRoles(
+          selectedProcess._id,
+          userId,
+        );
+        setData(data);
+        console.log('Rollen:', fetchedData);
+        if (!fetchedData || fetchedData.length === 0) {
+          setError(`Für den Benutzer ${userId} wurden keine Rollen gefunden.`);
+        } else if (
+          fetchedData.some((role) => !role.users || role.users.length === 0)
+        ) {
+          setError(
+            `Für einige Rollen des Benutzers ${userId} wurden keine Benutzer gefunden.`,
+          );
+        } else {
+          setData(fetchedData);
+        }
+      } else {
+        setError('Bitte geben Sie eine gültige Benutzer-ID ein.');
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der Rollen:', error);
+      setError(error as string | undefined);
     }
   };
 
-    useEffect(() => {
-      }, [selectedProcess]);
+  useEffect(() => {
+    setError(undefined);
+    setData(undefined);
+  }, [selectedProcess, userId]);
 
   return (
     <Box
@@ -62,7 +90,7 @@ export default function DebuggerView({
           paddingBottom: 1,
         }}
       >
-        Debugger-Sicht
+        {selectedProcess.name}
       </Typography>
 
       {/* Eingabefeld für Benutzer-ID */}
@@ -98,6 +126,13 @@ export default function DebuggerView({
           Rollen abrufen
         </Button>
       </Box>
+
+      {/* Fehleranzeige */}
+      {error && (
+        <Alert severity="error" sx={{ marginTop: 2 }}>
+          {error}
+        </Alert>
+      )}
 
       {/* Tabelle mit Rollen */}
       {data && data.length > 0 && (
@@ -142,6 +177,15 @@ export default function DebuggerView({
                     textAlign: 'center',
                   }}
                 >
+                 Kürzel
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: 'white',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
                   Funktion
                 </TableCell>
               </TableRow>
@@ -171,17 +215,22 @@ export default function DebuggerView({
                           textAlign: 'center',
                         }}
                       >
-                        {userEntry.user.profile?.firstName ?? 'N/A'}
-                        {' '}
-                        {userEntry.user.profile?.lastName ?? 'N/A'}(
-                        {userEntry.user.userId})
+                        {userEntry.user.profile?.firstName ?? 'N/A'}{' '}
+                        {userEntry.user.profile?.lastName ?? 'N/A'}
                       </TableCell>
                       <TableCell
                         sx={{
                           textAlign: 'center',
                         }}
                       >
-                        {userEntry.functionName}
+                        {userEntry.user.userId}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          textAlign: 'center',
+                        }}
+                      >
+                        {userEntry.functionName ?? 'N/A'}
                       </TableCell>
                     </TableRow>
                   ),
