@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Tab, Tabs, useTheme } from '@mui/material';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { Process } from '../../types/process.type';
 import DebuggerView from './DebuggerSicht';
 import EditorView from './EditorSicht';
@@ -19,6 +19,10 @@ export default function RolesSpalte({
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue as 'editor' | 'debugger');
   };
+
+    useEffect(() => {
+          setActiveTab(activeTab)
+      }, [selectedProcess]);
 
   return (
     <Box

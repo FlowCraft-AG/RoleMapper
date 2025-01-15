@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { getRoles } from '../../lib/api/rolemapper/roles.api';
 import { Process } from '../../types/process.type';
 import { RoleResult, UserWithFunction } from '../../types/role-payload.type';
@@ -34,6 +34,9 @@ export default function DebuggerView({
       setData(data);
     }
   };
+
+    useEffect(() => {
+      }, [selectedProcess]);
 
   return (
     <Box
