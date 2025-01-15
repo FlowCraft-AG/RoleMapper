@@ -5,6 +5,7 @@ import { JSX, useEffect, useState } from 'react';
 import { Process } from '../../types/process.type';
 import DebuggerView from './DebuggerSicht';
 import EditorView from './EditorSicht';
+import { BugReport, Edit } from '@mui/icons-material';
 
 interface RolesSpalteProps {
   selectedProcess: Process;
@@ -54,8 +55,18 @@ export default function RolesSpalte({
           },
         }}
       >
-        <Tab label="Editor-Sicht" value="editor" />
-        <Tab label="Debugger-Sicht" value="debugger" />
+        <Tab
+          label="Editor-Sicht"
+          value="editor"
+          icon={<Edit />} // Icon für den Editor-Tab
+          iconPosition="start" // Icon vor dem Text
+        />
+        <Tab
+          label="Debugger-Sicht"
+          value="debugger"
+          icon={<BugReport />} // Icon für den Debugger-Tab
+          iconPosition="start" // Icon vor dem Text
+        />
       </Tabs>
 
       {activeTab === 'editor' && (
