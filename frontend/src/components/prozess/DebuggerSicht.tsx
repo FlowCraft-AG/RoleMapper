@@ -177,7 +177,7 @@ export default function DebuggerView({
                     textAlign: 'center',
                   }}
                 >
-                 Kürzel
+                  Kürzel
                 </TableCell>
                 <TableCell
                   sx={{
