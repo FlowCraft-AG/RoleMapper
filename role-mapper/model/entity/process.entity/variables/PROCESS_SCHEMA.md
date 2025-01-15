@@ -8,4 +8,4 @@
 
 > `const` **PROCESS\_SCHEMA**: `Schema`\<[`Process`](../classes/Process.md), `Model`\<[`Process`](../classes/Process.md), `any`, `any`, `any`, `Document`\<`unknown`, `any`, [`Process`](../classes/Process.md)\> & [`Process`](../classes/Process.md) & `Required`\<\{\}\> & `object`, `any`\>, \{\}, \{\}, \{\}, \{\}, `DefaultSchemaOptions`, [`Process`](../classes/Process.md), `Document`\<`unknown`, \{\}, `FlatRecord`\<[`Process`](../classes/Process.md)\>\> & `FlatRecord`\<[`Process`](../classes/Process.md)\> & `Required`\<\{\}\> & `object`\>
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:67](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/entity/process.entity.ts#L67)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:67](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/entity/process.entity.ts#L67)

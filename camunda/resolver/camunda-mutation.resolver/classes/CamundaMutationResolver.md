@@ -6,7 +6,7 @@
 
 # Class: CamundaMutationResolver
 
-Defined in: [src/camunda/resolver/camunda-mutation.resolver.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/resolver/camunda-mutation.resolver.ts#L54)
+Defined in: [src/camunda/resolver/camunda-mutation.resolver.ts:54](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/resolver/camunda-mutation.resolver.ts#L54)
 
 GraphQL-Resolver für die Verarbeitung von Anfragen an die Camunda Platform API.
 
@@ -26,7 +26,7 @@ Alle Anfragen nutzen:
 
 > **new CamundaMutationResolver**(`camundaService`): [`CamundaMutationResolver`](CamundaMutationResolver.md)
 
-Defined in: [src/camunda/resolver/camunda-mutation.resolver.ts:71](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/resolver/camunda-mutation.resolver.ts#L71)
+Defined in: [src/camunda/resolver/camunda-mutation.resolver.ts:71](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/resolver/camunda-mutation.resolver.ts#L71)
 
 Konstruktor für den CamundaResolver.
 
@@ -48,7 +48,7 @@ Service für die Kommunikation mit der Camunda API.
 
 > **deleteProcessInstance**(`key`, `context`): `Promise`\<`string`\>
 
-Defined in: [src/camunda/resolver/camunda-mutation.resolver.ts:77](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/resolver/camunda-mutation.resolver.ts#L77)
+Defined in: [src/camunda/resolver/camunda-mutation.resolver.ts:77](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/resolver/camunda-mutation.resolver.ts#L77)
 
 #### Parameters
 

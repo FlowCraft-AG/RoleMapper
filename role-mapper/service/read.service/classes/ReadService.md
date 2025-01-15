@@ -6,7 +6,7 @@
 
 # Class: ReadService
 
-Defined in: [src/role-mapper/service/read.service.ts:41](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L41)
+Defined in: [src/role-mapper/service/read.service.ts:41](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L41)
 
 Service für Leseoperationen von Entitäten.
 
@@ -19,7 +19,7 @@ von Entitäten wie Benutzer, Prozesse, Mandate und Organisationseinheiten bereit
 
 > **new ReadService**(`userModel`, `processModel`, `mandateModel`, `orgUnitModel`, `roleModel`): [`ReadService`](ReadService.md)
 
-Defined in: [src/role-mapper/service/read.service.ts:57](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L57)
+Defined in: [src/role-mapper/service/read.service.ts:57](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L57)
 
 Konstruktor für den ReadService.
 
@@ -65,7 +65,7 @@ Das Mongoose-Modell für Rollen.
 
 > **buildFilterQuery**(`filter`?): `FilterQuery`\<`any`\>
 
-Defined in: [src/role-mapper/service/read.service.ts:501](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L501)
+Defined in: [src/role-mapper/service/read.service.ts:501](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L501)
 
 Erstellt rekursiv eine MongoDB-Filter-Query basierend auf den angegebenen Bedingungen.
 
@@ -119,7 +119,7 @@ console.log(query);
 
 > **buildSortQuery**(`orderBy`?): `Record`\<`string`, `-1` \| `1`\>
 
-Defined in: [src/role-mapper/service/read.service.ts:565](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L565)
+Defined in: [src/role-mapper/service/read.service.ts:565](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L565)
 
 Erstellt eine Sortier-Query basierend auf den angegebenen Bedingungen.
 
@@ -162,7 +162,7 @@ console.log(emptySortQuery); // {}
 
 > **executeSavedQuery**(`id`): `Promise`\<\{ `data`: [`EntityType`](../../../model/entity/entities.entity/type-aliases/EntityType.md)[]; `savedQuery`: [`MandateDocument`](../../../model/entity/mandates.entity/type-aliases/MandateDocument.md); \}\>
 
-Defined in: [src/role-mapper/service/read.service.ts:305](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L305)
+Defined in: [src/role-mapper/service/read.service.ts:305](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L305)
 
 Führt eine gespeicherte Abfrage aus, um Mandatsdaten zu erhalten.
 
@@ -204,7 +204,7 @@ console.log(result.data); // Die gefilterten Daten
 
 > **findAncestors**(`_id`): `Promise`\<[`OrgUnit`](../../../model/entity/org-unit.entity/classes/OrgUnit.md)[]\>
 
-Defined in: [src/role-mapper/service/read.service.ts:684](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L684)
+Defined in: [src/role-mapper/service/read.service.ts:684](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L684)
 
 Findet alle übergeordneten Organisationseinheiten einer gegebenen Organisationseinheit.
 
@@ -242,7 +242,7 @@ console.log(ancestors); // Gibt die Liste der übergeordneten Organisationseinhe
 
 > **findData**\<`T`\>(`entity`, `filter`?, `pagination`?, `orderBy`?): `Promise`\<`T`[]\>
 
-Defined in: [src/role-mapper/service/read.service.ts:427](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L427)
+Defined in: [src/role-mapper/service/read.service.ts:427](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L427)
 
 Führt eine Filterabfrage für eine bestimmte Entität aus.
 
@@ -308,7 +308,7 @@ console.log(users);
 
 > **findFunctionsWithRetiringUsers**(`lookaheadPeriod`, `timeUnit`): `Promise`\<[`UnassignedFunctionsPayload`](../../../model/payload/unassigned-functions.payload/type-aliases/UnassignedFunctionsPayload.md)[]\>
 
-Defined in: [src/role-mapper/service/read.service.ts:360](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L360)
+Defined in: [src/role-mapper/service/read.service.ts:360](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L360)
 
 Findet alle Funktionen, denen keine Benutzer zugewiesen sind,
 oder deren Benutzer innerhalb eines definierten Zeitraums ausscheiden.
@@ -339,7 +339,7 @@ Liste von Funktionen mit relevanten Benutzern.
 
 > **findProcessRoles**(`_id`, `userId`): `Promise`\<\{ `roles`: [`RoleResult`](../../../model/payload/role-payload.type/type-aliases/RoleResult.md)[]; \}\>
 
-Defined in: [src/role-mapper/service/read.service.ts:92](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L92)
+Defined in: [src/role-mapper/service/read.service.ts:92](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L92)
 
 Sucht die Rollen und die zugehörigen Benutzer für einen angegebenen Prozess.
 
@@ -383,7 +383,7 @@ console.log(result.roles); // Gibt die Rollen und die zugehörigen Benutzer aus
 
 > **findUnassignedFunctions**(): `Promise`\<[`Mandates`](../../../model/entity/mandates.entity/classes/Mandates.md)[]\>
 
-Defined in: [src/role-mapper/service/read.service.ts:335](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L335)
+Defined in: [src/role-mapper/service/read.service.ts:335](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L335)
 
 Findet alle Funktionen (Mandates), bei denen:
 - Das `users`-Array leer ist oder nicht existiert.
@@ -401,7 +401,7 @@ Eine Liste von Funktionen ohne Benutzer und ohne implizite Zuordnung.
 
 > **findUsersByFunction**(`id`): `Promise`\<[`GetUsersByFunctionResult`](../../../model/payload/get-users.payload/type-aliases/GetUsersByFunctionResult.md)\>
 
-Defined in: [src/role-mapper/service/read.service.ts:616](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/service/read.service.ts#L616)
+Defined in: [src/role-mapper/service/read.service.ts:616](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/service/read.service.ts#L616)
 
 Findet Benutzer basierend auf der Funktion eines Mandats.
 

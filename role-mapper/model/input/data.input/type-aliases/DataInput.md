@@ -8,7 +8,7 @@
 
 > **DataInput**: `object`
 
-Defined in: [src/role-mapper/model/input/data.input.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/input/data.input.ts#L14)
+Defined in: [src/role-mapper/model/input/data.input.ts:14](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/input/data.input.ts#L14)
 
 Eingabeparameter für die dynamische Abfrage von Entitätsdaten.
 

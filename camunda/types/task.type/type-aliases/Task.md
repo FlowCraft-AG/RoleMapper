@@ -8,7 +8,7 @@
 
 > **Task**: `object`
 
-Defined in: [src/camunda/types/task.type.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/types/task.type.ts#L5)
+Defined in: [src/camunda/types/task.type.ts:5](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/types/task.type.ts#L5)
 
 Typ für eine Aufgabe in Camunda.
 Beschreibt eine Benutzeraufgabe, einschließlich Status, zugewiesenem Benutzer und weiteren Metadaten.

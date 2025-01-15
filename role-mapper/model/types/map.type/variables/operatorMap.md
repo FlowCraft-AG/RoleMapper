@@ -8,4 +8,4 @@
 
 > `const` **operatorMap**: `Record`\<[`FilterOperator`](../../filter.type/type-aliases/FilterOperator.md), `string`\>
 
-Defined in: [src/role-mapper/model/types/map.type.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/types/map.type.ts#L6)
+Defined in: [src/role-mapper/model/types/map.type.ts:6](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/types/map.type.ts#L6)

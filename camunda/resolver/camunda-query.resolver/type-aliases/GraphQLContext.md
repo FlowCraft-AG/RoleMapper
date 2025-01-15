@@ -8,7 +8,7 @@
 
 > **GraphQLContext**: `object`
 
-Defined in: [src/camunda/resolver/camunda-query.resolver.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/resolver/camunda-query.resolver.ts#L31)
+Defined in: [src/camunda/resolver/camunda-query.resolver.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/resolver/camunda-query.resolver.ts#L31)
 
 Typ für den GraphQL-Kontext, der in Resolvern verwendet wird.
 Enthält Informationen über den eingehenden HTTP-Request.

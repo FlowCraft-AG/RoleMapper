@@ -8,7 +8,7 @@
 
 > **DeleteInstancePayload**: `object`
 
-Defined in: [src/camunda/types/delete-instance.payload.ts:1](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/types/delete-instance.payload.ts#L1)
+Defined in: [src/camunda/types/delete-instance.payload.ts:1](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/types/delete-instance.payload.ts#L1)
 
 ## Type declaration
 

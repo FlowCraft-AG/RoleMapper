@@ -6,7 +6,7 @@
 
 # Class: ZeebeService
 
-Defined in: [src/camunda/service/zeebe.service.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/service/zeebe.service.ts#L20)
+Defined in: [src/camunda/service/zeebe.service.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/service/zeebe.service.ts#L20)
 
 ## Implements
 
@@ -19,7 +19,7 @@ Defined in: [src/camunda/service/zeebe.service.ts:20](https://github.com/FlowCra
 
 > **new ZeebeService**(`service`): [`ZeebeService`](ZeebeService.md)
 
-Defined in: [src/camunda/service/zeebe.service.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/service/zeebe.service.ts#L38)
+Defined in: [src/camunda/service/zeebe.service.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/service/zeebe.service.ts#L38)
 
 #### Parameters
 
@@ -39,7 +39,7 @@ Instanz des ReadService zur Rollenabfrage
 
 > **cancelProcessInstance**(`processInstanceKey`): `Promise`\<`void`\>
 
-Defined in: [src/camunda/service/zeebe.service.ts:106](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/service/zeebe.service.ts#L106)
+Defined in: [src/camunda/service/zeebe.service.ts:106](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/service/zeebe.service.ts#L106)
 
 #### Parameters
 
@@ -57,7 +57,7 @@ Defined in: [src/camunda/service/zeebe.service.ts:106](https://github.com/FlowCr
 
 > **onModuleDestroy**(): `Promise`\<`void`\>
 
-Defined in: [src/camunda/service/zeebe.service.ts:63](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/service/zeebe.service.ts#L63)
+Defined in: [src/camunda/service/zeebe.service.ts:63](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/service/zeebe.service.ts#L63)
 
 Beendet den Zeebe-Service und schließt die Worker sowie den Client.
 
@@ -75,7 +75,7 @@ Beendet den Zeebe-Service und schließt die Worker sowie den Client.
 
 > **onModuleInit**(): `void`
 
-Defined in: [src/camunda/service/zeebe.service.ts:47](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/service/zeebe.service.ts#L47)
+Defined in: [src/camunda/service/zeebe.service.ts:47](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/service/zeebe.service.ts#L47)
 
 Initialisiert den Zeebe-Service und registriert die Worker.
 
@@ -93,7 +93,7 @@ Initialisiert den Zeebe-Service und registriert die Worker.
 
 > **startProcess**(`processKey`, `variables`): `Promise`\<`CreateProcessInstanceResponse`\>
 
-Defined in: [src/camunda/service/zeebe.service.ts:83](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/service/zeebe.service.ts#L83)
+Defined in: [src/camunda/service/zeebe.service.ts:83](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/service/zeebe.service.ts#L83)
 
 Startet einen neuen Prozess mit den angegebenen Variablen.
 

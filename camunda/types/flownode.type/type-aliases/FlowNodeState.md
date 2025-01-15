@@ -8,6 +8,6 @@
 
 > **FlowNodeState**: `"ACTIVE"` \| `"COMPLETED"` \| `"TERMINATED"`
 
-Defined in: [src/camunda/types/flownode.type.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/types/flownode.type.ts#L15)
+Defined in: [src/camunda/types/flownode.type.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/types/flownode.type.ts#L15)
 
 Beschreibt die möglichen Zustände einer FlowNode innerhalb einer Prozessinstanz.

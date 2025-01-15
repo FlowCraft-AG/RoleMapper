@@ -8,7 +8,7 @@
 
 > **ProcessInstanceFilter**: [`BaseFilter`](../../base-filter/type-aliases/BaseFilter.md) & `object`
 
-Defined in: [src/camunda/types/input-filter/process-instance-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/camunda/types/input-filter/process-instance-filter.ts#L10)
+Defined in: [src/camunda/types/input-filter/process-instance-filter.ts:10](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/camunda/types/input-filter/process-instance-filter.ts#L10)
 
 Erweiterter Filter für die Suche nach Prozessinstanzen.
 

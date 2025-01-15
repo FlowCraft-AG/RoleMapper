@@ -8,4 +8,4 @@
 
 > `const` **logLevel**: [`LogLevel`](../type-aliases/LogLevel.md) = `logLevelTemporary`
 
-Defined in: [src/config/logger.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/config/logger.ts#L30)
+Defined in: [src/config/logger.ts:30](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/config/logger.ts#L30)

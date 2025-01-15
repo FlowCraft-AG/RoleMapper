@@ -8,7 +8,7 @@
 
 > `const` **environment**: `object`
 
-Defined in: [src/config/environment.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/config/environment.ts#L24)
+Defined in: [src/config/environment.ts:24](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/config/environment.ts#L24)
 
 Umgebungsvariable zur Konfiguration
 

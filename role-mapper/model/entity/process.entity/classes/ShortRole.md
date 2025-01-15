@@ -6,7 +6,7 @@
 
 # Class: ShortRole
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/entity/process.entity.ts#L9)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/entity/process.entity.ts#L9)
 
 Definiert das Schema für die Role-Entität innerhalb eines Prozesses.
 
@@ -26,7 +26,7 @@ Definiert das Schema für die Role-Entität innerhalb eines Prozesses.
 
 > **roleId**: `string`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/entity/process.entity.ts#L16)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/entity/process.entity.ts#L16)
 
 Eindeutige ID der Rolle.
 
@@ -36,7 +36,7 @@ Eindeutige ID der Rolle.
 
 > **roleName**: `string`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/entity/process.entity.ts#L12)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:12](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/entity/process.entity.ts#L12)
 
 Schlüssel der Rolle (z. B. "Reviewer").
 
@@ -46,6 +46,6 @@ Schlüssel der Rolle (z. B. "Reviewer").
 
 > **roleType**: `RoleType`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/entity/process.entity.ts#L20)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/entity/process.entity.ts#L20)
 
 Typ der Rolle (z. B. "COLLECTION").

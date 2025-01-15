@@ -8,7 +8,7 @@
 
 > `const` **paths**: `object`
 
-Defined in: [src/config/keycloak.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/config/keycloak.ts#L35)
+Defined in: [src/config/keycloak.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/config/keycloak.ts#L35)
 
 ## Type declaration
 

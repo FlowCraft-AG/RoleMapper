@@ -8,6 +8,6 @@
 
 > **EntityCategoryType**: `"USERS"` \| `"MANDATES"` \| `"PROCESSES"` \| `"ROLES"` \| `"ORG_UNITS"`
 
-Defined in: [src/role-mapper/model/entity/entities.entity.ts:61](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/entity/entities.entity.ts#L61)
+Defined in: [src/role-mapper/model/entity/entities.entity.ts:61](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/entity/entities.entity.ts#L61)
 
 Kategorien der Entitäten, die abgefragt werden können.

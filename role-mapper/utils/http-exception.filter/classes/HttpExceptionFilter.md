@@ -6,7 +6,7 @@
 
 # Class: HttpExceptionFilter
 
-Defined in: [src/role-mapper/utils/http-exception.filter.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/utils/http-exception.filter.ts#L9)
+Defined in: [src/role-mapper/utils/http-exception.filter.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/utils/http-exception.filter.ts#L9)
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: [src/role-mapper/utils/http-exception.filter.ts:9](https://github.co
 
 > **catch**(`exception`): `void`
 
-Defined in: [src/role-mapper/utils/http-exception.filter.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/utils/http-exception.filter.ts#L16)
+Defined in: [src/role-mapper/utils/http-exception.filter.ts:16](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/utils/http-exception.filter.ts#L16)
 
 Fängt eine HttpException ab und wirft eine BadUserInputError.
 

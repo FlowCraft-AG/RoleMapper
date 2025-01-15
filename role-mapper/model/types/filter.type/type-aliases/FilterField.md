@@ -8,6 +8,6 @@
 
 > **FilterField**: `Userfilter` \| `Mandatefilter` \| `OrgUnitfilter` \| `Processfilter` \| `Rolefilter`
 
-Defined in: [src/role-mapper/model/types/filter.type.ts:67](https://github.com/FlowCraft-AG/RoleMapper/blob/aa2b8d129f8bd1600fa58ea512b195a2a2308efd/backend/src/role-mapper/model/types/filter.type.ts#L67)
+Defined in: [src/role-mapper/model/types/filter.type.ts:67](https://github.com/FlowCraft-AG/RoleMapper/blob/dfa0426eb5b55e53274c22382030e399befc29aa/backend/src/role-mapper/model/types/filter.type.ts#L67)
 
 Zusammengeführte Filterfelder für alle Entitätstypen.
