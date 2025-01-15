@@ -174,10 +174,7 @@ export default function ProcessSpalte({
           endIcon: DescriptionIcon,
         }}
         slotProps={{
-          item: {
-            onRemove,
-            refetch, // Weitergabe der Refetch-Methode
-          } as ExtendedSlotProps,
+          item: {} as ExtendedSlotProps,
         }}
         onItemClick={handleItemClick}
         sx={{

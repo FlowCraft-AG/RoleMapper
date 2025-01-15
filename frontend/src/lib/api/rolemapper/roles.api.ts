@@ -2,16 +2,39 @@
 
 import { ApolloError } from '@apollo/client';
 import { CREATE_PROCESS_ROLE } from '../../../graphql/rollen/mutation/create-role.mutation';
-import { GET_ROLES_BY_PROCESS_ID } from '../../../graphql/rollen/query/get-roles';
+import {
+  GET_ROLES,
+  GET_ROLES_BY_PROCESS_ID,
+} from '../../../graphql/rollen/query/get-roles';
 import { ShortRole } from '../../../types/process.type';
+import { RoleResult } from '../../../types/role-payload.type';
 import { Role } from '../../../types/role.type';
+import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 import { getLogger } from '../../../utils/logger';
 import getApolloClient from '../../apolloClient';
-import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 
 // Initialisiert den Logger mit dem spezifischen Kontext 'user.api.ts'
 const logger = getLogger('user.api.ts');
 const client = getApolloClient(undefined);
+
+export async function getRoles(
+  processId: string,
+  userId: string,
+): Promise<RoleResult[]> {
+  logger.debug('getRoles: processId=%s, userId=%s', processId, userId);
+
+  try {
+    const { data } = await client.query({
+      query: GET_ROLES,
+      variables: { processId, userId },
+    });
+
+    return data.getProcessRoles.roles;
+  } catch (error) {
+    logger.error('Fehler beim Laden der Rollen:', error);
+    handleGraphQLError(error, 'Fehler beim Laden der Rollen');
+  }
+}
 
 /**
  * Lädt Rollen basierend auf einer Liste von Role-IDs.
@@ -53,7 +76,7 @@ export async function updateProcessRole(
   id: string,
   name: string,
   roles: ShortRole[] | undefined,
-    updatedRole: ShortRole,
+  updatedRole: ShortRole,
   oldRoleId: string,
 ): Promise<{ success: boolean; message: string }> {
   logger.debug(
@@ -138,11 +161,16 @@ async function executeProcessRoleMutation(
   roles: ShortRole[],
   successMessage: string,
 ): Promise<{ success: boolean; message: string }> {
-    logger.debug('executeProcessRoleMutation: id=%s, name=%s roles=%o', id, name, roles);
+  logger.debug(
+    'executeProcessRoleMutation: id=%s, name=%s roles=%o',
+    id,
+    name,
+    roles,
+  );
   try {
     const { data } = await client.mutate({
       mutation: CREATE_PROCESS_ROLE,
-        variables: { id, name, roles },
+      variables: { id, name, roles },
     });
 
     const response = data?.updateEntity;
@@ -165,6 +193,6 @@ async function executeProcessRoleMutation(
     }
   } catch (error) {
     logger.error('Fehler bei der GraphQL-Mutation:', error);
-      handleGraphQLError(error, 'Fehler bei der GraphQL-Mutation');
+    handleGraphQLError(error, 'Fehler bei der GraphQL-Mutation');
   }
 }

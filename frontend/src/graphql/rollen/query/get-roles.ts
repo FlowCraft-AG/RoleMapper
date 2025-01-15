@@ -57,7 +57,13 @@ export const GET_ALL_ROLES = gql`
 
 export const GET_ROLES_BY_PROCESS_ID = gql`
   query GetData($filter: [FilterInput]) {
-    getData(input: { entity: ROLES, filter: { OR: $filter } }) {
+    getData(
+      input: {
+        entity: ROLES
+        filter: { OR: $filter }
+        sort: { field: name, direction: ASC }
+      }
+    ) {
       data {
         ... on Role {
           _id
@@ -66,6 +72,26 @@ export const GET_ROLES_BY_PROCESS_ID = gql`
         }
       }
       totalCount
+    }
+  }
+`;
+
+export const GET_ROLES = gql`
+  query GetProcessRoles($processId: ID!, $userId: String!) {
+    getProcessRoles(processId: $processId, userId: $userId) {
+      roles {
+        roleName
+        users {
+          functionName
+          user {
+            userId
+            profile {
+              firstName
+              lastName
+            }
+          }
+        }
+      }
     }
   }
 `;

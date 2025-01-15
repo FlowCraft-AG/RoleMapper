@@ -66,7 +66,7 @@ export default function RoleEditModal({
   >(null);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
 
-    const [updatedRole, setUpdatedRole] = useState<ShortRole | undefined>(role);
+  const [updatedRole, setUpdatedRole] = useState<ShortRole | undefined>(role);
 
   const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
@@ -168,15 +168,14 @@ export default function RoleEditModal({
       try {
         setAvailableRoles(await fetchRoles([]));
         setOrgUnits(await fetchAllOrgUnits());
-          setFunctions(await fetchAllFunctions());
+        setFunctions(await fetchAllFunctions());
       } catch (err) {
         console.error('Fehler beim Laden der Daten:', err);
       }
     }
 
     if (open) {
-        fetchData();
-
+      fetchData();
     }
   }, [open]);
 
@@ -208,19 +207,19 @@ export default function RoleEditModal({
     ),
   }));
 
-    useEffect(() => {
-      if (open && role) {
-        setUpdatedRole(role); // Setzt den aktuellen Zustand der Rolle
-        // Setze den Function Type basierend auf dem roleType
-        if (role.roleType === 'COLLECTION') {
-          setSelectedFunctionType('existierende');
-        } else if (role.roleType === 'IMPLICITE_ORG_UNIT') {
-          setSelectedFunctionType('orgUnit');
-        } else if (role.roleType === 'IMPLICITE_FUNCTION') {
-          setSelectedFunctionType('orgUnit');
-        }
+  useEffect(() => {
+    if (open && role) {
+      setUpdatedRole(role); // Setzt den aktuellen Zustand der Rolle
+      // Setze den Function Type basierend auf dem roleType
+      if (role.roleType === 'COLLECTION') {
+        setSelectedFunctionType('existierende');
+      } else if (role.roleType === 'IMPLICITE_ORG_UNIT') {
+        setSelectedFunctionType('orgUnit');
+      } else if (role.roleType === 'IMPLICITE_FUNCTION') {
+        setSelectedFunctionType('orgUnit');
       }
-    }, [open, role]);
+    }
+  }, [open, role]);
 
   return (
     <>
@@ -264,6 +263,11 @@ export default function RoleEditModal({
             gap: '16px',
             // padding: '16px',
             // gap: '24px',
+            width: '90%',
+            maxWidth: 500,
+            top: '50%',
+            bgcolor: 'background.paper',
+            //position: 'absolute',
           }}
         >
           <TextField
@@ -285,9 +289,7 @@ export default function RoleEditModal({
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={
-                    selectedFunctionType === 'existierende'
-                  }
+                  checked={selectedFunctionType === 'existierende'}
                   onChange={() => setSelectedFunctionType('existierende')}
                 />
               }
@@ -296,9 +298,7 @@ export default function RoleEditModal({
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={
-                    selectedFunctionType === 'orgUnit'
-                  }
+                  checked={selectedFunctionType === 'orgUnit'}
                   onChange={() => setSelectedFunctionType('orgUnit')}
                 />
               }

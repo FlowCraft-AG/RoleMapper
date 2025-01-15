@@ -1,10 +1,7 @@
-import type { User } from '../entity/user.entity.js';
-import type { Links } from '../types/link.type.js';
+import { User } from './user.type';
 
 export type RolePayloadRest = {
-    roles: RoleResult[];
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    _links?: Links;
+  roles: RoleResult[];
 };
 
 /**
@@ -13,7 +10,7 @@ export type RolePayloadRest = {
  * @property {RoleResult[]} roles - Eine Liste von Rollen mit zugeordneten Benutzern.
  */
 export type RolePayload = {
-    roles: RoleResult[];
+  roles: RoleResult[];
 };
 
 /**
@@ -23,14 +20,14 @@ export type RolePayload = {
  * @property {UserWithFunction[]} users - Liste der Benutzer, die dieser Rolle zugeordnet sind.
  */
 export type RoleResult = {
-    /**
-     * Dynamischer Rollenname (z. B. "Antragssteller").
-     */
-    roleName: string;
-    /**
-     * Benutzer, die dieser Rolle zugeordnet sind.
-     */
-    users: UserWithFunction[];
+  /**
+   * Dynamischer Rollenname (z. B. "Antragssteller").
+   */
+  roleName: string;
+  /**
+   * Benutzer, die dieser Rolle zugeordnet sind.
+   */
+  users: UserWithFunction[];
 };
 
 /**
@@ -40,6 +37,6 @@ export type RoleResult = {
  * @property {User} user - Das verschachtelte Benutzerobjekt.
  */
 export type UserWithFunction = {
-    functionName: string | undefined; // Dynamischer Funktionsname
-    user: User; // Das User-Objekt ist hier verschachtelt
+  functionName: string | undefined; // Dynamischer Funktionsname
+  user: User; // Das User-Objekt ist hier verschachtelt
 };

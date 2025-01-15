@@ -65,7 +65,9 @@ export class QueryResolver {
     ): Promise<RolePayload> {
         const { processId, userId } = input; // Destrukturiere die Eingabe
         this.#logger.debug(`getRole: processId=${processId}, userId=${userId}`);
-        return this.#service.findProcessRoles(processId, userId); // Aufruf der Service-Methode
+        const rollen = await this.#service.findProcessRoles(processId, userId); // Aufruf der Service-Methode
+        this.#logger.debug('getRole: result=%o', rollen);
+        return rollen;
     }
 
     /**
