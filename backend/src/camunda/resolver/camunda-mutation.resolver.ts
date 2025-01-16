@@ -13,6 +13,7 @@ import { getLogger } from '../../logger/logger.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { HttpExceptionFilter } from '../../role-mapper/utils/http-exception.filter.js';
 import { CamundaWriteService } from '../service/camunda-write.service.js';
+import { Task } from '../types/task.type.js';
 
 /**
  * Typ für den GraphQL-Kontext, der in Resolvern verwendet wird.
@@ -85,6 +86,26 @@ export class CamundaMutationResolver {
 
         this.#logger.debug('deleteProcessInstance: %s', message);
         return message;
+    }
+
+    @Public()
+    @Mutation('completeUserTask')
+    async completeUserTask(
+        @Args('taskId') taskId: string,
+        @Args('variables', { nullable: true }) variables: Record<string, any>,
+        @Context() context: GraphQLContext,
+    ): Promise<Task> {
+        this.#logger.debug('completeUserTask: taskId=%s', taskId);
+
+        const token = this.#extractToken(context);
+        const result = await this.#camundaMutationService.completeUserTask(
+            taskId,
+            token,
+            variables,
+        );
+
+        this.#logger.debug('completeUserTask: Task abgeschlossen: %s', result);
+        return result;
     }
 
     /**

@@ -54,7 +54,8 @@ type Mutation {
 
   Diese Mutation startet einen neuen Workflow innerhalb der Prozess-Engine.
   """
-  startProcess(processKey: String!, userId: String!): String!
+  startProcess(processKey: String!, userId: String!): CreateProcessInstancePayload
+  completeUserTask(taskId: String!, variables: JSON): Task
   cancelProcessInstance(processInstanceKey: String!): String
   deleteProcessInstance(processInstanceKey: String): String
 }

@@ -1,3 +1,5 @@
+scalar JSON
+
 """
 Mögliche Zustände eines Prozesses in Camunda.
 """
@@ -85,6 +87,20 @@ enum FlowNodeState {
   ACTIVE # Die FlowNode ist derzeit aktiv und wird ausgeführt.
   COMPLETED # Die FlowNode ist derzeit aktiv und wird ausgeführt.
   TERMINATED # Die Ausführung der FlowNode wurde abgebrochen oder gestoppt.
+}
+
+type CreateProcessInstancePayload {
+  success: Boolean!
+  message: String!
+  response: CreateProcessInstanceResponse
+}
+
+type CreateProcessInstanceResponse {
+  processDefinitionKey: String
+  bpmnProcessId: String
+  version: Int
+  processInstanceKey: String
+  tenantId: String
 }
 
 """
