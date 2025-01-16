@@ -71,56 +71,88 @@
 
  ```plaintext
 .
-├── backend               # Backend-Code (NestJS)
-│   ├── test              # Tests für das Backend
-│   ├── log               # Log-Dateien des Backends
-│   └── src               # Quellcode des Backends
-│       ├── config        # Konfigurationsdateien
-│       ├── logger        # Logging-Funktionalität
-│       ├── role-mapper   # Hauptlogik für das Rollen-Mapping
-│       │   ├── controller  # API-Endpunkte
-│       │   ├── error       # Fehlerbehandlung
-│       │   ├── model       # Datenmodelle
-│       │   │   ├── dto       # Data Transfer Objects
-│       │   │   ├── entity    # Datenbank-Entitäten
-│       │   │   ├── enum      # Enumerationen
-│       │   │   ├── input     # GraphQL-Inputs
-│       │   │   ├── payload   # Antwort-Payloads
-│       │   │   └── types     # Allgemeine Typdefinitionen
-│       │   ├── resolver    # GraphQL-Resolver
-│       │   ├── service     # Geschäftliche Logik
-│       │   └── utils       # Hilfsfunktionen
+├── backend                # Backend-Code (NestJS)
+│   ├── log                # Log-Dateien des Backends
+│   └── src                # Quellcode des Backends
+│       ├── camunda        # Camunda-spezifische Logik
+│       │   ├── controller # API-Endpunkte für Camunda
+│       │   ├── resolver   # GraphQL-Resolver für Camunda
+│       │   ├── service    # Geschäftliche Logik für Camunda
+│       │   └── types      # Typdefinitionen für Camunda
+│       │       └── input-filter # Filter-Inputs für Camunda
+│       ├── config         # Konfigurationsdateien
+│       │   └── resources  # Ressourcen für Konfigurationen
+│       │       └── graphql  # GraphQL-spezifische Ressourcen
+│       ├── logger         # Logging-Funktionalität
+│       ├── role-mapper    # Hauptlogik für das Rollen-Mapping
+│       │   ├── controller # API-Endpunkte
+│       │   ├── error      # Fehlerbehandlung
+│       │   ├── model      # Datenmodelle
+│       │   │   ├── dto    # Data Transfer Objects
+│       │   │   ├── entity # Datenbank-Entitäten
+│       │   │   ├── input  # GraphQL-Inputs
+│       │   │   ├── payload # Antwort-Payloads
+│       │   │   └── types  # Allgemeine Typdefinitionen
+│       │   ├── resolver   # GraphQL-Resolver
+│       │   ├── service    # Geschäftliche Logik
+│       │   └── utils      # Hilfsfunktionen
 │       └── security       # Sicherheitsrelevanter Code
-│           ├── http        # HTTP-Sicherheitskonfiguration
-│           └── keycloak    # Keycloak-Integration
-├── docs                  # Dokumentation
-│   ├── backend           # Backend-Dokumentation
-│   └── frontend          # Frontend-Dokumentation
-├── .extras               # Zusätzliche Konfigurationsdateien
-│   ├── camunda           # BPMN- und DMN-Dateien für Camunda
-│   ├── compose           # Docker-Compose-Konfigurationen
-│   │   ├── backend       # Docker-Compose.yaml für das Backend
-│   │   └── frontend      # Docker-compose für das Frontend
-│   ├── doc               # Zusätzliche Dokumentationen
-│   ├── postman           # Postman-Sammlungen
-│   └── volumes           # Persistente Daten
-│       └── keys          # Zertifikate und Schlüssel
-│           └── keycloak.p12
-├── frontend              # Frontend-Code (Next.js)
-│   ├── public            # Statische Dateien
-│   └── src               # Quellcode des Frontends
-│       ├── app           # App-Routing
-│       ├── components    # Wiederverwendbare UI-Komponenten
-│       ├── graphql       # GraphQL-Anfragen und Mutationen
-│       │   ├── mutations   # Mutationen
-│       │   └── queries     # Abfragen
-│       ├── lib           # Hilfsfunktionen
-│       ├── styles        # Stile und CSS-Dateien
-│       ├── types         # Typdefinitionen
-│       └── utils         # Hilfsfunktionen
-└── .volumes              # Persistente Daten
-    ├── keycloak          # Keycloak-Daten
-    └── keys              # Zertifikate für TLS
+│           ├── http       # HTTP-Sicherheitskonfiguration
+│           └── keycloak   # Keycloak-Integration
+└── frontend                           # Frontend-Code (Next.js)
+    ├── logs                           # Log-Dateien des Frontends (Next.js)
+    ├── public                         # Statische Dateien
+    │   └── diagrams                   # Diagramme
+    └── src                            # Quellcode des Frontends
+        ├── app                        # App-Routing
+        │   ├── api                    # API-Endpunkte
+        │   │   ├── auth               # Authentifizierungs-Endpunkte
+        │   │   ├── camunda-files # Dateien für Camunda-Prozesse
+        │   │   ├── diagram # Diagramm-Endpunkte
+        │   │   └── diagramme # Diagramme-Logik
+        │   ├── camunda               # Camunda-Prozesse
+        │   │   └── [key]             # Spezifischer Prozess
+        │   ├── fonts                 # Schriften
+        │   ├── login                 # Login-Seiten
+        │   ├── models                # Datenmodelle
+        │   ├── myProcesses           # Eigene Prozesse
+        │   │   └── [key]             # Spezifischer Prozess
+        │   ├── organisationseinheiten # Organisationseinheiten
+        │   │   └── standard          # Standard-Organisationseinheiten
+        │   ├── process               # Prozesse
+        │   │   └── [key]             # Spezifischer Prozess
+        │   ├── prozesse              # Liste aller Prozesse
+        │   └── startseite            # Startseite des Frontends
+        ├── components                # Wiederverwendbare UI-Komponenten
+        │   ├── bpmn                  # BPMN-Komponenten
+        │   ├── customs               # Benutzerdefinierte Komponenten
+        │   ├── modal                 # Modale Dialoge
+        │   │   ├── functionModals    # Funktionsmodale
+        │   │   ├── orgUnitModals     # Modale für Organisationseinheiten
+        │   │   ├── processModals     # Modale für Prozesse
+        │   │   ├── rolesModal        # Modale für Rollen
+        │   │   └── userModals        # Modale für Benutzer
+        │   ├── navigation            # Navigationskomponenten
+        │   ├── organigramm           # Organigramm-Komponenten
+        │   └── prozess               # Prozess-Komponenten
+        ├── graphql                   # GraphQL-Operationen
+        │   ├── auth                  # Authentifizierungs-Operationen
+        │   ├── functions             # Funktionen
+        │   ├── orgUnits              # Organisationseinheiten
+        │   ├── processes             # Prozesse
+        │   ├── rollen                # Rollen
+        │   └── users                 # Benutzer
+        ├── interfaces                # Schnittstellendefinitionen
+        ├── lib                       # Hilfsfunktionen
+        │   ├── api                   # API-Hilfsfunktionen
+        │   │   └── rolemapper        # Rolemapper-spezifische Funktionen
+        │   └── camunda               # Camunda-Hilfsfunktionen
+        │       ├── apolloClient.ts   # GraphQL-Apollo-Client
+        │       ├── authOptions.ts    # Authentifizierungsoptionen
+        ├── styles                    # Stile und CSS-Dateien
+        ├── theme                     # Design-Themes
+        ├── types                     # Typdefinitionen
+        └── utils                     # Hilfsfunktionen
 ```
 
 ---
