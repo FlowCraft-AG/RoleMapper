@@ -10,13 +10,13 @@ import { RESOURCES_DIR } from './app.js';
  */
 const graphqlSchemas = [
     // Camunda-Schemas
-    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.type.graphql'),
     path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.input.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.type.graphql'),
     path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.graphql'),
 
     // RoleMapper-Schemas
-    path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.type.graphql'),
     path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.input.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.type.graphql'),
     path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.graphql'),
 ];
 // Debug-Ausgabe zur Überprüfung der geladenen Pfade
