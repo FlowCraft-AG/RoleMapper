@@ -27,7 +27,7 @@ import {
   fetchSavedData,
   fetchUsersByFunction,
   removeUserFromFunction,
-} from '../../lib/api/function.api';
+} from '../../lib/api/rolemapper/function.api';
 import { FunctionUser } from '../../types/function.type';
 import { User } from '../../types/user.type';
 import { getListItemStyles } from '../../utils/styles';

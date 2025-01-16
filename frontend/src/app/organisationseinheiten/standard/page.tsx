@@ -13,7 +13,7 @@ import OrganigrammPage from './orgUnitPage';
 export const metadata: Metadata = {
   title: 'Organisationseinheiten',
   description:
-    'Organigramm der Hochschule Karlsruhe (HSKA) zur Darstellung der Fakultäten, Institute und Rollen.',
+    'Organigramm der Hochschule Karlsruhe (HKA) zur Darstellung der Fakultäten, Institute und Rollen.',
 };
 
 /**
@@ -47,31 +47,6 @@ export default async function HKAPage() {
           marginBottom: 4,
         }}
       >
-        <Link href="/organisationseinheiten/slider" passHref>
-          <Card
-            sx={{
-              transition: 'transform 0.3s, box-shadow 0.3s',
-              '&:hover': { transform: 'scale(1.05)', boxShadow: 6 },
-            }}
-          >
-            <CardActionArea>
-              <CardContent>
-                <Typography variant="h6" align="center" gutterBottom>
-                  Slider
-                </Typography>
-                <Typography
-                  variant="body2"
-                  align="center"
-                  color="text.secondary"
-                >
-                  Entdecken Sie das Organigramm in einer interaktiven
-                  Slider-Darstellung.
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </Link>
-
         <Link href="/organisationseinheiten" passHref>
           <Card
             sx={{
@@ -89,7 +64,8 @@ export default async function HKAPage() {
                   align="center"
                   color="text.secondary"
                 >
-                  Klassische Ansicht des Organigramms mit Fokus auf Einfachheit.
+                  Hervorgehobene Ansicht des Organigramms mit Fokus auf
+                  Einfachheit.
                 </Typography>
               </CardContent>
             </CardActionArea>

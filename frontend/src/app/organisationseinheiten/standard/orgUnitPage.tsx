@@ -6,7 +6,7 @@ import FunctionsSpalte from '../../../components/organigramm/FunctionsSpalte';
 import OrgUnitsSpalte from '../../../components/organigramm/OrgUnitsSpalte';
 import UserInfoSpalte from '../../../components/organigramm/UserInfoSpalte';
 import UsersSpalte from '../../../components/organigramm/UsersSpalte';
-import { fetchMitglieder } from '../../../lib/api/user.api';
+import { fetchMitglieder } from '../../../lib/api/rolemapper/user.api';
 import { useFacultyTheme } from '../../../theme/ThemeProviderWrapper';
 import { FunctionString, FunctionUser } from '../../../types/function.type';
 import { OrgUnit } from '../../../types/orgUnit.type';

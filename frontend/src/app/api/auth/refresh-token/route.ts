@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { REFRESH_TOKEN } from '../../../../graphql/auth/auth';
-import client from '../../../../lib/apolloClient';
+import getApolloClient from '../../../../lib/apolloClient';
 /**
  * POST-Handler für das Aktualisieren eines Authentifizierungstokens.
  *
@@ -45,6 +45,7 @@ import client from '../../../../lib/apolloClient';
 export async function POST(req: Request) {
   try {
     // Den Body der Anfrage auslesen
+    const client = getApolloClient(undefined);
     const body = await req.json();
     const { refreshToken } = body;
   

@@ -8,7 +8,7 @@
 
 'use client';
 
-import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
+import DescriptionIcon from '@mui/icons-material/Description';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import { Alert, CircularProgress, useTheme } from '@mui/material';
@@ -17,7 +17,7 @@ import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchAllProcesses } from '../../lib/api/process.api';
+import { fetchAllProcesses } from '../../lib/api/rolemapper/process.api';
 import { Process } from '../../types/process.type';
 import { getListItemStyles } from '../../utils/styles';
 
@@ -171,13 +171,10 @@ export default function ProcessSpalte({
         slots={{
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
-          endIcon: CorporateFareTwoToneIcon,
+          endIcon: DescriptionIcon,
         }}
         slotProps={{
-          item: {
-            onRemove,
-            refetch, // Weitergabe der Refetch-Methode
-          } as ExtendedSlotProps,
+          item: {} as ExtendedSlotProps,
         }}
         onItemClick={handleItemClick}
         sx={{

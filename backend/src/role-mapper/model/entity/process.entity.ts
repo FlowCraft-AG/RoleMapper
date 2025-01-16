@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+type RoleType = 'COLLECTION' | 'IMPLICITE_FUNCTION' | 'IMPLICITE_ORG_UNIT';
+
 /**
  * Definiert das Schema für die Role-Entität innerhalb eines Prozesses.
  */
@@ -12,6 +14,10 @@ export class ShortRole {
     /** Eindeutige ID der Rolle. */
     @Prop({ required: true })
     roleId!: string;
+
+    /** Typ der Rolle (z. B. "COLLECTION"). */
+    @Prop({ required: true })
+    roleType!: RoleType;
 }
 
 /**

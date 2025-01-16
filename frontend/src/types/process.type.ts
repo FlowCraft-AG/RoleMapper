@@ -6,7 +6,7 @@ export type Process = {
   _id: string; // Eindeutige ID des Prozesses
   name: string; // Name des Prozesses
   parentId?: string; // Optionale ID des übergeordneten Prozesses
-  roles?: Role[]; // Optionale Liste von Rollen, die mit dem Prozess verknüpft sind
+  roles?: ShortRole[]; // Optionale Liste von Rollen, die mit dem Prozess verknüpft sind
   processId?: string; // Optionale Prozesskennung (z. B. für spezielle Prozesse)
   children?: Process[]; // Optionale Liste von untergeordneten Prozessen (rekursiv)
 };
@@ -14,9 +14,10 @@ export type Process = {
 /**
  * Typdefinition für eine Rolle (Role), die mit einem Prozess verknüpft ist.
  */
-export type Role = {
+export type ShortRole = {
   roleName: string; // Name der Rolle
   roleId: string; // ID der Rolle
+  roleType: 'COLLECTION' | 'IMPLICITE_FUNCTION' | 'IMPLICITE_ORG_UNIT'; // Typ der Rolle (z. B. "COLLECTION")
 };
 
 /**
@@ -39,7 +40,7 @@ export interface ProcessInstance {
   bpmnProcessId: string; // BPMN-Prozess-ID
   startDate: string; // Startdatum der Instanz
   state: string; // Zustand der Prozessinstanz (z. B. "ACTIVE")
-  incident: false; // Gibt an, ob ein Vorfall vorliegt
+  incident: boolean; // Gibt an, ob ein Vorfall vorliegt
   processDefinitionKey: string; // Schlüssel der Prozessdefinition
   tenantId: string; // Mandanten-ID (kann leer sein)
 }

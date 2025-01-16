@@ -10,26 +10,83 @@ import { PaginationParameters } from '../input/pagination-parameters.js';
 import { SortInput } from '../input/sort.input.js';
 import { EntityCategoryType } from './entities.entity.js';
 
-type GraphQLMutationQuerys = {
+/**
+ * Typ für GraphQL-Mutationsabfragen.
+ *
+ * Dieser Typ definiert die Struktur für Abfrageparameter, die in GraphQL-Mutations
+ * verwendet werden, einschließlich der Zielentität, Filterkriterien, Paginierungs-
+ * und Sortieroptionen.
+ */
+export type GraphQLMutationQuerys = {
+    /**
+     * Die Zielentität der Abfrage.
+     *
+     * @type {EntityCategoryType}
+     * @example
+     * 'USERS', 'MANDATES', 'PROCESSES', 'ROLES', 'ORG_UNITS'
+     */
     entity: EntityCategoryType;
+
+    /**
+     * Die Filterkriterien, die auf die Abfrage angewendet werden.
+     *
+     * @type {FilterInput}
+     * @example
+     * {
+     *   field: 'name',
+     *   operator: 'LIKE',
+     *   value: 'John',
+     *   AND: [
+     *     { field: 'status', operator: 'EQ', value: 'active' }
+     *   ]
+     * }
+     */
     filter: FilterInput;
+
+    /**
+     * Die Paginierungsparameter, um die Abfrageergebnisse zu begrenzen.
+     *
+     * @type {PaginationParameters}
+     * @optional
+     * @default undefined
+     * @example
+     * {
+     *   limit: 10,
+     *   offset: 20
+     * }
+     */
     pagination?: PaginationParameters;
+
+    /**
+     * Die Sortieroptionen, um die Reihenfolge der Ergebnisse zu steuern.
+     *
+     * @type {SortInput}
+     * @optional
+     * @default undefined
+     * @example
+     * {
+     *   field: 'name',
+     *   direction: 'ASC'
+     * }
+     */
     sort?: SortInput;
 };
 
 /**
- * Definiert das Schema für die Function-Entität.
- */
-
-/**
- * Repräsentiert eine Function-Entität in der Datenbank.
- * Hebt hervor, dass die Funktion eine bestimmte Autorität oder Aufgabe beinhaltet.
+ * Repräsentiert eine Funktion (Mandate) in der Datenbank.
  *
- * @schema Functions
+ * Funktionen beschreiben organisatorische Rollen oder Autoritäten, die Benutzern
+ * und Organisationseinheiten zugeordnet sind.
+ *
+ * @schema Mandates
  */
 @Schema({ collection: 'Functions' })
 export class Mandates extends Document {
-    /** Der Name der Funktion (z. B. "Professor"). */
+    /**
+     * Der Name der Funktion (z. B. "Professor").
+     *
+     * @property {string} functionName - Muss eindeutig innerhalb der gleichen Organisationseinheit sein.
+     */
     @Prop({
         required: true,
         trim: true,
@@ -49,18 +106,35 @@ export class Mandates extends Document {
     })
     functionName!: string;
 
-    /** Organisationseinheit, der die Funktion zugeordnet ist. */
+    /**
+     * Die Organisationseinheit, der die Funktion zugeordnet ist.
+     *
+     * @property {Types.ObjectId} orgUnit - Referenz auf die zugehörige Organisationseinheit.
+     */
     @Prop({ required: true })
     orgUnit!: Types.ObjectId;
 
-    /** Kennzeichnet, ob der Mandant ein Einzelbenutzer-Mandant ist. */
+    /**
+     * Gibt an, ob die Funktion nur für einen Benutzer gilt.
+     *
+     * @property {boolean} isSingleUser - Standardmäßig `false`.
+     */
     @Prop({ required: true, default: false })
     isSingleUser!: boolean;
 
+    /**
+     * Gibt an, ob es sich um eine implizite Funktion handelt.
+     *
+     * @property {boolean} isImpliciteFunction - Standardmäßig `false`.
+     */
     @Prop({ required: true, default: false })
     isImpliciteFunction!: boolean;
 
-    /** Benutzer, die mit dieser Funktion verknüpft sind. */
+    /**
+     * Die Benutzer, die dieser Funktion zugeordnet sind.
+     *
+     * @property {string[]} users - Eine Liste von Benutzer-IDs. Doppelte Werte sind nicht erlaubt.
+     */
     @Prop({
         type: [String],
         required: true,
@@ -76,7 +150,11 @@ export class Mandates extends Document {
     })
     users?: string[];
 
-    /** Die gespeicherte GraphQL-Abfrage */
+    /**
+     * Die gespeicherte GraphQL-Abfrage.
+     *
+     * @property {GraphQLMutationQuerys} query - Optional gespeicherte Abfrageparameter.
+     */
     @Prop({
         type: Object, // explizite Angabe des Typs für `query`
         required: false,
@@ -84,6 +162,7 @@ export class Mandates extends Document {
     query?: GraphQLMutationQuerys;
 }
 
+// Typendefinition für Mandate
 export type MandateDocument = Mandates & Document;
 export const MANDATE_SCHEMA = SchemaFactory.createForClass(Mandates);
 

@@ -6,7 +6,7 @@
 
 # Class: MutationInput
 
-Defined in: [src/role-mapper/model/dto/mutation.input.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/dto/mutation.input.ts#L9)
+Defined in: [src/role-mapper/model/dto/mutation.input.ts:9](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/dto/mutation.input.ts#L9)
 
 Definiert die Eingabeparameter für Mutationen in GraphQL.
 
@@ -26,7 +26,7 @@ Definiert die Eingabeparameter für Mutationen in GraphQL.
 
 > `optional` **data**: [`DataInputDTO`](../../data.dto/classes/DataInputDTO.md)
 
-Defined in: [src/role-mapper/model/dto/mutation.input.ts:29](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/dto/mutation.input.ts#L29)
+Defined in: [src/role-mapper/model/dto/mutation.input.ts:29](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/dto/mutation.input.ts#L29)
 
 Die Daten für die Mutation (optional).
 
@@ -36,7 +36,7 @@ Die Daten für die Mutation (optional).
 
 > **entity**: `string`
 
-Defined in: [src/role-mapper/model/dto/mutation.input.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/dto/mutation.input.ts#L15)
+Defined in: [src/role-mapper/model/dto/mutation.input.ts:15](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/dto/mutation.input.ts#L15)
 
 Der Name der Entität, auf die die Mutation angewendet wird.
 
@@ -46,7 +46,7 @@ Der Name der Entität, auf die die Mutation angewendet wird.
 
 > `optional` **filter**: [`FilterInput`](../../../input/filter.input/type-aliases/FilterInput.md)
 
-Defined in: [src/role-mapper/model/dto/mutation.input.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/dto/mutation.input.ts#L36)
+Defined in: [src/role-mapper/model/dto/mutation.input.ts:36](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/dto/mutation.input.ts#L36)
 
 Die Filterkriterien für die Mutation (optional).
 
@@ -56,6 +56,6 @@ Die Filterkriterien für die Mutation (optional).
 
 > **operation**: `"DELETE"` \| `"CREATE"` \| `"UPDATE"`
 
-Defined in: [src/role-mapper/model/dto/mutation.input.ts:22](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/dto/mutation.input.ts#L22)
+Defined in: [src/role-mapper/model/dto/mutation.input.ts:22](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/dto/mutation.input.ts#L22)
 
 Die Art der Mutation (CREATE, UPDATE, DELETE).

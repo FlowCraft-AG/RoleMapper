@@ -1,5 +1,4 @@
 /**
- * @file Page.tsx
  * Hauptseite für die Prozesse der Hochschule Karlsruhe (HSKA).
  * Diese Seite zeigt direkt die `ProcessPage`-Komponente an.
  *
@@ -23,7 +22,7 @@ import ProcessPage from './processPage';
 export const metadata: Metadata = {
   title: 'Prozesse',
   description:
-    'Darstellung und Anpassung von Prozessen und Rollen an der Hochschule Karlsruhe (HSKA).',
+    'Darstellung und Anpassung von Prozessen und Rollen an der Hochschule Karlsruhe (HKA).',
 };
 
 /**

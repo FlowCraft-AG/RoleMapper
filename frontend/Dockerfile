@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1.10.0
 
 # Definiere ARG für die Umgebungsvariablen
-ARG NODE_VERSION=23
+# ARG NODE_VERSION=23
+ARG NODE_VERSION=22.9.0
 
 # ---------------------------------------------------------------------------------------
 # S t a g e   d i s t
@@ -34,17 +35,14 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED=${NODE_TLS_REJECT_UNAUTHORIZED} \
     NEXTAUTH_URL=${NEXTAUTH_URL} \
     NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
 
-    
+
 RUN <<EOF
 set -eux
 apt-get update
 apt-get upgrade --yes
 
-# Installiere Python und Abhängigkeiten
 # Installiere curl im Container
-apt-get install --no-install-recommends --yes python3.11=3.11.2-6+deb12u4 python3.11-dev=3.11.2-6+deb12u4 python3.11-minimal=3.11.2-6+deb12u4 curl
-ln -s /usr/bin/python3.11 /usr/bin/python3
-ln -s /usr/bin/python3.11 /usr/bin/python
+apt-get install --no-install-recommends --yes curl
 
 npm i -g --no-audit --no-fund npm
 EOF
@@ -61,7 +59,6 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=tsconfig.json,target=tsconfig.json \
     --mount=type=cache,target=/root/.npm <<EOF
 set -eux
-# ci (= clean install) mit package-lock.json  dependencies installieren
 npm ci --no-audit --no-fund
 npm run build
 EOF
@@ -76,11 +73,6 @@ set -eux
 apt-get update
 apt-get upgrade --yes
 
-# Installiere Python und Abhängigkeiten
-apt-get install --no-install-recommends --yes python3.11=3.11.2-6+deb12u4 python3.11-dev=3.11.2-6+deb12u4 python3.11-minimal=3.11.2-6+deb12u4
-ln -s /usr/bin/python3.11 /usr/bin/python3
-ln -s /usr/bin/python3.11 /usr/bin/python
-
 npm i -g --no-audit --no-fund npm
 EOF
 
@@ -92,8 +84,6 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     --mount=type=bind,source=package-lock.json,target=package-lock.json \
     --mount=type=cache,target=/root/.npm <<EOF
 set -eux
-# ci (= clean install) mit package-lock.json
-# --omit=dev: ohne devDependencies
 npm ci --no-audit --no-fund --omit=peer
 EOF
 

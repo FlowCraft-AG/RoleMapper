@@ -3,7 +3,13 @@
  * Diese Komponente zeigt allgemeine Informationen zu einer Prozessinstanz an.
  */
 
-import { Card, CardContent, CardHeader, Grid, Typography } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Grid2,
+  Typography,
+} from '@mui/material';
 import { ProcessInstance } from '../../../types/process.type';
 
 /**
@@ -38,8 +44,8 @@ export default function GeneralInfoCard({ details }: ProcessDetailsProps) {
         subheader={`Prozess-ID: ${details.bpmnProcessId}`}
       />
       <CardContent>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+        <Grid2 container spacing={2}>
+          <Grid2 size={{ xs: 12, sm: 6 }}>
             <Typography variant="body1">
               <strong>Instanz-Key:</strong> {details.key}
             </Typography>
@@ -50,8 +56,8 @@ export default function GeneralInfoCard({ details }: ProcessDetailsProps) {
               <strong>Startdatum:</strong>{' '}
               {new Date(details.startDate).toLocaleString()}
             </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Grid2>
+          <Grid2 size={{ xs: 12, sm: 6 }}>
             <Typography variant="body1">
               <strong>Tenant ID:</strong> {details.tenantId}
             </Typography>
@@ -64,8 +70,8 @@ export default function GeneralInfoCard({ details }: ProcessDetailsProps) {
             <Typography variant="body1">
               <strong>Prozessversion:</strong> {details.processVersion}
             </Typography>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </CardContent>
     </Card>
   );

@@ -1,0 +1,535 @@
+"""
+Input-Parameter für generische Abfragen.
+"""
+input DataInput {
+  """
+  Ziel-Entität für die Abfrage, z. B. USERS oder ROLES.
+  """
+  entity: EntityType!
+  """
+  Filterbedingungen, um die Abfrage zu präzisieren.
+  """
+  filter: FilterInput
+  """
+  Pagination-Parameter zur Steuerung der Ergebnisse.
+  """
+  pagination: PaginationInput
+  """
+  Sortierparameter für die Ergebnisse.
+  """
+  sort: SortInput
+}
+
+"""
+Pagination-Parameter für die Steuerung von Ergebnisgrößen.
+"""
+input PaginationInput {
+  """
+  Anzahl der zurückzugebenden Ergebnisse (Standard: 10).
+  """
+  limit: Int = 10
+  """
+  Startpunkt der Ergebnisse (Standard: 0).
+  """
+  offset: Int = 0
+}
+
+"""
+Filterbedingungen für Abfragen.
+"""
+input FilterInput {
+  """
+  Das zu filternde Feld, z. B. userId oder orgUnit.
+  """
+  field: FilterOptions
+
+  """
+  Der Vergleichsoperator, z. B. EQ oder IN.
+  """
+  operator: Operator
+
+  """
+  Der Vergleichswert.
+  """
+  value: String
+
+  """
+  Logische UND-Verknüpfung mit weiteren Filtern.
+  """
+  AND: [FilterInput]
+
+  """
+  Logische ODER-Verknüpfung mit weiteren Filtern.
+  """
+  OR: [FilterInput]
+
+  """
+  Logische NOR-Verknüpfung mit weiteren Filtern.
+  """
+  NOR: [FilterInput]
+}
+
+"""
+Sortierparameter für Abfragen.
+"""
+input SortInput {
+  """
+  Feld, nach dem sortiert werden soll.
+  """
+  field: FilterOptions
+
+  """
+  Sortierreihenfolge, z. B. ASC oder DESC.
+  """
+  direction: directionInput
+}
+
+
+"""
+Input für das Erstellen einer neuen Entität.
+"""
+input CreateEntityInput {
+  """
+  Ziel-Entität, z. B. USERS, MANDATES.
+  """
+  entity: EntityType!
+
+  """
+  Daten für die neue Entität.
+  """
+  userData: CreateUserInput
+  functionData: CreateFunctionInput
+  processData: CreateProcessInput
+  orgUnitData: CreateOrgUnitInput
+  roleData: CreateRoleInput
+}
+
+"""
+Input-Daten für die Erstellung eines Benutzers.
+"""
+input CreateUserInput {
+  """
+  Benutzer-ID (z. B. RZ-Kennung oder Personalnummer).
+  """
+  userId: String!
+
+  """
+  Typ des Benutzers, z. B. student oder employee.
+  """
+  userType: String!
+
+  """
+  Rolle des Benutzers, z. B. admin oder viewer.
+  """
+  userRole: String!
+
+  """
+  Organisationseinheit des Benutzers.
+  """
+  orgUnit: String
+
+  """
+  Gibt an, ob der Benutzer aktiv ist. Standardwert ist true.
+  """
+  active: Boolean = true
+
+  """
+  Details, falls der Benutzer ein Student ist.
+  """
+  student: CreateStudentInput
+
+  """
+  Details, falls der Benutzer ein Mitarbeiter ist.
+  """
+  employee: CreateEmployeeInput
+}
+
+"""
+Input-Daten für die Erstellung eines Studenten.
+"""
+input CreateStudentInput {
+  """
+  Studiengang des Studenten.
+  """
+  courseOfStudy: String!
+
+  """
+  Einzigartiger Studiengangscode.
+  """
+  courseOfStudyUnique: String!
+
+  """
+  Studienniveau, z. B. Bachelor oder Master.
+  """
+  level: String!
+
+  """
+  Prüfungsordnung, die für den Studenten gilt.
+  """
+  examRegulation: String!
+}
+
+"""
+Input-Daten für die Erstellung eines Mitarbeiters.
+"""
+input CreateEmployeeInput {
+  """
+  Kostenstelle des Mitarbeiters.
+  """
+  costCenter: String!
+
+  """
+  Abteilung, in der der Mitarbeiter tätig ist.
+  """
+  department: String!
+}
+
+"""
+Input-Daten für die Erstellung einer Funktion.
+"""
+input CreateFunctionInput {
+  """
+  Name der Funktion.
+  """
+  functionName: String!
+
+  """
+  Organisationseinheit, der die Funktion zugeordnet ist.
+  """
+  orgUnit: String!
+
+  """
+  Typ der Funktion, z. B. academic oder administrative.
+  """
+  type: String
+
+  """
+  Liste der Benutzer, die der Funktion zugeordnet sind.
+  """
+  users: [String!]!
+
+  """
+  Gibt an, ob die Funktion nur von einem Benutzer besetzt werden kann.
+  """
+  isSingleUser: Boolean
+
+  """
+  Gibt an, ob die Funktion implizit ist und nicht manuell zugewiesen werden kann.
+  """
+  isImpliciteFunction: Boolean
+}
+
+"""
+Input-Daten für die Erstellung eines Prozesses.
+"""
+input CreateProcessInput {
+  """
+  Eindeutige ID des Prozesses.
+  """
+  processId: String!
+
+  """
+  Name des Prozesses.
+  """
+  name: String!
+
+  """
+  Liste der Rollen, die mit dem Prozess verknüpft sind.
+  """
+  roles: [ProcessRoleInput!]!
+}
+
+"""
+Input-Daten für eine Rolle innerhalb eines Prozesses.
+"""
+input ProcessRoleInput {
+  """
+  Schlüssel der Rolle.
+  """
+  roleName: String!
+
+  """
+  Eindeutige ID der Rolle.
+  """
+  roleId: String!
+
+  """
+  Typ der Rolle, z. B. COLLECTION.
+  """
+  roleType: RoleType!
+}
+
+"""
+Input-Daten für die Erstellung einer Organisationseinheit.
+"""
+input CreateOrgUnitInput {
+  """
+  Name der Organisationseinheit.
+  """
+  name: String!
+
+  """
+  ID der übergeordneten Organisationseinheit (optional).
+  """
+  parentId: ID
+
+  """
+  Verantwortlicher der Organisationseinheit (optional).
+  """
+  supervisor: String
+}
+
+"""
+Input-Daten für die Erstellung einer Rolle.
+"""
+input CreateRoleInput {
+  """
+  Eindeutige ID der Rolle.
+  """
+  roleId: String!
+
+  """
+  Name der Rolle.
+  """
+  name: String!
+
+  """
+  Dynamische Abfragebedingungen für die Rolle.
+  """
+  query: [QueryStageInput!]
+}
+
+"""
+Dynamische Abfragebedingungen für Rollen.
+"""
+input QueryStageInput {
+  """
+  Feldname der Abfragebedingung.
+  """
+  key: String!
+
+  """
+  Vergleichswert der Abfragebedingung.
+  """
+  value: String!
+}
+
+
+
+
+"""
+Input für das Aktualisieren von Entitäten.
+"""
+input UpdateEntityInput {
+  """
+  Ziel-Entität, z. B. USERS, MANDATES.
+  """
+  entity: EntityType!
+  """
+  Filterbedingungen, um die zu aktualisierende Entität zu finden.
+  """
+  filter: FilterInput
+  """
+  Neue Werte für die Entität.
+  """
+  userData: UpdateUserInput
+  functionData: UpdateFunctionInput
+  processData: UpdateProcessInput
+  orgUnitData: UpdateOrgUnitInput
+  roleData: UpdateRoleInput
+}
+
+"""
+Input-Daten für die Aktualisierung eines Benutzers.
+"""
+input UpdateUserInput {
+  """
+  Benutzer-ID.
+  """
+  userId: String
+
+  """
+  Typ des Benutzers, z. B. student oder employee.
+  """
+  userType: String
+
+  """
+  Rolle des Benutzers.
+  """
+  userRole: String
+
+  """
+  Organisationseinheit des Benutzers.
+  """
+  orgUnit: String
+
+  """
+  Gibt an, ob der Benutzer aktiv ist.
+  """
+  active: Boolean
+
+  """
+  Gültigkeitszeitraum des Benutzers (von).
+  """
+  validFrom: String
+
+  """
+  Gültigkeitszeitraum des Benutzers (bis).
+  """
+  validUntil: String
+
+  """
+  Details zum Studenten (falls zutreffend).
+  """
+  student: UpdateStudentInput
+
+  """
+  Details zum Mitarbeiter (falls zutreffend).
+  """
+  employee: UpdateEmployeeInput
+}
+
+"""
+Input-Daten für die Aktualisierung von Studenteninformationen.
+"""
+input UpdateStudentInput {
+  """
+  Studiengang des Studenten.
+  """
+  courseOfStudy: String
+
+  """
+  Studienniveau, z. B. Bachelor oder Master.
+  """
+  level: String
+
+  """
+  Prüfungsordnung, die für den Studenten gilt.
+  """
+  examRegulation: String
+}
+
+"""
+Input-Daten für die Aktualisierung von Mitarbeiterinformationen.
+"""
+input UpdateEmployeeInput {
+  """
+  Kostenstelle des Mitarbeiters.
+  """
+  costCenter: String
+
+  """
+  Abteilung, in der der Mitarbeiter tätig ist.
+  """
+  department: String
+}
+
+"""
+Input-Daten für die Aktualisierung einer Funktion.
+"""
+input UpdateFunctionInput {
+  """
+  Name der Funktion.
+  """
+  functionName: String
+
+  """
+  Organisationseinheit, der die Funktion zugeordnet ist.
+  """
+  orgUnit: String
+
+  """
+  Typ der Funktion, z. B. academic oder administrative.
+  """
+  type: String
+
+  """
+  Liste der Benutzer, die der Funktion zugeordnet sind.
+  """
+  users: [String!]
+
+  """
+  Gibt an, ob die Funktion nur von einem Benutzer besetzt werden kann.
+  """
+  isSingleUser: Boolean
+}
+
+"""
+Input-Daten für die Aktualisierung eines Prozesses.
+"""
+input UpdateProcessInput {
+  """
+  Eindeutige ID des Prozesses.
+  """
+  processId: String
+
+  """
+  Name des Prozesses.
+  """
+  name: String
+
+  """
+  Liste der Rollen, die mit dem Prozess verknüpft sind.
+  """
+  roles: [ProcessRoleInput]
+}
+
+"""
+Input-Daten für die Aktualisierung einer Organisationseinheit.
+"""
+input UpdateOrgUnitInput {
+  """
+  Eindeutige ID der Organisationseinheit.
+  """
+  orgUnitId: String
+
+  """
+  Name der Organisationseinheit.
+  """
+  name: String
+
+  """
+  ID der übergeordneten Organisationseinheit.
+  """
+  parentId: String
+
+  """
+  Verantwortlicher der Organisationseinheit.
+  """
+  supervisor: String
+}
+
+"""
+Input-Daten für die Aktualisierung einer Rolle.
+"""
+input UpdateRoleInput {
+  """
+  Eindeutige ID der Rolle.
+  """
+  roleId: String
+
+  """
+  Name der Rolle.
+  """
+  name: String
+
+  """
+  Dynamische Abfragebedingungen für die Rolle.
+  """
+  query: [QueryStageInput]
+}
+
+
+"""
+Input für das Löschen von Entitäten.
+"""
+input DeleteEntityInput {
+  """
+  Ziel-Entität, z. B. USERS, MANDATES.
+  """
+  entity: EntityType!
+  """
+  Filterbedingungen, um die zu löschende Entität zu identifizieren.
+  """
+  filter: FilterInput
+}

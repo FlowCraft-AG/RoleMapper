@@ -1,5 +1,4 @@
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
-/* eslint-disable security-node/detect-unhandled-async-errors */
 /* eslint-disable security/detect-non-literal-fs-filename */
 import { Injectable, type OnApplicationBootstrap } from '@nestjs/common';
 import chalk from 'chalk';
@@ -12,24 +11,36 @@ const logger = getLogger('DeploymentService');
 
 const CAMUNDA_BASE_PATH = path.resolve(import.meta.dirname, '..', '..', '..', '.extras', 'camunda');
 
-async function deployFilesInFolder(folderPath: string) {
-    const files = fs.readdirSync(folderPath);
+/**
+ * Rekursive Funktion zum Bereitstellen von Dateien in einem Verzeichnis und dessen Unterverzeichnissen.
+ * @param folderPath - Der Pfad zum Verzeichnis.
+ */
+async function deployFilesInFolderRecursive(folderPath: string) {
+    logger.warn(`${chalk.cyan('Verarbeite Verzeichnis:')} ${chalk.yellow(folderPath)}`);
+    const entries = fs.readdirSync(folderPath, { withFileTypes: true });
 
-    for (const file of files) {
-        const filePath = path.join(folderPath, file);
-        if (fs.statSync(filePath).isFile()) {
-            const fileContent = fs.readFileSync(filePath);
+    for (const entry of entries) {
+        const entryPath = path.join(folderPath, entry.name);
+
+        if (entry.isDirectory()) {
+            // Rekursiver Aufruf für Unterverzeichnisse
+            await deployFilesInFolderRecursive(entryPath);
+        } else if (entry.isFile()) {
+            // Verarbeitung der Datei
+            const fileContent = fs.readFileSync(entryPath);
             try {
                 await zbClient.deployProcess({
                     definition: fileContent,
-                    name: file,
+                    name: entry.name,
                 });
                 logger.info(
-                    `${chalk.green('✔')} ${chalk.cyan('Datei bereitgestellt:')} ${chalk.yellow(file)}`,
+                    `${chalk.green('✔')} ${chalk.cyan('Datei bereitgestellt:')} ${chalk.yellow(entry.name)}`,
                 );
             } catch (error) {
                 logger.error(
-                    `${chalk.red('✖')} ${chalk.cyan('Fehler beim Bereitstellen der Datei:')} ${chalk.yellow(file)}`,
+                    `${chalk.red('✖')} ${chalk.cyan('Fehler beim Bereitstellen der Datei:')} ${chalk.yellow(
+                        entry.name,
+                    )}`,
                 );
                 logger.error(`${chalk.redBright('Details:')} ${(error as Error).message}`);
             }
@@ -37,18 +48,24 @@ async function deployFilesInFolder(folderPath: string) {
     }
 }
 
+/**
+ * Führt die Bereitstellung aller Ressourcen in der Camunda-Verzeichnisstruktur durch.
+ */
 export async function deployCamundaResources() {
     try {
         logger.info(chalk.green('=== Start der Ressourcendeployment ==='));
 
-        logger.info(chalk.cyan('Bereitstellung der BPMN-Dateien...'));
-        await deployFilesInFolder(path.join(CAMUNDA_BASE_PATH, 'bpmn'));
+        logger.info(chalk.cyan('Bereitstellung der Prozessmodelle...'));
+        await deployFilesInFolderRecursive(path.join(CAMUNDA_BASE_PATH));
 
-        logger.info(chalk.cyan('Bereitstellung der DMN-Dateien...'));
-        await deployFilesInFolder(path.join(CAMUNDA_BASE_PATH, 'dmn'));
+        // logger.info(chalk.cyan('Bereitstellung der BPMN-Dateien...'));
+        // await deployFilesInFolderRecursive(path.join(CAMUNDA_BASE_PATH, 'bpmn'));
 
-        logger.info(chalk.cyan('Bereitstellung der Formulare...'));
-        await deployFilesInFolder(path.join(CAMUNDA_BASE_PATH, 'form'));
+        // logger.info(chalk.cyan('Bereitstellung der DMN-Dateien...'));
+        // await deployFilesInFolderRecursive(path.join(CAMUNDA_BASE_PATH, 'dmn'));
+
+        // logger.info(chalk.cyan('Bereitstellung der Formulare...'));
+        // await deployFilesInFolderRecursive(path.join(CAMUNDA_BASE_PATH, 'form'));
 
         logger.info(chalk.green('✔ Alle Ressourcen wurden erfolgreich bereitgestellt.'));
     } catch (error) {

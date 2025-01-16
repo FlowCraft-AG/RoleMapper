@@ -21,8 +21,8 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { createExplicitFunction } from '../../../lib/api/function.api';
-import { fetchUserIds } from '../../../lib/api/user.api';
+import { createExplicitFunction } from '../../../lib/api/rolemapper/function.api';
+import { fetchUserIds } from '../../../lib/api/rolemapper/user.api';
 import { FunctionString } from '../../../types/function.type';
 import { ShortUser } from '../../../types/user.type';
 import UserAutocomplete from '../../UserAutocomplete';
@@ -159,7 +159,7 @@ const ExplicitFunctionModal = ({
       refetch(newFunctionList); // Aktualisiere die Daten nach der Mutation
       setSnackbar({
         open: true,
-        message: 'Explizierte Funktion erfolgreich erstellt.',
+        message: 'Explizite Funktion erfolgreich erstellt.',
       });
       resetFields(); // Eingabefelder zurücksetzen
       onClose();

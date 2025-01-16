@@ -1,0 +1,271 @@
+"""
+Sortierkriterien für Abfragen.
+"""
+input CamundaSortInput {
+  """
+  Das zu sortierende Feld.
+  """
+  field: String
+  """
+  Sortierreihenfolge (ASC oder DESC).
+  """
+  order: directionInput
+}
+
+"""
+Filterkriterien für die Abfrage von Prozessinstanzen.
+"""
+input ProcessInstanceFilterInput {
+  """
+  Eindeutiger Schlüssel der Prozessinstanz.
+  """
+  key: ID
+  """
+  Version der Prozessinstanz.
+  """
+  processVersion: String
+  """
+  BPMN-Prozess-ID der Instanz.
+  """
+  bpmnProcessId: String
+  """
+  Zustand der Prozessinstanz (z. B. "ACTIVE", "COMPLETED").
+  """
+  state: ProcessState
+  """
+  Gibt an, ob ein Vorfall vorliegt.
+  """
+  incident: Boolean
+  """
+  Mandanten-ID der Prozessinstanz (optional).
+  """
+  tenantId: String
+  """
+  Startdatum der Prozessinstanz im ISO-Format.
+  """
+  startDate: String
+  """
+  Enddatum der Prozessinstanz im ISO-Format.
+  """
+  endDate: String
+
+  """
+  Sortierkriterien für die Abfrage.
+  """
+  sortBy: [CamundaSortInput]
+}
+
+"""
+Filterkriterien für die Abfrage von Aufgaben.
+"""
+input TaskFilterInput {
+  """
+  Zustand der Aufgabe (z. B. "CREATED", "COMPLETED").
+  """
+  state: TaskState
+  """
+  Gibt an, ob die Aufgabe einem Benutzer zugewiesen ist.
+  """
+  assigned: Boolean
+  """
+  Benutzer, dem die Aufgabe zugewiesen ist.
+  """
+  assignee: String
+  """
+  Schlüssel der Prozessdefinition, zu der die Aufgabe gehört.
+  """
+  processDefinitionKey: String
+  """
+  Schlüssel der Prozessinstanz, zu der die Aufgabe gehört.
+  """
+  processInstanceKey: String
+  """
+  Zeitraum für das Nachverfolgungsdatum der Aufgabe.
+  """
+  followUpDate: DateRangeInput
+  """
+  Zeitraum für das Fälligkeitsdatum der Aufgabe.
+  """
+  dueDate: DateRangeInput
+  """
+  Kandidatengruppen für die Aufgabe.
+  """
+  candidateGroups: [String]
+  """
+  Kandidatbenutzer für die Aufgabe.
+  """
+  candidateUser: String
+  """
+  Liste der Kandidatenbenutzer für die Aufgabe.
+  """
+  candidateUsers: [String]
+  """
+  Priorität der Aufgabe.
+  """
+  priority: Int
+}
+
+"""
+Filterkriterien für die Abfrage von Prozessvariablen.
+"""
+input ProcessVariableFilterInput {
+  """
+  Schlüssel der Variable.
+  """
+  key: String
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: String
+  """
+  Schlüssel des Geltungsbereichs der Variable.
+  """
+  scopeKey: String
+  """
+  Name der Variable.
+  """
+  name: String
+  """
+  Wert der Variable.
+  """
+  value: String
+  """
+  Gibt an, ob der Wert der Variable abgeschnitten wurde.
+  """
+  truncated: Boolean
+  """
+  Mandanten-ID der Variable (optional).
+  """
+  tenantId: String
+}
+
+"""
+Zeitraum für die Filterung nach Daten.
+"""
+input DateRangeInput {
+  """
+  Startdatum des Zeitraums im ISO-Format.
+  """
+  from: String
+  """
+  Enddatum des Zeitraums im ISO-Format.
+  """
+  to: String
+}
+
+"""
+Definiert die Filteroptionen für die Suche nach Incidents.
+"""
+input IncodentFilterInput {
+  """
+  Eindeutiger Schlüssel des Incidents.
+  """
+  key: Int
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: Int
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: Int
+
+  """
+  Typ des Incidents, z. B. IO_MAPPING_ERROR oder JOB_NO_RETRIES.
+  """
+  type: IncidentType
+
+  """
+  Nachricht oder Beschreibung des Incidents.
+  """
+  message: String
+
+  """
+  Erstellungszeit des Incidents (ISO-Format).
+  """
+  creationTime: String
+
+  """
+  Zustand des Incidents, z. B. ACTIVE oder RESOLVED.
+  """
+  state: IncidentState
+
+  """
+  Schlüssel des zugehörigen Jobs, falls zutreffend.
+  """
+  jobKey: Int
+
+  """
+  Mandanten-ID, falls zutreffend.
+  """
+  tenantId: String
+}
+
+"""
+FlowNodeFilterInput: Definiert die Filteroptionen für die Suche nach FlowNode-Instanzen.
+Dieses Input-Objekt wird verwendet, um FlowNodes basierend auf verschiedenen Kriterien zu filtern.
+"""
+input FlowNodeFilterInput {
+  """
+  Eindeutige ID der FlowNode-Instanz.
+  """
+  key: Int
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: Int
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: Int
+
+  """
+  Startzeitpunkt der FlowNode im ISO-Format.
+  """
+  startDate: String
+
+  """
+  Endzeitpunkt der FlowNode im ISO-Format.
+  """
+  endDate: String
+
+  """
+  ID der FlowNode innerhalb der Prozessdefinition.
+  """
+  flowNodeId: String
+
+  """
+  Name der FlowNode, wie sie im BPMN-Modell definiert ist.
+  """
+  flowNodeName: String
+
+  """
+  Schlüssel eines Incidents, der mit der FlowNode verknüpft ist.
+  """
+  incidentKey: Int
+
+  """
+  Typ der FlowNode (z. B. TASK, START_EVENT, EXCLUSIVE_GATEWAY).
+  """
+  type: FlowNodeType
+
+  """
+  Zustand der FlowNode (z. B. ACTIVE, COMPLETED, TERMINATED).
+  """
+  state: FlowNodeState
+
+  """
+  Gibt an, ob die FlowNode mit einem Incident verknüpft ist.
+  """
+  incident: Boolean
+
+  """
+  Mandanten-ID der FlowNode (optional, falls Multitenancy verwendet wird).
+  """
+  tenantId: String
+}
+

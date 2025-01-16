@@ -29,6 +29,8 @@ export const ENV = {
     'http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token',
   CAMUNDA_KEYCLOAK_CLIENT_SECRET:
     process.env.CAMUNDA_KEYCLOAK_CLIENT_SECRET ?? 'N/A',
+  NOTIFICATION_UPDATE_INTERVAL:
+    process.env.NOTIFICATION_UPDATE_INTERVAL ?? '86400000',
 };
 
 /**
