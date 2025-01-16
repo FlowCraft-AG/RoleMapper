@@ -17,6 +17,10 @@ const validateHeader = (headers: any) => {
 
 describe('MutationResolver', () => {
     let client: AxiosInstance;
+    const invalidProcessKey = 'invalidKey';
+    const validProcessKey = 'testProcess';
+    const validUserId = 'testUser';
+    const testTaskId = 'testTask';
 
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
