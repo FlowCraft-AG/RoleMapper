@@ -12,7 +12,7 @@ const logger = getLogger('DeploymentService');
 /**
  * Liste der Dateierweiterungen, die bereitgestellt werden dürfen.
  */
-const VALID_EXTENSIONS = ['.bpmn', '.dmn', '.form'];
+const VALID_EXTENSIONS = new Set(['.bpmn', '.dmn', '.form']);
 
 /**
  * Prüft, ob eine Datei eine gültige Erweiterung hat.
@@ -21,7 +21,7 @@ const VALID_EXTENSIONS = ['.bpmn', '.dmn', '.form'];
  */
 function isValidFile(filename: string): boolean {
     const extension = path.extname(filename).toLowerCase();
-    return VALID_EXTENSIONS.includes(extension);
+    return VALID_EXTENSIONS.has(extension);
 }
 
 const CAMUNDA_BASE_PATH = path.resolve(import.meta.dirname, '..', '..', '..', '.extras', 'camunda');
