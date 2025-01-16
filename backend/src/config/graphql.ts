@@ -20,7 +20,7 @@ const graphqlSchemas = [
     path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.input.graphql'),
 ];
 // Debug-Ausgabe zur Überprüfung der geladenen Pfade
-// console.debug('GraphQL-Schemas:', graphqlSchemas);
+console.debug('GraphQL-Schemas:', graphqlSchemas);
 
 /**
  * Das Konfigurationsobjekt für GraphQL (siehe src\app.module.ts).
@@ -44,4 +44,10 @@ export const graphQlModuleOptions: ApolloDriverConfig = {
      * Zum Testen kann es durch `playground: true` aktiviert werden.
      */
     playground: false,
+
+    /**
+     * Aktiviert den Playground und Debug-Modus basierend auf der Umgebung.
+     */
+    // playground: process.env.NODE_ENV !== 'production',
+    // debug: process.env.NODE_ENV !== 'production',
 };
