@@ -7,6 +7,9 @@ import { JSX, useEffect, useState } from 'react';
 import { Process } from '../../types/process.type';
 import DebuggerView from './DebuggerSicht';
 import EditorView from './EditorSicht';
+import { ENV } from '../../utils/env';
+
+const { ADMIN_GROUP } = ENV;
 
 interface RolesSpalteProps {
   selectedProcess: Process;
@@ -17,7 +20,7 @@ export default function RolesSpalte({
 }: RolesSpalteProps): JSX.Element {
   const theme = useTheme();
   const { data: session } = useSession();
-  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+  const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
   const [activeTab, setActiveTab] = useState<'editor' | 'debugger'>(
     isAdmin ? 'editor' : 'debugger',
   );

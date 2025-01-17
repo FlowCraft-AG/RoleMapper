@@ -16,6 +16,7 @@ import {
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { ENV } from '../../utils/env';
 
 export default function SignInPage() {
   const [username, setUsername] = useState('');
@@ -25,7 +26,8 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [loadingKeycloak, setLoadingKeycloak] = useState(false);
   const router = useRouter();
-
+    const { DEFAULT_ROUTE } = ENV;
+    
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -40,7 +42,7 @@ export default function SignInPage() {
     setLoading(false);
 
     if (result?.ok) {
-      router.push('/startseite');
+      router.push(DEFAULT_ROUTE);
     } else {
       setError('Ungültige Anmeldedaten. Bitte versuche es erneut.');
     }
@@ -132,23 +134,6 @@ export default function SignInPage() {
             )}
           </Button>
         </form>
-        <Divider sx={{ my: 2 }}>Oder melde dich an mit</Divider>
-        <Box display="flex" justifyContent="space-between" gap={2}>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<Key />}
-            fullWidth
-            onClick={handleKeycloakLogin}
-            disabled={loadingKeycloak}
-          >
-            {loadingKeycloak ? (
-              <CircularProgress size={24} sx={{ color: 'error' }} />
-            ) : (
-              'Keycloak'
-            )}
-          </Button>
-        </Box>
       </Box>
       <Typography
         variant="body2"

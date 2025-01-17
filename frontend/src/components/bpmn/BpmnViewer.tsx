@@ -31,6 +31,7 @@ interface BpmnViewerProps {
   diagramURL?: string;
   activeElementId?: string;
   incidentElementId?: string;
+  isCanceled: boolean;
   onLoading?: () => void;
   onError?: (err: Error) => void;
   onShown?: (warnings: string[]) => void;
@@ -59,7 +60,8 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
   diagramXML,
   diagramURL,
   activeElementId,
-  incidentElementId,
+    incidentElementId,
+  isCanceled,
   onLoading,
   onError,
   onShown,
@@ -106,7 +108,7 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
         canvas.zoom('fit-viewport');
 
         // Falls keine spezifischen IDs definiert sind, alle Elemente grün hervorheben
-        if (!activeElementId && !incidentElementId) {
+        if (!activeElementId && !incidentElementId && !isCanceled) {
           const elementRegistry: ElementRegistry =
             bpmnViewer.get('elementRegistry');
           const elements = elementRegistry.getAll(); // Alle Elemente abrufen
@@ -164,11 +166,31 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
                   style: { stroke: string };
                 };
                 styledChild.style.stroke = 'red';
-                //child.style.stroke = 'green';
+                // child.style.stroke = 'green';
                 // child.style.strokeWidth = '2px';
               });
             }
           }
+        }
+
+        // Rot hervorheben, wenn abgebrochen
+        if (isCanceled) {
+          const elementRegistry: ElementRegistry =
+            bpmnViewer.get('elementRegistry');
+          const elements = elementRegistry.getAll(); // Alle Elemente abrufen
+
+          elements.forEach((element) => {
+            const gfx = canvas.getGraphics(element.id); // Grafik des Elements abrufen
+            const visual = gfx.querySelector('.djs-visual');
+            if (visual) {
+              visual.querySelectorAll('*').forEach((child) => {
+                const styledChild = child as HTMLElement & {
+                  style: { stroke: string };
+                };
+                  styledChild.style.stroke = 'red'; // Elemente rot hervorheben
+              });
+            }
+          });
         }
 
         onShown?.([]);

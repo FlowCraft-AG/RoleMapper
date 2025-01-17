@@ -7,7 +7,9 @@ import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import NavLinks from './NavLinks';
 import NotificationMenu from './NotificationMenu';
 import UserMenu from './UserMenu';
+import { ENV } from '../../utils/env';
 
+const { ADMIN_GROUP } = ENV;
 /**
  * Hauptkomponente für die Navigationsleiste.
  */
@@ -18,7 +20,7 @@ export default function Navigation() {
   const { useCustomStyles, toggleCustomStyles } = useFacultyTheme();
   const { data: session, update } = useSession();
 
-  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+  const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
 
   const dynamicStyles = useCustomStyles
     ? {

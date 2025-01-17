@@ -16,6 +16,7 @@ import { signOut } from 'next-auth/react';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useCallback, useEffect, useState } from 'react';
 import { formatTime } from '../../utils/counter-format.util';
+import { ENV } from '../../utils/env';
 
 interface UserMenuProps {
   theme: Theme;
@@ -34,6 +35,7 @@ export default function UserMenu({
   update,
   router,
 }: UserMenuProps) {
+    const { DEFAULT_ROUTE } = ENV;
   const [userMenuAnchor, setUserMenuAnchor] = useState<undefined | HTMLElement>(
     undefined,
   );
@@ -50,7 +52,7 @@ export default function UserMenu({
   };
 
   const handleLogout = () => {
-    router.push('/startseite');
+    router.push(DEFAULT_ROUTE);
     signOut();
   };
 

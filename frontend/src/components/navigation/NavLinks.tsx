@@ -17,16 +17,13 @@ export default function NavLinks({
   isAdmin,
 }: NavLinksProps) {
   const links = [
-    { href: '/startseite', label: 'Startseite' },
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/prozesse', label: 'Prozesse' },
-    { href: '/konfigurationen', label: 'Konfigurationen' },
-    { href: '/models', label: 'Modelle' },
-    { href: '/myProcess', label: 'Meine Prozesse' },
+    { href: '/myProcess', label: 'Meine Aktiven Prozesse' },
   ];
 
   if (isAdmin) {
-    links.push({ href: '/process', label: 'Alle Prozesse' });
+    links.push({ href: '/process', label: 'Alle Aktive Prozesse' });
   }
 
   return (

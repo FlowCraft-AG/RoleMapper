@@ -89,7 +89,7 @@ export default function NotificationMenu({
   /**
    * Ruft Benachrichtigungen ab und teilt sie nach `isSingleUser`.
    */
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = async () => {
     try {
       const functionsInfo = await fetchFunctionsWithNoUsersOrRetiringUsers(
         lookaheadPeriod,
@@ -117,7 +117,7 @@ export default function NotificationMenu({
     } catch (error) {
       console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
     }
-  }, [lookaheadPeriod, timeUnit]);
+  };
 
   /**
    * Handhabt das Klicken auf eine Benachrichtigung und navigiert zur entsprechenden Organisationseinheit.
@@ -154,7 +154,7 @@ export default function NotificationMenu({
       NOTIFICATION_UPDATE_INTERVAL,
     );
     return () => clearInterval(interval);
-  }, [fetchNotifications]);
+  }, []);
 
   const renderNotifications = (notifications: Notification[]) => (
     <Box sx={{ maxHeight: '60vh', overflowY: 'auto' }}>

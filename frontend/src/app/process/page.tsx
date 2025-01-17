@@ -44,7 +44,9 @@ import {
   getAllProcessInstances,
 } from '../../lib/api/camunda.api';
 import { ProcessInstance } from '../../types/process.type';
+import { ENV } from '../../utils/env';
 
+const { ADMIN_GROUP } = ENV;
 /**
  * `ProcessInstances`-Komponente
  *
@@ -71,7 +73,7 @@ export default function ProcessInstances() {
   const { data: session } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+  const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
 
   const handleCancelProcess = async (instanceKey: string) => {
     try {

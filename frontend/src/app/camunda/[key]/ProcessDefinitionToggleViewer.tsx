@@ -161,7 +161,8 @@ const ProcessDefinitionToggleViewer = ({
             <BpmnViewer
               diagramXML={diagramUrl}
               activeElementId={activeElementId ?? ''}
-              incidentElementId={incidentElementId ?? ''}
+                              incidentElementId={incidentElementId ?? ''}
+                              isCanceled={instanz?.state === 'CANCELED'}
               onLoading={() => console.log('Lädt das BPMN-Diagramm...')}
               onError={(err) => console.error('Fehler beim Rendern:', err)}
               onShown={() => console.log('Diagramm erfolgreich geladen!')}
