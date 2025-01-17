@@ -1,12 +1,14 @@
 'use client';
 
 import { Box, Theme, Typography } from '@mui/material';
+import { Session } from 'next-auth';
 import Link from 'next/link';
 
 interface NavLinksProps {
   pathname: string;
   useCustomStyles: boolean;
   theme: Theme;
+  session: Session | null;
   isAdmin: boolean | undefined;
 }
 
@@ -14,13 +16,17 @@ export default function NavLinks({
   pathname,
   useCustomStyles,
   theme,
+  session,
   isAdmin,
 }: NavLinksProps) {
   const links = [
     { href: '/organisationseinheiten', label: 'Organisationseinheiten' },
     { href: '/prozesse', label: 'Prozesse' },
-    { href: '/myProcess', label: 'Meine Aktiven Prozesse' },
   ];
+
+  if (session) {
+    links.push({ href: '/myProcess', label: 'Meine Aktiven Prozesse' });
+  }
 
   if (isAdmin) {
     links.push({ href: '/process', label: 'Alle Aktive Prozesse' });

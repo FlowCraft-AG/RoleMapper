@@ -33,10 +33,10 @@ import {
 import Autocomplete from '@mui/material/Autocomplete';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getProcessInstancesByUser } from '../../lib/api/camunda.api';
 import { ProcessInstance } from '../../types/process.type';
-import { useRouter } from 'next/navigation';
 import { ENV } from '../../utils/env';
 
 /**
@@ -64,9 +64,9 @@ export default function UserProcessInstancesPage() {
 
   const { data: session } = useSession();
   const [error, setError] = useState<string | undefined>(undefined);
-    const [loading, setLoading] = useState<boolean>(false);
-    const router = useRouter();
-    const { DEFAULT_ROUTE } = ENV;
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+  const { DEFAULT_ROUTE } = ENV;
 
   useEffect(() => {
     /**
@@ -87,7 +87,7 @@ export default function UserProcessInstancesPage() {
           session?.user === undefined ||
           session?.user.username === undefined
         ) {
-            router.push(DEFAULT_ROUTE);
+          router.push(DEFAULT_ROUTE);
           throw new Error('Keine Session vorhanden.');
         }
         console.log('UserProcessInstancesPage: token=', session.access_token);

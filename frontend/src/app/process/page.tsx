@@ -37,6 +37,7 @@ import {
 import Autocomplete from '@mui/material/Autocomplete';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   cancelProcessInstance,
@@ -74,6 +75,8 @@ export default function ProcessInstances() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
+  const router = useRouter();
+  const { DEFAULT_ROUTE } = ENV;
 
   const handleCancelProcess = async (instanceKey: string) => {
     try {
@@ -123,6 +126,7 @@ export default function ProcessInstances() {
 
       try {
         if (session === undefined || session?.access_token === undefined) {
+          router.push(DEFAULT_ROUTE);
           throw new Error('Keine Session vorhanden.');
         }
         console.log('ProcessInstances: token=', session.access_token);

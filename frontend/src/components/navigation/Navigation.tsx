@@ -4,10 +4,10 @@ import { AppBar, Box, Switch, Toolbar, useTheme } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
+import { ENV } from '../../utils/env';
 import NavLinks from './NavLinks';
 import NotificationMenu from './NotificationMenu';
 import UserMenu from './UserMenu';
-import { ENV } from '../../utils/env';
 
 const { ADMIN_GROUP } = ENV;
 /**
@@ -47,6 +47,7 @@ export default function Navigation() {
           useCustomStyles={useCustomStyles}
           theme={theme}
           isAdmin={isAdmin}
+          session={session}
         />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <NotificationMenu theme={theme} router={router} />

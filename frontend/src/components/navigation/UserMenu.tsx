@@ -35,7 +35,7 @@ export default function UserMenu({
   update,
   router,
 }: UserMenuProps) {
-    const { DEFAULT_ROUTE } = ENV;
+  const { DEFAULT_ROUTE } = ENV;
   const [userMenuAnchor, setUserMenuAnchor] = useState<undefined | HTMLElement>(
     undefined,
   );

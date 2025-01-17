@@ -5,9 +5,9 @@ import { Box, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { JSX, useEffect, useState } from 'react';
 import { Process } from '../../types/process.type';
+import { ENV } from '../../utils/env';
 import DebuggerView from './DebuggerSicht';
 import EditorView from './EditorSicht';
-import { ENV } from '../../utils/env';
 
 const { ADMIN_GROUP } = ENV;
 

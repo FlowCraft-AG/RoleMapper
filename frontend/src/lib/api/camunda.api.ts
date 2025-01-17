@@ -267,19 +267,21 @@ export async function getIncidentFlowNode(
 export async function startCamundaProcessInstance(
   processKey: string,
   userId: string,
+  orgUnitId: string,
 ): Promise<string> {
   logger.debug(
-    'startCamundaProcessInstance: processKey=%s, userId=%s',
+    'startCamundaProcessInstance: processKey=%s, userId=%s, orgUnitId=%s',
     processKey,
     userId,
+    orgUnitId,
   );
   try {
     const client = getApolloClient(undefined);
     const { data } = await client.query({
       query: START_CAMUNDA_PROCESS,
-      variables: { processKey, userId },
+      variables: { processKey, userId, orgUnitId },
     });
-    return data.startProcess;
+    return data.startProcess.message;
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Abrufen der Aufgaben.');
   }

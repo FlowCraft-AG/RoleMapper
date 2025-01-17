@@ -1,13 +1,12 @@
 'use client';
 
-import { Key, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Alert,
   Box,
   Button,
   CircularProgress,
   Container,
-  Divider,
   IconButton,
   InputAdornment,
   TextField,
@@ -26,8 +25,8 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [loadingKeycloak, setLoadingKeycloak] = useState(false);
   const router = useRouter();
-    const { DEFAULT_ROUTE } = ENV;
-    
+  const { DEFAULT_ROUTE } = ENV;
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');

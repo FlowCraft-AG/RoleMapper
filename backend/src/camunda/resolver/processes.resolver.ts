@@ -18,9 +18,15 @@ export class ProcessesResolver {
     async startProcess(
         @Args('processKey') processKey: string,
         @Args('userId') userId: string,
+        @Args('orgUnitId') orgUnitId: string,
     ): Promise<CreateProcessInstancePayload> {
-        const variables = { userId };
-        this.#logger.debug('Starting process: processKey=%s, userId=%o', processKey, variables);
+        const variables = { userId, orgUnitId };
+        this.#logger.debug(
+            'Starting process: processKey=%s, userId=%o, orgUnitId=%s',
+            processKey,
+            variables,
+            orgUnitId,
+        );
         const result = await this.#zeebeService.startProcess(processKey, variables);
         this.#logger.debug('Process started:', result);
         const payload: CreateProcessInstancePayload = {

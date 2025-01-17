@@ -60,7 +60,7 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
   diagramXML,
   diagramURL,
   activeElementId,
-    incidentElementId,
+  incidentElementId,
   isCanceled,
   onLoading,
   onError,
@@ -187,7 +187,7 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
                 const styledChild = child as HTMLElement & {
                   style: { stroke: string };
                 };
-                  styledChild.style.stroke = 'red'; // Elemente rot hervorheben
+                styledChild.style.stroke = 'red'; // Elemente rot hervorheben
               });
             }
           });

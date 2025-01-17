@@ -2,8 +2,13 @@
 
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Paper,
   Snackbar,
   Table,
@@ -16,11 +21,15 @@ import {
   Typography,
 } from '@mui/material';
 import { Session } from 'next-auth';
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useCallback, useEffect, useState } from 'react';
 import { startCamundaProcessInstance } from '../../lib/api/camunda.api';
+import { fetchOrgUnitsIds } from '../../lib/api/rolemapper/orgUnit.api';
 import { getRoles } from '../../lib/api/rolemapper/roles.api';
+import { GroupHeader, GroupItems } from '../../styles/GroupStyles';
+import { ShortOrgUnit } from '../../types/orgUnit.type';
 import { Process } from '../../types/process.type';
 import { RoleResult, UserWithFunction } from '../../types/role-payload.type';
+import { buildOrgUnitDisplayName } from '../../utils/buildDisplayName.utils';
 
 interface DebuggerViewProps {
   selectedProcess: Process;
@@ -35,6 +44,10 @@ export default function DebuggerView({
   const [data, setData] = useState<RoleResult[]>();
   const [error, setError] = useState<string | undefined>(undefined);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [orgUnitId, setOrgUnitId] = useState<string>(''); // Für zusätzliche Parameter
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false); // Für den Dialogstatus
+  const [orgUnits, setOrgUnits] = useState<ShortOrgUnit[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleStartProcess = async () => {
     console.log(
@@ -47,8 +60,11 @@ export default function DebuggerView({
       const message = await startCamundaProcessInstance(
         `P${selectedProcess._id}`,
         session.user.username ?? '',
+        orgUnitId,
       );
+
       setSnackbar({ open: true, message });
+      setDialogOpen(false); // Schließt den Dialog nach erfolgreicher Absendung
     } catch (error) {
       console.error('Fehler beim Starten des Prozesses:', error);
       setSnackbar({
@@ -90,10 +106,45 @@ export default function DebuggerView({
     }
   };
 
+  /**
+   * Lädt die IDs der Organisationseinheiten.
+   *
+   * @function fetchOrgUnits
+   * @async
+   */
+  const fetchOrgUnits = useCallback(async () => {
+    setLoading(true);
+    try {
+      const orgUnitsResponse = await fetchOrgUnitsIds(); // Fetch data from the server
+      const validOrgUnits = orgUnitsResponse.filter((ou) => ou.supervisor); // Filter out invalid org units
+      setOrgUnits(validOrgUnits);
+    } catch (error) {
+      console.error('Failed to fetch organization units:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
+
+  // Update state wenn `functionData`  sich ändert
+  useEffect(() => {
+    if (dialogOpen) {
+      fetchOrgUnits();
+    }
+  }, [dialogOpen, fetchOrgUnits]);
+
   useEffect(() => {
     setError(undefined);
     setData(undefined);
   }, [selectedProcess, userId]);
+
+  // Optionen für Autocomplete generieren
+  const options = orgUnits.map((unit) => ({
+    ...unit,
+    displayName: buildOrgUnitDisplayName(
+      unit,
+      new Map(orgUnits.map((u) => [u._id, u])),
+    ),
+  }));
 
   return (
     <>
@@ -289,7 +340,7 @@ export default function DebuggerView({
           <Button
             variant="contained"
             color="secondary"
-            onClick={handleStartProcess}
+            onClick={() => setDialogOpen(true)}
             sx={{
               marginTop: 3,
               padding: '12px 20px',
@@ -304,6 +355,59 @@ export default function DebuggerView({
           </Button>
         )}
       </Box>
+
+      {/* Dialogfenster */}
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Prozess starten</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" gutterBottom>
+            Falls der Antrag für eine andere Organisationseinheit gilt,
+            <br />
+            bitte auswählen:
+          </Typography>
+          <Autocomplete
+            options={options}
+            loading={loading}
+            groupBy={(option) => option.displayName[0].toUpperCase()}
+            renderGroup={(params) => (
+              <li key={params.key}>
+                <GroupHeader>{params.group}</GroupHeader>
+                <GroupItems>{params.children}</GroupItems>
+              </li>
+            )}
+            getOptionLabel={(option) => {
+              // Überprüfen, ob der Name verfügbar ist
+              if (!option.name) {
+                console.error('Option hat keinen Namen:', option);
+                return 'Unbenannt';
+              }
+              return option.name; // Rein und ohne Seiteneffekte
+            }}
+            renderOption={(props, option) => (
+              <li {...props} key={option._id}>
+                {option.displayName}
+              </li>
+            )}
+            value={options.find((ou) => ou._id === orgUnitId) || null}
+            onChange={(_, newValue) => setOrgUnitId(newValue?._id || '')}
+            renderInput={(params) => (
+              <TextField {...params} label="Organisationseinheit" />
+            )}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDialogOpen(false)} color="secondary">
+            Abbrechen
+          </Button>
+          <Button
+            onClick={handleStartProcess}
+            variant="contained"
+            color="primary"
+          >
+            Abschicken
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

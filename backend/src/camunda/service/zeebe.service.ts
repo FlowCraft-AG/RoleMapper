@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/operator-linebreak */
 /**
  * @file ZeebeService
  * @module ZeebeService
@@ -174,16 +175,17 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         this.#noteWorker = this.#zbClient!.createWorker({
             taskType: 'getRoles',
             taskHandler: async (job) => {
-                const { userId, processId } = job.variables;
+                const { userId, processId, orgUnitId } = job.variables;
 
                 if (userId) {
                     this.#logger.debug(
-                        'ermittle rollen zum prozess %s für den Antragsteller %s',
+                        'ermittle rollen zum prozess %s für den Antragsteller %s in der Organisationseinheit %s',
                         processId,
                         userId,
+                        orgUnitId,
                     );
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                    const result = await this.#service.findProcessRoles(processId, userId);
+                    const result = await this.#service.findProcessRoles(processId, userId, orgUnitId);
                     this.#logger.debug('Rollen für den Benutzer: %o', result);
 
                     const antragsteller = result?.roles[1]?.users[0]?.user;
@@ -196,9 +198,13 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
                     }
 
                     this.#logger.debug('Antragsteller: %s', antragsteller);
-                    const { userType, userRole, profile, employee } = antragsteller;
+                    const { userType, userRole, profile } = antragsteller;
                     const { firstName, lastName } = profile;
-                    const { costCenter } = employee!;
+
+                    const costCenter =
+                        antragsteller?.userType === 'student'
+                            ? antragsteller.orgUnit
+                            : antragsteller.employee!.costCenter;
                     const vorgesetzter = result?.roles[0]?.users[0]?.user;
                     this.#logger.debug('Vorgesetzter für den Benutzer: %o', vorgesetzter);
 
