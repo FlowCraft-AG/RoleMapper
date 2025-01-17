@@ -1,8 +1,6 @@
 /**
  * @file ProcessInstances.tsx
  * @description React-Komponente zur Anzeige von Prozessinstanzen aus Camunda.
- *
- * @module ProcessInstances
  */
 
 'use client';
@@ -10,11 +8,9 @@
 import {
   Cancel as CancelIcon,
   CheckCircle,
-  Delete as DeleteIcon,
   Error as ErrorIcon,
   Info as InfoIcon,
   PlayCircle,
-  Stop as StopIcon,
   Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import {
@@ -39,19 +35,14 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import {
-  cancelProcessInstance,
-  deleteProcessInstance,
-  getAllProcessInstances,
-} from '../../lib/api/camunda.api';
-import { ProcessInstance } from '../../types/process.type';
-import { ENV } from '../../utils/env';
+import { getProcessInstancesByUser } from '../../../lib/api/camunda.api';
+import { ProcessInstance } from '../../../types/process.type';
+import { ENV } from '../../../utils/env';
 
-const { ADMIN_GROUP } = ENV;
 /**
  * `ProcessInstances`-Komponente
  *
- * Diese Komponente zeigt Prozessinstanzen aus dem Camunda-System an. Sie bietet Filtermöglichkeiten nach Status und Prozessnamen.
+ * Diese Komponente zeigt user spezifische Prozessinstanzen aus dem Camunda-System an. Sie bietet Filtermöglichkeiten nach Status und Prozessnamen.
  *
  * @component
  * @returns {JSX.Element} Die JSX-Struktur der Prozessinstanzliste.
@@ -61,7 +52,7 @@ const { ADMIN_GROUP } = ENV;
  * <ProcessInstances />
  * ```
  */
-export default function ProcessInstances() {
+export default function UserProcessInstancesPage() {
   // Zustand für Prozessinstanzen
   const [instances, setInstances] = useState<ProcessInstance[]>([]);
   // Zustand für den Filter nach Prozessnamen
@@ -72,49 +63,14 @@ export default function ProcessInstances() {
   const [allProcesses, setAllProcesses] = useState<string[]>([]); // Alle Prozessnamen
 
   const { data: session } = useSession();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
-  const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
   const router = useRouter();
   const { DEFAULT_ROUTE } = ENV;
 
-  const handleCancelProcess = async (instanceKey: string) => {
-    try {
-      if (!session?.access_token || !isAdmin)
-        throw new Error('Keine Berechtigung.');
-      await cancelProcessInstance(instanceKey, session.access_token);
-      console.log('Prozess abgebrochen:', instanceKey);
-
-      // Status der Instanz in der Liste aktualisieren
-      setInstances((prevInstances) =>
-        prevInstances.map((instance) =>
-          instance.key === instanceKey
-            ? { ...instance, state: 'CANCELED' } // Status auf "CANCELED" setzen
-            : instance,
-        ),
-      );
-    } catch (error) {
-      setError((error as Error).message || 'Abbrechen fehlgeschlagen.');
-    }
-  };
-
-  const handleDeleteProcess = async (instanceKey: string) => {
-    try {
-      if (!session?.access_token || !isAdmin)
-        throw new Error('Keine Berechtigung.');
-      await deleteProcessInstance(instanceKey, session.access_token);
-      setInstances((prev) =>
-        prev.filter((instance) => instance.key !== instanceKey),
-      );
-      console.log('Prozess gelöscht:', instanceKey);
-    } catch (error) {
-      setError((error as Error).message || 'Löschen fehlgeschlagen.');
-    }
-  };
-
   useEffect(() => {
     /**
-     * Lädt die Prozessinstanzen und filtert diese basierend auf den gesetzten Filtern.
+     * Lädt die Prozessinstanzen eines Users und filtert diese basierend auf den gesetzten Filtern.
      *
      * @async
      * @function fetchData
@@ -122,15 +78,23 @@ export default function ProcessInstances() {
      */
     const fetchData = async () => {
       setLoading(true);
-      setError(null); // Fehler zurücksetzen
+      setError(undefined); // Fehler zurücksetzen
 
       try {
-        if (session === undefined || session?.access_token === undefined) {
+        if (
+          session === undefined ||
+          session?.access_token === undefined ||
+          session?.user === undefined ||
+          session?.user.username === undefined
+        ) {
           router.push(DEFAULT_ROUTE);
           throw new Error('Keine Session vorhanden.');
         }
-        console.log('ProcessInstances: token=', session.access_token);
-        const instanzen = await getAllProcessInstances(session.access_token);
+        console.log('UserProcessInstancesPage: token=', session.access_token);
+        const instanzen = await getProcessInstancesByUser(
+          session.user.username,
+          session.access_token,
+        );
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(
@@ -150,7 +114,8 @@ export default function ProcessInstances() {
               (statusFilter === 'ACTIVE' && instance.state === 'ACTIVE') ||
               (statusFilter === 'COMPLETED' &&
                 instance.state === 'COMPLETED') ||
-              (statusFilter === 'CANCELED' && instance.state === 'CANCELED');
+              (statusFilter === 'CANCELED' && instance.state === 'CANCELED') ||
+              (statusFilter === 'FAILED' && instance.incident === true);
             const matchesProcessName =
               !filter ||
               instance.bpmnProcessId
@@ -171,12 +136,12 @@ export default function ProcessInstances() {
     };
 
     fetchData();
-  }, [session, filter, statusFilter, router, DEFAULT_ROUTE]);
+  }, [session, filter, statusFilter, DEFAULT_ROUTE, router]);
 
   return (
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>
-        Prozessinstanzen
+        Meine Aktiven Prozessinstanzen
       </Typography>
 
       {/* Fehleranzeige */}
@@ -208,6 +173,7 @@ export default function ProcessInstances() {
               <MenuItem value="ACTIVE">Aktive Prozesse</MenuItem>
               <MenuItem value="COMPLETED">Abgeschlossene Prozesse</MenuItem>
               <MenuItem value="CANCELED">Abgebrochene Prozesse</MenuItem>
+              <MenuItem value="FAILED">Fehlgeschlagene Prozesse</MenuItem>
             </Select>
           </FormControl>
 
@@ -278,38 +244,24 @@ export default function ProcessInstances() {
                   </CardContent>
                   <CardActions>
                     <Tooltip title="BPMN ansehen">
-                      <Link href={`/camunda/${instance.key}`} passHref>
+                      <Link
+                        href={`/camunda/fortschritt/${instance.key}`}
+                        passHref
+                      >
                         <IconButton color="primary">
                           <VisibilityIcon />
                         </IconButton>
                       </Link>
                     </Tooltip>
                     <Tooltip title="Details ansehen">
-                      <Link href={`/process/${instance.key}`} passHref>
+                      <Link
+                        href={`/camunda/myProcess/${instance.key}`}
+                        passHref
+                      >
                         <IconButton color="info">
                           <InfoIcon />
                         </IconButton>
                       </Link>
-                    </Tooltip>
-                    <>
-                      {instance.state === 'ACTIVE' && (
-                        <Tooltip title="Prozess abbrechen">
-                          <IconButton
-                            onClick={() => handleCancelProcess(instance.key)}
-                            color="warning"
-                          >
-                            <StopIcon />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                    </>
-                    <Tooltip title="Prozess Löschen">
-                      <IconButton
-                        onClick={() => handleDeleteProcess(instance.key)}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
                     </Tooltip>
                   </CardActions>
                 </Card>

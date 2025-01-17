@@ -8,15 +8,15 @@
 import { Box, Button, Container, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import BpmnViewer from '../../../components/bpmn/BpmnViewer';
-import ProcessDefinitionXmlViewer from '../../../components/bpmn/ProcessDefinitionXmlViewer';
+import BpmnViewer from '../../../../components/bpmn/BpmnViewer';
+import ProcessDefinitionXmlViewer from '../../../../components/bpmn/ProcessDefinitionXmlViewer';
 import {
   getActiveElementId,
   getIncidentFlowNode,
   getProcessDefinitionXml,
   getProcessInstanceDetails,
-} from '../../../lib/api/camunda.api';
-import { ProcessInstance } from '../../../types/process.type';
+} from '../../../../lib/api/camunda.api';
+import { ProcessInstance } from '../../../../types/process.type';
 
 /**
  * Props für die `ProcessDefinitionToggleViewer`-Komponente.
@@ -122,7 +122,7 @@ const ProcessDefinitionToggleViewer = ({
         {/* <Button
           variant="outlined"
           color="secondary"
-          onClick={() => router.push('/process')}
+          onClick={() => router.push('/camunda')}
         >
           Zurück zur Prozessliste
         </Button> */}

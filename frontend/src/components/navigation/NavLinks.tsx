@@ -25,11 +25,11 @@ export default function NavLinks({
   ];
 
   if (session) {
-    links.push({ href: '/myProcess', label: 'Meine Aktiven Prozesse' });
+    links.push({ href: '/camunda/myProcess', label: 'Meine Aktiven Prozesse' });
   }
 
   if (isAdmin) {
-    links.push({ href: '/process', label: 'Alle Aktive Prozesse' });
+    links.push({ href: '/camunda', label: 'Alle Aktive Prozesse' });
   }
 
   return (
@@ -38,6 +38,7 @@ export default function NavLinks({
         <Link
           key={link.href}
           href={link.href}
+          prefetch={true}
           style={{
             color: useCustomStyles
               ? pathname === link.href
@@ -49,6 +50,21 @@ export default function NavLinks({
             textDecoration: 'none',
             fontWeight: pathname === link.href ? 'bold' : 'normal',
             transition: !useCustomStyles ? 'color 0.3s ease-in-out' : undefined,
+          }}
+          onMouseEnter={(e) => {
+            if (!useCustomStyles) {
+              e.currentTarget.style.color = theme.palette.primary.dark;
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!useCustomStyles) {
+              e.currentTarget.style.color =
+                pathname === link.href
+                  ? theme.palette.primary.main
+                  : theme.palette.text.secondary;
+              e.currentTarget.style.transform = 'scale(1)';
+            }
           }}
         >
           <Typography variant="body2" fontWeight="bold">

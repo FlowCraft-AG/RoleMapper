@@ -1,52 +1,36 @@
-/**
- * @file ProcessDefinitionPage.tsx
- * @description Server-Komponente zur Anzeige der Prozessdefinition-Seite.
- * Lädt den Prozessinstanz-Schlüssel (`processInstanceKey`) und übergibt ihn an die Client-Komponente `ProcessDefinitionToggleViewer`.
- *
- * @module ProcessDefinitionPage
- */
-
-import ProcessDefinitionToggleViewer from './ProcessDefinitionToggleViewer';
+import ProcessInstanceDetailsContent from './ProcessInstanceDetails';
 
 /**
- * Props für die `ProcessDefinitionPage`-Komponente.
- *
- * @interface ProcessDefinitionPageProps
- * @property {Promise<{ key: string }>} params - Ein Promise, das die URL-Parameter mit dem Prozessinstanz-Schlüssel enthält.
+ * Eigenschaften der Seite für die Details einer Prozessinstanz.
+ * @typedef ProcessInstanceDetailsPageProps
+ * @property {Promise<{ key: string }>} params - Die Parameter der Seite
+ * @property {string} params.key - Der Schlüssel der Prozessinstanz
  */
-interface ProcessDefinitionPageProps {
+interface ProcessInstanceDetailsPageProps {
   params: Promise<{ key: string }>; // Typ von params anpassen
 }
 
 /**
- * Server-Komponente zur Anzeige der Prozessdefinition.
- *
- * Diese Komponente:
- * - Lädt die URL-Parameter (`params`) asynchron.
- * - Übergibt den `processInstanceKey` an die Client-Komponente `ProcessDefinitionToggleViewer`.
+ * Seite für die Details einer Prozessinstanz.
  *
  * @component
- * @param {ProcessDefinitionPageProps} props - Die Props der Komponente.
- * @returns {JSX.Element} Die JSX-Struktur der Seite.
+ * @param {ProcessInstanceDetailsPageProps} props - Eigenschaften der Seite
+ * @returns {JSX.Element} Die JSX-Struktur der Seite
  *
  * @example
  * ```tsx
- * <ProcessDefinitionPage params={Promise.resolve({ key: 'instance-key' })} />
+ * <ProcessInstanceDetailsPage params={{ key: 'exampleKey' }} />
  * ```
  */
-const ProcessDefinitionPage = async ({
+export default async function ProcessInstanceDetailsPage({
   params,
-}: ProcessDefinitionPageProps) => {
-  // Warte, bis die URL-Parameter (params) aufgelöst sind
-  const { key } = await params;
+}: ProcessInstanceDetailsPageProps) {
+  const { key } = await params; // Warten, bis params aufgelöst ist
+  const processKey = key; // Sicherstellen, dass `params` asynchron verarbeitet wird
 
   return (
     <div>
-      <h1>Process Definition Viewer</h1>
-      {/* Übergabe des Keys an die Clientkomponente */}
-      <ProcessDefinitionToggleViewer processInstanceKey={key} />
+      <ProcessInstanceDetailsContent processKey={processKey} />
     </div>
   );
-};
-
-export default ProcessDefinitionPage;
+}

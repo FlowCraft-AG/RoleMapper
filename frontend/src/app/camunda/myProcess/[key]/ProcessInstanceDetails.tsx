@@ -24,12 +24,12 @@ import {
   getProcessInstanceDetails,
   getProcessInstanceVariables,
   getTasksByProcessInstance,
-} from '../../../lib/api/camunda.api';
+} from '../../../../lib/api/camunda.api';
 import {
   ProcessInstance,
   ProcessTask,
   ProcessVariable,
-} from '../../../types/process.type';
+} from '../../../../types/process.type';
 import GeneralInfoCard from './GeneralInfoCard';
 import TasksGrid from './TasksGrid';
 import VariablesTable from './VariablesTable';
@@ -154,7 +154,7 @@ export default function ProcessInstanceDetailsContent({
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => router.push('/process')} // Navigiert zur `/process`-Seite
+          onClick={() => router.push('/camunda/myProcess')} // Navigiert zur `/myPprocess`-Seite
         >
           Zurück zur Prozessliste
         </Button>
