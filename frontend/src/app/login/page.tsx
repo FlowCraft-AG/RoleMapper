@@ -23,7 +23,6 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [loadingKeycloak, setLoadingKeycloak] = useState(false);
   const router = useRouter();
   const { DEFAULT_ROUTE } = ENV;
 
@@ -44,18 +43,6 @@ export default function SignInPage() {
       router.push(DEFAULT_ROUTE);
     } else {
       setError('Ungültige Anmeldedaten. Bitte versuche es erneut.');
-    }
-  };
-
-  const handleKeycloakLogin = async () => {
-    setLoadingKeycloak(true);
-    try {
-      await signIn('keycloak', { callbackUrl: '/startseite' });
-    } catch (error) {
-      setError('Keycloak-Anmeldung fehlgeschlagen.');
-      console.log(error);
-    } finally {
-      setLoadingKeycloak(false);
     }
   };
 

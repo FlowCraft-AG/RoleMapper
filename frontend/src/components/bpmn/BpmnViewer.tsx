@@ -211,6 +211,7 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
   }, [
     diagramXML,
     diagramURL,
+    isCanceled,
     onLoading,
     onError,
     onShown,

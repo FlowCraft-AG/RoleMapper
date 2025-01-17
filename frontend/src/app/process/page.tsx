@@ -171,7 +171,7 @@ export default function ProcessInstances() {
     };
 
     fetchData();
-  }, [session, filter, statusFilter]);
+  }, [session, filter, statusFilter, router, DEFAULT_ROUTE]);
 
   return (
     <Box sx={{ padding: 4 }}>

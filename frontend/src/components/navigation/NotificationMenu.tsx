@@ -4,7 +4,6 @@ import { Notifications as NotificationsIcon } from '@mui/icons-material';
 import {
   Badge,
   Box,
-  Button,
   Card,
   CardActionArea,
   Divider,
@@ -89,8 +88,11 @@ export default function NotificationMenu({
   /**
    * Ruft Benachrichtigungen ab und teilt sie nach `isSingleUser`.
    */
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
+      if (lookaheadPeriod < 0) {
+        return;
+      }
       const functionsInfo = await fetchFunctionsWithNoUsersOrRetiringUsers(
         lookaheadPeriod,
         timeUnit,
@@ -117,7 +119,7 @@ export default function NotificationMenu({
     } catch (error) {
       console.error('Fehler beim Abrufen der Benachrichtigungen:', error);
     }
-  };
+  }, [lookaheadPeriod, timeUnit]);
 
   /**
    * Handhabt das Klicken auf eine Benachrichtigung und navigiert zur entsprechenden Organisationseinheit.
@@ -154,7 +156,7 @@ export default function NotificationMenu({
       NOTIFICATION_UPDATE_INTERVAL,
     );
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchNotifications]);
 
   const renderNotifications = (notifications: Notification[]) => (
     <Box sx={{ maxHeight: '60vh', overflowY: 'auto' }}>
@@ -271,9 +273,6 @@ export default function NotificationMenu({
                 <MenuItem value="JAHRE">Jahre</MenuItem>
               </Select>
             </FormControl>
-            <Button variant="contained" onClick={fetchNotifications} fullWidth>
-              Anwenden
-            </Button>
           </Box>
           {activeTab === 0 && renderNotifications(notificationsSingleUser)}
           {activeTab === 1 && renderNotifications(notificationsMultiUser)}

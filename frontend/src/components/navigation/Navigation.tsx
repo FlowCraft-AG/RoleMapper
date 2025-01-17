@@ -50,7 +50,7 @@ export default function Navigation() {
           session={session}
         />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <NotificationMenu theme={theme} router={router} />
+          {isAdmin && <NotificationMenu theme={theme} router={router} />}
           <Switch
             checked={useCustomStyles}
             onChange={toggleCustomStyles}

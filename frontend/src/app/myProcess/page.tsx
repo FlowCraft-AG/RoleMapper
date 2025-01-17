@@ -136,7 +136,7 @@ export default function UserProcessInstancesPage() {
     };
 
     fetchData();
-  }, [session, filter, statusFilter]);
+  }, [session, filter, statusFilter, DEFAULT_ROUTE, router]);
 
   return (
     <Box sx={{ padding: 4 }}>
