@@ -18,4 +18,5 @@
 export type GetRolesInput = {
     processId: string;
     userId: string;
+    orgUnit?: string;
 };

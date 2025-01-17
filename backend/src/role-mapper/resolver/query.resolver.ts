@@ -63,9 +63,14 @@ export class QueryResolver {
     async getRole(
         @Args() input: GetRolesInput, // Verwende `Args` mit dem Typ `GetRolesInput`
     ): Promise<RolePayload> {
-        const { processId, userId } = input; // Destrukturiere die Eingabe
-        this.#logger.debug(`getRole: processId=${processId}, userId=${userId}`);
-        const rollen = await this.#service.findProcessRoles(processId, userId); // Aufruf der Service-Methode
+        const { processId, userId, orgUnit } = input; // Destrukturiere die Eingabe
+        this.#logger.debug(
+            'getRole: processId=%s, userId=%s, orgUnit=%s',
+            processId,
+            userId,
+            orgUnit,
+        );
+        const rollen = await this.#service.findProcessRoles(processId, userId, orgUnit); // Aufruf der Service-Methode
         this.#logger.debug('getRole: result=%o', rollen);
         return rollen;
     }

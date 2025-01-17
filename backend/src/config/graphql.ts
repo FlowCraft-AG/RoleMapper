@@ -9,18 +9,17 @@ import { RESOURCES_DIR } from './app.js';
  * Pfade zu den GraphQL-Schema-Dateien, modularisiert nach Verantwortlichkeiten.
  */
 const graphqlSchemas = [
-    // Camunda-Schemas
-    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.input.graphql'),
-    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.type.graphql'),
-    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.graphql'),
-
-    // RoleMapper-Schemas
     path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.input.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.input.graphql'),
+
     path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.type.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.type.graphql'),
+
     path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.graphql'),
 ];
 // Debug-Ausgabe zur Überprüfung der geladenen Pfade
-console.debug('GraphQL-Schemas:', graphqlSchemas);
+// console.debug('GraphQL-Schemas:', graphqlSchemas);
 
 /**
  * Das Konfigurationsobjekt für GraphQL (siehe src\app.module.ts).

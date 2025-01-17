@@ -89,8 +89,15 @@ export class ReadService {
      * console.log(result.roles); // Gibt die Rollen und die zugehörigen Benutzer aus
      * ```
      */
-    async findProcessRoles(_id: string, userId: string): Promise<{ roles: RoleResult[] }> {
+    async findProcessRoles(
+        _id: string,
+        userId: string,
+        specifiedOrgUnit?: string,
+    ): Promise<{ roles: RoleResult[] }> {
         this.#logger.debug('findProcessRoles: _id=%s, userId=%s', _id, userId);
+
+        // Standardwert zuweisen, falls `specifiedOrgUnit` nicht gesetzt ist
+        specifiedOrgUnit = specifiedOrgUnit ?? undefined;
 
         // Abrufen des Prozesses aus der Datenbank anhand der Prozess-ID
         const process: Process = await this.#modelMap.PROCESSES?.findOne({ _id }).exec();
@@ -156,7 +163,7 @@ export class ReadService {
                     // Abfrage-Pipeline aus der Rolle ausführen
                     const queryPipeline = role.query ?? [];
                     const users = await this.#modelMap.MANDATES.aggregate(queryPipeline)
-                        .option({ let: { userId } }) // Lokale Variable für die Pipeline
+                        .option({ let: { userId, specifiedOrgUnit } }) // Lokale Variable für die Pipeline
                         .exec();
 
                     // Ergebnisstruktur für die Rolle erstellen
