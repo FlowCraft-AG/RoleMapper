@@ -1,4 +1,3 @@
-/* eslint-disable @stylistic/operator-linebreak */
 /**
  * @file ZeebeService
  * @module ZeebeService
@@ -7,6 +6,8 @@
 
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @stylistic/operator-linebreak */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ZBClient, ZBWorker } from 'zeebe-node';
@@ -184,8 +185,11 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
                         userId,
                         orgUnitId,
                     );
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                    const result = await this.#service.findProcessRoles(processId, userId, orgUnitId);
+                    const result = await this.#service.findProcessRoles(
+                        processId,
+                        userId,
+                        orgUnitId,
+                    );
                     this.#logger.debug('Rollen für den Benutzer: %o', result);
 
                     const antragsteller = result?.roles[1]?.users[0]?.user;
