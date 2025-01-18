@@ -15,11 +15,14 @@ import { Alert, CircularProgress, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
+import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
-import { useCallback, useEffect, useState } from 'react';
+import { JSXElementConstructor, useCallback, useEffect, useState } from 'react';
 import { fetchAllProcesses } from '../../lib/api/rolemapper/process.api';
 import { Process } from '../../types/process.type';
 import { getListItemStyles } from '../../utils/styles';
+import { CustomProcessTreeItem } from '../customs/CustomProcessTreeItem';
+import TransitionComponent from '../organigramm/TransitionComponent';
 
 /**
  * Erweiterte Slot-Props für die TreeItem-Komponente.
@@ -27,10 +30,10 @@ import { getListItemStyles } from '../../utils/styles';
  * @interface ExtendedSlotProps
  * @extends TreeItem2Props
  * @property {function} refetch - Methode zum Neuladen der Daten.
- * @property {function} onRemove - Callback-Funktion, um Elemente zu entfernen.
  */
 interface ExtendedSlotProps extends TreeItem2Props {
-  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
+  refetch: () => Promise<void>; // Die refetch-Methode
+  onRemove: () => void;
 }
 
 /**
@@ -38,7 +41,6 @@ interface ExtendedSlotProps extends TreeItem2Props {
  *
  * @interface ProcessRichTreeViewProps
  * @property {function} onSelect - Callback-Funktion, die aufgerufen wird, wenn ein Prozess ausgewählt wird.
- * @property {function} onRemove - Callback-Funktion, die aufgerufen wird, wenn Prozesse entfernt werden.
  * @property {string[] | undefined} expandedNodes - Die Knoten, die standardmäßig geöffnet sind.
  */
 interface ProcessRichTreeViewProps {
@@ -87,6 +89,10 @@ export default function ProcessSpalte({ onSelect }: ProcessRichTreeViewProps) {
       setLoading(false);
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
+
+  const onRemove = () => {
+    loadProcesses();
+  };
 
   useEffect(() => {
     loadProcesses();
@@ -148,6 +154,11 @@ export default function ProcessSpalte({ onSelect }: ProcessRichTreeViewProps) {
     onSelect(selectedProcess);
   };
 
+  const refetch = (processList: Process[]) => {
+      setProcesses(processes);
+      onRemove();
+  };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250 }}>
       <RichTreeView
@@ -156,9 +167,14 @@ export default function ProcessSpalte({ onSelect }: ProcessRichTreeViewProps) {
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
           endIcon: DescriptionIcon,
+          item: CustomProcessTreeItem as unknown as JSXElementConstructor<TreeItemProps>,
         }}
         slotProps={{
-          item: {} as ExtendedSlotProps,
+          item: {
+            onRemove,
+            refetch, // Weitergabe der Refetch-Methode an CustomTreeItem
+            slots: { groupTransition: TransitionComponent },
+          } as ExtendedSlotProps, // Erweiterter Typ
         }}
         onItemClick={handleItemClick}
         sx={{

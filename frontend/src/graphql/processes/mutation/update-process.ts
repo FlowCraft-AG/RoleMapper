@@ -32,3 +32,17 @@ export const UPDATE_PROCESS_ROLES = gql`
     }
   }
 `;
+
+export const UPDATE_PROCESS_COLLECTION = gql`
+  mutation UpdateEntity($id: String!, $name: String, $parentId: ID) {
+    updateEntity(
+      input: {
+        entity: PROCESSES
+        filter: { field: _id, operator: EQ, value: $id }
+        processData: { name: $name, parentId: $parentId }
+      }
+    ) {
+      success
+    }
+  }
+`;

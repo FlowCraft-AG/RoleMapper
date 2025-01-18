@@ -564,10 +564,7 @@ type Process {
   """
   parentId: String
   name: String
-  """
-  Eindeutige Prozess-ID.
-  """
-  processId: String
+
   """
   Liste der Rollen, die mit dem Prozess verknüpft sind.
   """

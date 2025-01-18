@@ -21,6 +21,7 @@ import {
     CreateDataInput,
     CreateFunctionInput,
     CreateOrgUnitInput,
+    CreateProcessInput,
 } from '../model/input/create.input.js';
 import { FilterInput } from '../model/input/filter.input.js';
 import { SortInput } from '../model/input/sort.input.js';
@@ -28,6 +29,7 @@ import {
     UpdateDataInput,
     UpdateFunctionInput,
     UpdateOrgUnitInput,
+    UpdateProcessInput,
 } from '../model/input/update.input.js';
 import { ReadService } from './read.service.js';
 
@@ -79,6 +81,16 @@ export class WriteService {
             data.orgUnit = this.#convertToObjectId(data.orgUnit, 'orgUnit') ?? new Types.ObjectId();
         }
 
+        // Typprüfung für PROCESS
+        if (
+            entity === 'PROCESSES' &&
+            this.#isCreateProcessInput(data) &&
+            data.parentId !== undefined
+        ) {
+            data.parentId =
+                this.#convertToObjectId(data.parentId, 'parentId') ?? new Types.ObjectId();
+        }
+
         const result = await model.create(data);
         return result.toObject();
     }
@@ -112,6 +124,16 @@ export class WriteService {
                 data.orgUnit =
                     this.#convertToObjectId(data.orgUnit, 'orgUnit') ?? new Types.ObjectId();
             }
+        }
+
+        // Typprüfung für PROCESS
+        if (
+            entity === 'PROCESSES' &&
+            this.#isUpdateProcessInput(data) &&
+            data.parentId !== undefined
+        ) {
+            data.parentId =
+                this.#convertToObjectId(data.parentId, 'parentId') ?? new Types.ObjectId();
         }
 
         const result = await model.updateMany(filterQuery, data).exec();
@@ -343,6 +365,10 @@ export class WriteService {
         return (data as CreateFunctionInput)?.functionName !== undefined;
     }
 
+    #isCreateProcessInput(data: CreateDataInput | undefined): data is CreateProcessInput {
+        return (data as CreateProcessInput)?.name !== undefined;
+    }
+
     #convertToObjectId(
         value: Types.ObjectId | string | undefined,
         fieldName: string,
@@ -383,6 +409,14 @@ export class WriteService {
             data &&
             'functionName' in data && // Prüft, ob es sich um ein Mandat handelt
             (typeof data.orgUnit === 'string' || data.orgUnit === undefined)
+        );
+    }
+
+    #isUpdateProcessInput(data: UpdateDataInput): data is UpdateProcessInput {
+        return (
+            data &&
+            'name' in data && // Prüft, ob es sich um ein Process handelt
+            (typeof data.name === 'string' || data.name === undefined)
         );
     }
 }

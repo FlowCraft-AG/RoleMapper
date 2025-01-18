@@ -86,8 +86,7 @@ export default function ProcessInstancesPage() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedInstance, setSelectedInstance] =
-      useState<ProcessInstance | null>(null);
-
+    useState<ProcessInstance | null>(null);
 
   const handleCancelProcess = async () => {
     if (!selectedInstance) return;
@@ -120,7 +119,7 @@ export default function ProcessInstancesPage() {
         setError('Keine Berechtigung.');
         setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
       }
-        if (selectedInstance.state !== 'CANCELED') {
+      if (selectedInstance.state !== 'CANCELED') {
         setError(
           'Der Prozess ist noch aktiv und kann nicht gelöscht werden. Bitte schließen oder brechen Sie den Prozess ab, bevor Sie ihn löschen.',
         );
@@ -164,7 +163,6 @@ export default function ProcessInstancesPage() {
     setSelectedInstance(instance);
     setCancelDialogOpen(true);
   };
-
 
   useEffect(() => {
     /**

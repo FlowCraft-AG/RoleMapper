@@ -71,3 +71,12 @@ export const GET_PROCESSES_SHORT = gql`
     }
   }
 `;
+export const GET_PROCESS_COLLECTIONS = gql`
+  query GetProcessCollectionList {
+    getProcessCollectionList {
+      _id
+      parentId
+      name
+    }
+  }
+`;

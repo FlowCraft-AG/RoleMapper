@@ -152,12 +152,7 @@ export type UpdateFunctionInput = {
  * Eingabetyp für die Aktualisierung von Prozessen.
  */
 export type UpdateProcessInput = {
-    /**
-     * Die ID des Prozesses.
-     *
-     * @type {string}
-     */
-    processId: string;
+    parentId: Types.ObjectId;
 
     /**
      * Der Name des Prozesses.

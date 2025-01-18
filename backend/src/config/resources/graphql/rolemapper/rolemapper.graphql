@@ -59,6 +59,8 @@ Die Ergebnisse basieren auf einem angegebenen Zeitraum und einer Zeiteinheit.
     """
     timeUnit: TimeUnit = JAHRE
   ): [UnassignedFunctionsPayload]
+
+  getProcessCollectionList: [Process]
 }
 
 ###############################################################################################G

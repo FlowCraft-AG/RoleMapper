@@ -224,11 +224,6 @@ Input-Daten für die Erstellung eines Prozesses.
 """
 input CreateProcessInput {
   """
-  Eindeutige ID des Prozesses.
-  """
-  processId: String!
-
-  """
   Name des Prozesses.
   """
   name: String!
@@ -236,7 +231,9 @@ input CreateProcessInput {
   """
   Liste der Rollen, die mit dem Prozess verknüpft sind.
   """
-  roles: [ProcessRoleInput!]!
+  roles: [ProcessRoleInput]
+
+  parentId: ID
 }
 
 """
@@ -251,12 +248,12 @@ input ProcessRoleInput {
   """
   Eindeutige ID der Rolle.
   """
-  roleId: String!
+  roleId: ID
 
   """
   Typ der Rolle, z. B. COLLECTION.
   """
-  roleType: RoleType!
+  roleType: RoleType
 }
 
 """
@@ -459,11 +456,6 @@ Input-Daten für die Aktualisierung eines Prozesses.
 """
 input UpdateProcessInput {
   """
-  Eindeutige ID des Prozesses.
-  """
-  processId: String
-
-  """
   Name des Prozesses.
   """
   name: String
@@ -472,6 +464,8 @@ input UpdateProcessInput {
   Liste der Rollen, die mit dem Prozess verknüpft sind.
   """
   roles: [ProcessRoleInput]
+
+    parentId: ID
 }
 
 """
@@ -491,7 +485,7 @@ input UpdateOrgUnitInput {
   """
   ID der übergeordneten Organisationseinheit.
   """
-  parentId: String
+  parentId: ID
 
   """
   Verantwortlicher der Organisationseinheit.

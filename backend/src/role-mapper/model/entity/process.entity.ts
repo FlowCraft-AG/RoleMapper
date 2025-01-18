@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-type RoleType = 'COLLECTION' | 'IMPLICITE_FUNCTION' | 'IMPLICITE_ORG_UNIT';
+export type RoleType = 'COLLECTION' | 'IMPLICITE_FUNCTION' | 'IMPLICITE_ORG_UNIT';
 
 /**
  * Definiert das Schema für die Role-Entität innerhalb eines Prozesses.
@@ -17,7 +17,7 @@ export class ShortRole {
 
     /** Typ der Rolle (z. B. "COLLECTION"). */
     @Prop({ required: true })
-    roleType!: RoleType;
+    roleType?: RoleType;
 }
 
 /**
@@ -40,18 +40,6 @@ export class Process extends Document {
     @Prop({ required: true })
     name!: string;
 
-    @Prop({ required: true })
-    parentId!: string;
-
-    /**
-     * Die eindeutige ID des Prozesses.
-     *
-     * @type {string}
-     * @required
-     */
-    @Prop({ required: true })
-    processId!: string;
-
     /**
      * Die Rollen, die dem Prozess zugeordnet sind.
      * Liste der Rollen, die dem Prozess zugeordnet sind.
@@ -59,8 +47,11 @@ export class Process extends Document {
      * @type {Role[]}
      * @required
      */
-    @Prop({ type: [ShortRole], required: true })
+    @Prop({ type: [ShortRole], required: false })
     roles!: ShortRole[];
+
+    @Prop({ required: false })
+    parentId!: Types.ObjectId;
 }
 
 export type ProcessDocument = Process & Document;

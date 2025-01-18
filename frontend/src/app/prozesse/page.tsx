@@ -8,7 +8,7 @@
 
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import ProcessPage from '../../components/prozess/processPage';
+import ProcessPage from './processPage';
 
 /**
  * Metadata für die Prozesse-Seite.

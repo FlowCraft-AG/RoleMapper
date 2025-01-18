@@ -22,13 +22,13 @@ import {
 } from '../../lib/api/rolemapper/function.api';
 import { StyledTreeItem } from '../../styles/StyleTreeItem';
 import { FunctionString } from '../../types/function.type';
-import { CustomLabel, CustomLabelProps } from '../customs/CustomLabel';
 import OrgUnitFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal1';
 import ConfirmDeleteModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal2';
 import ChildFunctionsModal from '../modal/orgUnitModals/ConfirmOrgUnitDeleteModal3';
 import CreateOrgUnitModal from '../modal/orgUnitModals/CreateOrgUnitModal';
 import DeleteConfirmationModal from '../modal/orgUnitModals/DeleteConfirmedOrgUnitModal'; // Importiere das ausgelagerte Delete-Modal
 import EditOrgUnitModal from '../modal/orgUnitModals/EditOrgUnitModal';
+import { CustomLabel, CustomLabelProps } from './CustomOrgUnitLabel';
 
 /**
  * Interface für die Darstellung eines zu rendernden Items.

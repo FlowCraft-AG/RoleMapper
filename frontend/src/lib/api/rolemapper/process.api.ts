@@ -1,14 +1,19 @@
 'use server';
 
-import { CREATE_PROCESS } from '../../../graphql/processes/mutation/create-process';
+import {
+  CREATE_PROCESS,
+  CREATE_PROCESS_COLLECTION,
+} from '../../../graphql/processes/mutation/create-process';
 import { DELETE_PROCESS } from '../../../graphql/processes/mutation/delete-process';
 import {
   UPDATE_PROCESS,
+  UPDATE_PROCESS_COLLECTION,
   UPDATE_PROCESS_ROLES,
 } from '../../../graphql/processes/mutation/update-process';
 import {
   GET_ALL_PROCESSES,
   GET_PROCESS_BY_ID,
+  GET_PROCESS_COLLECTIONS,
   GET_PROCESSES_SHORT,
 } from '../../../graphql/processes/query/get-processes.query';
 import { GET_ROLES_BY_PROCESS } from '../../../graphql/processes/query/get-roles';
@@ -37,6 +42,19 @@ export async function fetchAllProcesses(): Promise<Process[]> {
     });
 
     return data.getData.data || [];
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden der Prozesse.');
+  }
+}
+
+export async function fetchAllProcessCollections() {
+  logger.debug('Lade alle Prozesse Sammlungen');
+  try {
+    const { data } = await client.query({
+      query: GET_PROCESS_COLLECTIONS,
+    });
+
+    return data.getProcessCollectionList || [];
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Laden der Prozesse.');
   }
@@ -81,16 +99,30 @@ export async function createProcess(
   try {
     logger.debug('Erstelle neuen Prozess: %o', { name, parentId, roles });
 
-    await client.mutate({
-      mutation: CREATE_PROCESS,
-      variables: { name, parentId, roles },
-      refetchQueries: [{ query: GET_ALL_PROCESSES }],
-      awaitRefetchQueries: true,
-    });
+    if (roles.length === 0) {
+      // Ohne Rollen
+      await client.mutate({
+        mutation: CREATE_PROCESS,
+        variables: { name, parentId },
+        refetchQueries: [{ query: GET_ALL_PROCESSES }],
+        awaitRefetchQueries: true,
+      });
+    } else {
+      // Mit Rollen
+      await client.mutate({
+        mutation: CREATE_PROCESS,
+        variables: { name, parentId, roles },
+        refetchQueries: [{ query: GET_ALL_PROCESSES }],
+        awaitRefetchQueries: true,
+      });
+    }
 
     return await fetchAllProcesses();
   } catch (error) {
-    handleGraphQLError(error, 'Fehler beim Erstellen des Prozesses.');
+    handleGraphQLError(
+      error,
+      `Fehler beim Erstellen des neuen Prozesses: ${name}`,
+    );
   }
 }
 
@@ -237,6 +269,51 @@ export async function fetchProcessIds(): Promise<ShortProcess[]> {
     });
 
     return data.getData.data;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
+  }
+}
+
+export async function createProcessCollection(
+  name: string,
+  parentId: string | undefined,
+): Promise<string> {
+  try {
+    logger.debug(
+      'createProcessCollection: name=%s, parentId=%s',
+      name,
+      parentId,
+    );
+
+    const { data } = await client.query({
+      query: CREATE_PROCESS_COLLECTION,
+      variables: { name, parentId },
+    });
+
+    return data.createEntity.result._id;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
+  }
+}
+
+export async function updateProcessCollection(
+  id: string,
+  name: string,
+  parentId: string | undefined,
+): Promise<Process[]> {
+  try {
+    logger.debug(
+      'createProcessCollection: name=%s, parentId=%s',
+      name,
+      parentId,
+    );
+
+    const { data } = await client.query({
+      query: UPDATE_PROCESS_COLLECTION,
+      variables: { id, name, parentId },
+    });
+
+      return fetchAllProcesses();
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
   }

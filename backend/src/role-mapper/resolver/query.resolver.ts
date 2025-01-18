@@ -9,6 +9,7 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { EntityType } from '../model/entity/entities.entity.js';
 import { Mandates } from '../model/entity/mandates.entity.js';
 import { OrgUnit } from '../model/entity/org-unit.entity.js';
+import { Process } from '../model/entity/process.entity.js';
 import { User } from '../model/entity/user.entity.js';
 import { DataInput } from '../model/input/data.input.js';
 import { GetRolesInput } from '../model/input/get-roles.input.js';
@@ -73,6 +74,12 @@ export class QueryResolver {
         const rollen = await this.#service.findProcessRoles(processId, userId, orgUnit); // Aufruf der Service-Methode
         this.#logger.debug('getRole: result=%o', rollen);
         return rollen;
+    }
+
+    @Query('getProcessCollectionList')
+    @Public() // Kennzeichnet die Abfrage als öffentlich zugänglich
+    async getProcessCollection(): Promise<Process[]> {
+        return this.#service.findProcessCollections(); // Aufruf der Service-Methode;
     }
 
     /**

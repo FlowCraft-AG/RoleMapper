@@ -9,7 +9,6 @@ import NavLinks from './NavLinks';
 import NotificationMenu from './NotificationMenu';
 import UserMenu from './UserMenu';
 
-const { ADMIN_GROUP } = ENV;
 /**
  * Hauptkomponente für die Navigationsleiste.
  */
@@ -19,7 +18,7 @@ export default function Navigation() {
   const router = useRouter();
   const { useCustomStyles, toggleCustomStyles } = useFacultyTheme();
   const { data: session, update } = useSession();
-
+  const { ADMIN_GROUP } = ENV;
   const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
 
   const dynamicStyles = useCustomStyles

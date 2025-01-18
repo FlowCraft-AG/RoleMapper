@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
@@ -71,6 +69,14 @@ export class ReadService {
             ROLES: roleModel,
             ORG_UNITS: orgUnitModel,
         };
+    }
+
+    async findProcessCollections(): Promise<Process[]> {
+        const result: Process[] = await this.#modelMap.PROCESSES?.find({
+            roles: { $exists: false },
+        }).exec();
+        console.debug('Gefundene Prozesssammlungen ohne roles:', result);
+        return result;
     }
 
     /**
@@ -158,7 +164,6 @@ export class ReadService {
 
         // Verarbeitung der Rollen und zugehörigen Benutzer mit Aggregations-Pipeline
         const resultsCollection = await Promise.all(
-
             roles.map(async (role) => {
                 this.#logger.debug('Verarbeite Rolle: %o', role);
 
@@ -910,7 +915,7 @@ export class ReadService {
      * ```
      */
     #buildFieldQuery(filter: FilterInput, query: FilterQuery<any>): void {
-        // Validierung von Operator und Feld
+        // Validierung von Operator und Feldd
         if (!filter.operator || filter.field === null) {
             throw new Error(
                 `Ungültiger Filter: operator oder field fehlt (${JSON.stringify(filter)})`,
