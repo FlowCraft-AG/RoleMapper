@@ -20,6 +20,10 @@ import {
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import GeneralInfoCard from '../../../components/camunda/GeneralInfoCard';
+import ProcessDefinitionToggleViewer from '../../../components/camunda/ProcessDefinitionToggleViewer';
+import TasksGrid from '../../../components/camunda/TasksGrid';
+import VariablesTable from '../../../components/camunda/VariablesTable';
 import {
   getProcessInstanceDetails,
   getProcessInstanceVariables,
@@ -31,10 +35,6 @@ import {
   ProcessVariable,
 } from '../../../types/process.type';
 import { ENV } from '../../../utils/env';
-import GeneralInfoCard from '../../../components/camunda/GeneralInfoCard';
-import ProcessDefinitionToggleViewer from '../../../components/camunda/ProcessDefinitionToggleViewer';
-import TasksGrid from '../../../components/camunda/TasksGrid';
-import VariablesTable from '../../../components/camunda/VariablesTable';
 
 /**
 /**

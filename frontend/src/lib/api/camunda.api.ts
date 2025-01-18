@@ -288,7 +288,7 @@ export async function startCamundaProcessInstance(
 }
 
 export async function cancelProcessInstance(
-  processInstanceKey: string,
+  processInstanceKey: string | undefined,
   token: string,
 ): Promise<void> {
   logger.debug(
@@ -316,7 +316,7 @@ export async function deleteProcessInstance(
     processInstanceKey,
     token,
   );
-    try {
+  try {
     const client = getApolloClient(token);
     await client.mutate({
       mutation: DELETE_PROCESS_INSTANCE,

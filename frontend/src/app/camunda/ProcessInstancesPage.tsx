@@ -82,69 +82,89 @@ export default function ProcessInstancesPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
   const router = useRouter();
-    const { DEFAULT_ROUTE } = ENV;
-     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-     const [selectedInstance, setSelectedInstance] =
-       useState<ProcessInstance | null>(null);
+  const { DEFAULT_ROUTE } = ENV;
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedInstance, setSelectedInstance] =
+      useState<ProcessInstance | null>(null);
 
-  const handleCancelProcess = async (instanceKey: string) => {
+
+  const handleCancelProcess = async () => {
+    if (!selectedInstance) return;
     try {
-      if (!session?.access_token || !isAdmin)
+      if (!session?.access_token || !isAdmin) {
         throw new Error('Keine Berechtigung.');
-      await cancelProcessInstance(instanceKey, session.access_token);
-      console.log('Prozess abgebrochen:', instanceKey);
+        setTimeout(() => setError(null), 5000);
+      }
 
+      await cancelProcessInstance(selectedInstance.key, session.access_token);
       // Status der Instanz in der Liste aktualisieren
       setInstanceList((prevInstances) =>
         prevInstances.map((instance) =>
-          instance.key === instanceKey
+          instance.key === selectedInstance.key
             ? { ...instance, state: 'CANCELED' } // Status auf "CANCELED" setzen
             : instance,
         ),
       );
+      setCancelDialogOpen(false);
     } catch (error) {
       setError((error as Error).message || 'Abbrechen fehlgeschlagen.');
       setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
     }
   };
 
-    const handleDeleteProcess = async () => {
-       if (!selectedInstance) return;
+  const handleDeleteProcess = async () => {
+    if (!selectedInstance) return;
     try {
-        if (!session?.access_token || !isAdmin) {
-          setError('Keine Berechtigung.');
-          setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
-        }
-         if (selectedInstance.state !== 'CANCELED') {
-           setError('Nur abgebrochene Prozesse können gelöscht werden.');
-           setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
-           return;
-         }
+      if (!session?.access_token || !isAdmin) {
+        setError('Keine Berechtigung.');
+        setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
+      }
+        if (selectedInstance.state !== 'CANCELED') {
+        setError(
+          'Der Prozess ist noch aktiv und kann nicht gelöscht werden. Bitte schließen oder brechen Sie den Prozess ab, bevor Sie ihn löschen.',
+        );
+        setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
+        return;
+      }
       await deleteProcessInstance(selectedInstance.key, session?.access_token);
       setInstanceList((prev) =>
         prev.filter((instance) => instance.key !== selectedInstance.key),
       );
-         setDeleteDialogOpen(false);
+      setDeleteDialogOpen(false);
       console.log('Prozess gelöscht:', selectedInstance.key);
     } catch (error) {
       setError((error as Error).message || 'Löschen fehlgeschlagen.');
       setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
     }
-    };
+  };
 
-      const openDeleteDialog = (instance: ProcessInstance) => {
-        if (instance.state !== 'CANCELED') {
-            setError('Nur abgebrochene Prozesse können gelöscht werden.');
-            setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
-            return;
-        }
-        setSelectedInstance(instance);
-        setDeleteDialogOpen(true);
-      };
-     const closeDeleteDialog = () => {
-       setSelectedInstance(null);
-       setDeleteDialogOpen(false);
-     };
+  const openDeleteDialog = (instance: ProcessInstance) => {
+    if (instance.state === 'ACTIVE') {
+      setError('Nur abgebrochene Prozesse können gelöscht werden.');
+      setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
+      return;
+    }
+    setSelectedInstance(instance);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDialogs = () => {
+    setSelectedInstance(null);
+    setDeleteDialogOpen(false);
+    setCancelDialogOpen(false);
+  };
+
+  const openCancelDialog = (instance: ProcessInstance) => {
+    if (instance.state !== 'ACTIVE') {
+      setError('Nur aktive Prozesse können abgebrochen werden.');
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+    setSelectedInstance(instance);
+    setCancelDialogOpen(true);
+  };
+
 
   useEffect(() => {
     /**
@@ -167,11 +187,7 @@ export default function ProcessInstancesPage() {
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(
-          new Set(
-            instanzen.map(
-              (instance: ProcessInstance) => instance.name,
-            ),
-          ),
+          new Set(instanzen.map((instance: ProcessInstance) => instance.name)),
         );
 
         setAllProcesses(processNames);
@@ -235,7 +251,7 @@ export default function ProcessInstancesPage() {
       )}
 
       {/* Restliche Komponenten wie Filter und Grid2 */}
-      {!loading  && (
+      {!loading && (
         <>
           {/* Filter für Status */}
           <FormControl fullWidth sx={{ marginBottom: 3 }}>
@@ -332,7 +348,7 @@ export default function ProcessInstancesPage() {
                       {instance.state === 'ACTIVE' && (
                         <Tooltip title="Prozess abbrechen">
                           <IconButton
-                            onClick={() => handleCancelProcess(instance.key)}
+                            onClick={() => openCancelDialog(instance)}
                             color="warning"
                           >
                             <StopIcon />
@@ -354,7 +370,7 @@ export default function ProcessInstancesPage() {
             ))}
           </Grid2>
 
-          <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
+          <Dialog open={deleteDialogOpen} onClose={closeDialogs}>
             <DialogTitle>Prozess löschen</DialogTitle>
             <DialogContent>
               <DialogContentText>
@@ -363,7 +379,7 @@ export default function ProcessInstancesPage() {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={closeDeleteDialog} color="secondary">
+              <Button onClick={closeDialogs} color="secondary">
                 Abbrechen
               </Button>
               <Button
@@ -372,6 +388,29 @@ export default function ProcessInstancesPage() {
                 variant="contained"
               >
                 Löschen
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Dialog für das Abbrechen */}
+          <Dialog open={cancelDialogOpen} onClose={closeDialogs}>
+            <DialogTitle>Prozess abbrechen</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Möchten Sie die Prozessinstanz wirklich abbrechen? Diese Aktion
+                wird den Prozessstatus auf "Abgebrochen" setzen.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={closeDialogs} color="secondary">
+                Abbrechen
+              </Button>
+              <Button
+                onClick={handleCancelProcess}
+                color="warning"
+                variant="contained"
+              >
+                Abbrechen
               </Button>
             </DialogActions>
           </Dialog>
