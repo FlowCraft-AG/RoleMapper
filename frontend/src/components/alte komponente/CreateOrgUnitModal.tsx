@@ -10,9 +10,9 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchAllFunctions } from '../../lib/api/function.api';
-import { createOrgUnit } from '../../lib/api/orgUnit.api';
-import { fetchEmployees } from '../../lib/api/user.api';
+import { fetchAllFunctions } from '../../lib/api/rolemapper/function.api';
+import { createOrgUnit } from '../../lib/api/rolemapper/orgUnit.api';
+import { fetchEmployees } from '../../lib/api/rolemapper/user.api';
 import { FunctionString } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { ShortUser } from '../../types/user.type';

@@ -4,7 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SessionProvider } from 'next-auth/react';
 import localFont from 'next/font/local';
 import React from 'react';
-import Navigation from '../components/Navigation';
+import Navigation from '../components/navigation/Navigation';
 import ThemeProviderWrapper from '../theme/ThemeProviderWrapper';
 import './globals.css';
 
@@ -34,11 +34,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProviderWrapper>
           <SessionProvider>
-            {/* <ThemeProvider theme={theme}> */}
             <CssBaseline />
             <Navigation />
             {children}
-            {/* </ThemeProvider> */}
           </SessionProvider>
         </ThemeProviderWrapper>
       </body>

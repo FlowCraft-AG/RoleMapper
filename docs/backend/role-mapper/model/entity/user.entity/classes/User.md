@@ -6,7 +6,7 @@
 
 # Class: User
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:86](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L86)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:86](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L86)
 
 Repräsentiert einen Benutzer in der Datenbank.
 
@@ -50,7 +50,7 @@ Defined in: node\_modules/mongoose/types/document.d.ts:22
 
 > **active**: `boolean`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:121](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L121)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:121](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L121)
 
 Gibt an, ob der Benutzer aktiv ist.
 
@@ -68,7 +68,7 @@ true
 
 > `optional` **employee**: `Employee`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:156](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L156)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:156](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L156)
 
 Optionales Mitarbeiterobjekt, falls der Benutzer ein Mitarbeiter ist.
 
@@ -80,7 +80,7 @@ Optionales Mitarbeiterobjekt, falls der Benutzer ein Mitarbeiter ist.
 
 > **orgUnit**: `string`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:113](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L113)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:113](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L113)
 
 Organisationseinheit des Benutzers.
 
@@ -92,7 +92,7 @@ Organisationseinheit des Benutzers.
 
 > **profile**: `Profile`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:142](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L142)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:142](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L142)
 
 Profil des Benutzers.
 
@@ -104,7 +104,7 @@ Profil des Benutzers.
 
 > `optional` **student**: `Student`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:149](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L149)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:149](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L149)
 
 Optionales Studentenobjekt, falls der Benutzer ein Student ist.
 
@@ -116,7 +116,7 @@ Optionales Studentenobjekt, falls der Benutzer ein Student ist.
 
 > **userId**: `string`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:92](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L92)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:92](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L92)
 
 Eindeutige Benutzer-ID.
 
@@ -128,7 +128,7 @@ Eindeutige Benutzer-ID.
 
 > **userRole**: `string`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:106](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L106)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:106](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L106)
 
 Rolle des Benutzers (z.B. Admin, User).
 
@@ -140,7 +140,7 @@ Rolle des Benutzers (z.B. Admin, User).
 
 > **userType**: `string`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:99](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L99)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:99](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L99)
 
 Typ des Benutzers (z.B. Student, Mitarbeiter).
 
@@ -152,7 +152,7 @@ Typ des Benutzers (z.B. Student, Mitarbeiter).
 
 > **validFrom**: `Date`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:128](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L128)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:128](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L128)
 
 Datum, ab dem der Benutzer gültig ist.
 
@@ -164,7 +164,7 @@ Datum, ab dem der Benutzer gültig ist.
 
 > **validUntil**: `Date`
 
-Defined in: [src/role-mapper/model/entity/user.entity.ts:135](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/user.entity.ts#L135)
+Defined in: [src/role-mapper/model/entity/user.entity.ts:135](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/user.entity.ts#L135)
 
 Datum, bis zu dem der Benutzer gültig ist.
 

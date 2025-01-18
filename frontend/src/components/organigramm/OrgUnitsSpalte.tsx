@@ -19,7 +19,7 @@ import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
 import { JSXElementConstructor, useCallback, useEffect, useState } from 'react';
 import { FacultyTheme } from '../../interfaces/facultyTheme';
-import { fetchAllOrgUnits } from '../../lib/api/orgUnit.api';
+import { fetchAllOrgUnits } from '../../lib/api/rolemapper/orgUnit.api';
 import getFacultyTheme from '../../theme/fakultäten';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { OrgUnit } from '../../types/orgUnit.type';
@@ -78,7 +78,7 @@ export default function OrgUnitsSpalte({
   expandedNodes,
 }: OrgUnitRichTreeViewProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
-  const { setFacultyTheme } = useFacultyTheme(); // Dynamisches Theme nutzen
+  const { setFacultyTheme, useCustomStyles } = useFacultyTheme(); // Dynamisches Theme nutzen
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>();
@@ -94,6 +94,7 @@ export default function OrgUnitsSpalte({
     try {
       setLoading(true);
       const data = await fetchAllOrgUnits();
+      console.log('OrgUnitsSpalte - loadOrgUnits: orgUnits', data);
       setOrgUnits(data);
     } catch (err) {
       const errorMessage =
@@ -233,6 +234,7 @@ export default function OrgUnitsSpalte({
    * @param {FacultyTheme} theme - Das anzuwendende Theme.
    */
   const applyThemeToOrgUnit = (unit: OrgUnit, theme: FacultyTheme) => {
+    if (!useCustomStyles) return; // Keine Theme-Änderung, wenn Toggle deaktiviert ist
     setFacultyTheme(theme); // Setze das Theme für das aktuelle Element
 
     // Rekursiv auf alle Kinder und Enkelkinder anwenden

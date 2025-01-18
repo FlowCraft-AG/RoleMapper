@@ -13,6 +13,9 @@ const {
     MONGODB_DATABASE,
     TEST_MONGODB_URI,
     TEST_MONGODB_DATABASE,
+    CAMUNDA_TASKLIST_API_URL,
+    CAMUNDA_OPERATE_API_URL,
+    REQUEST_TIMEOUT_MS,
 } = process.env;
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -38,6 +41,9 @@ export const environment = {
     MONGODB_DATABASE,
     TEST_MONGODB_URI,
     TEST_MONGODB_DATABASE,
+    CAMUNDA_TASKLIST_API_URL,
+    CAMUNDA_OPERATE_API_URL,
+    REQUEST_TIMEOUT_MS,
 } as const;
 
 /* eslint-enable @typescript-eslint/naming-convention */

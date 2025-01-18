@@ -6,9 +6,13 @@
 
 # Class: MutationPayload
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:7](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/payload/mutation.payload.ts#L7)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:11](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/payload/mutation.payload.ts#L11)
 
-Definiert die Antwortstruktur für Mutationen in GraphQL.
+Definiert die Struktur der Antwort für GraphQL-Mutationen.
+
+Diese Klasse repräsentiert die allgemeine Antwortstruktur für Mutationen und enthält
+Informationen über den Erfolg, eine optionale Nachricht, das Ergebnis und zusätzliche
+Metadaten wie die Anzahl der betroffenen Einträge oder Warnungen.
 
 ## Constructors
 
@@ -26,7 +30,15 @@ Definiert die Antwortstruktur für Mutationen in GraphQL.
 
 > `optional` **affectedCount**: `number`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:29](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/payload/mutation.payload.ts#L29)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:46](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/payload/mutation.payload.ts#L46)
+
+Die Anzahl der betroffenen Einträge durch die Mutation.
+
+#### Example
+
+```ts
+1
+```
 
 ***
 
@@ -34,9 +46,15 @@ Defined in: [src/role-mapper/model/payload/mutation.payload.ts:29](https://githu
 
 > `optional` **message**: `string`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:20](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/payload/mutation.payload.ts#L20)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:28](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/payload/mutation.payload.ts#L28)
 
 Eine optionale Nachricht, die zusätzliche Informationen zur Mutation enthält.
+
+#### Example
+
+```ts
+"Mutation completed successfully."
+```
 
 ***
 
@@ -44,9 +62,15 @@ Eine optionale Nachricht, die zusätzliche Informationen zur Mutation enthält.
 
 > `optional` **result**: `any`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:27](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/payload/mutation.payload.ts#L27)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:37](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/payload/mutation.payload.ts#L37)
 
 Das Ergebnis der Mutation, falls vorhanden.
+
+#### Example
+
+```ts
+{ id: "12345", name: "Updated Entity" }
+```
 
 ***
 
@@ -54,9 +78,15 @@ Das Ergebnis der Mutation, falls vorhanden.
 
 > **success**: `boolean`
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/payload/mutation.payload.ts#L13)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:19](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/payload/mutation.payload.ts#L19)
 
 Gibt an, ob die Mutation erfolgreich war.
+
+#### Example
+
+```ts
+true
+```
 
 ***
 
@@ -64,4 +94,12 @@ Gibt an, ob die Mutation erfolgreich war.
 
 > `optional` **warnings**: `string`[]
 
-Defined in: [src/role-mapper/model/payload/mutation.payload.ts:31](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/payload/mutation.payload.ts#L31)
+Defined in: [src/role-mapper/model/payload/mutation.payload.ts:55](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/payload/mutation.payload.ts#L55)
+
+Eine Liste von Warnungen, die während der Mutation aufgetreten sind.
+
+#### Example
+
+```ts
+["Field 'description' was truncated.", "User already exists."]
+```

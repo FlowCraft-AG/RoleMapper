@@ -12,6 +12,7 @@
 
 ## Type Aliases
 
+- [GraphQLMutationQuerys](type-aliases/GraphQLMutationQuerys.md)
 - [MandateDocument](type-aliases/MandateDocument.md)
 
 ## Variables

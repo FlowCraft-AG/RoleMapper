@@ -1,0 +1,392 @@
+"""
+Mögliche Zustände eines Prozesses in Camunda.
+"""
+enum ProcessState {
+  ACTIVE # Der Prozess ist aktiv.
+  COMPLETED # Der Prozess wurde abgeschlossen.
+  CANCELED # Der Prozess wurde abgebrochen.
+}
+
+"""
+Mögliche Zustände einer Aufgabe in Camunda.
+"""
+enum TaskState {
+  CREATED # Die Aufgabe wurde erstellt.
+  COMPLETED # Die Aufgabe wurde abgeschlossen.
+  CANCELED # Die Aufgabe wurde abgebrochen.
+  FAILED # Die Aufgabe ist fehlgeschlagen.
+}
+
+"""
+IncidentType: Definiert die möglichen Typen von Incidents.
+"""
+enum IncidentType {
+  UNSPECIFIED # Nicht spezifizierter Incident-Typ.
+  UNKNOWN # Unbekannter Incident-Typ.
+  IO_MAPPING_ERROR # Fehler in der Eingabe-/Ausgabemapping-Konfiguration.
+  JOB_NO_RETRIES # Keine weiteren Wiederholungsversuche für einen Job.
+  EXECUTION_LISTENER_NO_RETRIES # Keine weiteren Wiederholungsversuche für einen Execution Listener.
+  CONDITION_ERROR # Fehler in einer Bedingung (z. B. in einem Gateway).
+  EXTRACT_VALUE_ERROR # Fehler beim Extrahieren eines Werts.
+  CALLED_ELEMENT_ERROR # Fehler beim Aufrufen eines Elements (z. B. eines Unterprozesses).
+  UNHANDLED_ERROR_EVENT # Nicht behandeltes Fehlerereignis.
+  MESSAGE_SIZE_EXCEEDED # Nachrichtengröße überschritten.
+  CALLED_DECISION_ERROR # Fehler beim Aufrufen einer Entscheidung.
+  DECISION_EVALUATION_ERROR # Fehler bei der Evaluierung einer Entscheidung.
+  FORM_NOT_FOUND # Formular nicht gefunden.
+}
+
+"""
+IncidentState: Mögliche Zustände eines Incidents.
+"""
+enum IncidentState {
+  ACTIVE # Der Incident ist aktiv und muss bearbeitet werden.
+  MIGRATED # Der Incident wurde migriert, z. B. im Rahmen einer Prozessmigration.
+  RESOLVED # Der Incident wurde erfolgreich gelöst.
+  PENDING # Der Incident wartet auf eine weitere Verarbeitung.
+}
+
+
+"""
+FlowNodeType: Definiert die möglichen Typen von FlowNodes.
+"""
+enum FlowNodeType {
+  UNSPECIFIED # Nicht spezifizierter Typ. Standardwert für nicht definierte FlowNodes.
+  PROCESS # Ein Prozess, der als eigenständige Einheit ausgeführt wird.
+  SUB_PROCESS # Ein Teilprozess innerhalb eines größeren Prozesses.
+  EVENT_SUB_PROCESS # Ein Subprozess, der durch ein Ereignis gestartet wird.
+  START_EVENT # Startpunkt eines Prozesses oder Subprozesses.
+  INTERMEDIATE_CATCH_EVENT # Ein Ereignis, das auf eine Bedingung wartet oder auftritt.
+  INTERMEDIATE_THROW_EVENT # Ein Ereignis, das aktiv ein Signal oder eine Nachricht auslöst.
+  BOUNDARY_EVENT # Ein Boundary-Event, das an eine Aktivität gebunden ist.
+  END_EVENT # Endpunkt eines Prozesses oder Subprozesses.
+  SERVICE_TASK # Ein automatisierter Task, der von einem externen Service ausgeführt wird.
+  RECEIVE_TASK # Ein Task, der darauf wartet, eine Nachricht zu empfangen.
+  USER_TASK # Ein Task, der von einem Benutzer manuell ausgeführt wird.
+  MANUAL_TASK # Ein Task, der vollständig manuell durchgeführt wird und keine Systemintegration erfordert.
+  TASK # Generischer Task, wenn der Typ nicht genauer definiert ist.
+  EXCLUSIVE_GATEWAY # Ein Gateway, das eine exklusive Entscheidung trifft.
+  INCLUSIVE_GATEWAY # Ein Gateway, das mehrere mögliche Pfade einschließt.
+  PARALLEL_GATEWAY # Ein Gateway, das mehrere parallele Pfade gleichzeitig aktiviert.
+  EVENT_BASED_GATEWAY # Ein Gateway, das auf ein Ereignis wartet, bevor es eine Entscheidung trifft
+  SEQUENCE_FLOW # Ein Sequenzfluss, der FlowNodes verbindet.
+  MULTI_INSTANCE_BODY # Ein Body für Multi-Instance-Aktivitäten.
+  CALL_ACTIVITY # Eine Aktivität, die einen anderen Prozess aufruft.
+  BUSINESS_RULE_TASK # Ein Task, der eine Geschäftsregel auswertet.
+  SCRIPT_TASK # Ein Task, der ein Script ausführt.
+  SEND_TASK # Ein Task, der eine Nachricht sendet.
+  UNKNOWN # Unbekannter Typ. Wird verwendet, wenn der Typ nicht identifiziert werden kann.
+}
+
+"""
+FlowNodeState: Beschreibt die möglichen Zustände einer FlowNode während der Ausführung.
+"""
+enum FlowNodeState {
+  ACTIVE # Die FlowNode ist derzeit aktiv und wird ausgeführt.
+  COMPLETED # Die FlowNode ist derzeit aktiv und wird ausgeführt.
+  TERMINATED # Die Ausführung der FlowNode wurde abgebrochen oder gestoppt.
+}
+
+"""
+FlowNode: Beschreibt die Struktur einer FlowNode-Instanz innerhalb eines Prozesses.
+FlowNodes repräsentieren die grundlegenden Bausteine eines BPMN-Modells, wie Aufgaben, Ereignisse oder Gateways.
+"""
+type FlowNode {
+  """
+  Eindeutige ID der FlowNode-Instanz.
+  """
+  key: Int!
+
+  """
+  Eindeutiger Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: Int!
+
+  """
+  Eindeutiger Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: Int!
+
+  """
+  Startzeitpunkt der FlowNode im ISO-Format.
+  """
+  startDate: String!
+
+  """
+  Endzeitpunkt der FlowNode im ISO-Format (optional, falls nicht abgeschlossen).
+  """
+  endDate: String
+
+  """
+  ID der FlowNode innerhalb der Prozessdefinition.
+  """
+  flowNodeId: String!
+
+  """
+  Name der FlowNode, wie sie im BPMN-Modell definiert ist.
+  """
+  flowNodeName: String!
+
+  """
+  Eindeutiger Schlüssel eines mit der FlowNode verknüpften Incidents (optional).
+  """
+  incidentKey: Int
+
+  """
+  Typ der FlowNode (z. B. TASK, START_EVENT, EXCLUSIVE_GATEWAY).
+  """
+  type: FlowNodeType!
+
+  """
+  Zustand der FlowNode (z. B. ACTIVE, COMPLETED, TERMINATED).
+  """
+  state: FlowNodeState!
+
+  """
+  Gibt an, ob ein Incident mit der FlowNode verknüpft ist.
+  """
+  incident: Boolean
+
+  """
+  Mandanten-ID der FlowNode (optional, falls Multitenancy verwendet wird).
+  """
+  tenantId: String
+}
+
+
+"""
+Beschreibt die Struktur eines Incident-Objekts.
+"""
+type Incident {
+  """
+  Eindeutiger Schlüssel des Incidents.
+  """
+  key: Int!
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: Int!
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: Int!
+  """
+  Typ des Incidents, z. B. IO_MAPPING_ERROR oder JOB_NO_RETRIES.
+  """
+  type: IncidentType!
+  """
+  Beschreibung oder Nachricht zum Incident.
+  """
+  message: String!
+  """
+  Erstellungszeit des Incidents (ISO-Format).
+  """
+  creationTime: String!
+  """
+  Zustand des Incidents, z. B. ACTIVE oder RESOLVED.
+  """
+  state: IncidentState!
+  """
+  Schlüssel des zugehörigen Jobs, falls zutreffend.
+  """
+  jobKey: Int!
+  """
+  Mandanten-ID, falls zutreffend (optional).
+  """
+  tenantId: String
+}
+
+"""
+Eine Camunda-Prozessinstanz, die Informationen über Status, Version und Metadaten enthält.
+"""
+type ProcessInstance {
+  """
+  Eindeutiger Schlüssel der Prozessinstanz.
+  """
+  key: ID!
+
+  """
+  Version des Prozesses.
+  """
+  processVersion: Int!
+
+  """
+  BPMN-Prozess-ID, die den Prozess eindeutig identifiziert.
+  """
+  bpmnProcessId: String!
+
+  """
+  Startdatum der Instanz im ISO-Format.
+  """
+  startDate: String!
+
+  """
+  Zustand der Prozessinstanz, z. B. "ACTIVE", "COMPLETED".
+  """
+  state: ProcessState!
+
+  """
+  Gibt an, ob ein Vorfall in der Prozessinstanz vorliegt.
+  """
+  incident: Boolean!
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: String!
+
+  """
+  Mandanten-ID der Prozessinstanz (optional).
+  """
+  tenantId: String
+}
+
+"""
+Eine Prozessvariable, die mit einer Prozessinstanz in Camunda verknüpft ist.
+"""
+type ProcessVariable {
+  """
+  Schlüssel der Variablen.
+  """
+  key: ID!
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: String!
+
+  """
+  Schlüssel des Geltungsbereichs, in dem die Variable definiert ist.
+  """
+  scopeKey: String!
+
+  """
+  Name der Variable.
+  """
+  name: String!
+
+  """
+  Wert der Variable.
+  """
+  value: String!
+
+  """
+  Gibt an, ob der Wert der Variable abgeschnitten wurde.
+  """
+  truncated: Boolean!
+
+  """
+  Mandanten-ID der Variable (optional).
+  """
+  tenantId: String
+}
+
+"""
+Eine Benutzeraufgabe in Camunda, einschließlich Status, Benutzer und zugehöriger Metadaten.
+"""
+type Task {
+  """
+  Eindeutige ID der Aufgabe.
+  """
+  id: ID!
+
+  """
+  Name der Aufgabe.
+  """
+  name: String!
+
+  """
+  ID der Aufgaben-Definition.
+  """
+  taskDefinitionId: String!
+
+  """
+  Name des zugehörigen Prozesses.
+  """
+  processName: String!
+
+  """
+  Erstellungsdatum der Aufgabe im ISO-Format.
+  """
+  creationDate: String!
+
+  """
+  Abschlussdatum der Aufgabe (optional, wenn die Aufgabe noch offen ist).
+  """
+  completionDate: String
+
+  """
+  Benutzer, dem die Aufgabe zugewiesen ist.
+  """
+  assignee: String
+
+  """
+  Zustand der Aufgabe, z. B. "CREATED", "COMPLETED".
+  """
+  taskState: TaskState!
+
+  """
+  Schlüssel des Formulars, das mit der Aufgabe verknüpft ist (optional).
+  """
+  formKey: String
+
+  """
+  ID des zugehörigen Formulars (optional).
+  """
+  formId: String
+
+  """
+  Version des Formulars (optional).
+  """
+  formVersion: Int
+
+  """
+  Gibt an, ob das Formular in die Aufgabe eingebettet ist.
+  """
+  isFormEmbedded: Boolean!
+
+  """
+  Schlüssel der zugehörigen Prozessdefinition.
+  """
+  processDefinitionKey: String!
+
+  """
+  Schlüssel der zugehörigen Prozessinstanz.
+  """
+  processInstanceKey: String!
+
+  """
+  Mandanten-ID der Aufgabe (optional).
+  """
+  tenantId: String
+
+  """
+  Fälligkeitsdatum der Aufgabe (optional).
+  """
+  dueDate: String
+
+  """
+  Datum für die Nachverfolgung der Aufgabe (optional).
+  """
+  followUpDate: String
+
+  """
+  Kandidatengruppen, die für die Aufgabe berechtigt sind (optional).
+  """
+  candidateGroups: [String]
+
+  """
+  Kandidatenbenutzer, die für die Aufgabe berechtigt sind (optional).
+  """
+  candidateUsers: [String]
+
+  """
+  Implementierungstyp der Aufgabe, z. B. "JOB_WORKER" oder "ZEEBE_USER_TASK".
+  """
+  implementation: String
+
+  """
+  Priorität der Aufgabe.
+  """
+  priority: Int!
+}

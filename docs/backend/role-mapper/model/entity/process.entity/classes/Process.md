@@ -6,7 +6,7 @@
 
 # Class: Process
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/process.entity.ts#L26)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:26](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/process.entity.ts#L26)
 
 Repräsentiert einen Prozess in der Datenbank.
 
@@ -46,7 +46,7 @@ Defined in: node\_modules/mongoose/types/document.d.ts:22
 
 > **name**: `string`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/process.entity.ts#L35)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:35](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/process.entity.ts#L35)
 
 Der Name des Prozesses.
 (z. B. "Reisegenehmigung")
@@ -59,7 +59,7 @@ Der Name des Prozesses.
 
 > **parentId**: `string`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/process.entity.ts#L38)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:38](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/process.entity.ts#L38)
 
 ***
 
@@ -67,7 +67,7 @@ Defined in: [src/role-mapper/model/entity/process.entity.ts:38](https://github.c
 
 > **processId**: `string`
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:47](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/process.entity.ts#L47)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:47](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/process.entity.ts#L47)
 
 Die eindeutige ID des Prozesses.
 
@@ -79,7 +79,7 @@ Die eindeutige ID des Prozesses.
 
 > **roles**: [`ShortRole`](ShortRole.md)[]
 
-Defined in: [src/role-mapper/model/entity/process.entity.ts:57](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/role-mapper/model/entity/process.entity.ts#L57)
+Defined in: [src/role-mapper/model/entity/process.entity.ts:57](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/role-mapper/model/entity/process.entity.ts#L57)
 
 Die Rollen, die dem Prozess zugeordnet sind.
 Liste der Rollen, die dem Prozess zugeordnet sind.

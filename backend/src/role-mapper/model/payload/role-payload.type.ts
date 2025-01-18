@@ -1,18 +1,30 @@
 import type { User } from '../entity/user.entity.js';
 import type { Links } from '../types/link.type.js';
 
-export type RolePayload = {
+export type RolePayloadRest = {
     roles: RoleResult[];
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _links?: Links;
 };
 
 /**
- * Interface für die Rückgabe einzelner Rollen und deren Benutzer.
+ * Typ für die Nutzlast der Rollen-Abfrage.
+ *
+ * @property {RoleResult[]} roles - Eine Liste von Rollen mit zugeordneten Benutzern.
+ */
+export type RolePayload = {
+    roles: RoleResult[];
+};
+
+/**
+ * Interface für die Rückgabe einzelner Rollen und deren zugeordneter Benutzer.
+ *
+ * @property {string} roleName - Dynamischer Rollenname (z. B. "Antragssteller").
+ * @property {UserWithFunction[]} users - Liste der Benutzer, die dieser Rolle zugeordnet sind.
  */
 export type RoleResult = {
     /**
-     * Dynamischer Rollenname (z.B. "Antragssteller").
+     * Dynamischer Rollenname (z. B. "Antragssteller").
      */
     roleName: string;
     /**
@@ -21,7 +33,12 @@ export type RoleResult = {
     users: UserWithFunction[];
 };
 
-// Benutzer mit einer Funktion
+/**
+ * Typ für einen Benutzer mit zugeordneter Funktion.
+ *
+ * @property {string} functionName - Dynamischer Funktionsname.
+ * @property {User} user - Das verschachtelte Benutzerobjekt.
+ */
 export type UserWithFunction = {
     functionName: string; // Dynamischer Funktionsname
     user: User; // Das User-Objekt ist hier verschachtelt

@@ -8,7 +8,7 @@
 
 > `const` **database**: `object`
 
-Defined in: [src/config/mongo-database.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/config/mongo-database.ts#L42)
+Defined in: [src/config/mongo-database.ts:42](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/config/mongo-database.ts#L42)
 
 ## Type declaration
 

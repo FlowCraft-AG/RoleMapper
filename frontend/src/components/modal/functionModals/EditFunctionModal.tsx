@@ -22,8 +22,8 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   fetchFunctionById,
   updateFunction,
-} from '../../../lib/api/function.api';
-import { fetchOrgUnitsIds } from '../../../lib/api/orgUnit.api';
+} from '../../../lib/api/rolemapper/function.api';
+import { fetchOrgUnitsIds } from '../../../lib/api/rolemapper/orgUnit.api';
 import { FunctionString } from '../../../types/function.type';
 import { ShortOrgUnit } from '../../../types/orgUnit.type';
 

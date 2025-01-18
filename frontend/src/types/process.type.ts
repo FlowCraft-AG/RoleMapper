@@ -39,7 +39,7 @@ export interface ProcessInstance {
   bpmnProcessId: string; // BPMN-Prozess-ID
   startDate: string; // Startdatum der Instanz
   state: string; // Zustand der Prozessinstanz (z. B. "ACTIVE")
-  incident: false; // Gibt an, ob ein Vorfall vorliegt
+  incident: boolean; // Gibt an, ob ein Vorfall vorliegt
   processDefinitionKey: string; // Schlüssel der Prozessdefinition
   tenantId: string; // Mandanten-ID (kann leer sein)
 }

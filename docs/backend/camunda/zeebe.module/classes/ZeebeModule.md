@@ -6,7 +6,7 @@
 
 # Class: ZeebeModule
 
-Defined in: [src/camunda/zeebe.module.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/cdd9e5010cc7adeee46f58ea0abd91d186332c1d/backend/src/camunda/zeebe.module.ts#L13)
+Defined in: [src/camunda/zeebe.module.ts:13](https://github.com/FlowCraft-AG/RoleMapper/blob/de0e51be3f89e6fa69f76597242a3d3e3b4ee01f/backend/src/camunda/zeebe.module.ts#L13)
 
 ## Constructors
 
