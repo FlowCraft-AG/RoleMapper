@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 type RoleType = 'COLLECTION' | 'IMPLICITE_FUNCTION' | 'IMPLICITE_ORG_UNIT';
 
@@ -13,7 +13,7 @@ export class ShortRole {
 
     /** Eindeutige ID der Rolle. */
     @Prop({ required: true })
-    roleId!: string;
+    roleId!: Types.ObjectId;
 
     /** Typ der Rolle (z. B. "COLLECTION"). */
     @Prop({ required: true })

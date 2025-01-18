@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
@@ -145,7 +147,7 @@ export class ReadService {
 
         // Abrufen der Rollen aus der Datenbank anhand der IDs
         const roles: Role[] = await this.#modelMap.ROLES.find({
-            roleId: { $in: roleIdsCollection },
+            _id: { $in: roleIdsCollection },
         }).exec();
         if (roles?.length === 0) {
             throw new NotFoundException(
@@ -156,6 +158,7 @@ export class ReadService {
 
         // Verarbeitung der Rollen und zugehörigen Benutzer mit Aggregations-Pipeline
         const resultsCollection = await Promise.all(
+
             roles.map(async (role) => {
                 this.#logger.debug('Verarbeite Rolle: %o', role);
 
