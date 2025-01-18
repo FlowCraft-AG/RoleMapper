@@ -1,4 +1,4 @@
-import ProcessInstanceDetailsContent from './ProcessInstanceDetails';
+import ProcessInstanceDetailsContent from '../../../components/camunda/ProcessInstanceDetails';
 
 /**
  * Eigenschaften der Seite für die Details einer Prozessinstanz.

@@ -52,8 +52,10 @@ export default function UserMenu({
   };
 
   const handleLogout = () => {
-    router.push(DEFAULT_ROUTE);
-    signOut();
+    signOut({
+      redirect: false,
+    });
+    router.replace(DEFAULT_ROUTE);
   };
 
   // Manuelle Token-Aktualisierung

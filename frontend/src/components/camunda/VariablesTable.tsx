@@ -9,7 +9,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { ProcessVariable } from '../../../types/process.type';
+import { ProcessVariable } from '../../types/process.type';
 
 /**
  * Props für die `VariablesTable`-Komponente.

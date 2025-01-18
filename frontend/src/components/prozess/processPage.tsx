@@ -10,9 +10,9 @@
 
 import { Box, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
-import ProcessSpalte from '../../components/prozess/ProcessSpalte';
-import RolesSpalte from '../../components/prozess/RolesSpalte2';
 import { Process } from '../../types/process.type';
+import ProcessSpalte from './ProcessSpalte';
+import RolesSpalte from './RolesSpalte2';
 
 export default function ProcessPage() {
   const theme = useTheme();

@@ -24,17 +24,17 @@ import {
   getProcessInstanceDetails,
   getProcessInstanceVariables,
   getTasksByProcessInstance,
-} from '../../../lib/api/camunda.api';
+} from '../../lib/api/camunda.api';
 import {
   ProcessInstance,
   ProcessTask,
   ProcessVariable,
-} from '../../../types/process.type';
-import { ENV } from '../../../utils/env';
+} from '../../types/process.type';
+import { ENV } from '../../utils/env';
 import GeneralInfoCard from './GeneralInfoCard';
+import ProcessDefinitionToggleViewer from './ProcessDefinitionToggleViewer';
 import TasksGrid from './TasksGrid';
 import VariablesTable from './VariablesTable';
-import ProcessDefinitionToggleViewer from '../fortschritt/[key]/ProcessDefinitionToggleViewer';
 
 /**
 /**

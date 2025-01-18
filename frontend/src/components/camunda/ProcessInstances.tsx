@@ -15,7 +15,6 @@ import {
   Info as InfoIcon,
   PlayCircle,
   Stop as StopIcon,
-  Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -280,16 +279,6 @@ export default function ProcessInstancesPage() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Tooltip title="BPMN ansehen">
-                      <Link
-                        href={`/camunda/fortschritt/${instance.key}`}
-                        passHref
-                      >
-                        <IconButton color="primary">
-                          <VisibilityIcon />
-                        </IconButton>
-                      </Link>
-                    </Tooltip>
                     <Tooltip title="Details ansehen">
                       <Link href={`/camunda/${instance.key}`} passHref>
                         <IconButton color="info">

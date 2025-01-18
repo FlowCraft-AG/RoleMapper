@@ -11,7 +11,6 @@ import {
   Error as ErrorIcon,
   Info as InfoIcon,
   PlayCircle,
-  Visibility as VisibilityIcon,
 } from '@mui/icons-material';
 import {
   Alert,
@@ -35,9 +34,9 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getProcessInstancesByUser } from '../../../lib/api/camunda.api';
-import { ProcessInstance } from '../../../types/process.type';
-import { ENV } from '../../../utils/env';
+import { getProcessInstancesByUser } from '../../lib/api/camunda.api';
+import { ProcessInstance } from '../../types/process.type';
+import { ENV } from '../../utils/env';
 
 /**
  * `ProcessInstances`-Komponente
@@ -246,16 +245,6 @@ export default function UserProcessInstancesPage() {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Tooltip title="BPMN ansehen">
-                      <Link
-                        href={`/camunda/fortschritt/${instance.key}`}
-                        passHref
-                      >
-                        <IconButton color="primary">
-                          <VisibilityIcon />
-                        </IconButton>
-                      </Link>
-                    </Tooltip>
                     <Tooltip title="Details ansehen">
                       <Link href={`/camunda/${instance.key}`} passHref>
                         <IconButton color="info">

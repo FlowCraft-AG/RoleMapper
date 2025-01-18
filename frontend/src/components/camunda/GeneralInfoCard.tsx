@@ -10,7 +10,7 @@ import {
   Grid2,
   Typography,
 } from '@mui/material';
-import { ProcessInstance } from '../../../types/process.type';
+import { ProcessInstance } from '../../types/process.type';
 
 /**
  * Props für die `GeneralInfoCard`-Komponente.

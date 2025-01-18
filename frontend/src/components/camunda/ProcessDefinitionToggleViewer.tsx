@@ -8,15 +8,16 @@
 import { Box, Button, Container, Typography } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import BpmnViewer from '../../../../components/bpmn/BpmnViewer';
-import ProcessDefinitionXmlViewer from '../../../../components/bpmn/ProcessDefinitionXmlViewer';
 import {
   getActiveElementId,
   getIncidentFlowNode,
   getProcessDefinitionXml,
   getProcessInstanceDetails,
-} from '../../../../lib/api/camunda.api';
-import { ProcessInstance } from '../../../../types/process.type';
+} from '../../lib/api/camunda.api';
+import { ProcessInstance } from '../../types/process.type';
+import { ENV } from '../../utils/env';
+import BpmnViewer from '../bpmn/BpmnViewer';
+import ProcessDefinitionXmlViewer from '../bpmn/ProcessDefinitionXmlViewer';
 
 /**
  * Props für die `ProcessDefinitionToggleViewer`-Komponente.
@@ -59,7 +60,9 @@ const ProcessDefinitionToggleViewer = ({
   const [incidentElementId, setIncidentElementId] = useState<
     string | undefined
   >(undefined);
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const { ADMIN_GROUP } = ENV;
+  const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
 
   /**
    * Lädt die Prozessinstanz-Details, die XML-Definition und die aktive Element-ID.
@@ -122,13 +125,15 @@ const ProcessDefinitionToggleViewer = ({
       </Typography>
 
       <Box mb={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setIsXmlView(!isXmlView)}
-        >
-          {isXmlView ? 'Diagramm-Ansicht anzeigen' : 'XML-Ansicht anzeigen'}
-        </Button>
+        {isAdmin && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setIsXmlView(!isXmlView)}
+          >
+            {isXmlView ? 'Diagramm-Ansicht anzeigen' : 'XML-Ansicht anzeigen'}
+          </Button>
+        )}
       </Box>
 
       <Box
@@ -140,7 +145,7 @@ const ProcessDefinitionToggleViewer = ({
           height: '500px',
         }}
       >
-        {isXmlView ? (
+        {isXmlView && isAdmin ? (
           <ProcessDefinitionXmlViewer
             processDefinitionKey={instanz?.processDefinitionKey}
           />

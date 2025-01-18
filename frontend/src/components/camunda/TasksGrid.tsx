@@ -6,7 +6,7 @@ import {
   Grid2,
   Typography,
 } from '@mui/material';
-import { ProcessTask } from '../../../types/process.type';
+import { ProcessTask } from '../../types/process.type';
 
 /**
  * Props für die `TasksGrid`-Komponente.
