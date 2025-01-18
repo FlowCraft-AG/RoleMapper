@@ -36,6 +36,7 @@ export type ShortProcess = {
 // Typen für Prozessdetails
 export interface ProcessInstance {
   key: string; // Eindeutiger Schlüssel der Prozessinstanz
+  name: string; // Name des Prozesses
   processVersion: number; // Version des Prozesses
   bpmnProcessId: string; // BPMN-Prozess-ID
   startDate: string; // Startdatum der Instanz

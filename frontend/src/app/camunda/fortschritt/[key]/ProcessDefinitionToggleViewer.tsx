@@ -117,17 +117,6 @@ const ProcessDefinitionToggleViewer = ({
 
   return (
     <Container maxWidth="md">
-      <Box mb={3}>
-        {/* Zurück-Button */}
-        {/* <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => router.push('/camunda')}
-        >
-          Zurück zur Prozessliste
-        </Button> */}
-      </Box>
-
       <Typography variant="h4" gutterBottom>
         Prozessdefinition: {isXmlView ? 'XML-Ansicht' : 'Diagramm-Ansicht'}
       </Typography>

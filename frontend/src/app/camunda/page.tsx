@@ -1,12 +1,10 @@
-import { Metadata } from "next";
-import ProcessInstancesPage from "./ProcessInstances";
+import { Metadata } from 'next';
+import ProcessInstancesPage from './ProcessInstances';
 
 export const metadata: Metadata = {
-    title: 'Aktiven Prozessinstanzen',
+  title: 'Aktiven Prozessinstanzen',
 };
 
 export default function Page() {
-  return (
-    <ProcessInstancesPage />
-  );
+  return <ProcessInstancesPage />;
 }

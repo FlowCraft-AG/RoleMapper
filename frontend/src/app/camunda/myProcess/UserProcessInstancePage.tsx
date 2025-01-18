@@ -233,6 +233,9 @@ export default function UserProcessInstancesPage() {
                   )}
                   <CardContent>
                     <Typography variant="h6" component="div" gutterBottom>
+                      {instance.name}
+                    </Typography>
+                    <Typography color="textSecondary">
                       Prozess-ID: {instance.bpmnProcessId}
                     </Typography>
                     <Typography color="textSecondary">
@@ -254,10 +257,7 @@ export default function UserProcessInstancesPage() {
                       </Link>
                     </Tooltip>
                     <Tooltip title="Details ansehen">
-                      <Link
-                        href={`/camunda/myProcess/${instance.key}`}
-                        passHref
-                      >
+                      <Link href={`/camunda/${instance.key}`} passHref>
                         <IconButton color="info">
                           <InfoIcon />
                         </IconButton>

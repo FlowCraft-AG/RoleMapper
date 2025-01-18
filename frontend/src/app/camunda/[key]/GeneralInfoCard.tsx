@@ -40,7 +40,7 @@ export default function GeneralInfoCard({ details }: ProcessDetailsProps) {
   return (
     <Card sx={{ marginBottom: 3 }}>
       <CardHeader
-        title="Allgemeine Informationen"
+        title={`Allgemeine Informationen zum ${details.name}-Prozess`}
         subheader={`Prozess-ID: ${details.bpmnProcessId}`}
       />
       <CardContent>

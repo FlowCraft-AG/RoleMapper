@@ -30,9 +30,11 @@ import {
   ProcessTask,
   ProcessVariable,
 } from '../../../types/process.type';
+import { ENV } from '../../../utils/env';
 import GeneralInfoCard from './GeneralInfoCard';
 import TasksGrid from './TasksGrid';
 import VariablesTable from './VariablesTable';
+import ProcessDefinitionToggleViewer from '../fortschritt/[key]/ProcessDefinitionToggleViewer';
 
 /**
 /**
@@ -70,6 +72,8 @@ export default function ProcessInstanceDetailsContent({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
+  const { ADMIN_GROUP } = ENV;
+  const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
 
   useEffect(() => {
     /**
@@ -150,14 +154,25 @@ export default function ProcessInstanceDetailsContent({
   return (
     <Box sx={{ padding: 4 }}>
       {/* Zurück-Button */}
+
       <Box mb={3}>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={() => router.push('/camunda')} // Navigiert zur `/process`-Seite
-        >
-          Zurück zur Prozessliste
-        </Button>
+        {isAdmin ? (
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => router.push('/camunda')} // Navigiert zur `/process`-Seite
+          >
+            Zurück zur Prozessliste
+          </Button>
+        ) : (
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => router.push('/camunda/myProcess')} // Navigiert zur `/myProcess`-Seite
+          >
+            Zurück zur Prozessliste
+          </Button>
+        )}
       </Box>
 
       <Typography variant="h4" gutterBottom>
@@ -175,10 +190,14 @@ export default function ProcessInstanceDetailsContent({
       >
         <Tab label="Variablen" />
         <Tab label="Tasks" />
+        <Tab label="BPMN" />
       </Tabs>
 
       {tabIndex === 0 && <VariablesTable variables={variables} />}
       {tabIndex === 1 && <TasksGrid tasks={tasks} />}
+      {tabIndex === 2 && (
+        <ProcessDefinitionToggleViewer processInstanceKey={processKey} />
+      )}
     </Box>
   );
 }

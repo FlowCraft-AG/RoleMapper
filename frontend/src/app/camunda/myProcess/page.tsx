@@ -1,4 +1,3 @@
-
 import { Metadata } from 'next';
 import UserProcessInstancesPage from './UserProcessInstancePage';
 
@@ -7,8 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-
-  return (
-    <UserProcessInstancesPage />
-  );
+  return <UserProcessInstancesPage />;
 }

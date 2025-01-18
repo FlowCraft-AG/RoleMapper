@@ -8,9 +8,11 @@ import { FlowNode } from '../types/flownode.type.js';
 import { Incident } from '../types/incident.type.js';
 import { FlowNodeFilter } from '../types/input-filter/flownode-filter.js';
 import { IncidentFilter } from '../types/input-filter/incident-filter.js';
+import { ProcessDefinitionFilter } from '../types/input-filter/process-definition-filter.js';
 import { ProcessInstanceFilter } from '../types/input-filter/process-instance-filter.js';
 import { TaskFilter } from '../types/input-filter/task-filter.js';
 import { VariableFilter } from '../types/input-filter/variable-filter.js';
+import { ProcessDefinition } from '../types/process-definition.type.js';
 import { ProcessInstance } from '../types/process-instance.type.js';
 import { ProcessVariable } from '../types/process-variable.type.js';
 import { Task } from '../types/task.type.js';
@@ -24,6 +26,28 @@ export class CamundaReadService {
 
     constructor(httpService: HttpService) {
         this.#httpService = httpService;
+    }
+
+    async fetchProcessDefinitions(
+        filter: ProcessDefinitionFilter,
+        token: string,
+    ): Promise<ProcessDefinition[]> {
+        this.#logger.debug('fetchProcessDefinitionByDefinitionKey: filter=%o', filter);
+
+        const apiUrl = `${CAMUNDA_OPERATE_API_URL}/process-definitions/search`;
+        const body = { filter, size: filter.size ?? undefined, sort: filter.sort ?? undefined };
+
+        const response = await this.#sendPostRequest<{ items: ProcessDefinition[] }>(
+            apiUrl,
+            body,
+            token,
+        );
+        const processDefinitions = response.items;
+        this.#logger.debug(
+            'fetchProcessDefinitionByDefinitionKey: processDefinitions=%o',
+            processDefinitions,
+        );
+        return processDefinitions;
     }
 
     /**
@@ -46,8 +70,21 @@ export class CamundaReadService {
             token,
         );
         const instanzen = response.items;
-        this.#logger.debug(': Gefundene Prozessinstanzen: %o', instanzen);
-        return instanzen;
+
+        const instanzenMitNamen: ProcessInstance[] = await Promise.all(
+            instanzen.map(async (instanz: ProcessInstance) => {
+                const processDefinitionFilter: ProcessDefinitionFilter = {
+                    key: instanz.processDefinitionKey,
+                };
+                const processDefinition = await this.fetchProcessDefinitions(
+                    processDefinitionFilter,
+                    token,
+                );
+                return { ...instanz, name: processDefinition[0]?.name };
+            }),
+        );
+        this.#logger.debug(': Gefundene Prozessinstanzen: %o', instanzenMitNamen);
+        return instanzenMitNamen;
     }
 
     /**

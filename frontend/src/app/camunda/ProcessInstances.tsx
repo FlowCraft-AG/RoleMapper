@@ -267,6 +267,9 @@ export default function ProcessInstancesPage() {
                   )}
                   <CardContent>
                     <Typography variant="h6" component="div" gutterBottom>
+                      {instance.name}
+                    </Typography>
+                    <Typography color="textSecondary">
                       Prozess-ID: {instance.bpmnProcessId}
                     </Typography>
                     <Typography color="textSecondary">

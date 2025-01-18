@@ -221,6 +221,8 @@ type ProcessInstance {
   """
   key: ID!
 
+  name: String!
+
   """
   Version des Prozesses.
   """
@@ -294,6 +296,32 @@ type ProcessVariable {
   """
   Mandanten-ID der Variable (optional).
   """
+  tenantId: String
+}
+
+type processDefinition {
+  """
+  Eindeutiger Schlüssel der Prozessdefinition.
+  """
+  key: ID!
+
+  """
+  Name der Prozessdefinition.
+  """
+  name: String!
+
+  """
+  Version der Prozessdefinition.
+  """
+  version: Int!
+
+  versionTag: Int
+
+  """
+  Schlüssel des zugehörigen Prozesses.
+  """
+  bpmnProcessId: String!
+
   tenantId: String
 }
 
