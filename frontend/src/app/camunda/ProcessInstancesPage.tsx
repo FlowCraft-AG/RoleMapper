@@ -19,16 +19,23 @@ import {
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   Grid2,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
   Tooltip,
   Typography,
@@ -62,7 +69,7 @@ const { ADMIN_GROUP } = ENV;
  */
 export default function ProcessInstancesPage() {
   // Zustand für Prozessinstanzen
-  const [instances, setInstances] = useState<ProcessInstance[]>([]);
+  const [instanceList, setInstanceList] = useState<ProcessInstance[]>([]);
   // Zustand für den Filter nach Prozessnamen
   const [filter, setFilter] = useState<string>(''); // Prozessname oder leer
   // Zustand für den Statusfilter
@@ -75,7 +82,10 @@ export default function ProcessInstancesPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
   const router = useRouter();
-  const { DEFAULT_ROUTE } = ENV;
+    const { DEFAULT_ROUTE } = ENV;
+     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+     const [selectedInstance, setSelectedInstance] =
+       useState<ProcessInstance | null>(null);
 
   const handleCancelProcess = async (instanceKey: string) => {
     try {
@@ -85,7 +95,7 @@ export default function ProcessInstancesPage() {
       console.log('Prozess abgebrochen:', instanceKey);
 
       // Status der Instanz in der Liste aktualisieren
-      setInstances((prevInstances) =>
+      setInstanceList((prevInstances) =>
         prevInstances.map((instance) =>
           instance.key === instanceKey
             ? { ...instance, state: 'CANCELED' } // Status auf "CANCELED" setzen
@@ -94,22 +104,47 @@ export default function ProcessInstancesPage() {
       );
     } catch (error) {
       setError((error as Error).message || 'Abbrechen fehlgeschlagen.');
+      setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
     }
   };
 
-  const handleDeleteProcess = async (instanceKey: string) => {
+    const handleDeleteProcess = async () => {
+       if (!selectedInstance) return;
     try {
-      if (!session?.access_token || !isAdmin)
-        throw new Error('Keine Berechtigung.');
-      await deleteProcessInstance(instanceKey, session.access_token);
-      setInstances((prev) =>
-        prev.filter((instance) => instance.key !== instanceKey),
+        if (!session?.access_token || !isAdmin) {
+          setError('Keine Berechtigung.');
+          setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
+        }
+         if (selectedInstance.state !== 'CANCELED') {
+           setError('Nur abgebrochene Prozesse können gelöscht werden.');
+           setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
+           return;
+         }
+      await deleteProcessInstance(selectedInstance.key, session?.access_token);
+      setInstanceList((prev) =>
+        prev.filter((instance) => instance.key !== selectedInstance.key),
       );
-      console.log('Prozess gelöscht:', instanceKey);
+         setDeleteDialogOpen(false);
+      console.log('Prozess gelöscht:', selectedInstance.key);
     } catch (error) {
       setError((error as Error).message || 'Löschen fehlgeschlagen.');
+      setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
     }
-  };
+    };
+
+      const openDeleteDialog = (instance: ProcessInstance) => {
+        if (instance.state !== 'CANCELED') {
+            setError('Nur abgebrochene Prozesse können gelöscht werden.');
+            setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
+            return;
+        }
+        setSelectedInstance(instance);
+        setDeleteDialogOpen(true);
+      };
+     const closeDeleteDialog = () => {
+       setSelectedInstance(null);
+       setDeleteDialogOpen(false);
+     };
 
   useEffect(() => {
     /**
@@ -128,14 +163,13 @@ export default function ProcessInstancesPage() {
           router.push(DEFAULT_ROUTE);
           throw new Error('Keine Session vorhanden.');
         }
-        console.log('ProcessInstances: token=', session.access_token);
         const instanzen = await getAllProcessInstances(session.access_token);
 
         // Sammle alle Prozessnamen (bpmnProcessId)
         const processNames: string[] = Array.from(
           new Set(
             instanzen.map(
-              (instance: ProcessInstance) => instance.bpmnProcessId,
+              (instance: ProcessInstance) => instance.name,
             ),
           ),
         );
@@ -159,11 +193,12 @@ export default function ProcessInstancesPage() {
           },
         );
 
-        setInstances(filteredInstances);
+        setInstanceList(filteredInstances);
       } catch (error) {
         setError(
           (error as Error).message || 'Ein unbekannter Fehler ist aufgetreten.',
         );
+        setTimeout(() => setError(null), 5000); // Fehlernachricht nach 5 Sekunden ausblenden
       } finally {
         setLoading(false);
       }
@@ -180,9 +215,16 @@ export default function ProcessInstancesPage() {
 
       {/* Fehleranzeige */}
       {error && (
-        <Alert severity="error" sx={{ marginBottom: 3 }}>
-          {error}
-        </Alert>
+        <Snackbar
+          open={Boolean(error)}
+          autoHideDuration={5000} // Automatisch nach 5 Sekunden schließen
+          onClose={() => setError(null)} // Fehler zurücksetzen
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} // Position
+        >
+          <Alert onClose={() => setError(null)} severity="error">
+            {error}
+          </Alert>
+        </Snackbar>
       )}
 
       {/* Ladespinner */}
@@ -193,7 +235,7 @@ export default function ProcessInstancesPage() {
       )}
 
       {/* Restliche Komponenten wie Filter und Grid2 */}
-      {!loading && !error && (
+      {!loading  && (
         <>
           {/* Filter für Status */}
           <FormControl fullWidth sx={{ marginBottom: 3 }}>
@@ -229,7 +271,7 @@ export default function ProcessInstancesPage() {
 
           {/* Instanzen anzeigen */}
           <Grid2 container spacing={3}>
-            {instances.map((instance: ProcessInstance) => (
+            {instanceList.map((instance: ProcessInstance) => (
               <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={instance.key}>
                 <Card variant="outlined">
                   {instance.state === 'COMPLETED' && (
@@ -300,7 +342,7 @@ export default function ProcessInstancesPage() {
                     </>
                     <Tooltip title="Prozess Löschen">
                       <IconButton
-                        onClick={() => handleDeleteProcess(instance.key)}
+                        onClick={() => openDeleteDialog(instance)}
                         color="error"
                       >
                         <DeleteIcon />
@@ -311,6 +353,28 @@ export default function ProcessInstancesPage() {
               </Grid2>
             ))}
           </Grid2>
+
+          <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
+            <DialogTitle>Prozess löschen</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Möchten Sie die Prozessinstanz wirklich löschen? Diese Aktion
+                kann nicht rückgängig gemacht werden.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={closeDeleteDialog} color="secondary">
+                Abbrechen
+              </Button>
+              <Button
+                onClick={handleDeleteProcess}
+                color="error"
+                variant="contained"
+              >
+                Löschen
+              </Button>
+            </DialogActions>
+          </Dialog>
         </>
       )}
     </Box>

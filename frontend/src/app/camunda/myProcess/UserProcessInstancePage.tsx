@@ -34,9 +34,9 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getProcessInstancesByUser } from '../../lib/api/camunda.api';
-import { ProcessInstance } from '../../types/process.type';
-import { ENV } from '../../utils/env';
+import { getProcessInstancesByUser } from '../../../lib/api/camunda.api';
+import { ProcessInstance } from '../../../types/process.type';
+import { ENV } from '../../../utils/env';
 
 /**
  * `ProcessInstances`-Komponente

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import ProcessInstancesPage from '../../components/camunda/ProcessInstances';
+import ProcessInstancesPage from './ProcessInstancesPage';
 
 export const metadata: Metadata = {
   title: 'Aktiven Prozessinstanzen',

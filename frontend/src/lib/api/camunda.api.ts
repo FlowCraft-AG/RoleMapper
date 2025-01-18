@@ -309,14 +309,14 @@ export async function cancelProcessInstance(
 
 export async function deleteProcessInstance(
   processInstanceKey: string,
-  token: string,
+  token: string | undefined,
 ): Promise<void> {
   logger.debug(
     'deleteProcessInstance: key=%s, token=%s',
     processInstanceKey,
     token,
   );
-  try {
+    try {
     const client = getApolloClient(token);
     await client.mutate({
       mutation: DELETE_PROCESS_INSTANCE,
