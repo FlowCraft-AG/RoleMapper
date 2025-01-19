@@ -42,8 +42,8 @@ const EditProcessCollectionModal = ({
     try {
       const selectedProcess = await getProcessById(itemId);
       setFormData(selectedProcess);
-        const collections = await fetchAllProcessCollections();
-        console.log('Collections: ',collections);
+      const collections = await fetchAllProcessCollections();
+      console.log('Collections: ', collections);
       setProcessCollections(collections);
     } catch (error) {
       console.error('Fehler beim Laden der Prozess-Sammlungen:', error);

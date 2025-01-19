@@ -13,10 +13,12 @@ const { ADMIN_GROUP } = ENV;
 
 interface RolesSpalteProps {
   selectedProcess: Process;
+  onRemove: () => void;
 }
 
 export default function RolesSpalte({
   selectedProcess,
+  onRemove,
 }: RolesSpalteProps): JSX.Element {
   const theme = useTheme();
   const { data: session } = useSession();
@@ -92,7 +94,7 @@ export default function RolesSpalte({
       )}
 
       {activeTab === 'editor' && isAdmin && (
-        <EditorView selectedProcess={selectedProcess} />
+        <EditorView selectedProcess={selectedProcess} onRemove={onRemove} />
       )}
       {activeTab === 'debugger' && (
         <DebuggerView selectedProcess={selectedProcess} session={session} />

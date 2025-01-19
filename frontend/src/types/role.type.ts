@@ -5,5 +5,5 @@
 export type Role = {
   _id: string; // Eindeutige ID der Rolle
   name: string; // Name der Rolle
-  roleId: string; // Kennung der Rolle
+  roleId?: string; // Kennung der Rolle
 };

@@ -9,7 +9,7 @@
 'use client';
 
 import { Box, Button, Typography, useTheme } from '@mui/material';
-import { use, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import CreateProcessCollectionModal from '../../components/modal/processModals/CreateProcessCollectionModal';
 import ProcessSpalte from '../../components/prozess/ProcessSpalte';
 import RolesSpalte from '../../components/prozess/RolesSpalte';
@@ -49,9 +49,17 @@ export default function ProcessPage() {
     }
   }, []);
 
-    useEffect(() => {
-        refetchProcesses();
-    }, [refetchProcesses]);
+  const onRemove = () => {
+    setState({
+      ...state,
+      selectedProcess: undefined,
+    });
+    refetchProcesses();
+  };
+
+  useEffect(() => {
+    refetchProcesses();
+  }, [refetchProcesses]);
 
   return (
     <Box
@@ -122,7 +130,10 @@ export default function ProcessPage() {
         {/* Bereich für zusätzliche Details */}
       </Box>
       {state.selectedProcess && state.selectedProcess.parentId && (
-        <RolesSpalte selectedProcess={state.selectedProcess} />
+        <RolesSpalte
+          selectedProcess={state.selectedProcess}
+          onRemove={onRemove}
+        />
       )}
 
       <CreateProcessCollectionModal

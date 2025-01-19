@@ -5,211 +5,152 @@ import {
   Box,
   Button,
   IconButton,
-  Snackbar,
   Tooltip,
   Typography,
   useTheme,
 } from '@mui/material';
 import { JSX, useCallback, useEffect, useState } from 'react';
+import { useModal } from '../../hooks/useModal';
+import { useRoleManager } from '../../hooks/useRoleManager';
+import { useSnackbar } from '../../hooks/useSnackbar';
 import { fetchAllFunctions } from '../../lib/api/rolemapper/function.api';
 import { fetchAllOrgUnits } from '../../lib/api/rolemapper/orgUnit.api';
 import {
-  fetchRoles,
-  removeProcessRole,
-  updateProcessRole,
-} from '../../lib/api/rolemapper/roles.api';
+  deleteProcess,
+  getProcessById,
+  updateProcess,
+} from '../../lib/api/rolemapper/process.api';
+import { fetchRoles } from '../../lib/api/rolemapper/roles.api';
 import { FunctionString } from '../../types/function.type';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { Process, ShortRole } from '../../types/process.type';
 import { Role } from '../../types/role.type';
-import ExistingRolesModal from '../modal/processModals/AddExistingRoleModal';
-import NewRoleModal from '../modal/processModals/AddNewRoleModal';
-import SelectAddRoleModal from '../modal/processModals/SelectAddRoleModal';
+import DeleteProcessDialog from '../modal/processModals/DeleteProcessDialog';
+import EditProcessDialog from '../modal/processModals/EditProcessDialog';
+import AddRoleModal from '../modal/rolesModal/AddRoleModal';
 import RoleEditModal from '../modal/rolesModal/RoleEditModal';
 
 interface EditorViewProps {
   selectedProcess: Process;
+  onRemove: () => void;
 }
 
 export default function EditorView({
   selectedProcess,
+  onRemove,
 }: EditorViewProps): JSX.Element {
   const theme = useTheme();
-  const [selectedProcessRoles, setSelectedProcessRoles] = useState<
-    ShortRole[] | undefined
-  >(selectedProcess.roles);
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [newRoleModalOpen, setNewRoleModalOpen] = useState(false);
-  const [existingRolesModalOpen, setExistingRolesModalOpen] = useState(false);
+  const { showSnackbar } = useSnackbar();
+  const { isOpen, openModal, closeModal } = useModal();
+  const [process, setProcess] = useState<Process>(selectedProcess);
 
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<ShortRole | undefined>();
+  const { roles, updateRole, addRole, removeRole } = useRoleManager(process);
 
-  const [collectionRoles, setCollectionRoles] = useState<Role[] | undefined>(
-    undefined,
-  );
+  const [collectionRoles, setCollectionRoles] = useState<Role[]>([]);
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
   const [functions, setFunctions] = useState<FunctionString[]>([]);
+  const [editProcessDialogOpen, setEditProcessDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<ShortRole | undefined>();
 
-  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
-
-  const handleEditClick = (role: ShortRole | undefined) => {
-    if (!role) return;
+  const handleEditRoleClick = (role: ShortRole) => {
     setSelectedRole(role);
-    setEditModalOpen(true);
+    openModal('editRole');
   };
 
-  const handleEditModalClose = () => {
+  const handleAddRoleClick = () => {
     setSelectedRole(undefined);
-    setEditModalOpen(false);
+    openModal('addRole');
   };
 
-  const handleDeleteClick = async (roleToDelete: ShortRole) => {
+  const handleAddRole = async (role: ShortRole) => {
     try {
-      await removeProcessRole(
-        selectedProcess._id,
-        selectedProcessRoles!,
-        roleToDelete.roleId,
-      );
-
-      // Aktualisiere die Ansicht
-      const updatedRoles = selectedProcessRoles?.filter(
-        (role) => role.roleId !== roleToDelete.roleId,
-      );
-      selectedProcess.roles = updatedRoles;
-      setSelectedProcessRoles(updatedRoles);
-
-      // Zeige eine Bestätigung an
-      setSnackbar({
-        open: true,
-        message: 'Rolle erfolgreich gelöscht!',
-      });
-    } catch (error) {
-      console.error('Fehler beim Löschen der Rolle:', error);
-      setSnackbar({
-        open: true,
-        message: 'Fehler beim Löschen der Rolle.',
-      });
+      await addRole(role); // Rolle hinzufügen und Zustand aktualisieren
+      showSnackbar('Rolle erfolgreich hinzugefügt.', 'success');
+    } catch {
+      showSnackbar('Fehler beim Hinzufügen der Rolle.', 'error');
     }
-  };
-
-  const handleAddRole = () => {
-    console.log('Add role clicked');
-    setAddModalOpen(true);
-  };
-
-  const handleSelectModalClose = () => {
-    setAddModalOpen(false);
-  };
-
-  const handleNewRoleModalOpen = () => {
-    setAddModalOpen(false);
-    setNewRoleModalOpen(true);
-  };
-
-  const handleNewRoleModalClose = () => {
-    setNewRoleModalOpen(false);
-  };
-
-  const handleExistingRolesModalOpen = () => {
-    setAddModalOpen(false);
-    setExistingRolesModalOpen(true);
-  };
-
-  const handleExistingRolesModalClose = () => {
-    setExistingRolesModalOpen(false);
-  };
-
-  const refresh = (updatedRole: ShortRole | undefined, oldRoleId: string) => {
-    // Aktualisiere die Rolle in der `roles`-Liste
-    setCollectionRoles(
-      (prevRoles) =>
-        prevRoles?.map((role) =>
-          role.roleId === oldRoleId ? { ...role, ...updatedRole } : role,
-        ) || [],
-    );
-
-    // Aktualisiere die Rolle in `selectedProcess.roles`
-    const updatedProcessRoles = selectedProcess.roles?.map((role) =>
-      role.roleId === oldRoleId ? { ...role, ...updatedRole } : role,
-    );
-
-    // Aktualisiere `selectedProcess`
-    selectedProcess.roles = updatedProcessRoles;
-    setSelectedProcessRoles(updatedProcessRoles);
-    console.log(selectedProcess.roles);
   };
 
   const handleUpdateRole = async (
-    updatedRole: ShortRole | undefined,
+    updatedRole: ShortRole,
     oldRoleId: string,
   ) => {
-    if (!updatedRole) return;
-
     try {
-      await updateProcessRole(
-        selectedProcess._id,
-        selectedProcess.name,
-        selectedProcessRoles,
-        updatedRole,
-        oldRoleId,
-      );
-
-      refresh(updatedRole, oldRoleId);
-
-      setSnackbar({
-        open: true,
-        message: 'Rolle erfolgreich aktualisiert!',
-      });
-    } catch (error) {
-      console.error('Fehler beim Aktualisieren der Rolle:', error);
-      setSnackbar({
-        open: true,
-        message: 'Fehler beim Aktualisieren der Rolle.',
-      });
+      await updateRole(updatedRole, oldRoleId); // Rolle aktualisieren
+      showSnackbar('Rolle erfolgreich aktualisiert.', 'success');
+    } catch {
+      showSnackbar('Fehler beim Aktualisieren der Rolle.', 'error');
     }
   };
 
-  const handleSelectRole = (role: Role | null) => {
-    if (role) {
-      console.log('Ausgewählte Rolle:', role);
+  const handleRemoveRole = async (roleId: string) => {
+    try {
+      await removeRole(roleId); // Rolle entfernen und Zustand aktualisieren
+      showSnackbar('Rolle erfolgreich gelöscht.', 'success');
+    } catch {
+      showSnackbar('Fehler beim Löschen der Rolle.', 'error');
     }
   };
 
+  const handleEditProcess = async (name: string, parentId: string) => {
+    try {
+      await updateProcess(process._id, name, parentId, process.roles);
+      showSnackbar('Prozess erfolgreich aktualisiert.', 'success');
+    } catch {
+      showSnackbar('Fehler beim Aktualisieren des Prozesses.', 'error');
+    }
+  };
+
+  const handleDeleteProcess = async () => {
+    try {
+      await deleteProcess(process._id);
+      onRemove();
+      showSnackbar('Prozess erfolgreich gelöscht.', 'success');
+    } catch {
+      showSnackbar('Fehler beim Löschen des Prozesses.', 'error');
+    }
+  };
+
+  // Lade den Prozess neu, wenn sich selectedProcess ändert
+  const loadProcess = useCallback(async () => {
+    try {
+      const process = await getProcessById(selectedProcess._id);
+      setProcess(process);
+    } catch (err) {
+      showSnackbar('Fehler beim Laden des Prozesses.', 'error');
+    }
+  }, [process, showSnackbar]);
+
+  // Lade Rollen, Organisationseinheiten und Funktionen
   const loadRoles = useCallback(async () => {
     try {
-      if (!selectedProcess.roles || selectedProcess.roles?.length === 0) {
-        setCollectionRoles([]);
-        return;
-      }
+      if (roles.length === 0) return;
 
-      const roleIds = selectedProcess.roles?.map((role) => role.roleId);
       const [loadedRoles, loadedOrgUnits, loadedFunctions] = await Promise.all([
-        fetchRoles(roleIds),
+        fetchRoles(),
         fetchAllOrgUnits(),
         fetchAllFunctions(),
       ]);
+
+      console.log('loadedRoles', loadedRoles);
 
       setCollectionRoles(loadedRoles);
       setOrgUnits(loadedOrgUnits);
       setFunctions(loadedFunctions);
     } catch (err) {
-      console.error('Fehler beim Laden der Rollen:', err);
+      showSnackbar('Fehler beim Laden der Rollen.', 'error');
     }
-  }, [selectedProcess]);
+  }, [roles, showSnackbar]);
 
+  // Aktualisiere Prozess und Rollen, wenn sich selectedProcess ändert
   useEffect(() => {
+    loadProcess();
     loadRoles();
-  }, [selectedProcess, selectedProcessRoles, loadRoles]);
+  }, [selectedProcess]);
 
   return (
     <>
-      <Snackbar
-        open={snackbar.open}
-        message={snackbar.message}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ open: false, message: '' })}
-      />
       <Typography
         variant="h5"
         sx={{
@@ -226,7 +167,7 @@ export default function EditorView({
           borderImageSlice: 1,
         }}
       >
-        {selectedProcess.name}
+        {process.name}
       </Typography>
 
       {/* Modernisierte Tabelle */}
@@ -282,15 +223,14 @@ export default function EditorView({
           </tr>
         </thead>
         <tbody>
-          {selectedProcess.roles && selectedProcess.roles.length > 0 ? (
-            selectedProcess.roles.map((processRole, index) => {
-              // Passende Rolle aus der `roles`-Liste finden
+          {roles.length > 0 ? (
+            roles.map((processRole, index) => {
               let matchedRole;
               let name;
               switch (processRole.roleType) {
                 case 'COLLECTION':
                   matchedRole = collectionRoles?.find(
-                    (role) => role.roleId === processRole.roleId,
+                    (role) => role._id === processRole.roleId,
                   );
                   name = `Rolle: ${matchedRole?.name}`;
                   break;
@@ -307,8 +247,10 @@ export default function EditorView({
                   name = `Funktion: Implizite Funktion: ${matchedRole?.functionName}`;
                   break;
                 default:
-                  matchedRole = null;
+                  name = 'Unbekannt';
               }
+              console.log('processRole', processRole);
+              console.log('matchedRole', matchedRole);
               return (
                 <tr
                   key={index}
@@ -338,7 +280,7 @@ export default function EditorView({
                   >
                     <Tooltip title="Bearbeiten">
                       <IconButton
-                        onClick={() => handleEditClick(processRole)}
+                        onClick={() => handleEditRoleClick(processRole)}
                         sx={{
                           color: theme.palette.info.main,
                           '&:hover': {
@@ -352,7 +294,7 @@ export default function EditorView({
                     </Tooltip>
                     <Tooltip title="Löschen">
                       <IconButton
-                        onClick={() => handleDeleteClick(processRole)}
+                        onClick={() => handleRemoveRole(processRole.roleId)}
                         sx={{
                           color: theme.palette.error.main,
                           '&:hover': {
@@ -386,53 +328,69 @@ export default function EditorView({
         </tbody>
       </Box>
 
-      {/* Button zum Hinzufügen von Rollen */}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleAddRole}
-        sx={{
-          marginTop: 2,
-          width: '100%',
-          padding: '10px',
-          fontWeight: 'bold',
-          textTransform: 'none',
-        }}
-        startIcon={<Add />}
-      >
-        Rolle hinzufügen
-      </Button>
+      {/* Buttons */}
+      <Box sx={{ display: 'flex', gap: 2, marginTop: 2 }}>
+        {/* Rolle hinzufügen */}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => openModal('addRole')}
+          startIcon={<Add />}
+          sx={{ flexGrow: 1 }}
+        >
+          Rolle hinzufügen
+        </Button>
 
-      {/* Modal für Auswahl */}
-      <SelectAddRoleModal
-        open={addModalOpen}
-        onClose={handleSelectModalClose}
-        onSelectType={(type) => {
-          if (type === 'explizite') {
-            handleNewRoleModalOpen();
-          } else if (type === 'implizite') {
-            handleExistingRolesModalOpen();
-          }
-        }}
+        {/* Prozess ändern */}
+        <Button
+          variant="outlined"
+          color="info"
+          onClick={() => setEditProcessDialogOpen(true)}
+          startIcon={<Edit />}
+          sx={{ flexGrow: 1 }}
+        >
+          Prozess ändern
+        </Button>
+
+        {/* Prozess löschen */}
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={() => setDeleteDialogOpen(true)}
+          startIcon={<Delete />}
+          sx={{ flexGrow: 1 }}
+        >
+          Prozess löschen
+        </Button>
+      </Box>
+
+      {/* Modale */}
+      <AddRoleModal
+        open={isOpen('addRole')}
+        onClose={() => closeModal('addRole')}
+        onSave={handleAddRole} // Fehler werden in handleAddRole behandelt
       />
 
-      {/* Modal für neue Rolle */}
-      <NewRoleModal open={newRoleModalOpen} onClose={handleNewRoleModalClose} />
-
-      {/* Modal für existierende Rollen */}
-      <ExistingRolesModal
-        open={existingRolesModalOpen}
-        collectionRoles={collectionRoles}
-        onClose={handleExistingRolesModalClose}
-        onSelectRole={handleSelectRole}
-      />
-
-      {/* Edit-Modal */}
       <RoleEditModal
-        open={editModalOpen}
+        open={isOpen('editRole')}
         role={selectedRole}
-        onClose={handleEditModalClose}
-        onSave={handleUpdateRole}
+        onClose={() => closeModal('editRole')}
+        onSave={(role) => handleUpdateRole(role!, selectedRole?.roleId || '')}
+      />
+
+      {/* Dialoge */}
+      <EditProcessDialog
+        open={editProcessDialogOpen}
+        onClose={() => setEditProcessDialogOpen(false)}
+        processName={process.name}
+        processParentId={process.parentId || ''}
+        onSave={handleEditProcess}
+      />
+
+      <DeleteProcessDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onDelete={handleDeleteProcess}
       />
     </>
   );

@@ -69,7 +69,7 @@ export async function fetchAllProcessCollections() {
  */
 export async function getProcessById(processId: string): Promise<Process> {
   try {
-    logger.debug('Lade Prozess mit ID: %o', processId);
+    logger.debug('getProcessById: processIs=%s', processId);
 
     const { data } = await client.query({
       query: GET_PROCESS_BY_ID,
@@ -140,7 +140,7 @@ export async function updateProcess(
   processId: string,
   name: string,
   parentId: string | undefined,
-  roles: { roleName: string; roleId: string }[],
+  roles: { roleName: string; roleId: string }[] | undefined,
 ): Promise<Process[]> {
   try {
     logger.debug('Aktualisiere Prozess: %o', {
@@ -153,6 +153,25 @@ export async function updateProcess(
     await client.mutate({
       mutation: UPDATE_PROCESS,
       variables: { id: processId, name, parentId, roles },
+      refetchQueries: [{ query: GET_ALL_PROCESSES }],
+      awaitRefetchQueries: true,
+    });
+
+    return await fetchAllProcesses();
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Aktualisieren des Prozesses.');
+  }
+}
+
+export async function deleteProcess(processId: string): Promise<Process[]> {
+  try {
+    logger.debug('deleteProcess: id=%s', {
+      processId,
+    });
+
+    await client.mutate({
+      mutation: DELETE_PROCESS,
+      variables: { id: processId },
       refetchQueries: [{ query: GET_ALL_PROCESSES }],
       awaitRefetchQueries: true,
     });
@@ -313,7 +332,7 @@ export async function updateProcessCollection(
       variables: { id, name, parentId },
     });
 
-      return fetchAllProcesses();
+    return fetchAllProcesses();
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
   }

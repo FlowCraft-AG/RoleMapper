@@ -44,6 +44,7 @@ export const GET_PROCESS_BY_ID = gql`
           roles {
             roleName
             roleId
+            roleType
           }
         }
       }

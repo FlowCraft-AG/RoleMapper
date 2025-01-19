@@ -155,8 +155,8 @@ export default function ProcessSpalte({ onSelect }: ProcessRichTreeViewProps) {
   };
 
   const refetch = (processList: Process[]) => {
-      setProcesses(processes);
-      onRemove();
+    setProcesses(processes);
+    onRemove();
   };
 
   return (

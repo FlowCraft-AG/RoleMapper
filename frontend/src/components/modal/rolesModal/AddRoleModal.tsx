@@ -35,9 +35,8 @@ import {
 
 interface RoleEditModalProps {
   open: boolean;
-  role: ShortRole | undefined;
   onClose: () => void;
-  onSave: (updatedRole: ShortRole | undefined, oldRoleId: string) => void;
+  onSave: (role: ShortRole) => void;
 }
 
 function a11yProps(index: number) {
@@ -49,7 +48,6 @@ function a11yProps(index: number) {
 
 export default function RoleEditModal({
   open,
-  role,
   onClose,
   onSave,
 }: RoleEditModalProps): JSX.Element {
@@ -57,7 +55,7 @@ export default function RoleEditModal({
     string | null
   >(null);
 
-  const [updatedRole, setUpdatedRole] = useState<ShortRole | undefined>(role);
+  const [updatedRole, setUpdatedRole] = useState<ShortRole | undefined>();
 
   const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
@@ -70,6 +68,20 @@ export default function RoleEditModal({
     isImplicite: false,
     isSingleUser: false,
   });
+
+  const handleSave = () => {
+    console.log('updatedRole:', updatedRole);
+    if (updatedRole) {
+      onSave(updatedRole);
+      setUpdatedRole(undefined);
+      onClose();
+    } else {
+      setSnackbar({
+        open: true,
+        message: 'Rolle konnte nicht gespeichert werden',
+      });
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -87,14 +99,6 @@ export default function RoleEditModal({
     }
   }, [open]);
 
-  const handleSave = () => {
-    console.log('updatedRole:', updatedRole);
-    if (role) {
-      onSave(updatedRole, role.roleId);
-      onClose();
-    }
-  };
-
   // Filtere nur Organisationseinheiten mit definiertem alias oder Kostenstelle
   const filteredOrgUnits = orgUnits.filter(
     (unit: OrgUnit) => unit.alias !== null || unit.kostenstelleNr !== null,
@@ -108,20 +112,6 @@ export default function RoleEditModal({
     ),
   }));
 
-  useEffect(() => {
-    if (open && role) {
-      setUpdatedRole(role); // Setzt den aktuellen Zustand der Rolle
-      // Setze den Function Type basierend auf dem roleType
-      if (role.roleType === 'COLLECTION') {
-        setSelectedFunctionType('existierende');
-      } else if (role.roleType === 'IMPLICITE_ORG_UNIT') {
-        setSelectedFunctionType('orgUnit');
-      } else if (role.roleType === 'IMPLICITE_FUNCTION') {
-        setSelectedFunctionType('orgUnit');
-      }
-    }
-  }, [open, role]);
-
   return (
     <>
       <Snackbar
@@ -130,6 +120,7 @@ export default function RoleEditModal({
         autoHideDuration={3000}
         onClose={() => setSnackbar({ open: false, message: '' })}
       />
+
       <Dialog
         open={open}
         onClose={onClose}
@@ -154,7 +145,7 @@ export default function RoleEditModal({
             color: 'primary.main',
           }}
         >
-          Rolle bearbeiten: {role?.roleName}
+          Neue Rolle:
         </DialogTitle>
         <DialogContent
           sx={{
@@ -175,7 +166,6 @@ export default function RoleEditModal({
             fullWidth
             margin="normal"
             label="Name"
-            value={updatedRole?.roleName ?? 'N/A'}
             onChange={(e) =>
               setUpdatedRole((prev) => ({
                 ...prev,
@@ -470,9 +460,9 @@ export default function RoleEditModal({
             Abbrechen
           </Button>
           <Button
-            onClick={handleSave}
             color="primary"
             variant="contained"
+            onClick={handleSave}
             sx={{
               '&:hover': {
                 backgroundColor: 'primary.dark',
