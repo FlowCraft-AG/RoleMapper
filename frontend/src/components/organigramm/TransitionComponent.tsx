@@ -1,6 +1,5 @@
 /**
- * @file TransitionComponent.tsx
- * @description Stellt eine benutzerdefinierte Übergangskomponente dar, die `Collapse` von Material-UI
+ * Stellt eine benutzerdefinierte Übergangskomponente dar, die `Collapse` von Material-UI
  * mit animierten Übergängen von `@react-spring/web` kombiniert. Diese Komponente kann verwendet werden,
  * um geschmeidige Animationen für ein- und ausblendbare Elemente zu erstellen.
  *

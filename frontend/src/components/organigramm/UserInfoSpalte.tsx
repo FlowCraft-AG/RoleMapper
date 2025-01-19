@@ -1,6 +1,5 @@
 /**
- * @file UserInfoSpalte.tsx
- * @description Stellt die Benutzerinformationen einer ausgewählten Person dar.
+ * Stellt die Benutzerinformationen einer ausgewählten Person dar.
  * Die Komponente zeigt Details wie Benutzerrolle, Aktivstatus, Gültigkeitszeitraum
  * und spezifische Informationen zu Mitarbeitern oder Studierenden an.
  *

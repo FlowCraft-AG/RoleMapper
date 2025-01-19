@@ -1,6 +1,5 @@
 /**
- * @file ConfirmDeleteModal.tsx
- * @description Modal zur Bestätigung der Löschung einer Organisationseinheit und ihrer Untereinheiten.
+ * Modal zur Bestätigung der Löschung einer Organisationseinheit und ihrer Untereinheiten.
  *
  * @module ConfirmDeleteModal
  */

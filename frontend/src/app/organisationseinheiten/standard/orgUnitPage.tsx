@@ -13,8 +13,10 @@ import { OrgUnit } from '../../../types/orgUnit.type';
 import { User } from '../../../types/user.type';
 
 /**
- * Organigramm-Seite zur Anzeige und Verwaltung von Organisationseinheiten,
- * Funktionen, Benutzern und Benutzerinformationen.
+ * @module OrganigrammPage
+ * Seite zur Anzeige und Verwaltung von Organisationseinheiten, Funktionen, Benutzern und Benutzerinformationen.
+ *
+ * @returns {JSX.Element} Die gerenderte Organigramm-Seite.
  */
 
 export default function OrganigrammPage() {
@@ -49,10 +51,13 @@ export default function OrganigrammPage() {
   }, [setFacultyTheme, theme.palette]);
 
   /**
-   * Lädt Mitglieder der Organisationseinheit basierend auf Alias und Kostenstellennummer.
-   * @param alias - Der Alias der Organisationseinheit
-   * @param kostenstelleNr - Die Kostenstellennummer der Organisationseinheit
-   * @returns Eine Liste der Mitglieder-IDs
+   * Lädt die Mitglieder einer Organisationseinheit basierend auf Alias und Kostenstellennummer.
+   *
+   * @async
+   * @function getMitgliederIds
+   * @param {string} alias - Der Alias der Organisationseinheit.
+   * @param {string} kostenstelleNr - Die Kostenstellennummer der Organisationseinheit.
+   * @returns {Promise<string[]>} Eine Liste der Mitglieder-IDs.
    */
   const getMitgliederIds = async (alias: string, kostenstelleNr: string) => {
     try {
@@ -65,7 +70,10 @@ export default function OrganigrammPage() {
 
   /**
    * Handelt die Auswahl einer Organisationseinheit.
-   * @param orgUnitDTO - Die ausgewählte Organisationseinheit
+   * 
+   * @async
+   * @function handleOrgUnitSelect
+   * @param {OrgUnit} orgUnit - Die ausgewählte Organisationseinheit.
    */
   const handleOrgUnitSelect = async (orgUnit: OrgUnit) => {
     setSelectedOrgUnit(orgUnit);
@@ -84,7 +92,9 @@ export default function OrganigrammPage() {
 
   /**
    * Handelt die Auswahl einer Funktion.
-   * @param functionInfo - Informationen zur ausgewählten Funktion
+   *
+   * @function handleFunctionSelect
+   * @param {FunctionString} func - Informationen zur ausgewählten Funktion.
    */
   const handleFunctionSelect = (func: FunctionString) => {
     setSelectedFunctionId(func._id);
@@ -94,7 +104,11 @@ export default function OrganigrammPage() {
     setIsSingleUser(func.isSingleUser);
   };
 
-  // Mitgliederansicht aktivieren
+  /**
+   * Mitgliederansicht aktivieren
+   *
+   * @function handleMitgliederClick
+   */
   const handleMitgliederClick = () => {
     setSelectedFunctionId('mitglieder'); // Reset functions
     setSelectedFunction(mitglied(selectedRootOrgUnit?._id));
@@ -104,7 +118,9 @@ export default function OrganigrammPage() {
 
   /**
    * Handelt die Auswahl eines Benutzers.
-   * @param userId - Die ID des ausgewählten Benutzers
+   *
+   * @function handleUserSelect
+   * @param {string} userId - Die ID des ausgewählten Benutzers.
    */
   const handleUserSelect = (userId: string) => {
     setSelectedUserId(userId);
@@ -112,7 +128,9 @@ export default function OrganigrammPage() {
 
   /**
    * Entfernt ein ausgewähltes Element (Organisationseinheit, Funktion oder Benutzer).
-   * @param ids - Eine Liste von IDs der zu entfernenden Elemente
+   *
+   * @function handleRemove
+   * @param {string[]} ids - Eine Liste von IDs der zu entfernenden Elemente.
    */
   const handleRemove = (ids: string[]) => {
     if (ids.includes(selectedUserId!)) {
@@ -133,7 +151,8 @@ export default function OrganigrammPage() {
 
   /**
    * Erstellt eine Mitgliederfunktion für eine Organisationseinheit.
-   * @param orgUnitId - Die ID der Organisationseinheit
+   * 
+   * @param {string} orgUnitId - Die ID der Organisationseinheit
    * @returns Die Mitgliederfunktion
    */
   const mitglied = (orgUnitId: string | undefined) => {

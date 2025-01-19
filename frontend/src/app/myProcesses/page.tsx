@@ -1,6 +1,5 @@
 /**
- * @file ProcessInstances.tsx
- * @description React-Komponente zur Anzeige von Prozessinstanzen aus Camunda.
+ * React-Komponente zur Anzeige von Prozessinstanzen aus Camunda.
  */
 
 'use client';

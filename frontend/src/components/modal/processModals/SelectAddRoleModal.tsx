@@ -1,6 +1,5 @@
 /**
- * @file SelectAddRoleModal.tsx
- * @description Modal-Komponente zur Auswahl des Hinzufügen von Rollen (neue oder bestehende)
+ * Modal-Komponente zur Auswahl des Hinzufügen von Rollen (neue oder bestehende)
  *
  * @module SelectAddRoleModal
  */

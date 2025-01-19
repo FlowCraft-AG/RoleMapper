@@ -19,17 +19,35 @@ import { getRoles } from '../../lib/api/rolemapper/roles.api';
 import { Process } from '../../types/process.type';
 import { RoleResult, UserWithFunction } from '../../types/role-payload.type';
 
-interface DebuggerViewProps {
+/**
+ * Properties für die DebuggerView component.
+ */
+interface DebuggerViewProps { 
+  /** Der aktuell ausgewählte Prozess, für den die Rollen abgeholt werden sollen. */
   selectedProcess: Process;
 }
 
+/**
+ * DebuggerView-Komponente zum Abrufen und Anzeigen von Benutzerrollen, die mit einem bestimmten Prozess verbunden sind.
+ * 
+ * @param {DebuggerViewProps} props - Komponenteneigenschaften.
+ * @returns {JSX.Element} Die gerenderte DebuggerView-Komponente.
+ */
 export default function DebuggerView({
   selectedProcess,
-}: DebuggerViewProps): JSX.Element {
+}: DebuggerViewProps): JSX.Element 
+  /** Die vom Benutzer eingegebene Benutzer-ID. */
   const [userId, setUserId] = useState<string>('');
+  /** Die gefechten Rollendaten für den Benutzer. */
   const [data, setData] = useState<RoleResult[]>();
+  /** error message. */
   const [error, setError] = useState<string | undefined>(undefined);
 
+  /**
+   * Handhabt den Abruf von Rollen für die angegebene Benutzer-ID und den Prozess.
+   * Setzt Fehler- und Datenstatus vor dem Abruf zurück.
+   * Zeigt eine Fehlermeldung an, wenn Rollen nicht abgerufen werden können oder ungültig sind.
+   */
   const handleFetchRoles = async () => {
     setError(undefined); //  error state zurücksetzen
     setData(undefined); // Reset data zurücksetzen
@@ -61,6 +79,9 @@ export default function DebuggerView({
     }
   };
 
+  /**
+   * Resets error and data states when the selected process or user ID changes.
+   */
   useEffect(() => {
     setError(undefined);
     setData(undefined);

@@ -1,6 +1,5 @@
 /**
- * @file OrgUnitsSpalte.tsx
- * @description Stellt die Spalte für Organisationseinheiten dar. Die Organisationseinheiten werden in einer Baumstruktur dargestellt,
+ * Stellt die Spalte für Organisationseinheiten dar. Die Organisationseinheiten werden in einer Baumstruktur dargestellt,
  * und es können dynamische Themes sowie Interaktionen mit den Einheiten durchgeführt werden.
  *
  * @module OrgUnitsSpalte

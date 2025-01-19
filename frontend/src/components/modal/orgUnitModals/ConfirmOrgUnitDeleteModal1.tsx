@@ -1,6 +1,5 @@
 /**
- * @file OrgUnitFunctionsModal.tsx
- * @description Modal zur Anzeige der Funktionen einer Organisationseinheit.
+ * Modal zur Anzeige der Funktionen einer Organisationseinheit.
  *
  * @module OrgUnitFunctionsModal
  */

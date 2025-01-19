@@ -1,6 +1,5 @@
 /**
- * @file ProcessSpalte.tsx
- * @description Stellt die Spalte für Prozesse dar. Die Prozesse werden in einer Baumstruktur dargestellt,
+ * Stellt die Spalte für Prozesse dar. Die Prozesse werden in einer Baumstruktur dargestellt,
  * und es können Interaktionen mit den Prozessen durchgeführt werden.
  *
  * @module ProcessSpalte

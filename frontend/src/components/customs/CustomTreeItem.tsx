@@ -1,6 +1,5 @@
 /**
- * @file CustomTreeItem.tsx
- * @description Eine erweiterte TreeItem-Komponente zur Darstellung von Organisationseinheiten mit integrierten Aktionen
+ * Eine erweiterte TreeItem-Komponente zur Darstellung von Organisationseinheiten mit integrierten Aktionen
  * wie Hinzufügen, Bearbeiten und Löschen. Unterstützt komplexe Prüfungen auf abhängige Funktionen und Kinder.
  *
  * @module CustomTreeItem

@@ -1,6 +1,5 @@
 /**
- * @file ExistingRolesModal.tsx
- * @description Modal-Komponente mit Autocomplete zur Auswahl vorhandener Rollen.
+ * Modal-Komponente mit Autocomplete zur Auswahl vorhandener Rollen.
  *
  * @module ExistingRolesModal
  */

@@ -24,12 +24,12 @@ interface ProcessDetailsProps {
 /**
  * `GeneralInfoCard`-Komponente
  *
- * Zeigt allgemeine Informationen zu einer Prozessinstanz an.
+ * Diese Komponente zeigt allgemeine Informationen zu einer Prozessinstanz an, einschließlich
+ * Instanz-Key, Status, Startdatum, Tenant ID, Vorfallstatus und Prozessversion.
  *
- * @component
- * @param {Object} props - Eigenschaften der Komponente
- * @param {ProcessInstance} props.details - Die Prozessdetails
- * @returns {JSX.Element} Die JSX-Struktur der allgemeinen Informationen
+ * @param {ProcessDetailsProps} props - Die Eigenschaften der Komponente.
+ * @param {ProcessInstance} props.details - Die Details der Prozessinstanz.
+ * @returns {JSX.Element} Die gerenderte Karte mit den allgemeinen Informationen.
  *
  * @example
  * ```tsx

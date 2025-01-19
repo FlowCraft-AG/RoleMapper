@@ -29,7 +29,7 @@ export interface ConfigData {
 /**
  * Eine Seite, die alle relevanten Konfigurationsvariablen anzeigt.
  *
- * @returns JSX.Element - Die gerenderte Konfigurationsseite.
+ * @returns {JSX.Element} - Die gerenderte Konfigurationsseite.
  */
 const ConfigPage = () => {
   const logger = getLogger('ConfigPage');

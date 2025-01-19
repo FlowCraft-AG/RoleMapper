@@ -2,7 +2,6 @@ import ProcessInstanceDetailsContent from './ProcessInstanceDetails';
 
 /**
  * Eigenschaften der Seite für die Details einer Prozessinstanz.
- * @typedef ProcessInstanceDetailsPageProps
  * @property {Promise<{ key: string }>} params - Die Parameter der Seite
  * @property {string} params.key - Der Schlüssel der Prozessinstanz
  */

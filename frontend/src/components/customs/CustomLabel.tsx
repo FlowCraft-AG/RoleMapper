@@ -1,6 +1,5 @@
 /**
- * @file CustomLabel.tsx
- * @description Eine flexible Komponente zur Anzeige eines benutzerdefinierten Labels mit Aktionen wie Hinzufügen, Bearbeiten und Löschen.
+ * Eine flexible Komponente zur Anzeige eines benutzerdefinierten Labels mit Aktionen wie Hinzufügen, Bearbeiten und Löschen.
  *
  * @module CustomLabel
  */

@@ -17,12 +17,14 @@ export const metadata: Metadata = {
 };
 
 /**
- * Server-Komponente zur Darstellung der Hauptseite für Organisationseinheiten.
- * Diese Komponente bietet eine Übersicht über die verschiedenen Darstellungsoptionen
+ *
+ * Diese Server-Komponente dient als Einstiegspunkt für die Darstellung und Navigation
+ * der Organisationseinheiten. Sie bietet eine Übersicht über Darstellungsoptionen
  * und integriert die Organigramm-Komponente.
- * 
- * @returns React-Element zur Darstellung der Seite.
+ *
+ * @returns {JSX.Element} Die gerenderte Seite für Organisationseinheiten.
  */
+
 export default async function HKAPage() {
   return (
     <Box sx={{ padding: 4 }}>

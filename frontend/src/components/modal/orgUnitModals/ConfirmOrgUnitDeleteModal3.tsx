@@ -1,6 +1,5 @@
 /**
- * @file ChildFunctionsModal.tsx
- * @description Modal zur Anzeige von Funktionen der untergeordneten Organisationseinheiten.
+ * Modal zur Anzeige von Funktionen der untergeordneten Organisationseinheiten.
  *
  * @module ChildFunctionsModal
  */

@@ -1,6 +1,5 @@
 /**
- * @file CreateOrgUnitModal.tsx
- * @description Modal-Komponente zur Erstellung neuer Organisationseinheiten.
+ * Modal-Komponente zur Erstellung neuer Organisationseinheiten.
  *
  * @module CreateOrgUnitModal
  */

@@ -27,43 +27,73 @@ import NewRoleModal from '../modal/processModals/AddNewRoleModal';
 import SelectAddRoleModal from '../modal/processModals/SelectAddRoleModal';
 import RoleEditModal from '../modal/rolesModal/RoleEditModal';
 
+/**
+ * Die Eigenschaften für die `EditorView`-Komponente
+ */
 interface EditorViewProps {
+  // Der aktuell ausgewählte Prozess, für den Rollen verwaltet werden
   selectedProcess: Process;
 }
 
+/**
+ * Hauptkomponente, die eine Editor-Ansicht für Rollen innerhalb eines Prozesses darstellt.
+ * 
+ * @param {EditorViewProps} props Die Eigenschaften für die Komponente
+ * @returns {JSX.Element} Die gerenderte Editor-Ansicht
+ */
 export default function EditorView({
   selectedProcess,
 }: EditorViewProps): JSX.Element {
   const theme = useTheme();
+
+  /** Die aktuell ausgewählten Rollen des Prozesses */
   const [selectedProcessRoles, setSelectedProcessRoles] = useState<
     ShortRole[] | undefined
   >(selectedProcess.roles);
+
+  /** Zustandsvariablen für verschiedene Modale */
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [newRoleModalOpen, setNewRoleModalOpen] = useState(false);
   const [existingRolesModalOpen, setExistingRolesModalOpen] = useState(false);
-
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  /** Die aktuell ausgewählte Rolle für die Bearbeitung */
   const [selectedRole, setSelectedRole] = useState<ShortRole | undefined>();
 
+  /** Gesammelte Rollen, Organisationseinheiten und Funktionen */ 
   const [collectionRoles, setCollectionRoles] = useState<Role[] | undefined>(
     undefined,
   );
   const [orgUnits, setOrgUnits] = useState<OrgUnit[]>([]);
   const [functions, setFunctions] = useState<FunctionString[]>([]);
 
+  /** Snackbar für Benachrichtigungen */
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
 
+  /**
+   * Öffnet das Bearbeitungsmodal für eine ausgewählte Rolle
+   * 
+   * @param {ShortRole | undefined} role Die Rolle, die bearbeitet werden soll
+   */
   const handleEditClick = (role: ShortRole | undefined) => {
     if (!role) return;
     setSelectedRole(role);
     setEditModalOpen(true);
   };
 
+  /**
+   * Schließt das Bearbeitungsmodal
+   */
   const handleEditModalClose = () => {
     setSelectedRole(undefined);
     setEditModalOpen(false);
   };
 
+  /**
+   * Löscht eine Rolle aus dem aktuellen Prozess
+   * 
+   * @param {ShortRole} roleToDelete Die zu löschende Rolle
+   */
   const handleDeleteClick = async (roleToDelete: ShortRole) => {
     try {
       await removeProcessRole(
@@ -93,33 +123,59 @@ export default function EditorView({
     }
   };
 
+  /**
+ * Öffnet das Modal zum Hinzufügen einer neuen Rolle.
+  */
   const handleAddRole = () => {
     console.log('Add role clicked');
     setAddModalOpen(true);
   };
 
+  /**
+  * Schließt das Modal zur Rollenauswahl.
+  */
   const handleSelectModalClose = () => {
     setAddModalOpen(false);
   };
 
+  /**
+  * Öffnet das Modal zum Erstellen einer neuen Rolle und schließt das Auswahl-Modal.
+  */
   const handleNewRoleModalOpen = () => {
     setAddModalOpen(false);
     setNewRoleModalOpen(true);
   };
 
+  /**
+  * Schließt das Modal zum Erstellen einer neuen Rolle.
+  */
   const handleNewRoleModalClose = () => {
     setNewRoleModalOpen(false);
   };
 
+  /**
+  * Öffnet das Modal zum Auswählen bestehender Rollen und schließt das Auswahl-Modal.
+  */
   const handleExistingRolesModalOpen = () => {
     setAddModalOpen(false);
     setExistingRolesModalOpen(true);
   };
 
+  /**
+  * Schließt das Modal für bestehende Rollen.
+  */
   const handleExistingRolesModalClose = () => {
     setExistingRolesModalOpen(false);
   };
 
+
+  /** 
+   * Aktualisiert die Daten einer Rolle sowohl in der lokalen State-Variable `collectionRoles`
+   * als auch in den Rollen des ausgewählten Prozesses.
+   *
+   * @param {ShortRole | undefined} updatedRole - Die aktualisierte Rolle.
+   * @param {string} oldRoleId - Die ID der zu ersetzenden alten Rolle.
+   */
   const refresh = (updatedRole: ShortRole | undefined, oldRoleId: string) => {
     // Aktualisiere die Rolle in der `roles`-Liste
     setCollectionRoles(
@@ -140,6 +196,12 @@ export default function EditorView({
     console.log(selectedProcess.roles);
   };
 
+  /**
+   * Aktualisiert eine Rolle, speichert die Änderungen im Backend und synchronisiert den lokalen State.
+   *
+   * @param {ShortRole | undefined} updatedRole - Die aktualisierte Rolle.
+   * @param {string} oldRoleId - Die ID der zu ersetzenden alten Rolle.
+   */
   const handleUpdateRole = async (
     updatedRole: ShortRole | undefined,
     oldRoleId: string,
@@ -147,6 +209,7 @@ export default function EditorView({
     if (!updatedRole) return;
 
     try {
+      //Backend-Aufruf zum Speichern der Rolle 
       await updateProcessRole(
         selectedProcess._id,
         selectedProcess.name,
@@ -170,12 +233,21 @@ export default function EditorView({
     }
   };
 
+  /**
+   * Verarbeitet die Auswahl einer Rolle im Modal.
+   *
+   * @param {Role | null} role - Die ausgewählte Rolle oder `null`, wenn keine Rolle ausgewählt wurde.
+   */
   const handleSelectRole = (role: Role | null) => {
     if (role) {
       console.log('Ausgewählte Rolle:', role);
     }
   };
 
+  /**
+   * Lädt Rollen, Organisationseinheiten und Funktionen für den ausgewählten Prozess.
+   * Wenn keine Rollen vorhanden sind, wird die Rollenliste geleert.
+   */
   const loadRoles = useCallback(async () => {
     try {
       if (!selectedProcess.roles || selectedProcess.roles?.length === 0) {
@@ -198,6 +270,9 @@ export default function EditorView({
     }
   }, [selectedProcess, selectedProcessRoles]);
 
+  /**
+   * Effekt, um Rollen zu laden, wenn sich der ausgewählte Prozess oder die Prozessrollen ändern.
+   */
   useEffect(() => {
     loadRoles();
   }, [selectedProcess, selectedProcessRoles]);

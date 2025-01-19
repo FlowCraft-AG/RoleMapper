@@ -1,6 +1,5 @@
 /**
- * @file FunctionsSpalte.tsx
- * @description Stellt die Spalte für Funktionen innerhalb einer Organisationseinheit dar.
+ * Stellt die Spalte für Funktionen innerhalb einer Organisationseinheit dar.
  * Diese Komponente zeigt Funktionen an, ermöglicht die Verwaltung von Funktionen und bietet Modals für verschiedene Aktionen.
  *
  * @module FunctionsSpalte

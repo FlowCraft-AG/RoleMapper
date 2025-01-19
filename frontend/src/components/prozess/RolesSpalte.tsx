@@ -1,6 +1,5 @@
 /**
- * @file RolesSpalte.tsx
- * @description Stellt den Bereich für die Prozess-Details inklusive der Rollen dar.
+ * Stellt den Bereich für die Prozess-Details inklusive der Rollen dar.
  *
  * @module RolesSpalte
  */

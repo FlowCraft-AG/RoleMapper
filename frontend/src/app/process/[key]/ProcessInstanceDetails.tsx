@@ -1,6 +1,5 @@
 /**
- * @file ProcessInstanceDetailsContent.tsx
- * @description Komponente zur Anzeige der Details einer Prozessinstanz, einschließlich Variablen und Tasks.
+ * Komponente zur Anzeige der Details einer Prozessinstanz, einschließlich Variablen und Tasks.
  *
  * Diese Komponente bietet Tabs, um Variablen und Aufgaben (Tasks) einer Prozessinstanz übersichtlich darzustellen.
  *

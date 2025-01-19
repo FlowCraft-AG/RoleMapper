@@ -1,6 +1,5 @@
 /**
- * @file AddNewRoleModal.tsx
- * @description Modal-Komponente zum Hinzufügen einer neuen Rolle.
+ * Modal-Komponente zum Hinzufügen einer neuen Rolle.
  *
  * @module NewRoleModal
  */

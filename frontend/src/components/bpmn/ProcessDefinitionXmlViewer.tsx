@@ -1,6 +1,5 @@
 /**
- * @file ProcessDefinitionXmlViewer.tsx
- * @description React-Komponente zur Anzeige des XML-Inhalts einer Prozessdefinition basierend auf einem gegebenen Prozessschlüssel.
+ * React-Komponente zur Anzeige des XML-Inhalts einer Prozessdefinition basierend auf einem gegebenen Prozessschlüssel.
  *
  * @module ProcessDefinitionXmlViewer
  */

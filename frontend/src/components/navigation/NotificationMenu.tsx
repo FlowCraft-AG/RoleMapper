@@ -36,26 +36,45 @@ import { ENV } from '../../utils/env';
  */
 const NOTIFICATION_UPDATE_INTERVAL = parseInt(ENV.NOTIFICATION_UPDATE_INTERVAL); //Default 86400000 = 24 Stunden
 
+/**
+ * Eigenschaften der `NotificationMenu`-Komponente.
+ */
 interface NotificationMenuProps {
+  /** Das Material-UI-Theme-Objekt zur Anpassung von Stilen. */
   theme: Theme;
+  /** Instanz des Next.js-Routers zur Navigation zwischen Seiten. */
   router: AppRouterInstance;
 }
 
 /**
- * Typ für eine Benachrichtigung.
+ * Typ für eine Benachrichtigung, die Informationen zu einer Funktion und Benutzern enthält.
  */
 interface Notification {
+  /** Informationen zur Funktion, für die Benachrichtigungen erstellt wurden. */
   function: FunctionString;
+  /** Liste von Benutzern mit verbleibender Zeit. */
   userList: UserRetirementInfo[];
 }
-
+/**
+ * Typ für Informationen zu Benutzern, die eine Rolle verlassen.
+ */
 interface UserRetirementInfo {
+   /** ID des Benutzers. */
   userId: string;
+  /** Verbleibende Zeit in Tagen, bevor der Benutzer die Rolle verlässt. */
   timeLeft: number;
 }
 
 /**
  * Komponente für das Benachrichtigungsmenü.
+ * Zeigt Benachrichtigungen über Funktionen an, die entweder keine Benutzer
+ * oder Benutzer mit auslaufender Mitgliedschaft enthalten.
+ *
+ * @param {NotificationMenuProps} props - Eigenschaften der Komponente.
+ * @param {Theme} props.theme - Das Material-UI-Theme zur Anpassung von Stilen.
+ * @param {AppRouterInstance} props.router - Instanz des Next.js-Routers.
+ *
+ * @returns Die React-Komponente für das Benachrichtigungsmenü.
  */
 export default function NotificationMenu({
   theme,
@@ -74,20 +93,34 @@ export default function NotificationMenu({
   const [timeUnit, setTimeUnit] = useState('JAHRE');
   const [activeTab, setActiveTab] = useState(0);
 
+  /**
+   * Öffnet das Benachrichtigungsmenü.
+   * 
+   * @param {React.MouseEvent<HTMLElement>} event - Das Klickereignis.
+   */
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setNotificationAnchor(event.currentTarget);
   };
 
+  /**
+   * Schließt das Benachrichtigungsmenü.
+   */
   const handleCloseMenu = () => {
     setNotificationAnchor(undefined);
   };
 
+  /**
+   * Wechselt den aktiven Tab im Menü.
+   * 
+   * @param {React.SyntheticEvent} event - Das Tab-Wechsel-Ereignis.
+   * @param {number} newValue - Der Index des neuen aktiven Tabs.
+   */
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
   /**
-   * Ruft Benachrichtigungen ab und teilt sie nach `isSingleUser`.
+   * Ruft Benachrichtigungen ab und teilt sie nach `isSingleUser.
    */
   const fetchNotifications = useCallback(async () => {
     try {
@@ -120,9 +153,9 @@ export default function NotificationMenu({
   }, [lookaheadPeriod, timeUnit]);
 
   /**
-   * Handhabt das Klicken auf eine Benachrichtigung und navigiert zur entsprechenden Organisationseinheit.
+   * Behandelt Klicks auf Benachrichtigungen und navigiert zur entsprechenden Organisationseinheit.
    *
-   * @param {Notification} notification - Die ausgewählte Benachrichtigung.
+   * @param {Notification} notification - Die Benachrichtigung, die angeklickt wurde.
    */
   const handleNotificationClick = useCallback(
     async (notification: Notification) => {
@@ -156,6 +189,12 @@ export default function NotificationMenu({
     return () => clearInterval(interval);
   }, [fetchNotifications]);
 
+  /**
+   * Rendert Benachrichtigungen basierend auf dem aktiven Tab.
+   * 
+   * @param {Notification[]} notifications - Die Benachrichtigungen, die gerendert werden sollen.
+   * @returns Ein JSX-Element mit gerenderten Benachrichtigungen.
+   */
   const renderNotifications = (notifications: Notification[]) => (
     <Box sx={{ maxHeight: '60vh', overflowY: 'auto' }}>
       {notifications.length > 0 ? (

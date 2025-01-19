@@ -1,6 +1,5 @@
 /**
- * @file SelectFunctionTypeModal.tsx
- * @description Modal-Komponente zur Auswahl eines Funktionstyps (implizit oder explizit).
+ * Modal-Komponente zur Auswahl eines Funktionstyps (implizit oder explizit).
  *
  * @module SelectFunctionTypeModal
  */

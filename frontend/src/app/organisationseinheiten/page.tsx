@@ -1,5 +1,5 @@
 /**
- * Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HSKA)
+ * Hauptseite für die Organisationseinheiten der Hochschule Karlsruhe (HKA)
  * Diese Seite bietet Navigation zu verschiedenen Ansichten des Organigramms
  * und zeigt eine eingebettete Organigramm-Komponente.
  *

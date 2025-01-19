@@ -41,6 +41,16 @@ import {
   buildOrgUnitDisplayName,
 } from '../../../utils/buildDisplayName.utils';
 
+/**
+ * Props für die `RoleEditModal`-Komponente.
+ *
+ * @interface RoleEditModalProps
+ * @property {boolean} open - Gibt an, ob das Modal geöffnet ist oder nicht.
+ * @property {ShortRole | undefined} role - Die aktuelle Rolle, die bearbeitet wird.
+ * @property {() => void} onClose - Callback, um das Modal zu schließen.
+ * @property {(updatedRole: ShortRole | undefined, oldRoleId: string) => void} onSave - Callback, um die Änderungen zu speichern.
+ */
+
 interface RoleEditModalProps {
   open: boolean;
   role: ShortRole | undefined;
@@ -55,6 +65,24 @@ function a11yProps(index: number) {
   };
 }
 
+/**
+ * `RoleEditModal`-Komponente
+ *
+ * Diese Komponente stellt ein Dialogfenster zur Verfügung, in dem eine Rolle bearbeitet werden kann.
+ * Es ermöglicht die Bearbeitung von Funktionsnamen, Attributen und anderen Details der Rolle.
+ *
+ * @component
+ * @param {RoleEditModalProps} props - Die Props der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur des Dialogs zur Bearbeitung der Rolle.
+ *
+ * @example
+ * <RoleEditModal
+ *   open={true}
+ *   role={roleData}
+ *   onClose={() => console.log('Modal geschlossen')}
+ *   onSave={(updatedRole, oldRoleId) => console.log('Rolle gespeichert', updatedRole, oldRoleId)}
+ * />
+ */
 export default function RoleEditModal({
   open,
   role,

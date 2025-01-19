@@ -10,16 +10,27 @@ import UserMenu from './UserMenu';
 
 /**
  * Hauptkomponente für die Navigationsleiste.
+ * Diese Komponente zeigt eine AppBar mit Navigationslinks, einem Benachrichtigungsmenü, 
+ * einem Schalter zur Anpassung von Designstilen und einem Benutzermenü an.
+ *
+ * @returns Die Navigationsleiste als React-Komponente.
  */
 export default function Navigation() {
+  // Aktueller Pfadname der Seite
   const pathname = usePathname();
+  // Zugriff auf das aktuelle Material-UI-Theme
   const theme = useTheme();
+  // Router-Objekt für Navigation und Routenmanagement
   const router = useRouter();
+  // Zugriff auf das benutzerdefinierte Theme und die Methode zum Umschalten
   const { useCustomStyles, toggleCustomStyles } = useFacultyTheme();
+  // Zugriff auf die aktuelle Sitzung des Benutzers
   const { data: session, update } = useSession();
 
-  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+  // Überprüft, ob der Benutzer Administratorrechte hat
+  const isAdmin = session?.user.roles?.includes('Identity');
 
+  // Dynamische Stile basierend auf der Verwendung des benutzerdefinierten Themes
   const dynamicStyles = useCustomStyles
     ? {
         backgroundColor:
@@ -40,6 +51,7 @@ export default function Navigation() {
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between', padding: '0 16px' }}>
+        {/* Navigationslinks für die Hauptnavigation */}
         <NavLinks
           pathname={pathname}
           useCustomStyles={useCustomStyles}
@@ -47,7 +59,9 @@ export default function Navigation() {
           isAdmin={isAdmin}
         />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* Menü für Benachrichtigungen */}
           <NotificationMenu theme={theme} router={router} />
+          {/* Schalter zur Aktivierung/Deaktivierung des benutzerdefinierten Designs */}
           <Switch
             checked={useCustomStyles}
             onChange={toggleCustomStyles}
@@ -64,6 +78,7 @@ export default function Navigation() {
               },
             }}
           />
+          {/* Menü für Benutzeraktionen wie Login/Logout */}
           <UserMenu
             theme={theme}
             useCustomStyles={useCustomStyles}

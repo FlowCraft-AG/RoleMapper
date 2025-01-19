@@ -1,6 +1,5 @@
 /**
- * @file FormViewer.tsx
- * @description React-Komponente zur Anzeige und Interaktion mit Formularen im `.form`-Format.
+ * React-Komponente zur Anzeige und Interaktion mit Formularen im `.form`-Format.
  *
  * @module FormViewer
  */

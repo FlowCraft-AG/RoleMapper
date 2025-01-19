@@ -1,6 +1,5 @@
 /**
- * @file EditFunctionModal.tsx
- * @description Modal-Komponente zum Bearbeiten einer Funktion in einer Organisationseinheit.
+ * Modal-Komponente zum Bearbeiten einer Funktion in einer Organisationseinheit.
  *
  * @module EditFunctionModal
  */

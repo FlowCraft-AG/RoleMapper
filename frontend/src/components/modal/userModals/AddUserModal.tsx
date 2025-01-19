@@ -1,6 +1,5 @@
 /**
- * @file AddUserModal.tsx
- * @description Modal-Komponente für das Hinzufügen oder Ersetzen eines Benutzers in einer Funktion.
+ * Modal-Komponente für das Hinzufügen oder Ersetzen eines Benutzers in einer Funktion.
  *
  * @module AddUserModal
  */

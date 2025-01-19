@@ -22,7 +22,7 @@ import { useState } from 'react';
  * 
  * Diese Seite ermöglicht die Anmeldung mit Benutzerdaten oder Keycloak.
  *
- * @returns JSX.Element - Die gerenderte Anmeldeseite‚.
+ * @returns {JSX.Element} Die gerenderte Anmeldeseite.
  */
 export default function SignInPage() {
   const [username, setUsername] = useState('');
@@ -34,9 +34,12 @@ export default function SignInPage() {
   const router = useRouter();
 
   /**
+   * @async
+   * @function handleLogin
    * Handler für die Anmeldung mit Benutzerdaten.
    *
-   * @param e - Das `React.FormEvent` welches beim Absenden des Formulars ausgelöst wird.
+   * @param {React.FormEvent} - Das `React.FormEvent`, welches beim Absenden des Formulars ausgelöst wird.
+   * @returns {Promise<void>} 
    */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +62,11 @@ export default function SignInPage() {
   };
 
    /**
+   * @async
+   * @function handleKeycloakLogin
    * Handler für die Anmeldung über Keycloak.
+   *
+   * @returns {Promise<void>}
    */
   const handleKeycloakLogin = async () => {
     setLoadingKeycloak(true);

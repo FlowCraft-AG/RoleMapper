@@ -1,6 +1,5 @@
 /**
- * @file ProcessDefinitionToggleViewer.tsx
- * @description React-Komponente zur Anzeige einer Prozessdefinition entweder als BPMN-Diagramm oder als XML-Ansicht.
+ * React-Komponente zur Anzeige einer Prozessdefinition entweder als BPMN-Diagramm oder als XML-Ansicht.
  */
 
 'use client';

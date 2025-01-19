@@ -1,6 +1,5 @@
 /**
- * @file EditOrgUnitModal.tsx
- * @description Modal-Komponente zur Bearbeitung einer bestehenden Organisationseinheit.
+ * Modal-Komponente zur Bearbeitung einer bestehenden Organisationseinheit.
  *
  * @module EditOrgUnitModal
  */

@@ -1,6 +1,5 @@
 /**
- * @file ImplicitFunctionModal.tsx
- * @description Modal-Komponente zur Erstellung von impliziten Funktionen in einer Organisationseinheit.
+ * Modal-Komponente zur Erstellung von impliziten Funktionen in einer Organisationseinheit.
  *
  * @module ImplicitFunctionModal
  */

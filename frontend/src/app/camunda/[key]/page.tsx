@@ -1,6 +1,5 @@
 /**
- * @file ProcessDefinitionPage.tsx
- * @description Server-Komponente zur Anzeige der Prozessdefinition-Seite.
+ * Server-Komponente zur Anzeige der Prozessdefinition-Seite.
  * Lädt den Prozessinstanz-Schlüssel (`processInstanceKey`) und übergibt ihn an die Client-Komponente `ProcessDefinitionToggleViewer`.
  *
  * @module ProcessDefinitionPage
@@ -9,9 +8,9 @@
 import ProcessDefinitionToggleViewer from './ProcessDefinitionToggleViewer';
 
 /**
- * Props für die `ProcessDefinitionPage`-Komponente.
+ * Schnittstelle für die Eigenschaften (`props`) der `ProcessDefinitionPage`-Komponente.
  *
- * @interface ProcessDefinitionPageProps
+ * @typedef {Object} ProcessDefinitionPageProps
  * @property {Promise<{ key: string }>} params - Ein Promise, das die URL-Parameter mit dem Prozessinstanz-Schlüssel enthält.
  */
 interface ProcessDefinitionPageProps {

@@ -15,6 +15,22 @@ import RolesSpalte from '../../components/prozess/RolesSpalte2';
 import { getProcessById } from '../../lib/api/rolemapper/process.api';
 import { Process } from '../../types/process.type';
 
+/**
+ * `ProcessPage`-Komponente
+ *
+ * Diese Komponente stellt die Prozess-Seite der Hochschule Karlsruhe dar. Sie ermöglicht es dem Benutzer,
+ * Prozesse hierarchisch zu durchsuchen und auszuwählen.
+ *
+ * @component
+ * @param {ProcessPageProps} props - Die Eigenschaften der Komponente.
+ * @returns {JSX.Element} Die JSX-Struktur der Prozess-Seite.
+ *
+ * @example
+ * ```tsx
+ * <ProcessPage />
+ * ```
+ */
+
 export default function ProcessPage() {
   const theme = useTheme();
   const [state, setState] = useState({
@@ -26,6 +42,9 @@ export default function ProcessPage() {
   const openNodesParam = searchParams.get('openNodes') || '';
   const parentProcessIdParam = searchParams.get('parentProcessId') || '';
 
+  /**
+   * Entfernt die URL-Parameter `openNodes` und `parentProcessId` aus der URL.
+   */
   const resetUrlParams = () => {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.delete('openNodes');
@@ -33,6 +52,13 @@ export default function ProcessPage() {
     window.history.replaceState(null, '', currentUrl.toString());
   };
 
+  /**
+   * Initialisiert den Zustand der Seite basierend auf den URL-Parametern und lädt die notwendigen Daten.
+   * 
+   * @async
+   * @function initializePageState
+   * @returns {Promise<void>}
+   */
   const initializePageState = useCallback(async () => {
     try {
       const expandedNodes = openNodesParam.split(',').filter(Boolean);
@@ -54,6 +80,11 @@ export default function ProcessPage() {
     initializePageState();
   }, [initializePageState]);
 
+  /**
+   * Handhabt die Auswahl eines Prozesses.
+   * 
+   * @param {Process} process - Der ausgewählte Prozess.
+   */
   const handleProcessSelect = (process: Process) => {
     setState({
       ...state,
@@ -63,6 +94,11 @@ export default function ProcessPage() {
     resetUrlParams();
   };
 
+  /**
+   * Entfernt die Auswahl eines Prozesses.
+   * 
+   * @param {string[]} ids - Die IDs der Prozesse, die entfernt werden sollen.
+   */
   const handleRemoveSelection = (ids: string[]) => {
     setState((prev) => ({
       ...prev,

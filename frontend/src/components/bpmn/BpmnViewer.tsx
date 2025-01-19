@@ -73,6 +73,7 @@ const BpmnViewer: React.FC<BpmnViewerProps> = ({
    *
    * @function loadDiagram
    * @async
+   * @returns {Promise<void>} Gibt ein Promise zurück, das nach dem Laden des Diagramms abgeschlossen ist.
    */
   useEffect(() => {
     const bpmnViewer = new BpmnJS({

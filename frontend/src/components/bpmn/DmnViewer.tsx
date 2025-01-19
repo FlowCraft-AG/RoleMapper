@@ -1,6 +1,5 @@
 /**
- * @file DmnViewer.tsx
- * @description React-Komponente zur Anzeige von DMN-Diagrammen (Decision Model and Notation).
+ * React-Komponente zur Anzeige von DMN-Diagrammen (Decision Model and Notation).
  *
  * @module DmnViewer
  */

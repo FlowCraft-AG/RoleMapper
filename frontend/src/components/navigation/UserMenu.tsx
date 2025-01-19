@@ -17,15 +17,35 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { useCallback, useEffect, useState } from 'react';
 import { formatTime } from '../../utils/counter-format.util';
 
+
+/**
+ * Eigenschaften für die UserMenu-Komponente.
+ */
 interface UserMenuProps {
+  /** Das aktuelle Theme-Objekt zur Anwendung von Stilen. */
   theme: Theme;
+  /** Ob benutzerdefinierte Stile verwendet werden sollen. */
   useCustomStyles: boolean;
+  /** Die aktuelle Benutzersitzung. */
   session: Session | null;
+   /** Der aktuelle Seitenpfad. */
   pathname: string;
+  /** Methode zur Aktualisierung der Benutzersitzung (Token-Aktualisierung). */
   update: () => Promise<Session | null>;
+  /** Router-Instanz zum Navigieren zwischen Seiten. */
   router: AppRouterInstance;
 }
 
+/**
+ * Komponente für das Benutzerprofil-Menü.
+ *
+ * Diese Komponente zeigt entweder das Benutzerprofilmenü an (falls eingeloggt)
+ * oder bietet eine Anmeldemöglichkeit (falls nicht eingeloggt). Außerdem
+ * ermöglicht sie das Aktualisieren des Tokens und das Ausloggen.
+ *
+ * @param {UserMenuProps} props - Die Eigenschaften der Komponente.
+ * @returns {JSX.Element} Die gerenderte Benutzerprofilmenü-Komponente.
+ */
 export default function UserMenu({
   theme,
   useCustomStyles,
@@ -34,27 +54,40 @@ export default function UserMenu({
   update,
   router,
 }: UserMenuProps) {
+  /** Verankerelement für das Benutzermenü. */
   const [userMenuAnchor, setUserMenuAnchor] = useState<undefined | HTMLElement>(
     undefined,
   );
+  /** Verbleibende Zeit bis zum Ablauf des Tokens. */
   const [remainingTime, setRemainingTime] = useState<number | undefined>(
     undefined,
   );
 
+  /**
+   * Öffnet das Benutzermenü.
+   * @param {React.MouseEvent<HTMLElement>} event - Das auslösende Event.
+   */
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
     setUserMenuAnchor(event.currentTarget);
   };
-
+  /**
+   * Schließt das Benutzermenü.
+   */
   const handleCloseMenu = () => {
     setUserMenuAnchor(undefined);
   };
-
+  /**
+   * Loggt den Benutzer aus und navigiert zur Startseite.
+   */
   const handleLogout = () => {
     router.push('/startseite');
     signOut();
   };
 
-  // Manuelle Token-Aktualisierung
+  /**
+   * Aktualisiert das Token manuell.
+   * @async
+   */
   const handleRefreshToken = useCallback(async () => {
     try {
       await update();
@@ -63,6 +96,9 @@ export default function UserMenu({
     }
   }, [update]);
 
+   /**
+   * Effekt zur Berechnung der verbleibenden Tokenzeit und automatischen Aktualisierung.
+   */
   useEffect(() => {
     if (session?.expires_in) {
       const now = Math.floor(Date.now() / 1000);

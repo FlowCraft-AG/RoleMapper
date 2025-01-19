@@ -1,5 +1,4 @@
 /**
- * @file CamundaPageClient.tsx
  * Diese Komponente lädt BPMN-, Form- und DMN-Dateien von der API und zeigt sie mit der `ClientPage`-Komponente an.
  *
  * @module CamundaPageClient

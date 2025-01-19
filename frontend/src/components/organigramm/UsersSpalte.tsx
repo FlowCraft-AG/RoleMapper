@@ -1,6 +1,5 @@
 /**
- * @file UsersSpalte.tsx
- * @description Stellt die Spalte für Benutzer einer ausgewählten Funktion dar.
+ * Stellt die Spalte für Benutzer einer ausgewählten Funktion dar.
  * Diese Komponente bietet Funktionen zur Anzeige, Suche, Hinzufügung und Entfernung von Benutzern.
  *
  * @module UsersSpalte

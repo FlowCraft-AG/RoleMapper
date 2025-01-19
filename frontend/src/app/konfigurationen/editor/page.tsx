@@ -24,7 +24,7 @@ const defaultEnvVars = {
 /**
  * Eine React-Komponente zur Bearbeitung von Umgebungsvariablen.
  *
- * @returns JSX.Element - Die gerenderte Seite für die Bearbeitung von Umgebungsvariablen.
+ * @returns {JSX.Element} - Die gerenderte Seite für die Bearbeitung von Umgebungsvariablen.
  */
 export default function EnvEditorPage() {
   const [envVars, setEnvVars] = useState(defaultEnvVars);

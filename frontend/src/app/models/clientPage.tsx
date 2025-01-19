@@ -1,5 +1,5 @@
 /**
- * @file ClientPage.tsx
+
  * Seite zur Anzeige von BPMN-, Form- und DMN-Dateien. Ermöglicht die Auswahl und Anzeige von Dateien basierend auf ihrem Typ.
  *
  * @module ClientPage

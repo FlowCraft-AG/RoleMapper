@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { REFRESH_TOKEN } from '../../../../graphql/auth/auth';
 import getApolloClient from '../../../../lib/apolloClient';
+
 /**
  * POST-Handler für das Aktualisieren eines Authentifizierungstokens.
  *
