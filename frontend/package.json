@@ -65,6 +65,7 @@
     "@types/bpmn-moddle": "^5.1.11",
     "@types/fs-extra": "^11.0.4",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/lodash": "^4.17.14",
     "@types/node": "^22.10.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",

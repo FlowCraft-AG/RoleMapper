@@ -332,6 +332,7 @@ export async function updateProcessCollection(
       variables: { id, name, parentId },
     });
 
+    logger.debug('Prozess-Sammlung erfolgreich aktualisiert:', data);
     return fetchAllProcesses();
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');

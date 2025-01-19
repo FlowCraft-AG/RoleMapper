@@ -1,6 +1,5 @@
 'use server';
 
-import { ApolloError } from '@apollo/client';
 import { CREATE_PROCESS_ROLE } from '../../../graphql/rollen/mutation/create-role.mutation';
 import {
   GET_ALL_ROLES,

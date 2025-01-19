@@ -49,6 +49,8 @@ export default function ProcessPage() {
     }
   }, []);
 
+  console.log('Prozesse geladen:', processList);
+
   const onRemove = () => {
     setState({
       ...state,

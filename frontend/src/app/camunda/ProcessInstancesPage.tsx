@@ -396,7 +396,7 @@ export default function ProcessInstancesPage() {
             <DialogContent>
               <DialogContentText>
                 Möchten Sie die Prozessinstanz wirklich abbrechen? Diese Aktion
-                wird den Prozessstatus auf "Abgebrochen" setzen.
+                wird den Prozessstatus auf &quot;Abgebrochen&quot; setzen.
               </DialogContentText>
             </DialogContent>
             <DialogActions>

@@ -54,7 +54,7 @@ export function CustomLabel({
   onDelete,
   onEdit,
 }: CustomLabelProps) {
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const { ADMIN_GROUP } = ENV;
   const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
 

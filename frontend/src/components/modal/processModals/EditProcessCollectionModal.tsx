@@ -52,7 +52,7 @@ const EditProcessCollectionModal = ({
         message: 'Fehler beim Laden der Prozess-Sammlungen.',
       });
     }
-  }, []);
+  }, [itemId]);
 
   /**
    * Validiert den Namen der Prozess-Sammlung.

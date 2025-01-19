@@ -1,5 +1,4 @@
 'use client';
-
 import { Add, Delete, Edit } from '@mui/icons-material';
 import {
   Box,
@@ -9,6 +8,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import isEqual from 'lodash/isEqual';
 import { JSX, useCallback, useEffect, useState } from 'react';
 import { useModal } from '../../hooks/useModal';
 import { useRoleManager } from '../../hooks/useRoleManager';
@@ -56,11 +56,6 @@ export default function EditorView({
   const handleEditRoleClick = (role: ShortRole) => {
     setSelectedRole(role);
     openModal('editRole');
-  };
-
-  const handleAddRoleClick = () => {
-    setSelectedRole(undefined);
-    openModal('addRole');
   };
 
   const handleAddRole = async (role: ShortRole) => {
@@ -119,8 +114,9 @@ export default function EditorView({
       setProcess(process);
     } catch (err) {
       showSnackbar('Fehler beim Laden des Prozesses.', 'error');
+      console.error('Fehler beim Laden des Prozesses:', err);
     }
-  }, [process, showSnackbar]);
+  }, [showSnackbar, selectedProcess._id]);
 
   // Lade Rollen, Organisationseinheiten und Funktionen
   const loadRoles = useCallback(async () => {
@@ -140,14 +136,43 @@ export default function EditorView({
       setFunctions(loadedFunctions);
     } catch (err) {
       showSnackbar('Fehler beim Laden der Rollen.', 'error');
+      console.error('Fehler beim Laden der Rollen:', err);
     }
-  }, [roles, showSnackbar]);
+  }, [roles.length, showSnackbar]);
 
   // Aktualisiere Prozess und Rollen, wenn sich selectedProcess ändert
   useEffect(() => {
-    loadProcess();
-    loadRoles();
-  }, [selectedProcess]);
+    if (
+      selectedProcess.name !== process.name ||
+      selectedProcess.parentId !== process.parentId ||
+      !isEqual(selectedProcess.roles, process.roles)
+    ) {
+      loadProcess();
+      loadRoles();
+    }
+  }, [loadProcess, loadRoles, process, selectedProcess]);
+
+  const getRoleName = (processRole: ShortRole): string => {
+    switch (processRole.roleType) {
+      case 'COLLECTION':
+        return `Rolle: ${
+          collectionRoles.find((role) => role._id === processRole.roleId)
+            ?.name || 'Unbekannt'
+        }`;
+      case 'IMPLICITE_ORG_UNIT':
+        return `Funktion: Alle Mitglieder von ${
+          orgUnits.find((orgUnit) => orgUnit._id === processRole.roleId)
+            ?.name || 'Unbekannt'
+        }`;
+      case 'IMPLICITE_FUNCTION':
+        return `Funktion: Implizite Funktion: ${
+          functions.find((func) => func._id === processRole.roleId)
+            ?.functionName || 'Unbekannt'
+        }`;
+      default:
+        return 'Unbekannt';
+    }
+  };
 
   return (
     <>
@@ -225,32 +250,7 @@ export default function EditorView({
         <tbody>
           {roles.length > 0 ? (
             roles.map((processRole, index) => {
-              let matchedRole;
-              let name;
-              switch (processRole.roleType) {
-                case 'COLLECTION':
-                  matchedRole = collectionRoles?.find(
-                    (role) => role._id === processRole.roleId,
-                  );
-                  name = `Rolle: ${matchedRole?.name}`;
-                  break;
-                case 'IMPLICITE_ORG_UNIT':
-                  matchedRole = orgUnits.find(
-                    (orgUnit) => orgUnit._id === processRole.roleId,
-                  );
-                  name = `Funktion: Alle Mitglieder von ${matchedRole?.name}`;
-                  break;
-                case 'IMPLICITE_FUNCTION':
-                  matchedRole = functions.find(
-                    (func) => func._id === processRole.roleId,
-                  );
-                  name = `Funktion: Implizite Funktion: ${matchedRole?.functionName}`;
-                  break;
-                default:
-                  name = 'Unbekannt';
-              }
-              console.log('processRole', processRole);
-              console.log('matchedRole', matchedRole);
+              const name = getRoleName(processRole);
               return (
                 <tr
                   key={index}

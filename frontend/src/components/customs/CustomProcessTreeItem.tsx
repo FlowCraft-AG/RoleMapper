@@ -44,7 +44,6 @@ export const CustomProcessTreeItem = forwardRef(function CustomProcessTreeItem(
 
   const [childrenToDelete, setChildrenToDelete] = useState<ItemToRender[]>([]);
   const [openChildrenModal, setOpenChildrenModal] = useState(false); // modal 2
-  const [childFunctions, setChildFunctions] = useState<string[]>([]); // Funktionen der Kinder
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false); // modal 4
 
   const handleAdd = () => {
