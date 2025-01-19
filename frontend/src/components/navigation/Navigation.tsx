@@ -4,6 +4,7 @@ import { AppBar, Box, Switch, Toolbar, useTheme } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
+import { ENV } from '../../utils/env';
 import NavLinks from './NavLinks';
 import NotificationMenu from './NotificationMenu';
 import UserMenu from './UserMenu';
@@ -17,8 +18,8 @@ export default function Navigation() {
   const router = useRouter();
   const { useCustomStyles, toggleCustomStyles } = useFacultyTheme();
   const { data: session, update } = useSession();
-
-  const isAdmin = session?.user.roles?.includes('Identity'); // Prüft, ob der Benutzer Admin ist
+  const { ADMIN_GROUP } = ENV;
+  const isAdmin = session?.user.roles?.includes(ADMIN_GROUP); // Prüft, ob der Benutzer Admin ist
 
   const dynamicStyles = useCustomStyles
     ? {
@@ -45,9 +46,10 @@ export default function Navigation() {
           useCustomStyles={useCustomStyles}
           theme={theme}
           isAdmin={isAdmin}
+          session={session}
         />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <NotificationMenu theme={theme} router={router} />
+          {isAdmin && <NotificationMenu theme={theme} router={router} />}
           <Switch
             checked={useCustomStyles}
             onChange={toggleCustomStyles}

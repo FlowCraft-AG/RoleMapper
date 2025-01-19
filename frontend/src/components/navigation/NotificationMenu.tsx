@@ -4,7 +4,6 @@ import { Notifications as NotificationsIcon } from '@mui/icons-material';
 import {
   Badge,
   Box,
-  Button,
   Card,
   CardActionArea,
   Divider,
@@ -91,6 +90,9 @@ export default function NotificationMenu({
    */
   const fetchNotifications = useCallback(async () => {
     try {
+      if (lookaheadPeriod < 0) {
+        return;
+      }
       const functionsInfo = await fetchFunctionsWithNoUsersOrRetiringUsers(
         lookaheadPeriod,
         timeUnit,
@@ -271,9 +273,6 @@ export default function NotificationMenu({
                 <MenuItem value="JAHRE">Jahre</MenuItem>
               </Select>
             </FormControl>
-            <Button variant="contained" onClick={fetchNotifications} fullWidth>
-              Anwenden
-            </Button>
           </Box>
           {activeTab === 0 && renderNotifications(notificationsSingleUser)}
           {activeTab === 1 && renderNotifications(notificationsMultiUser)}

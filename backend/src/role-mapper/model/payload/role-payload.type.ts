@@ -40,6 +40,6 @@ export type RoleResult = {
  * @property {User} user - Das verschachtelte Benutzerobjekt.
  */
 export type UserWithFunction = {
-    functionName: string; // Dynamischer Funktionsname
+    functionName: string | undefined; // Dynamischer Funktionsname
     user: User; // Das User-Objekt ist hier verschachtelt
 };

@@ -12,7 +12,7 @@ import OrganigrammPage from './orgUnitPage';
 export const metadata: Metadata = {
   title: 'Organisationseinheiten',
   description:
-    'Organigramm der Hochschule Karlsruhe (HSKA) zur Darstellung der Fakultäten, Institute und Rollen.',
+    'Organigramm der Hochschule Karlsruhe (HKA) zur Darstellung der Fakultäten, Institute und Rollen.',
 };
 
 export default async function HKAPage() {
@@ -56,7 +56,8 @@ export default async function HKAPage() {
                   align="center"
                   color="text.secondary"
                 >
-                  Klassische Ansicht des Organigramms mit Fokus auf Einfachheit.
+                  Hervorgehobene Ansicht des Organigramms mit Fokus auf
+                  Einfachheit.
                 </Typography>
               </CardContent>
             </CardActionArea>

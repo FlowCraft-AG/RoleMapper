@@ -3,7 +3,11 @@ import { gql } from '@apollo/client';
 export const GET_ALL_FUNCTIONS = gql`
   query GetData {
     getData(
-      input: { entity: MANDATES, sort: { field: functionName, direction: ASC } }
+      input: {
+        entity: MANDATES
+        sort: { field: functionName, direction: ASC }
+        pagination: { limit: 0 }
+      }
     ) {
       totalCount
       data {
@@ -13,6 +17,7 @@ export const GET_ALL_FUNCTIONS = gql`
           users
           isImpliciteFunction
           orgUnit
+          isSingleUser
         }
       }
     }
@@ -26,6 +31,7 @@ export const FUNCTIONS_BY_ORG_UNIT = gql`
         entity: MANDATES
         filter: { field: orgUnit, operator: EQ, value: $orgUnitId }
         sort: { field: functionName, direction: ASC }
+        pagination: { limit: 0 }
       }
     ) {
       data {
@@ -71,6 +77,7 @@ export const GET_FUNCTION_BY_ID = gql`
         entity: MANDATES
         filter: { field: _id, operator: EQ, value: $functionId }
         sort: { field: functionName, direction: ASC }
+        pagination: { limit: 0 }
       }
     ) {
       data {

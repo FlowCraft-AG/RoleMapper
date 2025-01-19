@@ -31,6 +31,8 @@ export const ENV = {
     process.env.CAMUNDA_KEYCLOAK_CLIENT_SECRET ?? 'N/A',
   NOTIFICATION_UPDATE_INTERVAL:
     process.env.NOTIFICATION_UPDATE_INTERVAL ?? '86400000',
+  ADMIN_GROUP: process.env.NEXT_PUBLIC_ADMIN_GROUP ?? 'Identity',
+  DEFAULT_ROUTE: process.env.NEXT_PUBLIC_DEFAULT_ROUTE ?? '/',
 };
 
 /**

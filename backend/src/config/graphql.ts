@@ -1,6 +1,6 @@
 import { ApolloDriver, type ApolloDriverConfig } from '@nestjs/apollo';
 import path from 'node:path';
-import { BASEDIR } from './app.js';
+import { RESOURCES_DIR } from './app.js';
 
 // const schemaGraphQL = path.join(BASEDIR, 'config', 'resources', 'graphql', 'schema.graphql');
 // console.debug('schemaGraphQL = %s', schemaGraphQL);
@@ -9,15 +9,14 @@ import { BASEDIR } from './app.js';
  * Pfade zu den GraphQL-Schema-Dateien, modularisiert nach Verantwortlichkeiten.
  */
 const graphqlSchemas = [
-    // Camunda-Schemas
-    path.join(BASEDIR, 'config', 'resources', 'graphql', 'camunda', 'camunda.graphql'),
-    path.join(BASEDIR, 'config', 'resources', 'graphql', 'camunda', 'camunda.type.graphql'),
-    path.join(BASEDIR, 'config', 'resources', 'graphql', 'camunda', 'camunda.input.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.input.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.input.graphql'),
 
-    // RoleMapper-Schemas
-    path.join(BASEDIR, 'config', 'resources', 'graphql', 'rolemapper', 'rolemapper.graphql'),
-    path.join(BASEDIR, 'config', 'resources', 'graphql', 'rolemapper', 'rolemapper.type.graphql'),
-    path.join(BASEDIR, 'config', 'resources', 'graphql', 'rolemapper', 'rolemapper.input.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.type.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.type.graphql'),
+
+    path.join(RESOURCES_DIR, 'graphql', 'rolemapper', 'rolemapper.graphql'),
+    path.join(RESOURCES_DIR, 'graphql', 'camunda', 'camunda.graphql'),
 ];
 // Debug-Ausgabe zur Überprüfung der geladenen Pfade
 // console.debug('GraphQL-Schemas:', graphqlSchemas);
@@ -44,4 +43,10 @@ export const graphQlModuleOptions: ApolloDriverConfig = {
      * Zum Testen kann es durch `playground: true` aktiviert werden.
      */
     playground: false,
+
+    /**
+     * Aktiviert den Playground und Debug-Modus basierend auf der Umgebung.
+     */
+    // playground: process.env.NODE_ENV !== 'production',
+    // debug: process.env.NODE_ENV !== 'production',
 };

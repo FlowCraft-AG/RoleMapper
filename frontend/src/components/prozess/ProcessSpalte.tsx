@@ -8,18 +8,21 @@
 
 'use client';
 
-import CorporateFareTwoToneIcon from '@mui/icons-material/CorporateFareTwoTone';
+import DescriptionIcon from '@mui/icons-material/Description';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FolderRoundedIcon from '@mui/icons-material/FolderRounded';
 import { Alert, CircularProgress, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import { TreeViewBaseItem } from '@mui/x-tree-view/models';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
+import { TreeItemProps } from '@mui/x-tree-view/TreeItem';
 import { TreeItem2Props } from '@mui/x-tree-view/TreeItem2';
-import { useCallback, useEffect, useState } from 'react';
+import { JSXElementConstructor, useCallback, useEffect, useState } from 'react';
 import { fetchAllProcesses } from '../../lib/api/rolemapper/process.api';
 import { Process } from '../../types/process.type';
 import { getListItemStyles } from '../../utils/styles';
+import { CustomProcessTreeItem } from '../customs/CustomProcessTreeItem';
+import TransitionComponent from '../organigramm/TransitionComponent';
 
 /**
  * Erweiterte Slot-Props für die TreeItem-Komponente.
@@ -27,11 +30,10 @@ import { getListItemStyles } from '../../utils/styles';
  * @interface ExtendedSlotProps
  * @extends TreeItem2Props
  * @property {function} refetch - Methode zum Neuladen der Daten.
- * @property {function} onRemove - Callback-Funktion, um Elemente zu entfernen.
  */
 interface ExtendedSlotProps extends TreeItem2Props {
   refetch: () => Promise<void>; // Die refetch-Methode
-  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
+  onRemove: () => void;
 }
 
 /**
@@ -39,12 +41,10 @@ interface ExtendedSlotProps extends TreeItem2Props {
  *
  * @interface ProcessRichTreeViewProps
  * @property {function} onSelect - Callback-Funktion, die aufgerufen wird, wenn ein Prozess ausgewählt wird.
- * @property {function} onRemove - Callback-Funktion, die aufgerufen wird, wenn Prozesse entfernt werden.
  * @property {string[] | undefined} expandedNodes - Die Knoten, die standardmäßig geöffnet sind.
  */
 interface ProcessRichTreeViewProps {
   onSelect: (process: Process) => void;
-  onRemove: (ids: string[]) => void; // Übergibt ein Array von IDs
 }
 
 /**
@@ -60,14 +60,10 @@ interface ProcessRichTreeViewProps {
  * @example
  * <ProcessSpalte
  *   onSelect={(process) => console.log(process)}
- *   onRemove={(ids) => console.log(ids)}
  *   expandedNodes={['node1', 'node2']}
  * />
  */
-export default function ProcessSpalte({
-  onSelect,
-  onRemove,
-}: ProcessRichTreeViewProps) {
+export default function ProcessSpalte({ onSelect }: ProcessRichTreeViewProps) {
   const theme = useTheme(); // Dynamisches Theme aus Material-UI
   const [processes, setProcesses] = useState<Process[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -94,14 +90,8 @@ export default function ProcessSpalte({
     }
   }, []); // Die Funktion wird nur beim ersten Laden ausgeführt
 
-  /**
-   * Aktualisiert die Prozesse in der Komponente.
-   *
-   * @function refetch
-   * @param {Process[]} processList - Die aktualisierte Liste der Prozesse.
-   */
-  const refetch = (processList: Process[]) => {
-    setProcesses(processList);
+  const onRemove = () => {
+    loadProcesses();
   };
 
   useEffect(() => {
@@ -164,6 +154,11 @@ export default function ProcessSpalte({
     onSelect(selectedProcess);
   };
 
+  const refetch = () => {
+    setProcesses(processes);
+    onRemove();
+  };
+
   return (
     <Box sx={{ minHeight: 352, minWidth: 250 }}>
       <RichTreeView
@@ -171,13 +166,15 @@ export default function ProcessSpalte({
         slots={{
           expandIcon: FolderOpenIcon,
           collapseIcon: FolderRoundedIcon,
-          endIcon: CorporateFareTwoToneIcon,
+          endIcon: DescriptionIcon,
+          item: CustomProcessTreeItem as unknown as JSXElementConstructor<TreeItemProps>,
         }}
         slotProps={{
           item: {
             onRemove,
-            refetch, // Weitergabe der Refetch-Methode
-          } as ExtendedSlotProps,
+            refetch, // Weitergabe der Refetch-Methode an CustomTreeItem
+            slots: { groupTransition: TransitionComponent },
+          } as ExtendedSlotProps, // Erweiterter Typ
         }}
         onItemClick={handleItemClick}
         sx={{

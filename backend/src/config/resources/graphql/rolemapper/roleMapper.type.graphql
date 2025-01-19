@@ -105,6 +105,15 @@ enum FilterOptions {
 }
 
 """
+Rollenarten für dynamische Abfragen.
+"""
+enum RoleType {
+  COLLECTION
+  IMPLICITE_FUNCTION
+  IMPLICITE_ORG_UNIT
+}
+
+"""
 Repräsentiert das Ergebnis der Query `getUnassignedFunctions`.
 """
 type UnassignedFunctionsPayload {
@@ -555,10 +564,7 @@ type Process {
   """
   parentId: String
   name: String
-  """
-  Eindeutige Prozess-ID.
-  """
-  processId: String
+
   """
   Liste der Rollen, die mit dem Prozess verknüpft sind.
   """
@@ -577,6 +583,11 @@ type ProcessRole {
   Eindeutige ID der Rolle.
   """
   roleId: String
+
+  """
+  Typ der Rolle, z. B. 'COLLECTION' oder 'IMPLICITE'.
+  """
+  roleType: RoleType
 }
 
 # Rollen mit dynamischen Abfragen

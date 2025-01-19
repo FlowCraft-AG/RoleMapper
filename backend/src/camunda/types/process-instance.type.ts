@@ -9,6 +9,8 @@ export type ProcessInstance = {
      */
     key: string;
 
+    name?: string;
+
     /**
      * Version des zugehörigen Prozesses.
      * Beispiel: `1` oder `42` (abhängig von der Prozessdefinition).

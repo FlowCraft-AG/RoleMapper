@@ -24,7 +24,7 @@ import getFacultyTheme from '../../theme/fakultäten';
 import { useFacultyTheme } from '../../theme/ThemeProviderWrapper';
 import { OrgUnit } from '../../types/orgUnit.type';
 import { getListItemStyles } from '../../utils/styles';
-import CustomTreeItem from '../customs/CustomTreeItem';
+import CustomTreeItem from '../customs/CustomOrgUnitTreeItem';
 import TransitionComponent from './TransitionComponent';
 
 /**

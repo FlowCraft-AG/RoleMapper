@@ -162,17 +162,6 @@ export const authOptions: AuthOptions = {
 
       return session;
     },
-
-    /**
-     * Redirect-Callback:
-     * Bestimmt die Ziel-URL nach der Authentifizierung oder Abmeldung.
-     */
-    redirect({ url, baseUrl }) {
-      logger.debug('Redirect URL: %s', url);
-      logger.debug('Base URL: %s', baseUrl);
-
-      return url.startsWith(baseUrl) ? url : `${baseUrl}/startseite`;
-    },
   },
 
   // Ereignishandler (z. B. für Abmeldung)

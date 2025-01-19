@@ -214,7 +214,7 @@ export default function FunctionsSpalte({
    * @param {string} type - Der Typ der Funktion.
    */
   const handleSelectFunctionType = (type: string) => {
-    if (type === 'implizierte') {
+    if (type === 'implizite') {
       setOpenImplicitFunction(true);
     } else {
       setOpenExplicitFunction(true);

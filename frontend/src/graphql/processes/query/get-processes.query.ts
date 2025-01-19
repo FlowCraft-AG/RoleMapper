@@ -18,6 +18,7 @@ export const GET_ALL_PROCESSES = gql`
           roles {
             roleName
             roleId
+            roleType
           }
         }
       }
@@ -43,6 +44,7 @@ export const GET_PROCESS_BY_ID = gql`
           roles {
             roleName
             roleId
+            roleType
           }
         }
       }
@@ -67,6 +69,15 @@ export const GET_PROCESSES_SHORT = gql`
           parentId
         }
       }
+    }
+  }
+`;
+export const GET_PROCESS_COLLECTIONS = gql`
+  query GetProcessCollectionList {
+    getProcessCollectionList {
+      _id
+      parentId
+      name
     }
   }
 `;

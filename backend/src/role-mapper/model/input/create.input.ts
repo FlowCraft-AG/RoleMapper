@@ -1,4 +1,5 @@
 import type { Types } from 'mongoose';
+import type { RoleType } from '../entity/process.entity.js';
 import { type QueryStageInput } from './query-stage.input.js';
 
 export type CreateUserInput = {
@@ -33,14 +34,15 @@ export type CreateFunctionInput = {
 };
 
 export type CreateProcessInput = {
-    processId: string;
+    parentId: Types.ObjectId;
     name: string;
     roles: ProcessRoleInput[];
 };
 
 export type ProcessRoleInput = {
-    roleKey: string;
-    roleId: string;
+    roleId: Types.ObjectId;
+    roleName: string;
+    roleType: RoleType;
 };
 
 export type CreateOrgUnitInput = {

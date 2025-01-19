@@ -1,0 +1,134 @@
+'use client';
+
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { ENV } from '../../utils/env';
+
+export default function SignInPage() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { DEFAULT_ROUTE } = ENV;
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    const result = await signIn('credentials', {
+      username,
+      password,
+      redirect: false,
+    });
+
+    setLoading(false);
+
+    if (result?.ok) {
+      router.push(DEFAULT_ROUTE);
+    } else {
+      setError('Ungültige Anmeldedaten. Bitte versuche es erneut.');
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  return (
+    <Container
+      maxWidth="xs"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+      }}
+    >
+      <Box
+        sx={{
+          width: '100%',
+          bgcolor: 'background.paper',
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 3,
+        }}
+      >
+        <Typography variant="h5" align="center" fontWeight="bold">
+          Anmeldung
+        </Typography>
+        <form onSubmit={handleLogin} style={{ marginTop: '1rem' }}>
+          <TextField
+            label="Benutzername"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextField
+            label="Passwort"
+            type={showPassword ? 'text' : 'password'}
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: 'white' }} />
+            ) : (
+              'Anmelden'
+            )}
+          </Button>
+        </form>
+      </Box>
+      <Typography
+        variant="body2"
+        align="center"
+        color="text.secondary"
+        sx={{ mt: 4 }}
+      >
+        © {new Date().getFullYear()} FlowCraft. Alle Rechte vorbehalten.
+      </Typography>
+    </Container>
+  );
+}

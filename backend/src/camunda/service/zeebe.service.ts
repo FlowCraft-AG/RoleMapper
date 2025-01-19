@@ -1,5 +1,13 @@
+/**
+ * @file ZeebeService
+ * @module ZeebeService
+ * @description Diese Datei implementiert den ZeebeService, der Worker für verschiedene Aufgaben registriert und die Interaktion mit einem Zeebe Gateway ermöglicht.
+ */
+
 /* eslint-disable @eslint-community/eslint-comments/disable-enable-pair */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @stylistic/operator-linebreak */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ZBClient, ZBWorker } from 'zeebe-node';
@@ -12,19 +20,32 @@ const { zeebe } = config;
 
 @Injectable()
 export class ZeebeService implements OnModuleInit, OnModuleDestroy {
-    readonly #logger = getLogger(ZeebeService.name); // Logger für die Service-Protokollierung
+    /** Logger für die Service-Protokollierung */
+    readonly #logger = getLogger(ZeebeService.name);
+    /** Instanz des Zeebe-Clients */
     #zbClient?: ZBClient;
+    /** Worker für Ausgabeverarbeitung */
     #outputWorker?: ZBWorker<any, any, any>;
+    /** Worker für Notizenverarbeitung */
     #noteWorker?: ZBWorker<any, any, any>;
+    /** Service zur Ermittlung von Benutzerrollen */
     readonly #service: ReadService;
+    /** Status, ob Zeebe aktiviert ist */
     readonly #isZeebeEnabled: boolean;
 
+    /**
+     * @constructor
+     * @param service Instanz des ReadService zur Rollenabfrage
+     */
     constructor(service: ReadService) {
         this.#service = service;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.#isZeebeEnabled = zeebe?.enable; // Überprüfen, ob Zeebe aktiviert ist
     }
 
+    /**
+     * Initialisiert den Zeebe-Service und registriert die Worker.
+     */
     onModuleInit() {
         if (this.#isZeebeEnabled) {
             this.#zbClient = zbClient; // Zeebe Gateway-Adresse
@@ -38,6 +59,9 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+    /**
+     * Beendet den Zeebe-Service und schließt die Worker sowie den Client.
+     */
     async onModuleDestroy() {
         if (this.#isZeebeEnabled) {
             if (this.#outputWorker) {
@@ -52,6 +76,12 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+    /**
+     * Startet einen neuen Prozess mit den angegebenen Variablen.
+     * @param processKey Der Schlüssel des BPMN-Prozesses
+     * @param variables Variablen für den Prozess
+     * @throws Fehler, wenn Zeebe deaktiviert ist oder der Prozessstart fehlschlägt
+     */
     async startProcess(processKey: string, variables: Record<string, any>) {
         if (!this.#isZeebeEnabled) {
             this.#logger.warn('Zeebe ist deaktiviert. Prozesse können nicht gestartet werden.');
@@ -59,7 +89,11 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
 
         try {
-            this.#logger.debug(`Starte Prozess mit Key: ${processKey} und Variablen:`, variables);
+            this.#logger.debug(
+                `Starte Prozess mit Key: %s und Variablen: %o`,
+                processKey,
+                variables,
+            );
 
             return await this.#zbClient!.createProcessInstance({
                 bpmnProcessId: processKey,
@@ -71,6 +105,24 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         }
     }
 
+    async cancelProcessInstance(processInstanceKey: string) {
+        if (!this.#isZeebeEnabled) {
+            this.#logger.warn('Zeebe ist deaktiviert. Prozesse können nicht abgebrochen werden.');
+            throw new Error('Zeebe ist deaktiviert.');
+        }
+
+        try {
+            this.#logger.debug('Breche Prozess ab mit Instanzschlüssel: %s', processInstanceKey);
+            await this.#zbClient!.cancelProcessInstance(processInstanceKey);
+        } catch (error) {
+            this.#logger.error('Fehler beim Abbrechen des Prozesses:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Registriert einen Worker für die Verarbeitung von "output"-Aufgaben.
+     */
     #registerOutputWorker() {
         this.#logger.debug('Registriere Worker für "output"');
         this.#outputWorker = this.#zbClient!.createWorker({
@@ -92,6 +144,9 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         });
     }
 
+    /**
+     * Registriert einen Worker für die Verarbeitung von "note"-Aufgaben.
+     */
     #registerNoteWorker() {
         this.#logger.debug('Registriere Worker für "note"');
         this.#noteWorker = this.#zbClient!.createWorker({
@@ -113,20 +168,28 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
         });
     }
 
+    /**
+     * Registriert einen Worker, um Benutzerrollen für einen Prozess zu ermitteln.
+     */
     #registerGetRolesWorker() {
         this.#logger.debug('Registriere Worker um Rollen zu ermitteln');
         this.#noteWorker = this.#zbClient!.createWorker({
             taskType: 'getRoles',
             taskHandler: async (job) => {
-                const { userId, processId } = job.variables;
+                const { userId, processId, orgUnitId } = job.variables;
 
                 if (userId) {
                     this.#logger.debug(
-                        'ermittle rollen zum prozess %s für den Antragsteller %s',
+                        'ermittle rollen zum prozess %s für den Antragsteller %s in der Organisationseinheit %s',
                         processId,
                         userId,
+                        orgUnitId,
                     );
-                    const result = await this.#service.findProcessRoles(processId, userId);
+                    const result = await this.#service.findProcessRoles(
+                        processId,
+                        userId,
+                        orgUnitId,
+                    );
                     this.#logger.debug('Rollen für den Benutzer: %o', result);
 
                     const antragsteller = result?.roles[1]?.users[0]?.user;
@@ -139,9 +202,13 @@ export class ZeebeService implements OnModuleInit, OnModuleDestroy {
                     }
 
                     this.#logger.debug('Antragsteller: %s', antragsteller);
-                    const { userType, userRole, profile, employee } = antragsteller;
+                    const { userType, userRole, profile } = antragsteller;
                     const { firstName, lastName } = profile;
-                    const { costCenter } = employee!;
+
+                    const costCenter =
+                        antragsteller?.userType === 'student'
+                            ? antragsteller.orgUnit
+                            : antragsteller.employee!.costCenter;
                     const vorgesetzter = result?.roles[0]?.users[0]?.user;
                     this.#logger.debug('Vorgesetzter für den Benutzer: %o', vorgesetzter);
 

@@ -25,8 +25,8 @@ interface SelectFunctionTypeModalProps {
  * `SelectFunctionTypeModal`-Komponente
  *
  * Diese Komponente zeigt ein Modal, in dem der Benutzer zwischen zwei Funktionstypen auswählen kann:
- * - Implizierte Funktion
- * - Explizierte Funktion
+ * - Implizite Funktion
+ * - Explizite Funktion
  *
  * @component
  * @param {SelectFunctionTypeModalProps} props - Die Props der Komponente.
@@ -70,18 +70,18 @@ const SelectFunctionTypeModal = ({
           <Button
             variant="contained"
             color="primary"
-            onClick={() => onSelectType('implizierte')}
+            onClick={() => onSelectType('implizite')}
             sx={{ padding: 2 }}
           >
-            Implizierte Funktion
+            Implizite Funktion
           </Button>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => onSelectType('explizierte')}
+            onClick={() => onSelectType('explizite')}
             sx={{ padding: 2 }}
           >
-            Explizierte Funktion
+            Explizite Funktion
           </Button>
         </Stack>
         <Button variant="outlined" sx={{ marginTop: 2 }} onClick={onClose}>

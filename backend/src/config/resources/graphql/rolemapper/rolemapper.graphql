@@ -14,7 +14,7 @@ type Query {
 
   Diese Abfrage liefert die Rollen, die ein Benutzer innerhalb eines bestimmten Prozesses besitzt.
   """
-  getProcessRoles(processId: ID!, userId: String!): RolePayload!
+  getProcessRoles(processId: ID!, userId: String!, orgUnit: String): RolePayload!
 
   """
   Ruft gespeicherte Daten (z. B. ein Mandat) basierend auf einer eindeutigen ID ab.
@@ -59,6 +59,8 @@ Die Ergebnisse basieren auf einem angegebenen Zeitraum und einer Zeiteinheit.
     """
     timeUnit: TimeUnit = JAHRE
   ): [UnassignedFunctionsPayload]
+
+  getProcessCollectionList: [Process]
 }
 
 ###############################################################################################G

@@ -9,6 +9,21 @@ import { zbClient } from './zeebe.js';
 
 const logger = getLogger('DeploymentService');
 
+/**
+ * Liste der Dateierweiterungen, die bereitgestellt werden dürfen.
+ */
+const VALID_EXTENSIONS = new Set(['.bpmn', '.dmn', '.form']);
+
+/**
+ * Prüft, ob eine Datei eine gültige Erweiterung hat.
+ * @param filename - Der Name der Datei.
+ * @returns {boolean} `true`, wenn die Datei eine gültige Erweiterung hat, sonst `false`.
+ */
+function isValidFile(filename: string): boolean {
+    const extension = path.extname(filename).toLowerCase();
+    return VALID_EXTENSIONS.has(extension);
+}
+
 const CAMUNDA_BASE_PATH = path.resolve(import.meta.dirname, '..', '..', '..', '.extras', 'camunda');
 
 /**
@@ -25,7 +40,7 @@ async function deployFilesInFolderRecursive(folderPath: string) {
         if (entry.isDirectory()) {
             // Rekursiver Aufruf für Unterverzeichnisse
             await deployFilesInFolderRecursive(entryPath);
-        } else if (entry.isFile()) {
+        } else if (entry.isFile() && isValidFile(entry.name)) {
             // Verarbeitung der Datei
             const fileContent = fs.readFileSync(entryPath);
             try {
@@ -44,6 +59,11 @@ async function deployFilesInFolderRecursive(folderPath: string) {
                 );
                 logger.error(`${chalk.redBright('Details:')} ${(error as Error).message}`);
             }
+        } else if (entry.isFile()) {
+            // Ignorierte Datei protokollieren
+            logger.warn(
+                `${chalk.yellow('⚠')} ${chalk.cyan('Ignoriere ungültige Datei:')} ${chalk.yellow(entry.name)}`,
+            );
         }
     }
 }

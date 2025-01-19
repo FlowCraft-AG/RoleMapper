@@ -22,7 +22,7 @@ import { FilterInput } from '../model/input/filter.input.js';
 import { PaginationParameters } from '../model/input/pagination-parameters.js';
 import { SortInput } from '../model/input/sort.input.js';
 import { GetUsersByFunctionResult } from '../model/payload/get-users.payload.js';
-import { RoleResult } from '../model/payload/role-payload.type.js';
+import { RoleResult, UserWithFunction } from '../model/payload/role-payload.type.js';
 import {
     UnassignedFunctionsPayload,
     UserRetirementInfo,
@@ -71,6 +71,14 @@ export class ReadService {
         };
     }
 
+    async findProcessCollections(): Promise<Process[]> {
+        const result: Process[] = await this.#modelMap.PROCESSES?.find({
+            roles: { $exists: false },
+        }).exec();
+        console.debug('Gefundene Prozesssammlungen ohne roles:', result);
+        return result;
+    }
+
     /**
      * Sucht die Rollen und die zugehörigen Benutzer für einen angegebenen Prozess.
      *
@@ -89,8 +97,15 @@ export class ReadService {
      * console.log(result.roles); // Gibt die Rollen und die zugehörigen Benutzer aus
      * ```
      */
-    async findProcessRoles(_id: string, userId: string): Promise<{ roles: RoleResult[] }> {
+    async findProcessRoles(
+        _id: string,
+        userId: string,
+        specifiedOrgUnit?: string,
+    ): Promise<{ roles: RoleResult[] }> {
         this.#logger.debug('findProcessRoles: _id=%s, userId=%s', _id, userId);
+
+        // Standardwert zuweisen, falls `specifiedOrgUnit` nicht gesetzt ist
+        specifiedOrgUnit = specifiedOrgUnit ?? undefined;
 
         // Abrufen des Prozesses aus der Datenbank anhand der Prozess-ID
         const process: Process = await this.#modelMap.PROCESSES?.findOne({ _id }).exec();
@@ -107,20 +122,48 @@ export class ReadService {
         }
 
         // Extrahieren der Rollen-IDs aus dem Prozess
-        const roleIds = process.roles.flatMap((role: ShortRole) => role.roleId);
-        this.#logger.debug('findProcessRoles: Rollen-IDs aus Prozess: %o', roleIds);
+        const roleIdsCollection = process.roles.flatMap((role: ShortRole) => {
+            if (role.roleType === 'COLLECTION') {
+                return role.roleId;
+            }
+            return [];
+        });
+
+        const roleIdFunction = process.roles.flatMap((role: ShortRole) => {
+            if (role.roleType === 'IMPLICITE_FUNCTION') {
+                return { id: role.roleId, name: role.roleName };
+            }
+            return [];
+        });
+
+        const roleIdOrgUnit = process.roles.flatMap((role: ShortRole) => {
+            if (role.roleType === 'IMPLICITE_ORG_UNIT') {
+                return { id: role.roleId, name: role.roleName };
+            }
+            return [];
+        });
+
+        if (roleIdsCollection.length === 0) {
+            throw new NotFoundException(
+                `Keine Rolleninformationen gefunden für Prozess-ID: ${_id}`,
+            );
+        }
+
+        this.#logger.debug('findProcessRoles: Rollen-IDs aus Prozess: %o', roleIdsCollection);
 
         // Abrufen der Rollen aus der Datenbank anhand der IDs
-        const roles: Role[] = await this.#modelMap.ROLES.find({ roleId: { $in: roleIds } }).exec();
+        const roles: Role[] = await this.#modelMap.ROLES.find({
+            _id: { $in: roleIdsCollection },
+        }).exec();
         if (roles?.length === 0) {
             throw new NotFoundException(
-                `Keine Rolleninformationen gefunden für IDs: ${roleIds.join(', ')}`,
+                `Keine Rolleninformationen gefunden für IDs: ${roleIdsCollection.join(', ')}`,
             );
         }
         this.#logger.debug('findProcessRoles: roles=%o', roles);
 
         // Verarbeitung der Rollen und zugehörigen Benutzer mit Aggregations-Pipeline
-        const results = await Promise.all(
+        const resultsCollection = await Promise.all(
             roles.map(async (role) => {
                 this.#logger.debug('Verarbeite Rolle: %o', role);
 
@@ -128,7 +171,7 @@ export class ReadService {
                     // Abfrage-Pipeline aus der Rolle ausführen
                     const queryPipeline = role.query ?? [];
                     const users = await this.#modelMap.MANDATES.aggregate(queryPipeline)
-                        .option({ let: { userId } }) // Lokale Variable für die Pipeline
+                        .option({ let: { userId, specifiedOrgUnit } }) // Lokale Variable für die Pipeline
                         .exec();
 
                     // Ergebnisstruktur für die Rolle erstellen
@@ -148,12 +191,109 @@ export class ReadService {
                 }
             }),
         );
+
+        const resultFunction = await Promise.all(
+            roleIdFunction.map(async (roleId) => {
+                this.#logger.debug('Verarbeite RollenId: %s', roleId);
+
+                let users;
+                let functionName: string | undefined;
+                try {
+                    const function_ = (await this.#modelMap.MANDATES.findOne({
+                        _id: roleId.id,
+                    }).exec()) as Mandates;
+                    if (function_ === undefined) {
+                        throw new Error('Keine Funktion gefunden');
+                    }
+
+                    if (function_.isImpliciteFunction === true) {
+                        const data = await this.executeSavedQuery(function_._id as string);
+                        users = data.data as Mandates[];
+                    } else {
+                        // Abrufen der Benutzer aus der Datenbank
+                        users = await this.#modelMap.USERS.find({
+                            userId: { $in: function_.users },
+                        }).exec();
+                        this.#logger.debug('Benutzer: %o', users);
+                        functionName = function_.functionName;
+                    }
+
+                    const normalizedUsers: UserWithFunction[] = users?.map((user: User) => ({
+                        user: { ...user.toObject() },
+                        functionName: functionName ?? undefined,
+                    }));
+
+                    this.#logger.debug('normalizedUsers: %o', normalizedUsers);
+
+                    return {
+                        roleName: roleId.name,
+                        roleId: roleId.id,
+                        users: normalizedUsers,
+                    };
+                } catch (error) {
+                    this.#logger.error(
+                        'Fehler bei der Verarbeitung der Rolle: %s, Rolle-ID: %o. Fehler: %o',
+                        'Funktion',
+                        roleId,
+                        error,
+                    );
+                    return; // Fehlerhafte Rolle überspringen
+                }
+            }),
+        );
+
+        const resultOrgUnit = await Promise.all(
+            roleIdOrgUnit.map(async (roleId) => {
+                this.#logger.debug('Verarbeite RollenId: %s', roleId);
+
+                try {
+                    const orgUnit = (await this.#modelMap.ORG_UNITS.findOne({
+                        _id: roleId.id,
+                    }).exec()) as OrgUnit;
+                    if (orgUnit === undefined) {
+                        throw new Error('Keine Organisationseinheit gefunden');
+                    }
+                    const users = await this.findData<User>(
+                        'USERS',
+                        {
+                            OR: [
+                                { field: 'orgUnit', operator: 'EQ', value: orgUnit.alias },
+                                { field: 'orgUnit', operator: 'EQ', value: orgUnit.kostenstelleNr },
+                            ],
+                        },
+                        { limit: 0 },
+                        { field: 'userId', direction: 'ASC' },
+                    );
+
+                    const normalizedUsers: UserWithFunction[] = users?.map((user) => ({
+                        user,
+                        functionName: undefined, // Funktion ist nicht vorhanden
+                    }));
+                    return {
+                        roleName: roleId.name,
+                        roleId: roleId.id,
+                        users: normalizedUsers,
+                    };
+                } catch (error) {
+                    this.#logger.error(
+                        'Fehler bei der Verarbeitung der Rolle: %s, Rolle-ID: %s. Fehler: %o',
+                        'Organisationseinheit',
+                        roleId,
+                        error,
+                    );
+                    return; // Fehlerhafte Rolle überspringen
+                }
+            }),
+        );
         // Ergebnisse filtern, um fehlerhafte Rollen zu entfernen
-        const filteredResults = results.filter(Boolean);
+        const filteredResults = resultsCollection.filter(Boolean);
         this.#logger.debug('findProcessRoles: filteredResults=%o', filteredResults);
 
+        const endResult = [...filteredResults, ...resultFunction, ...resultOrgUnit];
+        this.#logger.debug('findProcessRoles: endResult=%o', endResult);
+
         this.#logger.info('findProcessRoles: Verarbeitung abgeschlossen');
-        return { roles: filteredResults as RoleResult[] };
+        return { roles: endResult as RoleResult[] };
     }
 
     /**
@@ -775,7 +915,7 @@ export class ReadService {
      * ```
      */
     #buildFieldQuery(filter: FilterInput, query: FilterQuery<any>): void {
-        // Validierung von Operator und Feld
+        // Validierung von Operator und Feldd
         if (!filter.operator || filter.field === null) {
             throw new Error(
                 `Ungültiger Filter: operator oder field fehlt (${JSON.stringify(filter)})`,

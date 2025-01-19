@@ -1,13 +1,22 @@
 'use server';
 
-import { CREATE_PROCESS } from '../../../graphql/processes/mutation/create-process';
+import {
+  CREATE_PROCESS,
+  CREATE_PROCESS_COLLECTION,
+} from '../../../graphql/processes/mutation/create-process';
 import { DELETE_PROCESS } from '../../../graphql/processes/mutation/delete-process';
-import { UPDATE_PROCESS } from '../../../graphql/processes/mutation/update-process';
+import {
+  UPDATE_PROCESS,
+  UPDATE_PROCESS_COLLECTION,
+  UPDATE_PROCESS_ROLES,
+} from '../../../graphql/processes/mutation/update-process';
 import {
   GET_ALL_PROCESSES,
   GET_PROCESS_BY_ID,
+  GET_PROCESS_COLLECTIONS,
   GET_PROCESSES_SHORT,
 } from '../../../graphql/processes/query/get-processes.query';
+import { GET_ROLES_BY_PROCESS } from '../../../graphql/processes/query/get-roles';
 import { Process, ShortProcess } from '../../../types/process.type';
 import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
 import { getLogger } from '../../../utils/logger';
@@ -38,6 +47,19 @@ export async function fetchAllProcesses(): Promise<Process[]> {
   }
 }
 
+export async function fetchAllProcessCollections() {
+  logger.debug('Lade alle Prozesse Sammlungen');
+  try {
+    const { data } = await client.query({
+      query: GET_PROCESS_COLLECTIONS,
+    });
+
+    return data.getProcessCollectionList || [];
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden der Prozesse.');
+  }
+}
+
 /**
  * Ruft einen Prozess anhand seiner ID ab.
  *
@@ -47,7 +69,7 @@ export async function fetchAllProcesses(): Promise<Process[]> {
  */
 export async function getProcessById(processId: string): Promise<Process> {
   try {
-    logger.debug('Lade Prozess mit ID: %o', processId);
+    logger.debug('getProcessById: processIs=%s', processId);
 
     const { data } = await client.query({
       query: GET_PROCESS_BY_ID,
@@ -77,16 +99,30 @@ export async function createProcess(
   try {
     logger.debug('Erstelle neuen Prozess: %o', { name, parentId, roles });
 
-    await client.mutate({
-      mutation: CREATE_PROCESS,
-      variables: { name, parentId, roles },
-      refetchQueries: [{ query: GET_ALL_PROCESSES }],
-      awaitRefetchQueries: true,
-    });
+    if (roles.length === 0) {
+      // Ohne Rollen
+      await client.mutate({
+        mutation: CREATE_PROCESS,
+        variables: { name, parentId },
+        refetchQueries: [{ query: GET_ALL_PROCESSES }],
+        awaitRefetchQueries: true,
+      });
+    } else {
+      // Mit Rollen
+      await client.mutate({
+        mutation: CREATE_PROCESS,
+        variables: { name, parentId, roles },
+        refetchQueries: [{ query: GET_ALL_PROCESSES }],
+        awaitRefetchQueries: true,
+      });
+    }
 
     return await fetchAllProcesses();
   } catch (error) {
-    handleGraphQLError(error, 'Fehler beim Erstellen des Prozesses.');
+    handleGraphQLError(
+      error,
+      `Fehler beim Erstellen des neuen Prozesses: ${name}`,
+    );
   }
 }
 
@@ -104,7 +140,7 @@ export async function updateProcess(
   processId: string,
   name: string,
   parentId: string | undefined,
-  roles: { roleName: string; roleId: string }[],
+  roles: { roleName: string; roleId: string }[] | undefined,
 ): Promise<Process[]> {
   try {
     logger.debug('Aktualisiere Prozess: %o', {
@@ -124,6 +160,92 @@ export async function updateProcess(
     return await fetchAllProcesses();
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Aktualisieren des Prozesses.');
+  }
+}
+
+export async function deleteProcess(processId: string): Promise<Process[]> {
+  try {
+    logger.debug('deleteProcess: id=%s', {
+      processId,
+    });
+
+    await client.mutate({
+      mutation: DELETE_PROCESS,
+      variables: { id: processId },
+      refetchQueries: [{ query: GET_ALL_PROCESSES }],
+      awaitRefetchQueries: true,
+    });
+
+    return await fetchAllProcesses();
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Aktualisieren des Prozesses.');
+  }
+}
+
+/**
+ * Holt die bestehenden Rollen eines Prozesses.
+ *
+ * @param {string} processId - Die ID des Prozesses.
+ * @returns {Promise<{ roleName: string; roleId: string }[]>} - Die Rollen des Prozesses.
+ */
+async function fetchRolesByProcess(
+  processId: string,
+): Promise<{ roleName: string; roleId: string }[]> {
+  try {
+    const { data } = await client.query({
+      query: GET_ROLES_BY_PROCESS,
+      variables: { id: processId },
+    });
+    return data?.roles || [];
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Abrufen der Rollen des Prozesses.');
+    return [];
+  }
+}
+
+/**
+ * Fügt neue Rollen zu einem bestehenden Prozess hinzu, ohne die bestehenden Rollen zu überschreiben.
+ *
+ * @param {string} processId - Die ID des Prozesses.
+ * @param {object[]} newRoles - Die neuen Rollen, die hinzugefügt werden sollen.
+ * @returns {Promise<Process[]>} - Die aktualisierte Liste der Prozesse.
+ * @throws {ApolloError} - Wird geworfen, wenn die Mutation fehlschlägt.
+ */
+export async function addRolesToProcess(
+  processId: string,
+  newRoles: { roleName: string; roleId: string }[],
+): Promise<Process[]> {
+  try {
+    // Bestehende Rollen des Prozesses abrufen
+    const existingRoles = await fetchRolesByProcess(processId);
+
+    // Nur neue Rollen hinzufügen, die noch nicht existieren
+    const combinedRoles = [
+      ...existingRoles,
+      ...newRoles.filter(
+        (newRole) =>
+          !existingRoles.some(
+            (existingRole) => existingRole.roleId === newRole.roleId,
+          ),
+      ),
+    ];
+
+    logger.debug('Füge Rollen zum Prozess hinzu: %o', {
+      processId,
+      combinedRoles,
+    });
+
+    // Mutation ausführen, um die kombinierten Rollen zu speichern
+    await client.mutate({
+      mutation: UPDATE_PROCESS_ROLES,
+      variables: { id: processId, roles: combinedRoles },
+      refetchQueries: [{ query: GET_ALL_PROCESSES }],
+      awaitRefetchQueries: true,
+    });
+
+    return await fetchAllProcesses(); // Aktualisierte Prozesse abrufen
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Hinzufügen der Rollen zum Prozess.');
   }
 }
 
@@ -166,6 +288,52 @@ export async function fetchProcessIds(): Promise<ShortProcess[]> {
     });
 
     return data.getData.data;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
+  }
+}
+
+export async function createProcessCollection(
+  name: string,
+  parentId: string | undefined,
+): Promise<string> {
+  try {
+    logger.debug(
+      'createProcessCollection: name=%s, parentId=%s',
+      name,
+      parentId,
+    );
+
+    const { data } = await client.query({
+      query: CREATE_PROCESS_COLLECTION,
+      variables: { name, parentId },
+    });
+
+    return data.createEntity.result._id;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
+  }
+}
+
+export async function updateProcessCollection(
+  id: string,
+  name: string,
+  parentId: string | undefined,
+): Promise<Process[]> {
+  try {
+    logger.debug(
+      'createProcessCollection: name=%s, parentId=%s',
+      name,
+      parentId,
+    );
+
+    const { data } = await client.query({
+      query: UPDATE_PROCESS_COLLECTION,
+      variables: { id, name, parentId },
+    });
+
+    logger.debug('Prozess-Sammlung erfolgreich aktualisiert:', data);
+    return fetchAllProcesses();
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Laden der Prozess-IDs.');
   }

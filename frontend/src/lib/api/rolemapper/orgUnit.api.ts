@@ -6,7 +6,6 @@ import { UPDATE_ORG_UNIT } from '../../../graphql/orgUnits/mutation/org-unit.mut
 import {
   GET_ALL_ORG_UNITS,
   GET_ORG_UNIT_BY_ID,
-  GET_ORG_UNITS_SHORT,
 } from '../../../graphql/orgUnits/query/get-orgUnits';
 import { OrgUnit, ShortOrgUnit } from '../../../types/orgUnit.type';
 import { handleGraphQLError } from '../../../utils/graphqlHandler.error';
@@ -172,10 +171,35 @@ export async function fetchOrgUnitsIds(): Promise<ShortOrgUnit[]> {
     logger.debug('Lade IDs aller Organisationseinheiten');
 
     const { data } = await client.query({
-      query: GET_ORG_UNITS_SHORT,
+      query: GET_ALL_ORG_UNITS,
     });
 
     return data.getData.data;
+  } catch (error) {
+    handleGraphQLError(
+      error,
+      'Fehler beim Laden der Organisationseinheiten-IDs.',
+    );
+  }
+}
+
+export async function fetchOrgUnitsCostCenterAlias(): Promise<OrgUnit[]> {
+  try {
+    logger.debug('Lade IDs aller Organisationseinheiten');
+
+    const { data } = await client.query({
+      query: GET_ALL_ORG_UNITS,
+    });
+
+    const orgUnits = data.getData.data;
+
+    // Filtere nur Organisationseinheiten mit definiertem alias oder Kostenstelle
+    const filteredOrgUnits = orgUnits.filter(
+      (unit: OrgUnit) =>
+        unit.alias?.trim() !== '' || unit.kostenstelleNr?.trim() !== '',
+    );
+
+    return filteredOrgUnits;
   } catch (error) {
     handleGraphQLError(
       error,

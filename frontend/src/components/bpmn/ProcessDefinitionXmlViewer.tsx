@@ -7,6 +7,7 @@
 
 'use client';
 
+import { Box } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { getProcessDefinitionXml } from '../../lib/api/camunda.api';
@@ -76,7 +77,20 @@ const ProcessDefinitionXmlViewer: React.FC<ProcessDefinitionXmlViewerProps> = ({
   if (!xml) return <div>Loading...</div>;
 
   return (
-    <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{xml}</pre>
+    <Box
+      sx={{
+        maxHeight: '100%',
+        overflow: 'auto', // Scrollbalken aktivieren
+        backgroundColor: '#f4f4f4',
+        padding: '16px',
+        borderRadius: '8px',
+        border: '1px solid #ccc',
+      }}
+    >
+      <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>
+        {xml}
+      </pre>
+    </Box>
   );
 };
 

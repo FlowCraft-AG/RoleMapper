@@ -159,7 +159,7 @@ const ExplicitFunctionModal = ({
       refetch(newFunctionList); // Aktualisiere die Daten nach der Mutation
       setSnackbar({
         open: true,
-        message: 'Explizierte Funktion erfolgreich erstellt.',
+        message: 'Explizite Funktion erfolgreich erstellt.',
       });
       resetFields(); // Eingabefelder zurücksetzen
       onClose();

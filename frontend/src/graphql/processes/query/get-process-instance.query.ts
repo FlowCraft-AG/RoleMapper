@@ -10,13 +10,11 @@ export const GET_ALL_PROCESS_INSTANCES = gql`
       filter: { sortBy: [{ field: "bpmnProcessId", order: ASC }] }
     ) {
       key
-      processVersion
+      name
       bpmnProcessId
-      startDate
       state
       incident
       processDefinitionKey
-      tenantId
     }
   }
 `;
@@ -31,6 +29,7 @@ export const GET_PROCESS_INSTANCE_BY_PROCESS_INSTANCE_KEY = gql`
       filter: { key: $key, sortBy: [{ field: "bpmnProcessId", order: ASC }] }
     ) {
       key
+      name
       processVersion
       bpmnProcessId
       startDate
@@ -56,6 +55,7 @@ export const GET_PROCESS_INSTANCE_BY_USER = gql`
   query GetProcessInstancesByUserId($userId: String!) {
     getProcessInstancesByUserId(userId: $userId) {
       key
+      name
       processVersion
       bpmnProcessId
       startDate

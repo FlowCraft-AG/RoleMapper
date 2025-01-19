@@ -21,5 +21,6 @@ export type OrgUnit = {
 export type ShortOrgUnit = {
   _id: string; // Eindeutige ID der Organisationseinheit
   name: string; // Name der Organisationseinheit
+  supervisor?: string;
   parentId: string | undefined; // ID der übergeordneten Organisationseinheit oder undefined
 };

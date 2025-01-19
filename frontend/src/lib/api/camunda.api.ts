@@ -6,6 +6,11 @@
 'use server';
 
 import {
+  CANCEL_PROCESS_INSTANCE,
+  DELETE_PROCESS_INSTANCE,
+} from '../../graphql/processes/mutation/delete-process';
+import { START_CAMUNDA_PROCESS } from '../../graphql/processes/mutation/start-process';
+import {
   GET_ALL_PROCESS_INSTANCES,
   GET_PROCESS_DEFINITION_XML_BY_PROCESS_DEFINITION_KEY,
   GET_PROCESS_INSTANCE_BY_PROCESS_INSTANCE_KEY,
@@ -256,5 +261,68 @@ export async function getIncidentFlowNode(
     return data.getIncidentFlowNodeByProcessInstanceKey;
   } catch (error) {
     handleGraphQLError(error, 'Fehler beim Abrufen der Aufgaben.');
+  }
+}
+
+export async function startCamundaProcessInstance(
+  processKey: string,
+  userId: string,
+  orgUnitId: string,
+): Promise<string> {
+  logger.debug(
+    'startCamundaProcessInstance: processKey=%s, userId=%s, orgUnitId=%s',
+    processKey,
+    userId,
+    orgUnitId,
+  );
+  try {
+    const client = getApolloClient(undefined);
+    const { data } = await client.query({
+      query: START_CAMUNDA_PROCESS,
+      variables: { processKey, userId, orgUnitId },
+    });
+    return data.startProcess.message;
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Abrufen der Aufgaben.');
+  }
+}
+
+export async function cancelProcessInstance(
+  processInstanceKey: string | undefined,
+  token: string,
+): Promise<void> {
+  logger.debug(
+    'cancelProcessInstance: key=%s, token=%s',
+    processInstanceKey,
+    token,
+  );
+  try {
+    const client = getApolloClient(token);
+    await client.mutate({
+      mutation: CANCEL_PROCESS_INSTANCE,
+      variables: { processInstanceKey },
+    });
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Abbrechen der Prozessinstanz.');
+  }
+}
+
+export async function deleteProcessInstance(
+  processInstanceKey: string,
+  token: string | undefined,
+): Promise<void> {
+  logger.debug(
+    'deleteProcessInstance: key=%s, token=%s',
+    processInstanceKey,
+    token,
+  );
+  try {
+    const client = getApolloClient(token);
+    await client.mutate({
+      mutation: DELETE_PROCESS_INSTANCE,
+      variables: { processInstanceKey },
+    });
+  } catch (error) {
+    handleGraphQLError(error, 'Fehler beim Löschen der Prozessinstanz.');
   }
 }
